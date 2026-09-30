@@ -22,122 +22,74 @@ export default async function handler(req, res) {
             whatsapp = ""
         } = req.body || {};
 
-        const normalizedName = String(name || "").trim();
-        const normalizedEmail = String(email || "")
+        const cleanName = String(name || "").trim();
+        const cleanEmail = String(email || "")
             .trim()
             .toLowerCase();
+        const cleanPassword = String(password || "");
+        const cleanWhatsapp = String(whatsapp || "").trim();
 
-        const normalizedPassword = String(password || "");
-        const normalizedWhatsapp = String(whatsapp || "").trim();
-
-        if (
-            !normalizedName ||
-            !normalizedEmail ||
-            !normalizedPassword
-        ) {
+        if (!cleanName || !cleanEmail || !cleanPassword) {
             return res.status(400).json({
                 success: false,
                 message: "Nama, email, dan password wajib diisi"
             });
         }
 
-        if (normalizedName.length > 30) {
+        if (cleanName.length > 30) {
             return res.status(400).json({
                 success: false,
                 message: "Nama maksimal 30 karakter"
             });
         }
 
-        if (normalizedPassword.length < 8) {
+        if (cleanPassword.length < 8) {
             return res.status(400).json({
                 success: false,
                 message: "Password minimal 8 karakter"
             });
         }
 
-        const existingUser = await User.findOne({
-            email: normalizedEmail
-        });
+        const hashedPassword = await bcrypt.hash(
+            cleanPassword,
+            12
+        );
 
-        if (existingUser) {
-            if (existingUser.emailVerified === true) {
+        const verificationToken =
+            crypto.randomBytes(32).toString("hex");
+
+        let user;
+
+        try {
+            user = await User.create({
+                name: cleanName,
+                email: cleanEmail,
+                password: hashedPassword,
+                whatsapp: cleanWhatsapp,
+                emailVerified: false,
+                welcomeEmailSent: false,
+                verificationToken,
+                resetToken: null,
+                resetTokenExpires: null
+            });
+        } catch (error) {
+            console.error(
+                "USER CREATE ERROR:",
+                error
+            );
+
+            if (error?.code === 11000) {
                 return res.status(409).json({
                     success: false,
                     message: "Email sudah terdaftar"
                 });
             }
 
-            const verificationToken =
-                crypto.randomBytes(32).toString("hex");
-
-            existingUser.name = normalizedName;
-            existingUser.password =
-                await bcrypt.hash(normalizedPassword, 12);
-            existingUser.whatsapp = normalizedWhatsapp;
-            existingUser.verificationToken =
-                verificationToken;
-            existingUser.emailVerified = false;
-
-            await existingUser.save();
-
-            const baseUrl =
-                process.env.APP_URL ||
-                `https://${req.headers.host}`;
-
-            const verificationUrl =
-                `${baseUrl}/verify-email?token=${encodeURIComponent(
-                    verificationToken
-                )}`;
-
-            try {
-                await sendVerificationEmail({
-                    to: existingUser.email,
-                    name: existingUser.name,
-                    verificationUrl
-                });
-            } catch (mailError) {
-                console.error(
-                    "RESEND VERIFICATION ERROR:",
-                    mailError
-                );
-
-                return res.status(500).json({
-                    success: false,
-                    message:
-                        "Akun belum terverifikasi dan email verifikasi gagal dikirim"
-                });
-            }
-
-            return res.status(200).json({
-                success: true,
-                message:
-                    "Akun sudah ada tetapi belum diverifikasi. Link verifikasi baru telah dikirim.",
-                user: {
-                    id: existingUser._id,
-                    name: existingUser.name,
-                    email: existingUser.email,
-                    emailVerified: false
-                }
+            return res.status(500).json({
+                success: false,
+                message: "Gagal membuat akun"
             });
         }
-
-        const hashedPassword =
-            await bcrypt.hash(normalizedPassword, 12);
-
-        const verificationToken =
-            crypto.randomBytes(32).toString("hex");
-
-        const user = await User.create({
-            name: normalizedName,
-            email: normalizedEmail,
-            password: hashedPassword,
-            whatsapp: normalizedWhatsapp,
-            emailVerified: false,
-            welcomeEmailSent: false,
-            verificationToken,
-            resetToken: null,
-            resetTokenExpires: null
-        });
 
         const baseUrl =
             process.env.APP_URL ||
@@ -154,10 +106,10 @@ export default async function handler(req, res) {
                 name: user.name,
                 verificationUrl
             });
-        } catch (mailError) {
+        } catch (error) {
             console.error(
                 "VERIFICATION EMAIL ERROR:",
-                mailError
+                error
             );
 
             return res.status(201).json({
@@ -188,14 +140,10 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error("REGISTER ERROR:", error);
-
-        if (error?.code === 11000) {
-            return res.status(409).json({
-                success: false,
-                message: "Email sudah terdaftar"
-            });
-        }
+        console.error(
+            "REGISTER ERROR:",
+            error
+        );
 
         return res.status(500).json({
             success: false,
