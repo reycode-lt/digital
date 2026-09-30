@@ -29,27 +29,29 @@ export default async function handler(req, res) {
             });
         }
 
-        if (password.length < 8) {
-            return res.status(400).json({
-                success: false,
-                message: "Password minimal 8 karakter"
-            });
-        }
-
-        const normalizedEmail = String(email)
-            .trim()
-            .toLowerCase();
-
-        const normalizedName = String(name)
-            .trim();
-
-        const normalizedWhatsapp = String(whatsapp || "")
-            .trim();
+        const normalizedName = String(name).trim();
+        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedWhatsapp = String(whatsapp || "").trim();
+        const normalizedPassword = String(password);
 
         if (!normalizedName) {
             return res.status(400).json({
                 success: false,
                 message: "Nama tidak boleh kosong"
+            });
+        }
+
+        if (!normalizedEmail) {
+            return res.status(400).json({
+                success: false,
+                message: "Email tidak boleh kosong"
+            });
+        }
+
+        if (normalizedPassword.length < 5) {
+            return res.status(400).json({
+                success: false,
+                message: "Password minimal 5 karakter"
             });
         }
 
@@ -65,28 +67,35 @@ export default async function handler(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(
-            password,
+            normalizedPassword,
             12
         );
 
         const verificationToken =
             crypto.randomBytes(32).toString("hex");
 
-        const user = await User.create({
+        const user = new User({
             name: normalizedName,
             email: normalizedEmail,
             password: hashedPassword,
             whatsapp: normalizedWhatsapp,
             emailVerified: false,
-            verificationToken
+            welcomeEmailSent: false,
+            verificationToken,
+            resetToken: null,
+            resetTokenExpires: null
         });
+
+        await user.save();
 
         const baseUrl =
             process.env.APP_URL ||
             `https://${req.headers.host}`;
 
         const verificationUrl =
-            `${baseUrl}/verify-email?token=${encodeURIComponent(verificationToken)}`;
+            `${baseUrl}/verify-email?token=${encodeURIComponent(
+                verificationToken
+            )}`;
 
         try {
             await sendVerificationEmail({
@@ -100,11 +109,9 @@ export default async function handler(req, res) {
                 mailError
             );
 
-            await User.findByIdAndDelete(user._id);
-
             return res.status(500).json({
                 success: false,
-                message: "Akun gagal dibuat karena email verifikasi tidak dapat dikirim"
+                message: "Akun berhasil dibuat, tetapi email verifikasi gagal dikirim"
             });
         }
 
@@ -125,9 +132,16 @@ export default async function handler(req, res) {
             error
         );
 
+        if (error?.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: "Email sudah terdaftar"
+            });
+        }
+
         return res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan pada server"
+            message: "Terjadi kesalahan pada register"
         });
     }
 }
