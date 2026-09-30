@@ -15,34 +15,40 @@ export default async function handler(req, res) {
     try {
         await connectDB();
 
-        const body = req.body || {};
+        const {
+            name,
+            email,
+            password,
+            whatsapp = ""
+        } = req.body || {};
 
-        const name = String(body.name || "").trim();
-        const email = String(body.email || "")
+        const normalizedName = String(name || "").trim();
+        const normalizedEmail = String(email || "")
             .trim()
             .toLowerCase();
 
-        const password = String(body.password || "");
+        const normalizedPassword = String(password || "");
+        const normalizedWhatsapp = String(whatsapp || "").trim();
 
-        const whatsapp = String(
-            body.whatsapp || ""
-        ).trim();
-
-        if (!name || !email || !password) {
+        if (
+            !normalizedName ||
+            !normalizedEmail ||
+            !normalizedPassword
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Nama, email, dan password wajib diisi"
             });
         }
 
-        if (name.length > 100) {
+        if (normalizedName.length > 30) {
             return res.status(400).json({
                 success: false,
-                message: "Nama maksimal 100 karakter"
+                message: "Nama maksimal 30 karakter"
             });
         }
 
-        if (password.length < 8) {
+        if (normalizedPassword.length < 8) {
             return res.status(400).json({
                 success: false,
                 message: "Password minimal 8 karakter"
@@ -50,56 +56,88 @@ export default async function handler(req, res) {
         }
 
         const existingUser = await User.findOne({
-            email: email
-        }).lean();
+            email: normalizedEmail
+        });
 
         if (existingUser) {
-            return res.status(409).json({
-                success: false,
-                message: "Email sudah terdaftar"
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(
-            password,
-            12
-        );
-
-        const verificationToken =
-            crypto.randomBytes(32).toString("hex");
-
-        let user;
-
-        try {
-            user = await User.create({
-                name,
-                email,
-                password: hashedPassword,
-                whatsapp,
-                emailVerified: false,
-                welcomeEmailSent: false,
-                verificationToken,
-                resetToken: null,
-                resetTokenExpires: null
-            });
-        } catch (error) {
-            console.error(
-                "REGISTER CREATE ERROR:",
-                error
-            );
-
-            if (error?.code === 11000) {
+            if (existingUser.emailVerified === true) {
                 return res.status(409).json({
                     success: false,
                     message: "Email sudah terdaftar"
                 });
             }
 
-            return res.status(500).json({
-                success: false,
-                message: "Gagal membuat akun"
+            const verificationToken =
+                crypto.randomBytes(32).toString("hex");
+
+            existingUser.name = normalizedName;
+            existingUser.password =
+                await bcrypt.hash(normalizedPassword, 12);
+            existingUser.whatsapp = normalizedWhatsapp;
+            existingUser.verificationToken =
+                verificationToken;
+            existingUser.emailVerified = false;
+
+            await existingUser.save();
+
+            const baseUrl =
+                process.env.APP_URL ||
+                `https://${req.headers.host}`;
+
+            const verificationUrl =
+                `${baseUrl}/verify-email?token=${encodeURIComponent(
+                    verificationToken
+                )}`;
+
+            try {
+                await sendVerificationEmail({
+                    to: existingUser.email,
+                    name: existingUser.name,
+                    verificationUrl
+                });
+            } catch (mailError) {
+                console.error(
+                    "RESEND VERIFICATION ERROR:",
+                    mailError
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message:
+                        "Akun belum terverifikasi dan email verifikasi gagal dikirim"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message:
+                    "Akun sudah ada tetapi belum diverifikasi. Link verifikasi baru telah dikirim.",
+                user: {
+                    id: existingUser._id,
+                    name: existingUser.name,
+                    email: existingUser.email,
+                    emailVerified: false
+                }
             });
         }
+
+        const hashedPassword =
+            await bcrypt.hash(normalizedPassword, 12);
+
+        const verificationToken =
+            crypto.randomBytes(32).toString("hex");
+
+        const user = await User.create({
+            name: normalizedName,
+            email: normalizedEmail,
+            password: hashedPassword,
+            whatsapp: normalizedWhatsapp,
+            emailVerified: false,
+            welcomeEmailSent: false,
+            verificationToken,
+            resetToken: null,
+            resetTokenExpires: null
+        });
 
         const baseUrl =
             process.env.APP_URL ||
@@ -116,22 +154,22 @@ export default async function handler(req, res) {
                 name: user.name,
                 verificationUrl
             });
-        } catch (error) {
+        } catch (mailError) {
             console.error(
-                "REGISTER MAIL ERROR:",
-                error
+                "VERIFICATION EMAIL ERROR:",
+                mailError
             );
 
             return res.status(201).json({
                 success: true,
                 emailSent: false,
                 message:
-                    "Akun berhasil dibuat, tetapi email verifikasi gagal dikirim. Silakan coba kirim ulang verifikasi.",
+                    "Akun berhasil dibuat, tetapi email verifikasi gagal dikirim.",
                 user: {
                     id: user._id,
                     name: user.name,
                     email: user.email,
-                    emailVerified: user.emailVerified
+                    emailVerified: false
                 }
             });
         }
@@ -145,19 +183,23 @@ export default async function handler(req, res) {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                emailVerified: user.emailVerified
+                emailVerified: false
             }
         });
 
     } catch (error) {
-        console.error(
-            "REGISTER ERROR:",
-            error
-        );
+        console.error("REGISTER ERROR:", error);
+
+        if (error?.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: "Email sudah terdaftar"
+            });
+        }
 
         return res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan pada register"
+            message: "Terjadi kesalahan pada server"
         });
     }
 }
