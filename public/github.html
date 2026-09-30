@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Workspace • ReyCode</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #050505;
+            --panel: rgba(255,255,255,.055);
+            --panel-2: rgba(255,255,255,.08);
+            --border: rgba(255,255,255,.1);
+            --text: #fff;
+            --muted: #929292;
+            --blue: #1677ff;
+            --blue-2: #4da3ff;
+            --danger: #ff4d67;
+            --success: #27d17f;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 10%, rgba(22,119,255,.16), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(77,163,255,.08), transparent 25%),
+                var(--bg);
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: auto;
+            padding: 28px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand img {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .brand h1 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .user-badge {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            border-radius: 14px;
+            color: #ddd;
+            font-size: 13px;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,.075),
+                rgba(255,255,255,.025)
+            );
+            backdrop-filter: blur(22px);
+            margin-bottom: 18px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            right: -80px;
+            top: -100px;
+            border-radius: 50%;
+            background: rgba(22,119,255,.18);
+            filter: blur(35px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            color: var(--blue-2);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .hero h2 {
+            font-size: clamp(28px, 5vw, 43px);
+            line-height: 1.08;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 650px;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            gap: 18px;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 17px;
+        }
+
+        .card-title h3 {
+            font-size: 15px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #666;
+        }
+
+        .dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 12px rgba(39,209,127,.55);
+        }
+
+        .input {
+            width: 100%;
+            border: 1px solid var(--border);
+            outline: none;
+            border-radius: 13px;
+            background: rgba(0,0,0,.35);
+            color: white;
+            padding: 12px 13px;
+            margin-bottom: 10px;
+            transition: .2s;
+        }
+
+        .input:focus {
+            border-color: rgba(22,119,255,.7);
+            box-shadow: 0 0 0 3px rgba(22,119,255,.1);
+        }
+
+        textarea.input {
+            min-height: 260px;
+            resize: vertical;
+            line-height: 1.6;
+            font-family: monospace;
+        }
+
+        .token-wrap {
+            position: relative;
+        }
+
+        .token-wrap .input {
+            padding-right: 48px;
+        }
+
+        .eye {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #aaa;
+        }
+
+        .btn {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 12px 15px;
+            color: white;
+            background: rgba(255,255,255,.06);
+            transition: .2s;
+            margin-top: 7px;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,.1);
+            transform: translateY(-1px);
+        }
+
+        .btn.primary {
+            background: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .btn.primary:hover {
+            background: #0d6bea;
+        }
+
+        .btn.danger {
+            color: #ff8092;
+        }
+
+        .github-profile {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .github-profile img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+        }
+
+        .github-profile strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .github-profile span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .repos-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .repo-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .small-btn {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.05);
+            color: #ddd;
+            padding: 9px 11px;
+            border-radius: 11px;
+            font-size: 12px;
+        }
+
+        .repo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .repo {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.035);
+            border-radius: 17px;
+            padding: 16px;
+            transition: .2s;
+        }
+
+        .repo:hover {
+            border-color: rgba(22,119,255,.5);
+            transform: translateY(-2px);
+        }
+
+        .repo-name {
+            font-weight: 700;
+            margin-bottom: 7px;
+            word-break: break-word;
+        }
+
+        .repo-desc {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            min-height: 36px;
+            margin-bottom: 12px;
+        }
+
+        .repo-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .repo-meta span {
+            color: #aaa;
+        }
+
+        .repo-buttons {
+            display: flex;
+            gap: 7px;
+            margin-top: 12px;
+        }
+
+        .repo-buttons button {
+            flex: 1;
+            padding: 9px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255,255,255,.045);
+            color: #ddd;
+            font-size: 11px;
+        }
+
+        .empty {
+            padding: 45px 15px;
+            text-align: center;
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            border-radius: 17px;
+            grid-column: 1 / -1;
+        }
+
+        .upload-box {
+            margin-top: 18px;
+            padding: 18px;
+            border: 1px dashed rgba(22,119,255,.4);
+            border-radius: 18px;
+            background: rgba(22,119,255,.035);
+        }
+
+        .upload-box h4 {
+            margin-bottom: 6px;
+        }
+
+        .upload-box p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(0,0,0,.3);
+            color: #aaa;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(0,0,0,.75);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-box {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow: auto;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: #0b0b0b;
+            padding: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,.55);
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .close {
+            border: 0;
+            background: transparent;
+            color: #888;
+            font-size: 23px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,.03);
+        }
+
+        .file-item span {
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .notice {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 200;
+            max-width: 340px;
+            padding: 13px 16px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: rgba(15,15,15,.92);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 15px 50px rgba(0,0,0,.35);
+            font-size: 13px;
+            display: none;
+        }
+
+        .notice.success {
+            border-color: rgba(39,209,127,.35);
+        }
+
+        .notice.error {
+            border-color: rgba(255,77,103,.35);
+        }
+
+        .loading {
+            opacity: .6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 850px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .repo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                padding-top: 15px;
+            }
+
+            .hero {
+                padding: 22px;
+                border-radius: 20px;
+            }
+
+            .card {
+                border-radius: 18px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .user-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+        <div class="brand">
+            <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+            <div>
+                <h1>ReyCode</h1>
+                <p>GitHub Workspace</p>
+            </div>
+        </div>
+
+        <div class="user-badge" id="userBadge">
+            Memuat akun...
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="eyebrow">ReyCode Developer Workspace</div>
+            <h2>GitHub Workspace</h2>
+            <p>
+                Kelola repository GitHub langsung dari dashboard ReyCode.
+                Upload website, edit file, membuat repository, dan mengelola
+                source code dari satu tempat.
+            </p>
+        </div>
+    </section>
+
+    <main class="workspace">
+
+        <aside>
+
+            <div class="card">
+
+                <div class="card-title">
+                    <h3>GitHub Connection</h3>
+
+                    <div class="status">
+                        <span class="dot" id="statusDot"></span>
+                        <span id="statusText">Disconnected</span>
+                    </div>
+                </div>
+
+                <div class="github-profile" id="githubProfile">
+                    <img id="githubAvatar" src="" alt="GitHub">
+                    <div>
+                        <strong id="githubName">GitHub</strong>
+                        <span id="githubUsername">@username</span>
+                    </div>
+                </div>
+
+                <div id="connectBox">
+
+                    <div class="token-wrap">
+                        <input
+                            id="githubToken"
+                            class="input"
+                            type="password"
+                            placeholder="GitHub Personal Access Token"
+                            autocomplete="off"
+                        >
+
+                        <button
+                            class="eye"
+                            type="button"
+                            onclick="toggleToken()"
+                        >
+                            ◉
+                        </button>
+                    </div>
+
+                    <button
+                        class="btn primary"
+                        onclick="connectGitHub()"
+                    >
+                        Connect GitHub
+                    </button>
+
+                </div>
+
+                <div id="connectedBox" style="display:none">
+
+                    <button
+                        class="btn"
+                        onclick="openCreateRepo()"
+                    >
+                        ＋ Create Repository
+                    </button>
+
+                    <button
+                        class="btn danger"
+                        onclick="disconnectGitHub()"
+                    >
+                        Disconnect GitHub
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card" style="margin-top:18px">
+
+                <div class="card-title">
+                    <h3>Workspace Info</h3>
+                </div>
+
+                <p style="color:#888;font-size:12px;line-height:1.7">
+                    Akun GitHub terhubung secara khusus ke akun ReyCode
+                    yang sedang login. Token disimpan dalam bentuk terenkripsi
+                    di server.
+                </p>
+
+            </div>
+
+        </aside>
+
+        <section>
+
+            <div class="card">
+
+                <div class="repos-header">
+                    <div>
+                        <h3>Repositories</h3>
+                        <p
+                            id="repoCount"
+                            style="color:#777;font-size:12px;margin-top:4px"
+                        >
+                            Belum terhubung
+                        </p>
+                    </div>
+
+                    <div class="repo-actions">
+                        <button
+                            class="small-btn"
+                            onclick="loadRepos()"
+                        >
+                            ↻ Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    class="repo-grid"
+                    id="repoGrid"
+                >
+                    <div class="empty">
+                        Hubungkan GitHub untuk melihat repository.
+                    </div>
+                </div>
+
+            </div>
+
+            <div
+                class="card"
+                id="uploadCard"
+                style="margin-top:18px;display:none"
+            >
+
+                <div class="card-title">
+                    <h3>Upload Website</h3>
+                </div>
+
+                <div class="upload-box">
+
+                    <h4>ZIP → GitHub</h4>
+
+                    <p>
+                        Upload file ZIP website. ZIP akan diekstrak terlebih
+                        dahulu dan seluruh file akan dimasukkan langsung ke
+                        repository. File ZIP tidak disimpan di repository.
+                    </p>
+
+                    <select
+                        id="uploadRepo"
+                        class="input"
+                    >
+                        <option value="">
+                            Pilih repository
+                        </option>
+                    </select>
+
+                    <input
+                        id="uploadBranch"
+                        class="input"
+                        type="text"
+                        placeholder="Branch (kosong = default branch)"
+                    >
+
+                    <input
+                        id="commitMessage"
+                        class="input"
+                        type="text"
+                        value="Upload website"
+                        placeholder="Commit message"
+                    >
+
+                    <input
+                        id="zipFile"
+                        class="file-input"
+                        type="file"
+                        accept=".zip,application/zip"
+                    >
+
+                    <button
+                        class="btn primary"
+                        onclick="uploadZip()"
+                    >
+                        Upload & Extract ke GitHub
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="modal" id="createModal">
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+            <h3>Create Repository</h3>
+
+            <button
+                class="close"
+                onclick="closeModal('createModal')"
+            >
+                ×
+            </button>
+        </div>
+
+        <input
+            id="repoName"
+            class="input"
+            type="text"
+            placeholder="Repository name"
+        >
+
+        <input
+            id="repoDescription"
+            class="input"
+            type="text"
+            placeholder="Description"
+        >
+
+        <select
+            id="repoVisibility"
+            class="input"
+        >
+            <option value="false">
+                Public Repository
+            </option>
+
+            <option value="true">
+                Private Repository
+            </option>
+        </select>
+
+        <button
+            class="btn primary"
+            onclick="createRepo()"
+        >
+            Create Repository
+        </button>
+
+    </div>
+
+</div>
+
+<div class="modal" id="filesModal">
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+            <div>
+                <h3 id="filesTitle">Repository Files</h3>
+                <p
+                    id="filesSubtitle"
+                    style="color:#777;font-size:12px;margin-top:4px"
+                ></p>
+            </div>
+
+            <button
+                class="close"
+                onclick="closeModal('filesModal')"
+            >
+                ×
+            </button>
+        </div>
+
+        <div
+            class="file-list"
+            id="fileList"
+        >
+            <div class="empty">
+                Loading...
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="modal" id="editModal">
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+            <h3>Edit File</h3>
+
+            <button
+                class="close"
+                onclick="closeModal('editModal')"
+            >
+                ×
+            </button>
+        </div>
+
+        <input
+            id="editRepo"
+            class="input"
+            type="text"
+            readonly
+        >
+
+        <input
+            id="editPath"
+            class="input"
+            type="text"
+            readonly
+        >
+
+        <input
+            id="editMessage"
+            class="input"
+            type="text"
+            value="Update file"
+        >
+
+        <textarea
+            id="editContent"
+            class="input"
+            spellcheck="false"
+            placeholder="File content..."
+        ></textarea>
+
+        <button
+            class="btn primary"
+            onclick="saveFile()"
+        >
+            Save & Commit
+        </button>
+
+        <button
+            class="btn danger"
+            onclick="deleteCurrentFile()"
+        >
+            Delete File
+        </button>
+
+    </div>
+
+</div>
+
+<div
+    class="notice"
+    id="notice"
+></div>
+
+<script>
+    const API = "/api/github";
+
+    let repositories = [];
+    let currentFile = {
+        repo: "",
+        path: "",
+        sha: ""
+    };
+
+    function qs(selector) {
+        return document.querySelector(selector);
+    }
+
+    function showNotice(message, type = "") {
+        const notice = qs("#notice");
+
+        notice.textContent = message;
+        notice.className = `notice ${type}`;
+        notice.style.display = "block";
+
+        clearTimeout(window.__noticeTimer);
+
+        window.__noticeTimer = setTimeout(() => {
+            notice.style.display = "none";
+        }, 3500);
+    }
+
+    function setLoading(element, state) {
+        if (!element) return;
+
+        element.classList.toggle(
+            "loading",
+            state
+        );
+    }
+
+    async function request(
+        url,
+        options = {}
+    ) {
+        const response = await fetch(
+            url,
+            {
+                credentials: "include",
+                ...options
+            }
+        );
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {}
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Request gagal"
+            );
+        }
+
+        return data;
+    }
+
+    function toggleToken() {
+        const input = qs("#githubToken");
+
+        input.type =
+            input.type === "password"
+                ? "text"
+                : "password";
+    }
+
+    async function loadUser() {
+        try {
+            const response = await fetch(
+                "/api/user/me",
+                {
+                    credentials: "include"
+                }
+            );
+
+            if (!response.ok) {
+                qs("#userBadge").textContent =
+                    "Belum login";
+                return;
+            }
+
+            const data = await response.json();
+
+            const user =
+                data.user ||
+                data.data ||
+                data;
+
+            qs("#userBadge").textContent =
+                user.name
+                    ? `Hallo, ${user.name} 👋`
+                    : user.email || "ReyCode User";
+        } catch {
+            qs("#userBadge").textContent =
+                "ReyCode User";
+        }
+    }
+
+    async function checkGitHub() {
+        try {
+            const data = await request(
+                `${API}?action=me`
+            );
+
+            if (data.connected) {
+                setConnected(
+                    data.github
+                );
+
+                await loadRepos();
+            } else {
+                setDisconnected();
+            }
+        } catch {
+            setDisconnected();
+        }
+    }
+
+    function setConnected(github) {
+        qs("#statusDot")
+            .classList.add("connected");
+
+        qs("#statusText").textContent =
+            "Connected";
+
+        qs("#connectBox").style.display =
+            "none";
+
+        qs("#connectedBox").style.display =
+            "block";
+
+        qs("#githubProfile").style.display =
+            "flex";
+
+        qs("#githubName").textContent =
+            github.username || "GitHub";
+
+        qs("#githubUsername").textContent =
+            `@${github.username || ""}`;
+
+        if (github.avatar) {
+            qs("#githubAvatar").src =
+                github.avatar;
+        }
+
+        qs("#uploadCard").style.display =
+            "block";
+    }
+
+    function setDisconnected() {
+        qs("#statusDot")
+            .classList.remove("connected");
+
+        qs("#statusText").textContent =
+            "Disconnected";
+
+        qs("#connectBox").style.display =
+            "block";
+
+        qs("#connectedBox").style.display =
+            "none";
+
+        qs("#githubProfile").style.display =
+            "none";
+
+        qs("#uploadCard").style.display =
+            "none";
+
+        repositories = [];
+
+        renderRepos();
+    }
+
+    async function connectGitHub() {
+        const input = qs("#githubToken");
+        const token = input.value.trim();
+
+        if (!token) {
+            showNotice(
+                "Masukkan GitHub token terlebih dahulu.",
+                "error"
+            );
+            return;
+        }
+
+        const button = event?.currentTarget;
+
+        try {
+            setLoading(button, true);
+
+            const data = await request(
+                `${API}?action=connect`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        token
+                    })
+                }
+            );
+
+            input.value = "";
+
+            setConnected(
+                data.github
+            );
+
+            showNotice(
+                "GitHub berhasil terhubung.",
+                "success"
+            );
+
+            await loadRepos();
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        } finally {
+            setLoading(button, false);
+        }
+    }
+
+    async function disconnectGitHub() {
+        if (
+            !confirm(
+                "Putuskan koneksi GitHub dari akun ReyCode ini?"
+            )
+        ) {
+            return;
+        }
+
+        try {
+            await request(
+                `${API}?action=disconnect`,
+                {
+                    method: "POST"
+                }
+            );
+
+            setDisconnected();
+
+            showNotice(
+                "GitHub berhasil diputus.",
+                "success"
+            );
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function loadRepos() {
+        try {
+            const data = await request(
+                `${API}?action=repos`
+            );
+
+            repositories =
+                data.repositories || [];
+
+            renderRepos();
+            fillUploadRepos();
+        } catch (error) {
+            if (
+                error.message
+                    .toLowerCase()
+                    .includes("belum terhubung")
+            ) {
+                setDisconnected();
+            } else {
+                showNotice(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    }
+
+    function renderRepos() {
+        const grid =
+            qs("#repoGrid");
+
+        qs("#repoCount").textContent =
+            repositories.length
+                ? `${repositories.length} repository`
+                : "Tidak ada repository";
+
+        if (!repositories.length) {
+            grid.innerHTML = `
+                <div class="empty">
+                    Belum ada repository.
+                    <br>
+                    Buat repository baru untuk mulai.
+                </div>
+            `;
+
+            return;
+        }
+
+        grid.innerHTML =
+            repositories
+                .map(repo => `
+                    <div class="repo">
+                        <div class="repo-name">
+                            ${escapeHtml(repo.name)}
+                        </div>
+
+                        <div class="repo-desc">
+                            ${escapeHtml(
+                                repo.description ||
+                                "Tidak ada deskripsi."
+                            )}
+                        </div>
+
+                        <div class="repo-meta">
+                            <span>
+                                ${repo.private
+                                    ? "🔒 Private"
+                                    : "🌐 Public"}
+                            </span>
+
+                            <span>
+                                ${escapeHtml(
+                                    repo.defaultBranch ||
+                                    "main"
+                                )}
+                            </span>
+                        </div>
+
+                        <div class="repo-buttons">
+                            <button
+                                onclick='openFiles(${JSON.stringify(
+                                    repo.name
+                                )})'
+                            >
+                                📁 Files
+                            </button>
+
+                            <button
+                                onclick='window.open(${JSON.stringify(
+                                    repo.htmlUrl
+                                )}, "_blank")'
+                            >
+                                GitHub ↗
+                            </button>
+                        </div>
+                    </div>
+                `)
+                .join("");
+    }
+
+    function fillUploadRepos() {
+        const select =
+            qs("#uploadRepo");
+
+        select.innerHTML = `
+            <option value="">
+                Pilih repository
+            </option>
+        `;
+
+        repositories.forEach(repo => {
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = repo.name;
+
+            option.textContent =
+                `${repo.name}${
+                    repo.private
+                        ? " 🔒"
+                        : ""
+                }`;
+
+            select.appendChild(option);
+        });
+    }
+
+    function openCreateRepo() {
+        qs("#createModal").style.display =
+            "flex";
+    }
+
+    async function createRepo() {
+        const name =
+            qs("#repoName").value.trim();
+
+        const description =
+            qs("#repoDescription").value.trim();
+
+        const isPrivate =
+            qs("#repoVisibility").value ===
+            "true";
+
+        if (!name) {
+            showNotice(
+                "Nama repository wajib diisi.",
+                "error"
+            );
+            return;
+        }
+
+        try {
+            const data = await request(
+                `${API}?action=create-repo`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        description,
+                        private: isPrivate,
+                        autoInit: true
+                    })
+                }
+            );
+
+            closeModal(
+                "createModal"
+            );
+
+            qs("#repoName").value = "";
+            qs("#repoDescription").value = "";
+
+            showNotice(
+                "Repository berhasil dibuat.",
+                "success"
+            );
+
+            await loadRepos();
+
+            if (data.repository?.htmlUrl) {
+                window.open(
+                    data.repository.htmlUrl,
+                    "_blank"
+                );
+            }
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function openFiles(repo) {
+        qs("#filesModal").style.display =
+            "flex";
+
+        qs("#filesTitle").textContent =
+            repo;
+
+        qs("#filesSubtitle").textContent =
+            "Repository files";
+
+        qs("#fileList").innerHTML = `
+            <div class="empty">
+                Loading files...
+            </div>
+        `;
+
+        try {
+            const data = await request(
+                `${API}?action=files&repo=${encodeURIComponent(
+                    repo
+                )}`
+            );
+
+            renderFiles(
+                repo,
+                data.files || []
+            );
+        } catch (error) {
+            qs("#fileList").innerHTML = `
+                <div class="empty">
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </div>
+            `;
+        }
+    }
+
+    function renderFiles(repo, files) {
+        const list =
+            qs("#fileList");
+
+        if (!files.length) {
+            list.innerHTML = `
+                <div class="empty">
+                    Repository kosong.
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML =
+            files
+                .map(file => `
+                    <div class="file-item">
+                        <span>
+                            ${
+                                file.type === "dir"
+                                    ? "📁"
+                                    : "📄"
+                            }
+                            ${escapeHtml(
+                                file.path
+                            )}
+                        </span>
+
+                        ${
+                            file.type === "file"
+                                ? `
+                                    <button
+                                        class="small-btn"
+                                        onclick='editFile(
+                                            ${JSON.stringify(
+                                                repo
+                                            )},
+                                            ${JSON.stringify(
+                                                file.path
+                                            )}
+                                        )'
+                                    >
+                                        Edit
+                                    </button>
+                                `
+                                : `
+                                    <button
+                                        class="small-btn"
+                                        onclick='openFolder(
+                                            ${JSON.stringify(
+                                                repo
+                                            )},
+                                            ${JSON.stringify(
+                                                file.path
+                                            )}
+                                        )'
+                                    >
+                                        Open
+                                    </button>
+                                `
+                        }
+                    </div>
+                `)
+                .join("");
+    }
+
+    async function openFolder(
+        repo,
+        folder
+    ) {
+        qs("#filesSubtitle").textContent =
+            folder;
+
+        try {
+            const data = await request(
+                `${API}?action=files&repo=${encodeURIComponent(
+                    repo
+                )}&path=${encodeURIComponent(
+                    folder
+                )}`
+            );
+
+            renderFiles(
+                repo,
+                data.files || []
+            );
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function editFile(
+        repo,
+        filePath
+    ) {
+        try {
+            const data = await request(
+                `${API}?action=read&repo=${encodeURIComponent(
+                    repo
+                )}&path=${encodeURIComponent(
+                    filePath
+                )}`
+            );
+
+            currentFile = {
+                repo,
+                path: filePath,
+                sha: data.file.sha
+            };
+
+            qs("#editRepo").value =
+                repo;
+
+            qs("#editPath").value =
+                filePath;
+
+            qs("#editContent").value =
+                data.file.content || "";
+
+            qs("#editModal").style.display =
+                "flex";
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function saveFile() {
+        const content =
+            qs("#editContent").value;
+
+        const message =
+            qs("#editMessage").value.trim() ||
+            "Update file";
+
+        try {
+            await request(
+                `${API}?action=edit`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        repo: currentFile.repo,
+                        path: currentFile.path,
+                        content,
+                        message,
+                        sha: currentFile.sha
+                    })
+                }
+            );
+
+            closeModal(
+                "editModal"
+            );
+
+            showNotice(
+                "File berhasil diperbarui.",
+                "success"
+            );
+
+            await openFiles(
+                currentFile.repo
+            );
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function deleteCurrentFile() {
+        if (
+            !confirm(
+                `Hapus ${currentFile.path}?`
+            )
+        ) {
+            return;
+        }
+
+        try {
+            await request(
+                `${API}?action=delete`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        repo: currentFile.repo,
+                        path: currentFile.path,
+                        sha: currentFile.sha,
+                        message:
+                            `Delete ${currentFile.path}`
+                    })
+                }
+            );
+
+            closeModal(
+                "editModal"
+            );
+
+            showNotice(
+                "File berhasil dihapus.",
+                "success"
+            );
+
+            await openFiles(
+                currentFile.repo
+            );
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+    async function uploadZip() {
+        const repo =
+            qs("#uploadRepo").value;
+
+        const branch =
+            qs("#uploadBranch").value.trim();
+
+        const commitMessage =
+            qs("#commitMessage").value.trim() ||
+            "Upload website";
+
+        const file =
+            qs("#zipFile").files[0];
+
+        if (!repo) {
+            showNotice(
+                "Pilih repository terlebih dahulu.",
+                "error"
+            );
+            return;
+        }
+
+        if (!file) {
+            showNotice(
+                "Pilih file ZIP terlebih dahulu.",
+                "error"
+            );
+            return;
+        }
+
+        if (
+            !file.name
+                .toLowerCase()
+                .endsWith(".zip")
+        ) {
+            showNotice(
+                "File harus berupa ZIP.",
+                "error"
+            );
+            return;
+        }
+
+        if (
+            file.size >
+            50 * 1024 * 1024
+        ) {
+            showNotice(
+                "Ukuran ZIP maksimal 50MB.",
+                "error"
+            );
+            return;
+        }
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "repo",
+            repo
+        );
+
+        formData.append(
+            "branch",
+            branch
+        );
+
+        formData.append(
+            "commitMessage",
+            commitMessage
+        );
+
+        formData.append(
+            "file",
+            file
+        );
+
+        const button =
+            event?.currentTarget;
+
+        try {
+            setLoading(
+                button,
+                true
+            );
+
+            showNotice(
+                "ZIP sedang diekstrak dan diupload...",
+                ""
+            );
+
+            const response =
+                await fetch(
+                    `${API}?action=upload`,
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: formData
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Upload gagal"
+                );
+            }
+
+            qs("#zipFile").value = "";
+
+            showNotice(
+                `${data.repository.files} file berhasil diupload ke ${data.repository.name}.`,
+                "success"
+            );
+        } catch (error) {
+            showNotice(
+                error.message,
+                "error"
+            );
+        } finally {
+            setLoading(
+                button,
+                false
+            );
+        }
+    }
+
+    function closeModal(id) {
+        const modal =
+            qs(`#${id}`);
+
+        if (modal) {
+            modal.style.display =
+                "none";
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+            modal.addEventListener(
+                "click",
+                event => {
+                    if (
+                        event.target === modal
+                    ) {
+                        modal.style.display =
+                            "none";
+                    }
+                }
+            );
+        });
+
+    loadUser();
+    checkGitHub();
+</script>
+
+</body>
+</html>

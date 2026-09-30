@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Register • ReyCode Digital</title>
+
+    <style>
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
+            font-family:Inter,Arial,sans-serif;
+            color:#fff;
+            background:
+                radial-gradient(circle at 20% 20%,rgba(49,133,255,.16),transparent 30%),
+                radial-gradient(circle at 80% 80%,rgba(49,133,255,.10),transparent 32%),
+                #05070a;
+        }
+
+        .card{
+            width:100%;
+            max-width:430px;
+            padding:34px;
+            border:1px solid rgba(255,255,255,.09);
+            border-radius:24px;
+            background:rgba(12,16,22,.72);
+            backdrop-filter:blur(24px);
+            -webkit-backdrop-filter:blur(24px);
+            box-shadow:0 30px 80px rgba(0,0,0,.45);
+        }
+
+        .logo{
+            width:52px;
+            height:52px;
+            margin:0 auto 22px;
+            padding:7px;
+            border-radius:16px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .logo img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        h1{
+            margin:0;
+            text-align:center;
+            font-size:28px;
+            letter-spacing:-.8px;
+        }
+
+        .subtitle{
+            margin:9px 0 30px;
+            text-align:center;
+            color:#7f8996;
+            font-size:13px;
+        }
+
+        .field{
+            margin-bottom:17px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:8px;
+            color:#aeb7c3;
+            font-size:12px;
+        }
+
+        input{
+            width:100%;
+            height:50px;
+            padding:0 15px;
+            border-radius:13px;
+            border:1px solid rgba(255,255,255,.09);
+            outline:none;
+            background:rgba(255,255,255,.035);
+            color:#fff;
+            font-size:14px;
+            transition:.2s;
+        }
+
+        input::placeholder{
+            color:#4f5965;
+        }
+
+        input:focus{
+            border-color:rgba(49,133,255,.7);
+            box-shadow:0 0 0 4px rgba(49,133,255,.08);
+        }
+
+        .optional{
+            color:#596472;
+            font-size:10px;
+            margin-left:5px;
+        }
+
+        button{
+            width:100%;
+            height:50px;
+            margin-top:4px;
+            border:0;
+            border-radius:13px;
+            background:#3185ff;
+            color:#fff;
+            font-size:13px;
+            font-weight:700;
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        button:hover{
+            transform:translateY(-1px);
+            box-shadow:0 10px 30px rgba(49,133,255,.22);
+        }
+
+        button:disabled{
+            opacity:.7;
+            cursor:wait;
+            transform:none;
+        }
+
+        .message{
+            display:none;
+            margin-bottom:18px;
+            padding:12px 14px;
+            border-radius:12px;
+            font-size:12px;
+            line-height:1.5;
+        }
+
+        .message.error{
+            display:block;
+            background:rgba(255,70,70,.08);
+            border:1px solid rgba(255,70,70,.16);
+            color:#ff8d8d;
+        }
+
+        .message.success{
+            display:block;
+            background:rgba(49,133,255,.08);
+            border:1px solid rgba(49,133,255,.16);
+            color:#75adff;
+        }
+
+        .login{
+            margin-top:24px;
+            text-align:center;
+            color:#707b88;
+            font-size:12px;
+        }
+
+        a{
+            color:#3185ff;
+            text-decoration:none;
+        }
+
+        .loading{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .spinner{
+            width:15px;
+            height:15px;
+            border:2px solid rgba(255,255,255,.25);
+            border-top-color:#fff;
+            border-radius:50%;
+            animation:spin .7s linear infinite;
+        }
+
+        @keyframes spin{
+            to{transform:rotate(360deg)}
+        }
+
+        @media(max-width:480px){
+            .card{
+                padding:27px 22px;
+                border-radius:21px;
+            }
+
+            h1{
+                font-size:25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="logo">
+        <img
+            src="https://i.top4top.io/p_3925af3h26.png"
+            alt="ReyCode"
+        >
+    </div>
+
+    <h1>Create account</h1>
+
+    <div class="subtitle">
+        Buat akun ReyCode Digital
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <form id="registerForm">
+
+        <div class="field">
+            <label>Nama</label>
+
+            <input
+                id="name"
+                type="text"
+                placeholder="Nama lengkap"
+                autocomplete="name"
+                maxlength="100"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Email</label>
+
+            <input
+                id="email"
+                type="email"
+                placeholder="nama@email.com"
+                autocomplete="email"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Password</label>
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Minimal 8 karakter"
+                autocomplete="new-password"
+                minlength="8"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>Konfirmasi Password</label>
+
+            <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Ulangi password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label>
+                WhatsApp
+                <span class="optional">Opsional</span>
+            </label>
+
+            <input
+                id="whatsapp"
+                type="tel"
+                placeholder="08xxxxxxxxxx"
+                autocomplete="tel"
+            >
+        </div>
+
+        <button id="submitButton" type="submit">
+            BUAT AKUN
+        </button>
+
+    </form>
+
+    <div class="login">
+        Sudah punya akun?
+        <a href="/login">Login</a>
+    </div>
+
+</div>
+
+<script>
+const form = document.getElementById("registerForm");
+const button = document.getElementById("submitButton");
+const message = document.getElementById("message");
+
+function showMessage(text, type) {
+    message.textContent = text;
+    message.className = `message ${type}`;
+}
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+
+    if (password !== confirmPassword) {
+        showMessage(
+            "Konfirmasi password tidak cocok",
+            "error"
+        );
+        return;
+    }
+
+    if (password.length < 8) {
+        showMessage(
+            "Password minimal 8 karakter",
+            "error"
+        );
+        return;
+    }
+
+    button.disabled = true;
+
+    button.innerHTML = `
+        <span class="loading">
+            <span class="spinner"></span>
+            Membuat akun...
+        </span>
+    `;
+
+    message.className = "message";
+
+    try {
+        const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                email,
+                password,
+                whatsapp
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Registrasi gagal"
+            );
+        }
+
+        showMessage(
+            "Akun berhasil dibuat. Silakan login.",
+            "success"
+        );
+
+        form.reset();
+
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 1200);
+
+    } catch (error) {
+        showMessage(
+            error.message || "Terjadi kesalahan",
+            "error"
+        );
+
+        button.disabled = false;
+        button.textContent = "BUAT AKUN";
+    }
+});
+</script>
+
+</body>
+</html>
