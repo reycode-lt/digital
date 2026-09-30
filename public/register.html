@@ -342,18 +342,22 @@ form.addEventListener("submit", async (e) => {
     message.className = "message";
 
     try {
-        const response = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password,
-                whatsapp
-            })
-        });
+        const response = await fetch(
+            "/api/auth/register?test=" + Date.now(),
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    whatsapp
+                })
+            }
+        );
 
         const data = await response.json();
 
