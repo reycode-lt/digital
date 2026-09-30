@@ -15,12 +15,18 @@ export default async function handler(req, res) {
     try {
         await connectDB();
 
-        const {
-            name,
-            email,
-            password,
-            whatsapp = ""
-        } = req.body || {};
+        const body = req.body || {};
+
+        const name = String(body.name || "").trim();
+        const email = String(body.email || "")
+            .trim()
+            .toLowerCase();
+
+        const password = String(body.password || "");
+
+        const whatsapp = String(
+            body.whatsapp || ""
+        ).trim();
 
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -29,35 +35,23 @@ export default async function handler(req, res) {
             });
         }
 
-        const normalizedName = String(name).trim();
-        const normalizedEmail = String(email).trim().toLowerCase();
-        const normalizedWhatsapp = String(whatsapp || "").trim();
-        const normalizedPassword = String(password);
-
-        if (!normalizedName) {
+        if (name.length > 100) {
             return res.status(400).json({
                 success: false,
-                message: "Nama tidak boleh kosong"
+                message: "Nama maksimal 100 karakter"
             });
         }
 
-        if (!normalizedEmail) {
+        if (password.length < 8) {
             return res.status(400).json({
                 success: false,
-                message: "Email tidak boleh kosong"
-            });
-        }
-
-        if (normalizedPassword.length < 5) {
-            return res.status(400).json({
-                success: false,
-                message: "Password minimal 5 karakter"
+                message: "Password minimal 8 karakter"
             });
         }
 
         const existingUser = await User.findOne({
-            email: normalizedEmail
-        });
+            email: email
+        }).lean();
 
         if (existingUser) {
             return res.status(409).json({
@@ -67,26 +61,45 @@ export default async function handler(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(
-            normalizedPassword,
+            password,
             12
         );
 
         const verificationToken =
             crypto.randomBytes(32).toString("hex");
 
-        const user = new User({
-            name: normalizedName,
-            email: normalizedEmail,
-            password: hashedPassword,
-            whatsapp: normalizedWhatsapp,
-            emailVerified: false,
-            welcomeEmailSent: false,
-            verificationToken,
-            resetToken: null,
-            resetTokenExpires: null
-        });
+        let user;
 
-        await user.save();
+        try {
+            user = await User.create({
+                name,
+                email,
+                password: hashedPassword,
+                whatsapp,
+                emailVerified: false,
+                welcomeEmailSent: false,
+                verificationToken,
+                resetToken: null,
+                resetTokenExpires: null
+            });
+        } catch (error) {
+            console.error(
+                "REGISTER CREATE ERROR:",
+                error
+            );
+
+            if (error?.code === 11000) {
+                return res.status(409).json({
+                    success: false,
+                    message: "Email sudah terdaftar"
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: "Gagal membuat akun"
+            });
+        }
 
         const baseUrl =
             process.env.APP_URL ||
@@ -103,21 +116,31 @@ export default async function handler(req, res) {
                 name: user.name,
                 verificationUrl
             });
-        } catch (mailError) {
+        } catch (error) {
             console.error(
-                "VERIFICATION EMAIL ERROR:",
-                mailError
+                "REGISTER MAIL ERROR:",
+                error
             );
 
-            return res.status(500).json({
-                success: false,
-                message: "Akun berhasil dibuat, tetapi email verifikasi gagal dikirim"
+            return res.status(201).json({
+                success: true,
+                emailSent: false,
+                message:
+                    "Akun berhasil dibuat, tetapi email verifikasi gagal dikirim. Silakan coba kirim ulang verifikasi.",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    emailVerified: user.emailVerified
+                }
             });
         }
 
         return res.status(201).json({
             success: true,
-            message: "Registrasi berhasil. Silakan cek email untuk verifikasi.",
+            emailSent: true,
+            message:
+                "Registrasi berhasil. Silakan cek email untuk verifikasi.",
             user: {
                 id: user._id,
                 name: user.name,
@@ -131,13 +154,6 @@ export default async function handler(req, res) {
             "REGISTER ERROR:",
             error
         );
-
-        if (error?.code === 11000) {
-            return res.status(409).json({
-                success: false,
-                message: "Email sudah terdaftar"
-            });
-        }
 
         return res.status(500).json({
             success: false,
