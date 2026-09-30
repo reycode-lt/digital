@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { connectDB } from "../_lib/mongodb.js";
 import User from "../../models/User.js";
+import { sendVerificationEmail } from "../_lib/mail.js";
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
@@ -35,7 +36,22 @@ export default async function handler(req, res) {
             });
         }
 
-        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedEmail = String(email)
+            .trim()
+            .toLowerCase();
+
+        const normalizedName = String(name)
+            .trim();
+
+        const normalizedWhatsapp = String(whatsapp || "")
+            .trim();
+
+        if (!normalizedName) {
+            return res.status(400).json({
+                success: false,
+                message: "Nama tidak boleh kosong"
+            });
+        }
 
         const existingUser = await User.findOne({
             email: normalizedEmail
@@ -48,22 +64,53 @@ export default async function handler(req, res) {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await bcrypt.hash(
+            password,
+            12
+        );
 
-        const verificationToken = crypto.randomBytes(32).toString("hex");
+        const verificationToken =
+            crypto.randomBytes(32).toString("hex");
 
         const user = await User.create({
-            name: name.trim(),
+            name: normalizedName,
             email: normalizedEmail,
             password: hashedPassword,
-            whatsapp: whatsapp.trim(),
+            whatsapp: normalizedWhatsapp,
             emailVerified: false,
             verificationToken
         });
 
+        const baseUrl =
+            process.env.APP_URL ||
+            `https://${req.headers.host}`;
+
+        const verificationUrl =
+            `${baseUrl}/verify-email?token=${encodeURIComponent(verificationToken)}`;
+
+        try {
+            await sendVerificationEmail({
+                to: user.email,
+                name: user.name,
+                verificationUrl
+            });
+        } catch (mailError) {
+            console.error(
+                "VERIFICATION EMAIL ERROR:",
+                mailError
+            );
+
+            await User.findByIdAndDelete(user._id);
+
+            return res.status(500).json({
+                success: false,
+                message: "Akun gagal dibuat karena email verifikasi tidak dapat dikirim"
+            });
+        }
+
         return res.status(201).json({
             success: true,
-            message: "Registrasi berhasil",
+            message: "Registrasi berhasil. Silakan cek email untuk verifikasi.",
             user: {
                 id: user._id,
                 name: user.name,
@@ -71,8 +118,12 @@ export default async function handler(req, res) {
                 emailVerified: user.emailVerified
             }
         });
+
     } catch (error) {
-        console.error("REGISTER ERROR:", error);
+        console.error(
+            "REGISTER ERROR:",
+            error
+        );
 
         return res.status(500).json({
             success: false,
