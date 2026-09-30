@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Profile • ReyCode Digital</title>
+
+    <style>
+        *{
+            box-sizing:border-box;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            font-family:Inter,Arial,sans-serif;
+            color:#fff;
+            background:
+                radial-gradient(circle at 15% 10%,rgba(49,133,255,.14),transparent 30%),
+                radial-gradient(circle at 85% 90%,rgba(49,133,255,.08),transparent 32%),
+                #05070a;
+        }
+
+        .container{
+            width:100%;
+            max-width:900px;
+            margin:auto;
+            padding:28px 20px 50px;
+        }
+
+        .topbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            margin-bottom:22px;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .brand-logo{
+            width:44px;
+            height:44px;
+            padding:6px;
+            border-radius:14px;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-logo img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        .brand-text{
+            font-size:16px;
+            font-weight:700;
+        }
+
+        .brand-sub{
+            margin-top:3px;
+            color:#6f7888;
+            font-size:10px;
+            letter-spacing:1.4px;
+        }
+
+        .back{
+            padding:11px 16px;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(255,255,255,.035);
+            color:#aeb7c5;
+            text-decoration:none;
+            font-size:12px;
+            transition:.2s;
+        }
+
+        .back:hover{
+            background:rgba(255,255,255,.07);
+            color:#fff;
+        }
+
+        .verification-alert{
+            display:none;
+            margin-bottom:18px;
+            padding:17px 18px;
+            border-radius:17px;
+            border:1px solid rgba(255,177,92,.18);
+            background:rgba(255,177,92,.055);
+        }
+
+        .verification-alert .alert-title{
+            display:flex;
+            align-items:center;
+            gap:9px;
+            margin-bottom:7px;
+            color:#ffc27d;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .verification-alert .alert-text{
+            color:#aeb4bf;
+            font-size:12px;
+            line-height:1.7;
+        }
+
+        .verification-alert strong{
+            color:#e8edf5;
+        }
+
+        .profile-card{
+            overflow:hidden;
+            border-radius:26px;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(12,16,22,.76);
+            backdrop-filter:blur(24px);
+            -webkit-backdrop-filter:blur(24px);
+            box-shadow:0 30px 90px rgba(0,0,0,.42);
+        }
+
+        .profile-head{
+            position:relative;
+            padding:34px;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            background:linear-gradient(
+                135deg,
+                rgba(49,133,255,.11),
+                transparent 55%
+            );
+        }
+
+        .avatar{
+            width:78px;
+            height:78px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:18px;
+            border-radius:24px;
+            background:linear-gradient(135deg,#3185ff,#1658c7);
+            color:#fff;
+            font-size:30px;
+            font-weight:800;
+            box-shadow:0 15px 40px rgba(49,133,255,.22);
+        }
+
+        .profile-head h1{
+            margin:0;
+            font-size:27px;
+            letter-spacing:-.8px;
+        }
+
+        .profile-head p{
+            margin:8px 0 0;
+            color:#737e90;
+            font-size:13px;
+        }
+
+        .verified{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            margin-top:16px;
+            padding:7px 11px;
+            border-radius:999px;
+            background:rgba(49,133,255,.08);
+            border:1px solid rgba(49,133,255,.16);
+            color:#70aaff;
+            font-size:11px;
+            font-weight:600;
+        }
+
+        .content{
+            padding:30px 34px 34px;
+        }
+
+        .section-title{
+            margin:0 0 18px;
+            font-size:14px;
+            color:#fff;
+        }
+
+        .fields{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:16px;
+        }
+
+        .field{
+            padding:17px;
+            border-radius:16px;
+            background:rgba(255,255,255,.025);
+            border:1px solid rgba(255,255,255,.065);
+        }
+
+        .label{
+            margin-bottom:8px;
+            color:#687386;
+            font-size:10px;
+            text-transform:uppercase;
+            letter-spacing:1.2px;
+        }
+
+        .value{
+            color:#e9edf4;
+            font-size:13px;
+            word-break:break-word;
+        }
+
+        .status{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            color:#70aaff;
+        }
+
+        .dot{
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:#3185ff;
+            box-shadow:0 0 10px rgba(49,133,255,.7);
+        }
+
+        .actions{
+            display:flex;
+            gap:12px;
+            margin-top:24px;
+        }
+
+        .button{
+            flex:1;
+            min-height:46px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:13px;
+            text-decoration:none;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(255,255,255,.035);
+            color:#c6ceda;
+            font-size:12px;
+            transition:.2s;
+        }
+
+        .button:hover{
+            background:rgba(255,255,255,.07);
+            color:#fff;
+        }
+
+        .button.primary{
+            background:#3185ff;
+            border-color:#3185ff;
+            color:#fff;
+            box-shadow:0 10px 30px rgba(49,133,255,.16);
+        }
+
+        .button.primary:hover{
+            background:#2877ea;
+        }
+
+        .loading{
+            padding:70px 20px;
+            text-align:center;
+            color:#6f7888;
+            font-size:13px;
+        }
+
+        .spinner{
+            width:28px;
+            height:28px;
+            margin:0 auto 16px;
+            border:3px solid rgba(255,255,255,.1);
+            border-top-color:#3185ff;
+            border-radius:50%;
+            animation:spin .7s linear infinite;
+        }
+
+        .error{
+            padding:50px 20px;
+            text-align:center;
+            color:#ff8b8b;
+            font-size:13px;
+        }
+
+        footer{
+            margin-top:22px;
+            text-align:center;
+            color:#404958;
+            font-size:10px;
+            letter-spacing:.5px;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        @media(max-width:650px){
+            .container{
+                padding:20px 14px 40px;
+            }
+
+            .topbar{
+                margin-bottom:18px;
+            }
+
+            .profile-head{
+                padding:26px 22px;
+            }
+
+            .content{
+                padding:24px 22px 26px;
+            }
+
+            .fields{
+                grid-template-columns:1fr;
+            }
+
+            .profile-head h1{
+                font-size:24px;
+            }
+
+            .actions{
+                flex-direction:column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                <img
+                    src="https://i.top4top.io/p_3925af3h26.png"
+                    alt="ReyCode"
+                >
+            </div>
+
+            <div>
+                <div class="brand-text">
+                    ReyCode Digital
+                </div>
+
+                <div class="brand-sub">
+                    MONIKALABS SECURITY
+                </div>
+            </div>
+
+        </div>
+
+        <a href="/dashboard" class="back">
+            ← Dashboard
+        </a>
+
+    </div>
+
+    <div id="verificationAlert" class="verification-alert">
+
+        <div class="alert-title">
+            ⚠️ Email belum terverifikasi
+        </div>
+
+        <div class="alert-text">
+            Cek email kamu, termasuk folder
+            <strong>Spam</strong>, lalu klik tombol
+            <strong>Verifikasi Email</strong>.
+            Setelah berhasil diverifikasi, status akun kamu
+            akan berubah menjadi <strong>aktif</strong>.
+        </div>
+
+    </div>
+
+    <div class="profile-card">
+
+        <div id="loading" class="loading">
+
+            <div class="spinner"></div>
+
+            Memuat profile...
+
+        </div>
+
+        <div id="content" style="display:none;">
+
+            <div class="profile-head">
+
+                <div id="avatar" class="avatar">
+                    R
+                </div>
+
+                <h1 id="name">
+                    ReyCode
+                </h1>
+
+                <p id="email">
+                    -
+                </p>
+
+                <div id="verified" class="verified">
+                    ✓ Email terverifikasi
+                </div>
+
+            </div>
+
+            <div class="content">
+
+                <h2 class="section-title">
+                    Informasi Akun
+                </h2>
+
+                <div class="fields">
+
+                    <div class="field">
+
+                        <div class="label">
+                            Nama
+                        </div>
+
+                        <div id="nameValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="label">
+                            Email
+                        </div>
+
+                        <div id="emailValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="label">
+                            WhatsApp
+                        </div>
+
+                        <div id="whatsappValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="label">
+                            Status Email
+                        </div>
+
+                        <div id="statusValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="label">
+                            Bergabung
+                        </div>
+
+                        <div id="createdValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="label">
+                            User ID
+                        </div>
+
+                        <div id="idValue" class="value">
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="actions">
+
+                    <a
+                        href="/dashboard"
+                        class="button primary"
+                    >
+                        Dashboard
+                    </a>
+
+                    <a
+                        href="/"
+                        class="button"
+                    >
+                        Beranda
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="error" class="error" style="display:none;">
+            Gagal memuat profile.
+        </div>
+
+    </div>
+
+    <footer>
+        © ReyCode Digital • MonikaLabs
+    </footer>
+
+</div>
+
+<script>
+const loading =
+    document.getElementById("loading");
+
+const content =
+    document.getElementById("content");
+
+const errorBox =
+    document.getElementById("error");
+
+const verificationAlert =
+    document.getElementById("verificationAlert");
+
+async function loadProfile() {
+
+    try {
+
+        const response = await fetch(
+            `/api/user/me?_=${Date.now()}`,
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                "Gagal memuat profile"
+            );
+        }
+
+        const user = data.user;
+
+        const name =
+            user.name || "User";
+
+        const email =
+            user.email || "-";
+
+        const whatsapp =
+            user.whatsapp || "-";
+
+        const verified =
+            user.emailVerified === true;
+
+        const created =
+            user.createdAt
+                ? new Date(
+                    user.createdAt
+                ).toLocaleDateString(
+                    "id-ID",
+                    {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                    }
+                )
+                : "-";
+
+        document.getElementById("avatar")
+            .textContent =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+        document.getElementById("name")
+            .textContent = name;
+
+        document.getElementById("email")
+            .textContent = email;
+
+        document.getElementById("nameValue")
+            .textContent = name;
+
+        document.getElementById("emailValue")
+            .textContent = email;
+
+        document.getElementById("whatsappValue")
+            .textContent = whatsapp;
+
+        document.getElementById("createdValue")
+            .textContent = created;
+
+        document.getElementById("idValue")
+            .textContent =
+            user._id || "-";
+
+        if (!verified) {
+
+            verificationAlert.style.display =
+                "block";
+
+            document.getElementById(
+                "statusValue"
+            ).innerHTML = `
+                <span style="color:#ffb15c;">
+                    ⚠ Belum terverifikasi
+                </span>
+            `;
+
+            const verifiedBadge =
+                document.getElementById(
+                    "verified"
+                );
+
+            verifiedBadge.textContent =
+                "⚠ Email belum terverifikasi";
+
+            verifiedBadge.style.color =
+                "#ffb15c";
+
+            verifiedBadge.style.background =
+                "rgba(255,177,92,.08)";
+
+            verifiedBadge.style.borderColor =
+                "rgba(255,177,92,.16)";
+
+        } else {
+
+            verificationAlert.style.display =
+                "none";
+
+            document.getElementById(
+                "statusValue"
+            ).innerHTML = `
+                <span class="status">
+                    <span class="dot"></span>
+                    Terverifikasi
+                </span>
+            `;
+
+        }
+
+        loading.style.display =
+            "none";
+
+        content.style.display =
+            "block";
+
+    } catch (error) {
+
+        console.error(
+            "PROFILE ERROR:",
+            error
+        );
+
+        loading.style.display =
+            "none";
+
+        errorBox.style.display =
+            "block";
+
+        errorBox.textContent =
+            error.message ||
+            "Gagal memuat profile.";
+
+        setTimeout(() => {
+            window.location.href =
+                "/login";
+        }, 1800);
+    }
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>
