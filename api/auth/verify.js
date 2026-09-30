@@ -1,3 +1,4 @@
+
 import { connectDB } from "../_lib/mongodb.js";
 import User from "../../models/User.js";
 import { sendWelcomeEmail } from "../_lib/mail.js";
@@ -29,41 +30,77 @@ export default async function handler(req, res) {
 
         await connectDB();
 
-        const user = await User.findOne({
+        const userBefore = await User.findOne({
             verificationToken: token
         });
 
-        if (!user) {
+        if (!userBefore) {
             return res.status(400).json({
                 success: false,
                 message: "Token verifikasi tidak valid atau sudah digunakan"
             });
         }
 
-        if (user.emailVerified === true) {
+        if (userBefore.emailVerified === true) {
             return res.status(200).json({
                 success: true,
                 alreadyVerified: true,
                 message: "Email sudah diverifikasi sebelumnya",
                 user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
+                    id: userBefore._id,
+                    name: userBefore.name,
+                    email: userBefore.email,
                     emailVerified: true,
                     welcomeEmailSent:
-                        user.welcomeEmailSent === true
+                        userBefore.welcomeEmailSent === true
                 }
             });
         }
 
-        user.emailVerified = true;
-        user.verificationToken = null;
+        const updateResult = await User.updateOne(
+            {
+                _id: userBefore._id,
+                verificationToken: token,
+                emailVerified: false
+            },
+            {
+                $set: {
+                    emailVerified: true
+                },
+                $unset: {
+                    verificationToken: ""
+                }
+            }
+        );
 
-        await user.save();
+        if (updateResult.matchedCount !== 1) {
+            return res.status(500).json({
+                success: false,
+                message: "User ditemukan tetapi gagal melakukan update verifikasi",
+                debug: {
+                    matchedCount: updateResult.matchedCount,
+                    modifiedCount: updateResult.modifiedCount
+                }
+            });
+        }
 
-        let welcomeSent = false;
+        const verifiedUser = await User.findById(
+            userBefore._id
+        ).select(
+            "_id name email whatsapp emailVerified welcomeEmailSent createdAt updatedAt"
+        );
 
-        if (user.welcomeEmailSent !== true) {
+        if (!verifiedUser) {
+            return res.status(500).json({
+                success: false,
+                message: "User tidak ditemukan setelah update"
+            });
+        }
+
+        let welcomeSent =
+            verifiedUser.welcomeEmailSent === true;
+
+        if (!welcomeSent) {
             try {
                 const baseUrl =
                     process.env.APP_URL ||
@@ -73,14 +110,21 @@ export default async function handler(req, res) {
                     `${baseUrl}/dashboard`;
 
                 await sendWelcomeEmail({
-                    to: user.email,
-                    name: user.name,
+                    to: verifiedUser.email,
+                    name: verifiedUser.name,
                     dashboardUrl
                 });
 
-                user.welcomeEmailSent = true;
-
-                await user.save();
+                await User.updateOne(
+                    {
+                        _id: verifiedUser._id
+                    },
+                    {
+                        $set: {
+                            welcomeEmailSent: true
+                        }
+                    }
+                );
 
                 welcomeSent = true;
 
@@ -92,8 +136,8 @@ export default async function handler(req, res) {
             }
         }
 
-        const updatedUser = await User.findById(
-            user._id
+        const finalUser = await User.findById(
+            verifiedUser._id
         ).select(
             "_id name email whatsapp emailVerified welcomeEmailSent createdAt updatedAt"
         );
@@ -103,8 +147,12 @@ export default async function handler(req, res) {
             message: welcomeSent
                 ? "Email berhasil diverifikasi dan Welcome Email telah dikirim"
                 : "Email berhasil diverifikasi",
-            welcomeEmailSent: updatedUser.welcomeEmailSent === true,
-            user: updatedUser
+            welcomeEmailSent: welcomeSent,
+            user: finalUser,
+            debug: {
+                matchedCount: updateResult.matchedCount,
+                modifiedCount: updateResult.modifiedCount
+            }
         });
 
     } catch (error) {
@@ -115,7 +163,11 @@ export default async function handler(req, res) {
 
         return res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan pada server"
+            message: "Terjadi kesalahan pada server",
+            error:
+                process.env.NODE_ENV === "development"
+                    ? error.message
+                    : undefined
         });
     }
 }
