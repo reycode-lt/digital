@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema(
             trim: true,
             maxlength: 100
         },
+
         email: {
             type: String,
             required: true,
@@ -15,27 +16,38 @@ const UserSchema = new mongoose.Schema(
             lowercase: true,
             trim: true
         },
+
         password: {
             type: String,
             required: true
         },
+
         whatsapp: {
             type: String,
             default: "",
             trim: true
         },
+
         emailVerified: {
             type: Boolean,
             default: false
         },
+
+        welcomeEmailSent: {
+            type: Boolean,
+            default: false
+        },
+
         verificationToken: {
             type: String,
             default: null
         },
+
         resetToken: {
             type: String,
             default: null
         },
+
         resetTokenExpires: {
             type: Date,
             default: null
@@ -46,4 +58,5 @@ const UserSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+export default mongoose.models.User ||
+    mongoose.model("User", UserSchema);
