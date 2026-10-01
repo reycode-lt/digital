@@ -35,6 +35,10 @@
     {
       "source": "/github",
       "destination": "/github.html"
+    },
+    {
+      "source": "/alightmotion",
+      "destination": "/alightmotion.html"
     }
   ]
 }
