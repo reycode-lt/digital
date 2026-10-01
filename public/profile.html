@@ -22,6 +22,11 @@
                 #05070a;
         }
 
+        button,
+        input{
+            font-family:inherit;
+        }
+
         .container{
             width:100%;
             max-width:900px;
@@ -229,6 +234,210 @@
             box-shadow:0 0 10px rgba(49,133,255,.7);
         }
 
+        .phone-box{
+            margin-top:24px;
+            padding:20px;
+            border-radius:19px;
+            border:1px solid rgba(49,133,255,.13);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(49,133,255,.075),
+                    rgba(255,255,255,.018)
+                );
+        }
+
+        .phone-box-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:15px;
+        }
+
+        .phone-title{
+            color:#fff;
+            font-size:14px;
+            font-weight:700;
+        }
+
+        .phone-description{
+            margin-top:6px;
+            color:#737e90;
+            font-size:11px;
+            line-height:1.6;
+        }
+
+        .phone-status{
+            flex-shrink:0;
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:6px 9px;
+            border-radius:999px;
+            font-size:10px;
+            font-weight:600;
+        }
+
+        .phone-status.pending{
+            color:#ffc27d;
+            background:rgba(255,177,92,.07);
+            border:1px solid rgba(255,177,92,.14);
+        }
+
+        .phone-status.success{
+            color:#70aaff;
+            background:rgba(49,133,255,.08);
+            border:1px solid rgba(49,133,255,.15);
+        }
+
+        .phone-row{
+            display:flex;
+            gap:10px;
+            margin-top:17px;
+        }
+
+        .phone-input{
+            flex:1;
+            min-width:0;
+            height:45px;
+            padding:0 14px;
+            border-radius:12px;
+            outline:none;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(0,0,0,.18);
+            color:#fff;
+            font-size:12px;
+            transition:.2s;
+        }
+
+        .phone-input::placeholder{
+            color:#566071;
+        }
+
+        .phone-input:focus{
+            border-color:rgba(49,133,255,.45);
+            box-shadow:0 0 0 3px rgba(49,133,255,.08);
+        }
+
+        .verify-phone-button{
+            min-width:145px;
+            height:45px;
+            padding:0 16px;
+            border:1px solid #3185ff;
+            border-radius:12px;
+            background:#3185ff;
+            color:#fff;
+            font-size:11px;
+            font-weight:700;
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        .verify-phone-button:hover{
+            background:#2877ea;
+        }
+
+        .verify-phone-button:disabled{
+            opacity:.55;
+            cursor:not-allowed;
+        }
+
+        .phone-message{
+            display:none;
+            margin-top:12px;
+            padding:11px 13px;
+            border-radius:11px;
+            font-size:11px;
+            line-height:1.5;
+        }
+
+        .phone-message.error{
+            display:block;
+            color:#ff9b9b;
+            background:rgba(255,70,70,.06);
+            border:1px solid rgba(255,70,70,.12);
+        }
+
+        .phone-message.success{
+            display:block;
+            color:#79b0ff;
+            background:rgba(49,133,255,.06);
+            border:1px solid rgba(49,133,255,.12);
+        }
+
+        .otp-section{
+            display:none;
+            margin-top:14px;
+            padding-top:16px;
+            border-top:1px solid rgba(255,255,255,.06);
+        }
+
+        .otp-section.show{
+            display:block;
+        }
+
+        .otp-label{
+            margin-bottom:8px;
+            color:#687386;
+            font-size:10px;
+            text-transform:uppercase;
+            letter-spacing:1.2px;
+        }
+
+        .otp-row{
+            display:flex;
+            gap:10px;
+        }
+
+        .otp-input{
+            flex:1;
+            min-width:0;
+            height:45px;
+            padding:0 14px;
+            outline:none;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(0,0,0,.18);
+            color:#fff;
+            font-size:16px;
+            letter-spacing:5px;
+            text-align:center;
+        }
+
+        .otp-input:focus{
+            border-color:rgba(49,133,255,.45);
+            box-shadow:0 0 0 3px rgba(49,133,255,.08);
+        }
+
+        .otp-button{
+            min-width:125px;
+            height:45px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:12px;
+            background:rgba(255,255,255,.045);
+            color:#cbd3df;
+            font-size:11px;
+            font-weight:700;
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        .otp-button:hover{
+            background:rgba(255,255,255,.08);
+            color:#fff;
+        }
+
+        .otp-button:disabled{
+            opacity:.45;
+            cursor:not-allowed;
+        }
+
+        .cooldown{
+            margin-top:9px;
+            color:#687386;
+            font-size:10px;
+        }
+
         .actions{
             display:flex;
             gap:12px;
@@ -290,6 +499,115 @@
             font-size:13px;
         }
 
+        .modal{
+            position:fixed;
+            inset:0;
+            z-index:1000;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+            background:rgba(0,0,0,.72);
+            backdrop-filter:blur(10px);
+            -webkit-backdrop-filter:blur(10px);
+        }
+
+        .modal.show{
+            display:flex;
+        }
+
+        .modal-card{
+            width:100%;
+            max-width:430px;
+            padding:25px;
+            border-radius:22px;
+            border:1px solid rgba(255,255,255,.09);
+            background:rgba(12,16,22,.96);
+            box-shadow:0 30px 100px rgba(0,0,0,.6);
+        }
+
+        .modal-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            margin-bottom:20px;
+        }
+
+        .modal-title{
+            font-size:17px;
+            font-weight:700;
+        }
+
+        .modal-close{
+            width:34px;
+            height:34px;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:10px;
+            background:rgba(255,255,255,.035);
+            color:#8791a1;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .modal-text{
+            margin-bottom:18px;
+            color:#737e90;
+            font-size:11px;
+            line-height:1.7;
+        }
+
+        .modal-input{
+            width:100%;
+            height:46px;
+            padding:0 14px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:12px;
+            outline:none;
+            background:rgba(255,255,255,.035);
+            color:#fff;
+            font-size:12px;
+        }
+
+        .modal-input:focus{
+            border-color:rgba(49,133,255,.45);
+        }
+
+        .modal-button{
+            width:100%;
+            height:46px;
+            margin-top:12px;
+            border:0;
+            border-radius:12px;
+            background:#3185ff;
+            color:#fff;
+            font-size:12px;
+            font-weight:700;
+            cursor:pointer;
+        }
+
+        .modal-button:disabled{
+            opacity:.5;
+            cursor:not-allowed;
+        }
+
+        .modal-message{
+            display:none;
+            margin-top:12px;
+            font-size:11px;
+            line-height:1.6;
+        }
+
+        .modal-message.error{
+            display:block;
+            color:#ff9696;
+        }
+
+        .modal-message.success{
+            display:block;
+            color:#72aaff;
+        }
+
         footer{
             margin-top:22px;
             text-align:center;
@@ -305,6 +623,7 @@
         }
 
         @media(max-width:650px){
+
             .container{
                 padding:20px 14px 40px;
             }
@@ -331,6 +650,24 @@
 
             .actions{
                 flex-direction:column;
+            }
+
+            .phone-box-head{
+                flex-direction:column;
+            }
+
+            .phone-row,
+            .otp-row{
+                flex-direction:column;
+            }
+
+            .verify-phone-button,
+            .otp-button{
+                width:100%;
+            }
+
+            .modal-card{
+                padding:22px;
             }
         }
     </style>
@@ -499,6 +836,96 @@
 
                 </div>
 
+                <div class="phone-box">
+
+                    <div class="phone-box-head">
+
+                        <div>
+                            <div class="phone-title">
+                                Verifikasi WhatsApp
+                            </div>
+
+                            <div class="phone-description">
+                                Verifikasi nomor WhatsApp untuk keamanan akun
+                                dan menerima notifikasi penting dari ReyCode.
+                            </div>
+                        </div>
+
+                        <div
+                            id="phoneStatus"
+                            class="phone-status pending"
+                        >
+                            ⚠ Belum terverifikasi
+                        </div>
+
+                    </div>
+
+                    <div class="phone-row">
+
+                        <input
+                            id="phoneInput"
+                            class="phone-input"
+                            type="tel"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            placeholder="Contoh: 628xxxxxxxxxx"
+                        >
+
+                        <button
+                            id="requestOtpButton"
+                            class="verify-phone-button"
+                            type="button"
+                        >
+                            Verifikasi Nomor
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="phoneMessage"
+                        class="phone-message"
+                    ></div>
+
+                    <div
+                        id="otpSection"
+                        class="otp-section"
+                    >
+
+                        <div class="otp-label">
+                            Kode OTP
+                        </div>
+
+                        <div class="otp-row">
+
+                            <input
+                                id="otpInput"
+                                class="otp-input"
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="6"
+                                autocomplete="one-time-code"
+                                placeholder="••••••"
+                            >
+
+                            <button
+                                id="verifyOtpButton"
+                                class="otp-button"
+                                type="button"
+                            >
+                                Verifikasi OTP
+                            </button>
+
+                        </div>
+
+                        <div
+                            id="cooldownText"
+                            class="cooldown"
+                        ></div>
+
+                    </div>
+
+                </div>
+
                 <div class="actions">
 
                     <a
@@ -533,6 +960,61 @@
 
 </div>
 
+<div
+    id="otpModal"
+    class="modal"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+                Verifikasi Nomor
+            </div>
+
+            <button
+                id="closeModal"
+                class="modal-close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="modal-text">
+            Masukkan nomor WhatsApp yang ingin kamu
+            gunakan untuk verifikasi. Kode OTP akan
+            dikirim ke nomor tersebut.
+        </div>
+
+        <input
+            id="modalPhoneInput"
+            class="modal-input"
+            type="tel"
+            inputmode="numeric"
+            autocomplete="tel"
+            placeholder="628xxxxxxxxxx"
+        >
+
+        <button
+            id="modalRequestButton"
+            class="modal-button"
+            type="button"
+        >
+            Kirim Kode OTP
+        </button>
+
+        <div
+            id="modalMessage"
+            class="modal-message"
+        ></div>
+
+    </div>
+
+</div>
+
 <script>
 const loading =
     document.getElementById("loading");
@@ -545,6 +1027,424 @@ const errorBox =
 
 const verificationAlert =
     document.getElementById("verificationAlert");
+
+const phoneInput =
+    document.getElementById("phoneInput");
+
+const requestOtpButton =
+    document.getElementById(
+        "requestOtpButton"
+    );
+
+const verifyOtpButton =
+    document.getElementById(
+        "verifyOtpButton"
+    );
+
+const otpInput =
+    document.getElementById("otpInput");
+
+const otpSection =
+    document.getElementById(
+        "otpSection"
+    );
+
+const phoneStatus =
+    document.getElementById(
+        "phoneStatus"
+    );
+
+const phoneMessage =
+    document.getElementById(
+        "phoneMessage"
+    );
+
+const cooldownText =
+    document.getElementById(
+        "cooldownText"
+    );
+
+const otpModal =
+    document.getElementById("otpModal");
+
+const closeModal =
+    document.getElementById("closeModal");
+
+const modalPhoneInput =
+    document.getElementById(
+        "modalPhoneInput"
+    );
+
+const modalRequestButton =
+    document.getElementById(
+        "modalRequestButton"
+    );
+
+const modalMessage =
+    document.getElementById(
+        "modalMessage"
+    );
+
+let currentPhone = "";
+
+let cooldownTimer = null;
+
+function normalizePhone(phone) {
+
+    return String(phone || "")
+        .replace(/[^\d+]/g, "")
+        .replace(/^00/, "+")
+        .trim();
+}
+
+function showPhoneMessage(
+    message,
+    type = "error"
+) {
+
+    phoneMessage.textContent =
+        message;
+
+    phoneMessage.className =
+        `phone-message ${type}`;
+}
+
+function clearPhoneMessage() {
+
+    phoneMessage.textContent = "";
+
+    phoneMessage.className =
+        "phone-message";
+}
+
+function showModalMessage(
+    message,
+    type = "error"
+) {
+
+    modalMessage.textContent =
+        message;
+
+    modalMessage.className =
+        `modal-message ${type}`;
+}
+
+function startCooldown(seconds) {
+
+    clearInterval(
+        cooldownTimer
+    );
+
+    let remaining =
+        Number(seconds) || 0;
+
+    function update() {
+
+        if (remaining <= 0) {
+
+            cooldownText.textContent =
+                "";
+
+            requestOtpButton.disabled =
+                false;
+
+            clearInterval(
+                cooldownTimer
+            );
+
+            return;
+        }
+
+        const minutes =
+            Math.floor(
+                remaining / 60
+            );
+
+        const secondsLeft =
+            remaining % 60;
+
+        cooldownText.textContent =
+            `Tunggu ${minutes} menit ${String(
+                secondsLeft
+            ).padStart(2, "0")} detik sebelum meminta OTP lagi.`;
+
+        requestOtpButton.disabled =
+            true;
+
+        remaining--;
+    }
+
+    update();
+
+    cooldownTimer =
+        setInterval(
+            update,
+            1000
+        );
+}
+
+function setPhoneVerified(
+    phone
+) {
+
+    currentPhone =
+        phone || currentPhone;
+
+    phoneStatus.textContent =
+        "✓ Terverifikasi";
+
+    phoneStatus.className =
+        "phone-status success";
+
+    phoneInput.value =
+        currentPhone;
+
+    phoneInput.disabled =
+        true;
+
+    requestOtpButton.style.display =
+        "none";
+
+    otpSection.classList.remove(
+        "show"
+    );
+
+    clearPhoneMessage();
+}
+
+function setPhonePending(
+    phone
+) {
+
+    currentPhone =
+        phone || currentPhone;
+
+    phoneStatus.textContent =
+        "⚠ Belum terverifikasi";
+
+    phoneStatus.className =
+        "phone-status pending";
+
+    phoneInput.disabled =
+        false;
+
+    requestOtpButton.style.display =
+        "";
+
+    if (currentPhone) {
+        phoneInput.value =
+            currentPhone;
+    }
+}
+
+async function requestOtp() {
+
+    const phone =
+        normalizePhone(
+            phoneInput.value
+        );
+
+    if (!phone) {
+
+        showPhoneMessage(
+            "Nomor WhatsApp wajib diisi."
+        );
+
+        return;
+    }
+
+    if (
+        !/^\+?\d{8,15}$/.test(
+            phone
+        )
+    ) {
+
+        showPhoneMessage(
+            "Format nomor WhatsApp tidak valid."
+        );
+
+        return;
+    }
+
+    currentPhone =
+        phone;
+
+    requestOtpButton.disabled =
+        true;
+
+    clearPhoneMessage();
+
+    try {
+
+        /*
+         * Endpoint ini akan kita sambungkan
+         * setelah API OTP selesai dibuat.
+         */
+
+        const response =
+            await fetch(
+                "/api/otp/request",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        phone
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            if (
+                data.cooldownSeconds
+            ) {
+                startCooldown(
+                    data.cooldownSeconds
+                );
+            } else {
+                requestOtpButton.disabled =
+                    false;
+            }
+
+            throw new Error(
+                data.message ||
+                "Gagal meminta OTP."
+            );
+        }
+
+        otpSection.classList.add(
+            "show"
+        );
+
+        showPhoneMessage(
+            "Kode OTP berhasil diminta. Cek WhatsApp kamu.",
+            "success"
+        );
+
+        if (
+            data.cooldownSeconds
+        ) {
+            startCooldown(
+                data.cooldownSeconds
+            );
+        }
+
+        otpInput.focus();
+
+    } catch (error) {
+
+        showPhoneMessage(
+            error.message ||
+            "Gagal meminta OTP."
+        );
+
+        if (
+            !cooldownTimer
+        ) {
+            requestOtpButton.disabled =
+                false;
+        }
+    }
+}
+
+async function verifyOtp() {
+
+    const phone =
+        normalizePhone(
+            currentPhone ||
+            phoneInput.value
+        );
+
+    const otp =
+        String(
+            otpInput.value || ""
+        ).trim();
+
+    if (!phone) {
+
+        showPhoneMessage(
+            "Nomor WhatsApp belum diisi."
+        );
+
+        return;
+    }
+
+    if (!/^\d{6}$/.test(otp)) {
+
+        showPhoneMessage(
+            "OTP harus terdiri dari 6 angka."
+        );
+
+        return;
+    }
+
+    verifyOtpButton.disabled =
+        true;
+
+    clearPhoneMessage();
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/otp/verify",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        phone,
+                        otp
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+            throw new Error(
+                data.message ||
+                "OTP tidak valid."
+            );
+        }
+
+        setPhoneVerified(
+            phone
+        );
+
+        showPhoneMessage(
+            "Nomor WhatsApp berhasil diverifikasi.",
+            "success"
+        );
+
+    } catch (error) {
+
+        showPhoneMessage(
+            error.message ||
+            "Verifikasi OTP gagal."
+        );
+
+        verifyOtpButton.disabled =
+            false;
+    }
+}
 
 async function loadProfile() {
 
@@ -559,28 +1459,39 @@ async function loadProfile() {
             }
         );
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
-        if (!response.ok || !data.success) {
+        if (
+            !response.ok ||
+            !data.success
+        ) {
             throw new Error(
                 data.message ||
                 "Gagal memuat profile"
             );
         }
 
-        const user = data.user;
+        const user =
+            data.user;
 
         const name =
-            user.name || "User";
+            user.name ||
+            "User";
 
         const email =
-            user.email || "-";
+            user.email ||
+            "-";
 
         const whatsapp =
-            user.whatsapp || "-";
+            user.whatsapp ||
+            "";
 
-        const verified =
+        const emailVerified =
             user.emailVerified === true;
+
+        const phoneVerified =
+            user.phoneVerified === true;
 
         const created =
             user.createdAt
@@ -596,35 +1507,51 @@ async function loadProfile() {
                 )
                 : "-";
 
-        document.getElementById("avatar")
-            .textContent =
+        document.getElementById(
+            "avatar"
+        ).textContent =
             name
                 .charAt(0)
                 .toUpperCase();
 
-        document.getElementById("name")
-            .textContent = name;
+        document.getElementById(
+            "name"
+        ).textContent =
+            name;
 
-        document.getElementById("email")
-            .textContent = email;
+        document.getElementById(
+            "email"
+        ).textContent =
+            email;
 
-        document.getElementById("nameValue")
-            .textContent = name;
+        document.getElementById(
+            "nameValue"
+        ).textContent =
+            name;
 
-        document.getElementById("emailValue")
-            .textContent = email;
+        document.getElementById(
+            "emailValue"
+        ).textContent =
+            email;
 
-        document.getElementById("whatsappValue")
-            .textContent = whatsapp;
+        document.getElementById(
+            "whatsappValue"
+        ).textContent =
+            whatsapp ||
+            "Belum ditambahkan";
 
-        document.getElementById("createdValue")
-            .textContent = created;
+        document.getElementById(
+            "createdValue"
+        ).textContent =
+            created;
 
-        document.getElementById("idValue")
-            .textContent =
-            user._id || "-";
+        document.getElementById(
+            "idValue"
+        ).textContent =
+            user._id ||
+            "-";
 
-        if (!verified) {
+        if (!emailVerified) {
 
             verificationAlert.style.display =
                 "block";
@@ -667,7 +1594,30 @@ async function loadProfile() {
                     Terverifikasi
                 </span>
             `;
+        }
 
+        if (whatsapp) {
+
+            phoneInput.value =
+                whatsapp;
+
+            currentPhone =
+                normalizePhone(
+                    whatsapp
+                );
+        }
+
+        if (phoneVerified) {
+
+            setPhoneVerified(
+                currentPhone
+            );
+
+        } else {
+
+            setPhonePending(
+                currentPhone
+            );
         }
 
         loading.style.display =
@@ -694,11 +1644,153 @@ async function loadProfile() {
             "Gagal memuat profile.";
 
         setTimeout(() => {
+
             window.location.href =
                 "/login";
+
         }, 1800);
     }
 }
+
+requestOtpButton.addEventListener(
+    "click",
+    requestOtp
+);
+
+verifyOtpButton.addEventListener(
+    "click",
+    verifyOtp
+);
+
+otpInput.addEventListener(
+    "input",
+    () => {
+
+        otpInput.value =
+            otpInput.value
+                .replace(/\D/g, "")
+                .slice(0, 6);
+    }
+);
+
+closeModal.addEventListener(
+    "click",
+    () => {
+
+        otpModal.classList.remove(
+            "show"
+        );
+    }
+);
+
+otpModal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            otpModal
+        ) {
+            otpModal.classList.remove(
+                "show"
+            );
+        }
+    }
+);
+
+modalRequestButton.addEventListener(
+    "click",
+    async () => {
+
+        const phone =
+            normalizePhone(
+                modalPhoneInput.value
+            );
+
+        if (!phone) {
+
+            showModalMessage(
+                "Nomor WhatsApp wajib diisi."
+            );
+
+            return;
+        }
+
+        modalRequestButton.disabled =
+            true;
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/otp/request",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            phone
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+                throw new Error(
+                    data.message ||
+                    "Gagal meminta OTP."
+                );
+            }
+
+            phoneInput.value =
+                phone;
+
+            currentPhone =
+                phone;
+
+            otpSection.classList.add(
+                "show"
+            );
+
+            showPhoneMessage(
+                "OTP berhasil dikirim ke WhatsApp kamu.",
+                "success"
+            );
+
+            if (
+                data.cooldownSeconds
+            ) {
+                startCooldown(
+                    data.cooldownSeconds
+                );
+            }
+
+            otpModal.classList.remove(
+                "show"
+            );
+
+            otpInput.focus();
+
+        } catch (error) {
+
+            showModalMessage(
+                error.message ||
+                "Gagal meminta OTP."
+            );
+
+            modalRequestButton.disabled =
+                false;
+        }
+    }
+);
 
 loadProfile();
 </script>
