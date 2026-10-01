@@ -74,7 +74,6 @@ async function vercel(method, endpoint, data) {
             `Vercel API error ${result.status}`;
 
         const error = new Error(message);
-
         error.status = result.status;
         error.data = result.data;
 
@@ -170,9 +169,7 @@ function normalizeRepo(url) {
     const value = String(url || "").trim();
 
     if (!value) {
-        throw new Error(
-            "Repository URL wajib diisi"
-        );
+        throw new Error("Repository URL wajib diisi");
     }
 
     let parsed;
@@ -180,9 +177,7 @@ function normalizeRepo(url) {
     try {
         parsed = new URL(value);
     } catch {
-        throw new Error(
-            "Repository URL tidak valid"
-        );
+        throw new Error("Repository URL tidak valid");
     }
 
     if (
@@ -194,9 +189,7 @@ function normalizeRepo(url) {
             "www.gitlab.com",
             "bitbucket.org",
             "www.bitbucket.org"
-        ].includes(
-            parsed.hostname.toLowerCase()
-        )
+        ].includes(parsed.hostname.toLowerCase())
     ) {
         throw new Error(
             "Repository hanya mendukung GitHub, GitLab, atau Bitbucket"
@@ -216,9 +209,7 @@ function parseGitHubRepo(url) {
         .split("/");
 
     if (parts.length < 2) {
-        throw new Error(
-            "Repository GitHub tidak valid"
-        );
+        throw new Error("Repository GitHub tidak valid");
     }
 
     return {
@@ -235,10 +226,8 @@ async function getGitHubRepo(owner, repo) {
             `${encodeURIComponent(owner)}/` +
             `${encodeURIComponent(repo)}`,
         headers: {
-            Accept:
-                "application/vnd.github+json",
-            "User-Agent":
-                "ReyCode-Deploy"
+            Accept: "application/vnd.github+json",
+            "User-Agent": "ReyCode-Deploy"
         },
         timeout: 20000,
         validateStatus: () => true
@@ -275,8 +264,7 @@ async function createProject(slug) {
 }
 
 async function getOrCreateProject(slug) {
-    const existing =
-        await getProject(slug);
+    const existing = await getProject(slug);
 
     if (existing) {
         return existing;
@@ -295,10 +283,8 @@ async function uploadVercelFile(buffer) {
         method: "POST",
         url: `${VERCEL_API}/v2/files`,
         headers: {
-            Authorization:
-                `Bearer ${process.env.API_VERCEL}`,
-            "Content-Type":
-                "application/octet-stream",
+            Authorization: `Bearer ${process.env.API_VERCEL}`,
+            "Content-Type": "application/octet-stream",
             "x-now-digest": sha
         },
         data: buffer,
@@ -356,70 +342,45 @@ function normalizeZipPath(filename) {
 function findIndexFile(files) {
     const matches = files.filter(
         item =>
-            item.file.toLowerCase() ===
-            "index.html"
+            item.file.toLowerCase() === "index.html"
     );
 
     if (!matches.length) {
         return null;
     }
 
-    matches.sort((a, b) => {
-        const depthA =
-            a.file.split("/").length;
-
-        const depthB =
-            b.file.split("/").length;
-
-        return depthA - depthB;
-    });
-
     return matches[0];
 }
 
 function stripIndexRoot(files, indexFile) {
-    const indexParts =
-        indexFile.file.split("/");
+    const indexParts = indexFile.file.split("/");
 
     if (indexParts.length <= 1) {
         return files;
     }
 
     const root =
-        indexParts
-            .slice(0, -1)
-            .join("/") + "/";
+        indexParts.slice(0, -1).join("/") + "/";
 
     return files
         .map(item => {
-            if (
-                item.file ===
-                indexFile.file
-            ) {
+            if (item.file === indexFile.file) {
                 return {
                     ...item,
                     file: "index.html"
                 };
             }
 
-            if (
-                item.file.startsWith(root)
-            ) {
+            if (item.file.startsWith(root)) {
                 return {
                     ...item,
-                    file: item.file.slice(
-                        root.length
-                    )
+                    file: item.file.slice(root.length)
                 };
             }
 
             return null;
         })
-        .filter(
-            item =>
-                item &&
-                item.file
-        );
+        .filter(item => item && item.file);
 }
 
 function readZip(zipPath) {
@@ -433,7 +394,6 @@ function readZip(zipPath) {
     }
 
     const files = [];
-
     let totalSize = 0;
 
     for (const entry of entries) {
@@ -442,23 +402,17 @@ function readZip(zipPath) {
         }
 
         const filename =
-            normalizeZipPath(
-                entry.entryName
-            );
+            normalizeZipPath(entry.entryName);
 
         if (!filename) {
             continue;
         }
 
-        const buffer =
-            entry.getData();
+        const buffer = entry.getData();
 
         totalSize += buffer.length;
 
-        if (
-            totalSize >
-            MAX_TOTAL_ZIP_SIZE
-        ) {
+        if (totalSize > MAX_TOTAL_ZIP_SIZE) {
             throw new Error(
                 "Total isi ZIP terlalu besar"
             );
@@ -476,8 +430,7 @@ function readZip(zipPath) {
         );
     }
 
-    const indexFile =
-        findIndexFile(files);
+    const indexFile = findIndexFile(files);
 
     if (!indexFile) {
         throw new Error(
@@ -485,64 +438,54 @@ function readZip(zipPath) {
         );
     }
 
-    return stripIndexRoot(
-        files,
-        indexFile
-    );
+    return stripIndexRoot(files, indexFile);
 }
 
-async function prepareUploadedFiles(
-    uploadedFile
-) {
+async function prepareUploadedFiles(uploadedFile) {
     if (!uploadedFile?.filepath) {
         throw new Error(
             "File upload tidak ditemukan"
         );
     }
 
-    const filename =
-        String(
-            uploadedFile.originalFilename ||
-            ""
-        ).toLowerCase();
+    const originalName = String(
+        uploadedFile.originalFilename || ""
+    ).trim();
 
-    const mimetype =
-        String(
-            uploadedFile.mimetype ||
-            ""
-        ).toLowerCase();
+    const filename = originalName.toLowerCase();
+
+    const mimetype = String(
+        uploadedFile.mimetype || ""
+    ).toLowerCase();
 
     const isZip =
         filename.endsWith(".zip") ||
         mimetype.includes("zip") ||
-        mimetype.includes(
-            "compressed"
-        );
+        mimetype.includes("compressed");
 
     if (isZip) {
-        return readZip(
-            uploadedFile.filepath
-        );
+        return readZip(uploadedFile.filepath);
     }
-
-    const buffer =
-        await fs.readFile(
-            uploadedFile.filepath
-        );
 
     const isHtml =
         filename.endsWith(".html") ||
         filename.endsWith(".htm") ||
-        mimetype.includes("html") ||
-        buffer
-            .subarray(0, 1000)
-            .toString("utf8")
-            .toLowerCase()
-            .includes("<html");
+        mimetype.includes("text/html") ||
+        mimetype.includes("html");
 
     if (!isHtml) {
         throw new Error(
-            "File tunggal hanya mendukung index.html"
+            "File tunggal hanya mendukung HTML (.html / .htm)"
+        );
+    }
+
+    const buffer = await fs.readFile(
+        uploadedFile.filepath
+    );
+
+    if (!buffer.length) {
+        throw new Error(
+            "File HTML kosong"
         );
     }
 
@@ -554,9 +497,7 @@ async function prepareUploadedFiles(
     ];
 }
 
-async function uploadProjectFiles(
-    uploadedFile
-) {
+async function uploadProjectFiles(uploadedFile) {
     const files =
         await prepareUploadedFiles(
             uploadedFile
@@ -601,10 +542,7 @@ async function uploadProjectFiles(
     return uploaded;
 }
 
-async function deployFiles(
-    project,
-    files
-) {
+async function deployFiles(project, files) {
     return await vercel(
         "POST",
         "/v13/deployments",
@@ -622,18 +560,13 @@ async function deployGitHub(
     repositoryUrl
 ) {
     const repoUrl =
-        normalizeRepo(
-            repositoryUrl
-        );
+        normalizeRepo(repositoryUrl);
 
-    const parsed =
-        new URL(repoUrl);
+    const parsed = new URL(repoUrl);
 
     if (
-        parsed.hostname !==
-            "github.com" &&
-        parsed.hostname !==
-            "www.github.com"
+        parsed.hostname !== "github.com" &&
+        parsed.hostname !== "www.github.com"
     ) {
         throw new Error(
             "Untuk deployment repository saat ini gunakan repository GitHub"
@@ -643,10 +576,7 @@ async function deployGitHub(
     const {
         owner,
         repo
-    } =
-        parseGitHubRepo(
-            repoUrl
-        );
+    } = parseGitHubRepo(repoUrl);
 
     const githubRepo =
         await getGitHubRepo(
@@ -667,8 +597,7 @@ async function deployGitHub(
             target: "production",
             gitSource: {
                 type: "github",
-                repoId:
-                    githubRepo.id,
+                repoId: githubRepo.id,
                 ref: branch
             }
         }
@@ -715,9 +644,7 @@ async function addDomain(
 async function getDeployment(id) {
     return await vercel(
         "GET",
-        `/v13/deployments/${encodeURIComponent(
-            id
-        )}`
+        `/v13/deployments/${encodeURIComponent(id)}`
     );
 }
 
@@ -737,15 +664,9 @@ async function syncDeploymentStatus(
                 deployment.lastDeploymentId
             );
 
-        if (
-            remote.readyState ===
-            "READY"
-        ) {
-            deployment.status =
-                "live";
-
-            deployment.errorMessage =
-                "";
+        if (remote.readyState === "READY") {
+            deployment.status = "live";
+            deployment.errorMessage = "";
 
             if (remote.url) {
                 deployment.vercelUrl =
@@ -756,13 +677,10 @@ async function syncDeploymentStatus(
         }
 
         if (
-            remote.readyState ===
-                "ERROR" ||
-            remote.readyState ===
-                "CANCELED"
+            remote.readyState === "ERROR" ||
+            remote.readyState === "CANCELED"
         ) {
-            deployment.status =
-                "failed";
+            deployment.status = "failed";
 
             deployment.errorMessage =
                 remote.error?.message ||
@@ -783,15 +701,23 @@ async function syncDeploymentStatus(
     return deployment;
 }
 
+async function cleanupUpload(file) {
+    if (!file?.filepath) {
+        return;
+    }
+
+    try {
+        await fs.unlink(file.filepath);
+    } catch {}
+}
+
 async function createDeployment(
     req,
     res,
     userId
 ) {
     const contentType =
-        req.headers[
-            "content-type"
-        ] || "";
+        req.headers["content-type"] || "";
 
     let name = "";
     let domain = "";
@@ -844,45 +770,21 @@ async function createDeployment(
                 parsed.files
             );
     } else {
-        let body =
-            req.body || {};
+        let body = req.body || {};
 
-        if (
-            typeof body ===
-            "string"
-        ) {
+        if (typeof body === "string") {
             try {
-                body =
-                    JSON.parse(
-                        body
-                    );
+                body = JSON.parse(body);
             } catch {
                 body = {};
             }
         }
 
-        name =
-            String(
-                body.name || ""
-            );
-
-        domain =
-            String(
-                body.domain || ""
-            );
-
-        sourceType =
-            String(
-                body.sourceType ||
-                ""
-            );
-
+        name = String(body.name || "");
+        domain = String(body.domain || "");
+        sourceType = String(body.sourceType || "");
         repositoryUrl =
-            String(
-                body.repositoryUrl ||
-                ""
-            );
-
+            String(body.repositoryUrl || "");
         preset =
             String(
                 body.preset ||
@@ -890,41 +792,24 @@ async function createDeployment(
             );
     }
 
-    name =
-        name.trim();
-
-    domain =
-        domain.trim();
-
-    sourceType =
-        sourceType.trim();
+    name = name.trim();
+    domain = domain.trim();
+    sourceType = sourceType.trim();
 
     if (!name) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Project name wajib diisi"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message: "Project name wajib diisi"
+        });
     }
 
     if (
-        !ALLOWED_DOMAINS.includes(
-            domain
-        )
+        !ALLOWED_DOMAINS.includes(domain)
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Domain tidak valid"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message: "Domain tidak valid"
+        });
     }
 
     if (
@@ -932,54 +817,39 @@ async function createDeployment(
         sourceType !== "zip" &&
         sourceType !== "file"
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Source deployment tidak valid"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Source deployment tidak valid"
+        });
     }
 
     if (
         sourceType === "repo" &&
         !repositoryUrl
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Repository URL wajib diisi"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Repository URL wajib diisi"
+        });
     }
 
     if (
         (
-            sourceType ===
-                "zip" ||
-            sourceType ===
-                "file"
+            sourceType === "zip" ||
+            sourceType === "file"
         ) &&
         !uploadedFile
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "File project wajib diupload"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "File project wajib diupload"
+        });
     }
 
-    const slug =
-        slugify(name);
+    const slug = slugify(name);
 
     const existing =
         await Deployment.findOne({
@@ -991,69 +861,63 @@ async function createDeployment(
         });
 
     if (existing) {
-        return send(
-            res,
-            409,
-            {
-                success: false,
-                message:
-                    "Nama project sudah digunakan"
-            }
-        );
+        return send(res, 409, {
+            success: false,
+            message:
+                "Nama project sudah digunakan"
+        });
     }
 
-    let normalizedRepo =
-        "";
+    let normalizedRepo = "";
 
-    if (
-        sourceType ===
-        "repo"
-    ) {
+    if (sourceType === "repo") {
         normalizedRepo =
-            normalizeRepo(
-                repositoryUrl
-            );
+            normalizeRepo(repositoryUrl);
     }
 
     const project =
-        await getOrCreateProject(
-            slug
-        );
+        await getOrCreateProject(slug);
 
     let result;
     let uploadFileName = "";
 
-    if (
-        sourceType ===
-        "repo"
-    ) {
-        result =
-            await deployGitHub(
-                project,
-                normalizedRepo
-            );
-    } else {
-        uploadFileName =
-            uploadedFile.originalFilename ||
-            "index.html";
+    try {
+        if (sourceType === "repo") {
+            result =
+                await deployGitHub(
+                    project,
+                    normalizedRepo
+                );
+        } else {
+            uploadFileName =
+                uploadedFile.originalFilename ||
+                (
+                    sourceType === "file"
+                        ? "index.html"
+                        : "project.zip"
+                );
 
-        const files =
-            await uploadProjectFiles(
-                uploadedFile
-            );
+            const files =
+                await uploadProjectFiles(
+                    uploadedFile
+                );
 
-        result =
-            await deployFiles(
-                project,
-                files
-            );
+            result =
+                await deployFiles(
+                    project,
+                    files
+                );
+        }
+    } finally {
+        await cleanupUpload(
+            uploadedFile
+        );
     }
 
     const customUrl =
         `https://${slug}.${domain}`;
 
-    let domainConfigured =
-        false;
+    let domainConfigured = false;
 
     try {
         await addDomain(
@@ -1061,8 +925,7 @@ async function createDeployment(
             customUrl
         );
 
-        domainConfigured =
-            true;
+        domainConfigured = true;
     } catch (error) {
         console.error(
             "DOMAIN ERROR:",
@@ -1083,61 +946,31 @@ async function createDeployment(
                     ? `https://${result.url}`
                     : "",
             customUrl,
-            sourceType:
-                sourceType ===
-                "file"
-                    ? "zip"
-                    : sourceType,
+            sourceType,
             repositoryUrl:
-                sourceType ===
-                "repo"
+                sourceType === "repo"
                     ? normalizedRepo
                     : "",
             zipFileName:
-                sourceType ===
-                    "zip" ||
-                sourceType ===
-                    "file"
+                sourceType === "zip"
                     ? uploadFileName
                     : "",
             preset:
                 preset ||
                 "Auto Detect",
-            status:
-                "deploying",
+            status: "deploying",
             lastDeploymentId:
                 result.id || "",
-            errorMessage:
-                ""
+            errorMessage: ""
         });
 
-    if (
-        (
-            sourceType ===
-                "zip" ||
-            sourceType ===
-                "file"
-        ) &&
-        uploadedFile?.filepath
-    ) {
-        try {
-            await fs.unlink(
-                uploadedFile.filepath
-            );
-        } catch {}
-    }
-
-    return send(
-        res,
-        201,
-        {
-            success: true,
-            message:
-                "Deployment berhasil dikirim ke Vercel",
-            deployment,
-            domainConfigured
-        }
-    );
+    return send(res, 201, {
+        success: true,
+        message:
+            "Deployment berhasil dikirim ke Vercel",
+        deployment,
+        domainConfigured
+    });
 }
 
 async function updateDeployment(
@@ -1146,9 +979,7 @@ async function updateDeployment(
     userId
 ) {
     const contentType =
-        req.headers[
-            "content-type"
-        ] || "";
+        req.headers["content-type"] || "";
 
     let id = "";
     let sourceType = "";
@@ -1186,51 +1017,29 @@ async function updateDeployment(
                 parsed.files
             );
     } else {
-        let body =
-            req.body || {};
+        let body = req.body || {};
 
-        if (
-            typeof body ===
-            "string"
-        ) {
+        if (typeof body === "string") {
             try {
-                body =
-                    JSON.parse(
-                        body
-                    );
+                body = JSON.parse(body);
             } catch {
                 body = {};
             }
         }
 
-        id =
-            String(
-                body.id || ""
-            );
-
+        id = String(body.id || "");
         sourceType =
-            String(
-                body.sourceType ||
-                ""
-            );
-
+            String(body.sourceType || "");
         repositoryUrl =
-            String(
-                body.repositoryUrl ||
-                ""
-            );
+            String(body.repositoryUrl || "");
     }
 
     if (!id) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Deployment ID wajib diisi"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Deployment ID wajib diisi"
+        });
     }
 
     if (
@@ -1238,51 +1047,36 @@ async function updateDeployment(
         sourceType !== "zip" &&
         sourceType !== "file"
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Source deployment tidak valid"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Source deployment tidak valid"
+        });
     }
 
     if (
-        sourceType ===
-            "repo" &&
+        sourceType === "repo" &&
         !repositoryUrl
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Repository URL wajib diisi"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Repository URL wajib diisi"
+        });
     }
 
     if (
         (
-            sourceType ===
-                "zip" ||
-            sourceType ===
-                "file"
+            sourceType === "zip" ||
+            sourceType === "file"
         ) &&
         !uploadedFile
     ) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "File project wajib diupload"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "File project wajib diupload"
+        });
     }
 
     const deployment =
@@ -1295,15 +1089,11 @@ async function updateDeployment(
         });
 
     if (!deployment) {
-        return send(
-            res,
-            404,
-            {
-                success: false,
-                message:
-                    "Deployment tidak ditemukan"
-            }
-        );
+        return send(res, 404, {
+            success: false,
+            message:
+                "Deployment tidak ditemukan"
+        });
     }
 
     const project =
@@ -1312,57 +1102,52 @@ async function updateDeployment(
         );
 
     let result;
-    let normalizedRepo =
-        "";
+    let normalizedRepo = "";
 
-    if (
-        sourceType ===
-        "repo"
-    ) {
-        normalizedRepo =
-            normalizeRepo(
-                repositoryUrl
-            );
+    try {
+        if (sourceType === "repo") {
+            normalizedRepo =
+                normalizeRepo(
+                    repositoryUrl
+                );
 
-        result =
-            await deployGitHub(
-                project,
-                normalizedRepo
-            );
-    } else {
-        const files =
-            await uploadProjectFiles(
-                uploadedFile
-            );
+            result =
+                await deployGitHub(
+                    project,
+                    normalizedRepo
+                );
+        } else {
+            const files =
+                await uploadProjectFiles(
+                    uploadedFile
+                );
 
-        result =
-            await deployFiles(
-                project,
-                files
-            );
+            result =
+                await deployFiles(
+                    project,
+                    files
+                );
+        }
+    } finally {
+        await cleanupUpload(
+            uploadedFile
+        );
     }
 
     deployment.sourceType =
-        sourceType ===
-            "file"
-            ? "zip"
-            : sourceType;
+        sourceType;
 
     deployment.repositoryUrl =
-        sourceType ===
-            "repo"
+        sourceType === "repo"
             ? normalizedRepo
             : "";
 
     deployment.zipFileName =
-        (
-            sourceType ===
-                "zip" ||
-            sourceType ===
-                "file"
-        )
-            ? uploadedFile.originalFilename ||
-              "index.html"
+        sourceType === "zip"
+            ? (
+                uploadedFile?.originalFilename ||
+                "project.zip"
+            )
             : "";
 
     deployment.vercelProjectId =
@@ -1374,8 +1159,7 @@ async function updateDeployment(
     deployment.status =
         "deploying";
 
-    deployment.errorMessage =
-        "";
+    deployment.errorMessage = "";
 
     if (result.url) {
         deployment.vercelUrl =
@@ -1384,32 +1168,12 @@ async function updateDeployment(
 
     await deployment.save();
 
-    if (
-        (
-            sourceType ===
-                "zip" ||
-            sourceType ===
-                "file"
-        ) &&
-        uploadedFile?.filepath
-    ) {
-        try {
-            await fs.unlink(
-                uploadedFile.filepath
-            );
-        } catch {}
-    }
-
-    return send(
-        res,
-        200,
-        {
-            success: true,
-            message:
-                "Redeploy berhasil dikirim",
-            deployment
-        }
-    );
+    return send(res, 200, {
+        success: true,
+        message:
+            "Redeploy berhasil dikirim",
+        deployment
+    });
 }
 
 async function deleteDeployment(
@@ -1417,36 +1181,24 @@ async function deleteDeployment(
     res,
     userId
 ) {
-    let body =
-        req.body || {};
+    let body = req.body || {};
 
-    if (
-        typeof body ===
-        "string"
-    ) {
+    if (typeof body === "string") {
         try {
-            body =
-                JSON.parse(
-                    body
-                );
+            body = JSON.parse(body);
         } catch {
             body = {};
         }
     }
 
-    const id =
-        body.id;
+    const id = body.id;
 
     if (!id) {
-        return send(
-            res,
-            400,
-            {
-                success: false,
-                message:
-                    "Deployment ID wajib diisi"
-            }
-        );
+        return send(res, 400, {
+            success: false,
+            message:
+                "Deployment ID wajib diisi"
+        });
     }
 
     const deployment =
@@ -1459,20 +1211,14 @@ async function deleteDeployment(
         });
 
     if (!deployment) {
-        return send(
-            res,
-            404,
-            {
-                success: false,
-                message:
-                    "Deployment tidak ditemukan"
-            }
-        );
+        return send(res, 404, {
+            success: false,
+            message:
+                "Deployment tidak ditemukan"
+        });
     }
 
-    if (
-        deployment.vercelProjectId
-    ) {
+    if (deployment.vercelProjectId) {
         try {
             await vercel(
                 "DELETE",
@@ -1488,20 +1234,15 @@ async function deleteDeployment(
         }
     }
 
-    deployment.status =
-        "deleted";
+    deployment.status = "deleted";
 
     await deployment.save();
 
-    return send(
-        res,
-        200,
-        {
-            success: true,
-            message:
-                "Deployment berhasil dihapus"
-        }
-    );
+    return send(res, 200, {
+        success: true,
+        message:
+            "Deployment berhasil dihapus"
+    });
 }
 
 async function listDeployments(
@@ -1518,10 +1259,7 @@ async function listDeployments(
             updatedAt: -1
         });
 
-    for (
-        const deployment
-        of deployments
-    ) {
+    for (const deployment of deployments) {
         if (
             deployment.status ===
             "deploying"
@@ -1532,21 +1270,13 @@ async function listDeployments(
         }
     }
 
-    const result =
-        deployments.map(
-            item =>
-                item.toObject()
-        );
-
-    return send(
-        res,
-        200,
-        {
-            success: true,
-            deployments:
-                result
-        }
-    );
+    return send(res, 200, {
+        success: true,
+        deployments:
+            deployments.map(
+                item => item.toObject()
+            )
+    });
 }
 
 export default async function handler(
@@ -1566,20 +1296,14 @@ export default async function handler(
 
         await connectDB();
 
-        if (
-            req.method ===
-            "GET"
-        ) {
+        if (req.method === "GET") {
             return await listDeployments(
                 res,
                 user.userId
             );
         }
 
-        if (
-            req.method ===
-            "POST"
-        ) {
+        if (req.method === "POST") {
             return await createDeployment(
                 req,
                 res,
@@ -1587,10 +1311,7 @@ export default async function handler(
             );
         }
 
-        if (
-            req.method ===
-            "PATCH"
-        ) {
+        if (req.method === "PATCH") {
             return await updateDeployment(
                 req,
                 res,
@@ -1598,10 +1319,7 @@ export default async function handler(
             );
         }
 
-        if (
-            req.method ===
-            "DELETE"
-        ) {
+        if (req.method === "DELETE") {
             return await deleteDeployment(
                 req,
                 res,
@@ -1609,18 +1327,12 @@ export default async function handler(
             );
         }
 
-        return send(
-            res,
-            405,
-            {
-                success: false,
-                message:
-                    "Method tidak diizinkan"
-            }
-        );
-
+        return send(res, 405, {
+            success: false,
+            message:
+                "Method tidak diizinkan"
+        });
     } catch (error) {
-
         console.error(
             "DEPLOY API ERROR:",
             error
@@ -1629,44 +1341,28 @@ export default async function handler(
         if (
             error?.code ===
                 "LIMIT_FILE_SIZE" ||
-            error?.httpCode ===
-                413
+            error?.httpCode === 413
         ) {
-            return send(
-                res,
-                413,
-                {
-                    success: false,
-                    message:
-                        "Ukuran file terlalu besar. Maksimal 45 MB"
-                }
-            );
-        }
-
-        if (
-            error?.code ===
-            11000
-        ) {
-            return send(
-                res,
-                409,
-                {
-                    success: false,
-                    message:
-                        "Project dengan nama tersebut sudah ada"
-                }
-            );
-        }
-
-        return send(
-            res,
-            500,
-            {
+            return send(res, 413, {
                 success: false,
                 message:
-                    error?.message ||
-                    "Deployment gagal"
-            }
-        );
+                    "Ukuran file terlalu besar. Maksimal 45 MB"
+            });
+        }
+
+        if (error?.code === 11000) {
+            return send(res, 409, {
+                success: false,
+                message:
+                    "Project dengan nama tersebut sudah ada"
+            });
+        }
+
+        return send(res, 500, {
+            success: false,
+            message:
+                error?.message ||
+                "Deployment gagal"
+        });
     }
-            }
+}
