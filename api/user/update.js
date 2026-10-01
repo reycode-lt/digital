@@ -4,15 +4,12 @@ import {
     getAuthToken,
     verifyToken
 } from "../_lib/auth.js";
+import {
+    requestOtp,
+    verifyOtp
+} from "../../lib/otp.js";
 
 export default async function handler(req, res) {
-    if (req.method !== "PATCH") {
-        return res.status(405).json({
-            success: false,
-            message: "Method tidak diizinkan"
-        });
-    }
-
     try {
         const token = getAuthToken(req);
 
@@ -32,15 +29,6 @@ export default async function handler(req, res) {
             });
         }
 
-        const { name, whatsapp } = req.body || {};
-
-        if (!name?.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: "Nama wajib diisi"
-            });
-        }
-
         await connectDB();
 
         const user = await User.findById(payload.userId);
@@ -52,30 +40,143 @@ export default async function handler(req, res) {
             });
         }
 
-        user.name = name.trim();
-        user.whatsapp = typeof whatsapp === "string"
-            ? whatsapp.trim()
-            : user.whatsapp;
+        /*
+         * REQUEST / VERIFY OTP
+         */
+        if (req.method === "POST") {
+            const {
+                action,
+                phone,
+                otp
+            } = req.body || {};
 
-        await user.save();
+            if (action === "request_otp") {
+                const result = await requestOtp({
+                    userId: user._id,
+                    phone
+                });
 
-        return res.status(200).json({
-            success: true,
-            message: "Profile berhasil diperbarui",
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                whatsapp: user.whatsapp,
-                emailVerified: user.emailVerified
+                return res.status(200).json({
+                    success: true,
+                    message: "OTP berhasil dibuat.",
+                    requestId: result.requestId,
+                    phone: result.phone,
+                    expiresAt: result.expiresAt,
+                    cooldownSeconds:
+                        result.cooldownSeconds,
+                    event: result.event,
+
+                    /*
+                     * Sementara dikembalikan
+                     * untuk proses integrasi
+                     * WhatsApp notification.
+                     */
+                    otp: result.otp
+                });
             }
+
+            if (action === "verify_otp") {
+                const result = await verifyOtp({
+                    userId: user._id,
+                    phone,
+                    otp
+                });
+
+                user.whatsapp = result.phone;
+                user.phoneVerified = true;
+                user.phoneVerifiedAt =
+                    result.verifiedAt;
+
+                await user.save();
+
+                return res.status(200).json({
+                    success: true,
+                    message:
+                        "Nomor WhatsApp berhasil diverifikasi.",
+                    user: {
+                        id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        whatsapp: user.whatsapp,
+                        emailVerified:
+                            user.emailVerified,
+                        phoneVerified:
+                            user.phoneVerified,
+                        phoneVerifiedAt:
+                            user.phoneVerifiedAt
+                    }
+                });
+            }
+
+            return res.status(400).json({
+                success: false,
+                message: "Action tidak valid"
+            });
+        }
+
+        /*
+         * UPDATE PROFILE
+         */
+        if (req.method === "PATCH") {
+            const {
+                name,
+                whatsapp
+            } = req.body || {};
+
+            if (!name?.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Nama wajib diisi"
+                });
+            }
+
+            user.name = name.trim();
+
+            if (
+                typeof whatsapp ===
+                "string"
+            ) {
+                user.whatsapp =
+                    whatsapp.trim();
+            }
+
+            await user.save();
+
+            return res.status(200).json({
+                success: true,
+                message:
+                    "Profile berhasil diperbarui.",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    whatsapp:
+                        user.whatsapp,
+                    emailVerified:
+                        user.emailVerified,
+                    phoneVerified:
+                        user.phoneVerified
+                }
+            });
+        }
+
+        return res.status(405).json({
+            success: false,
+            message:
+                "Method tidak diizinkan"
         });
     } catch (error) {
-        console.error("UPDATE PROFILE ERROR:", error);
+        console.error(
+            "UPDATE / OTP ERROR:",
+            error
+        );
 
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
-            message: "Terjadi kesalahan pada server"
+            message:
+                error?.message ||
+                "Terjadi kesalahan pada server"
         });
     }
 }
