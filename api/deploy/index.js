@@ -32,13 +32,15 @@ function send(res, status, data) {
 }
 
 function slugify(value) {
-    return String(value || "")
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9-]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "")
-        .slice(0, 60) || "project";
+    return (
+        String(value || "")
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9-]/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "")
+            .slice(0, 60) || "project"
+    );
 }
 
 function headers(contentType = "application/json") {
@@ -181,8 +183,7 @@ function normalizeRepo(url) {
         throw new Error("Repository URL tidak valid");
     }
 
-    const hostname =
-        parsed.hostname.toLowerCase();
+    const hostname = parsed.hostname.toLowerCase();
 
     if (
         parsed.protocol !== "https:" ||
@@ -213,9 +214,7 @@ function parseGitHubRepo(url) {
         .split("/");
 
     if (parts.length < 2) {
-        throw new Error(
-            "Repository GitHub tidak valid"
-        );
+        throw new Error("Repository GitHub tidak valid");
     }
 
     return {
@@ -248,48 +247,615 @@ async function getGitHubRepo(owner, repo) {
     return result.data;
 }
 
+async function getGitHubFile(
+    owner,
+    repo,
+    branch,
+    filename
+) {
+    const result = await axios({
+        method: "GET",
+        url:
+            `https://api.github.com/repos/` +
+            `${encodeURIComponent(owner)}/` +
+            `${encodeURIComponent(repo)}/contents/` +
+            `${filename}?ref=${encodeURIComponent(branch)}`,
+        headers: {
+            Accept: "application/vnd.github+json",
+            "User-Agent": "ReyCode-Deploy"
+        },
+        timeout: 20000,
+        validateStatus: () => true
+    });
+
+    if (result.status === 404) {
+        return null;
+    }
+
+    if (result.status !== 200) {
+        throw new Error(
+            `Gagal membaca ${filename} dari GitHub`
+        );
+    }
+
+    if (
+        result.data?.type !== "file" ||
+        !result.data?.content
+    ) {
+        return null;
+    }
+
+    return Buffer.from(
+        result.data.content.replace(/\s/g, ""),
+        "base64"
+    );
+}
+
+function parseJsonBuffer(buffer, filename) {
+    if (!buffer) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(
+            buffer.toString("utf8")
+        );
+    } catch {
+        throw new Error(
+            `${filename} tidak valid`
+        );
+    }
+}
+
+function findProjectFile(files, filename) {
+    const target = filename.toLowerCase();
+
+    return (
+        files.find(
+            item =>
+                String(item.file)
+                    .toLowerCase() === target
+        ) || null
+    );
+}
+
+function getDependencies(packageJson) {
+    return {
+        ...(packageJson?.dependencies || {}),
+        ...(packageJson?.devDependencies || {}),
+        ...(packageJson?.peerDependencies || {})
+    };
+}
+
+function hasDependency(dependencies, names) {
+    return names.some(name =>
+        Object.prototype.hasOwnProperty.call(
+            dependencies,
+            name
+        )
+    );
+}
+
+function detectFramework(
+    packageJson = null,
+    vercelJson = null
+) {
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "framework"
+        )
+    ) {
+        return vercelJson.framework;
+    }
+
+    const dependencies =
+        getDependencies(packageJson);
+
+    if (
+        hasDependency(dependencies, ["next"])
+    ) {
+        return "nextjs";
+    }
+
+    if (
+        hasDependency(dependencies, ["nuxt"])
+    ) {
+        return "nuxtjs";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@sveltejs/kit"]
+        )
+    ) {
+        return "sveltekit";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["astro"]
+        )
+    ) {
+        return "astro";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@remix-run/dev", "remix"]
+        )
+    ) {
+        return "remix";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@angular/core"]
+        )
+    ) {
+        return "angular";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@tanstack/start"]
+        )
+    ) {
+        return "tanstack-start";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["solid-start"]
+        )
+    ) {
+        return "solidstart";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@sveltejs/vite-plugin-svelte"]
+        )
+    ) {
+        return "svelte";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["vue"]
+        )
+    ) {
+        if (
+            hasDependency(
+                dependencies,
+                ["vite"]
+            )
+        ) {
+            return "vite";
+        }
+
+        return "vue";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["react-router"]
+        )
+    ) {
+        return "react-routers";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["vite"]
+        )
+    ) {
+        return "vite";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["react-scripts"]
+        )
+    ) {
+        return "create-react-app";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["gatsby"]
+        )
+    ) {
+        return "gatsby";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["preact"]
+        )
+    ) {
+        return "preact";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["express"]
+        )
+    ) {
+        return "express";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["fastify"]
+        )
+    ) {
+        return "fastify";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["hono"]
+        )
+    ) {
+        return "hono";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@nestjs/core"]
+        )
+    ) {
+        return "nestjs";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["koa"]
+        )
+    ) {
+        return "koa";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["@hapi/hapi"]
+        )
+    ) {
+        return "hapi";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["elysia"]
+        )
+    ) {
+        return "elysia";
+    }
+
+    if (
+        hasDependency(
+            dependencies,
+            ["h3"]
+        )
+    ) {
+        return "h3";
+    }
+
+    return null;
+}
+
+function buildProjectSettings(
+    packageJson = null,
+    vercelJson = null,
+    isStatic = false
+) {
+    const framework = isStatic
+        ? null
+        : detectFramework(
+            packageJson,
+            vercelJson
+        );
+
+    const settings = {
+        framework
+    };
+
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "buildCommand"
+        )
+    ) {
+        settings.buildCommand =
+            vercelJson.buildCommand;
+    }
+
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "devCommand"
+        )
+    ) {
+        settings.devCommand =
+            vercelJson.devCommand;
+    }
+
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "installCommand"
+        )
+    ) {
+        settings.installCommand =
+            vercelJson.installCommand;
+    }
+
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "outputDirectory"
+        )
+    ) {
+        settings.outputDirectory =
+            vercelJson.outputDirectory;
+    }
+
+    return settings;
+}
+
+function inspectProjectFiles(files) {
+    const packageFile =
+        findProjectFile(
+            files,
+            "package.json"
+        );
+
+    const vercelFile =
+        findProjectFile(
+            files,
+            "vercel.json"
+        );
+
+    const packageJson =
+        packageFile
+            ? parseJsonBuffer(
+                packageFile.buffer,
+                "package.json"
+            )
+            : null;
+
+    const vercelJson =
+        vercelFile
+            ? parseJsonBuffer(
+                vercelFile.buffer,
+                "vercel.json"
+            )
+            : null;
+
+    const framework =
+        detectFramework(
+            packageJson,
+            vercelJson
+        );
+
+    const hasIndex =
+        Boolean(
+            findProjectFile(
+                files,
+                "index.html"
+            )
+        );
+
+    const isStatic =
+        !framework;
+
+    if (
+        isStatic &&
+        !hasIndex
+    ) {
+        throw new Error(
+            "Framework tidak terdeteksi dan index.html tidak ditemukan"
+        );
+    }
+
+    return {
+        packageJson,
+        vercelJson,
+        framework,
+        projectSettings:
+            buildProjectSettings(
+                packageJson,
+                vercelJson,
+                isStatic
+            )
+    };
+}
+
+async function inspectGitHubProject(
+    owner,
+    repo,
+    branch
+) {
+    const packageBuffer =
+        await getGitHubFile(
+            owner,
+            repo,
+            branch,
+            "package.json"
+        );
+
+    const vercelBuffer =
+        await getGitHubFile(
+            owner,
+            repo,
+            branch,
+            "vercel.json"
+        );
+
+    const packageJson =
+        packageBuffer
+            ? parseJsonBuffer(
+                packageBuffer,
+                "package.json"
+            )
+            : null;
+
+    const vercelJson =
+        vercelBuffer
+            ? parseJsonBuffer(
+                vercelBuffer,
+                "vercel.json"
+            )
+            : null;
+
+    const framework =
+        detectFramework(
+            packageJson,
+            vercelJson
+        );
+
+    return {
+        packageJson,
+        vercelJson,
+        framework,
+        projectSettings:
+            buildProjectSettings(
+                packageJson,
+                vercelJson,
+                !framework
+            )
+    };
+}
+
 async function getProject(slug) {
     try {
         return await vercel(
             "GET",
-            `/v9/projects/${encodeURIComponent(slug)}`
+            `/v9/projects/${encodeURIComponent(
+                slug
+            )}`
         );
     } catch {
         return null;
     }
 }
 
-async function createProject(slug) {
+async function createProject(
+    slug,
+    projectSettings
+) {
     return await vercel(
         "POST",
-        "/v10/projects",
+        "/v10/projects?skipAutoDetectionConfirmation=1",
         {
-            name: slug
+            name: slug,
+            projectSettings
         }
     );
 }
 
-async function getOrCreateProject(slug) {
+async function updateProjectSettings(
+    project,
+    projectSettings
+) {
+    if (!project?.id) {
+        return project;
+    }
+
+    try {
+        return await vercel(
+            "PATCH",
+            `/v9/projects/${encodeURIComponent(
+                project.id
+            )}`,
+            {
+                projectSettings
+            }
+        );
+    } catch (error) {
+        console.error(
+            "PROJECT SETTINGS UPDATE ERROR:",
+            error.message
+        );
+
+        return project;
+    }
+}
+
+async function getOrCreateProject(
+    slug,
+    projectSettings
+) {
     const existing =
         await getProject(slug);
 
     if (existing) {
+        await updateProjectSettings(
+            existing,
+            projectSettings
+        );
+
         return existing;
     }
 
-    return await createProject(slug);
+    return await createProject(
+        slug,
+        projectSettings
+    );
 }
 
-/*
- * Upload file ke Vercel.
- *
- * Penting:
- * - SHA-1 dihitung dari buffer asli.
- * - Content-Length dikirim eksplisit.
- * - x-now-digest dan x-vercel-digest dikirim.
- * - response error Vercel diteruskan secara lengkap.
- */
-async function uploadVercelFile(buffer) {
+function getVercelTeamId(project) {
+    const configured =
+        process.env.VERCEL_TEAM_ID ||
+        process.env.VERCEL_TEAM;
+
+    if (configured) {
+        return configured;
+    }
+
+    const accountId =
+        project?.accountId;
+
+    if (
+        typeof accountId === "string" &&
+        accountId.startsWith("team_")
+    ) {
+        return accountId;
+    }
+
+    return "";
+}
+
+async function uploadVercelFile(
+    buffer,
+    project = null
+) {
     if (!Buffer.isBuffer(buffer)) {
         throw new Error(
             "Data file tidak valid"
@@ -314,11 +880,21 @@ async function uploadVercelFile(buffer) {
             .update(buffer)
             .digest("hex");
 
+    const teamId =
+        getVercelTeamId(project);
+
+    const query =
+        teamId
+            ? `?teamId=${encodeURIComponent(
+                teamId
+            )}`
+            : "";
+
     const result =
         await axios({
             method: "POST",
             url:
-                `${VERCEL_API}/v2/files`,
+                `${VERCEL_API}/v2/files${query}`,
             headers: {
                 Authorization:
                     `Bearer ${process.env.API_VERCEL}`,
@@ -378,28 +954,32 @@ async function uploadVercelFile(buffer) {
 }
 
 function normalizeZipPath(filename) {
-    let value =
+    const original =
         String(filename || "")
-            .replace(/\\/g, "/")
-            .replace(/^\/+/g, "")
-            .replace(/^(\.\/)+/g, "");
-
-    value =
-        path.posix
-            .normalize(value)
-            .replace(/^(\.\.\/)+/g, "");
-
-    value =
-        value.replace(/^\/+/g, "");
+            .replace(/\\/g, "/");
 
     if (
-        !value ||
-        value === "."
+        original.startsWith("/") ||
+        original.includes("../") ||
+        original.includes("/..")
     ) {
         return null;
     }
 
+    let value =
+        original
+            .replace(/^\/+/g, "")
+            .replace(/^(\.\/)+/g, "");
+
+    value =
+        path.posix.normalize(
+            value
+        );
+
     if (
+        !value ||
+        value === "." ||
+        value === ".." ||
         value.startsWith("../") ||
         value.includes("/../") ||
         path.posix.isAbsolute(value)
@@ -421,48 +1001,57 @@ function findIndexFile(files) {
     );
 }
 
-function stripIndexRoot(files, indexFile) {
-    const indexParts =
-        indexFile.file.split("/");
+function getCommonZipRoot(files) {
+    if (!files.length) {
+        return "";
+    }
 
-    if (indexParts.length <= 1) {
-        return files;
+    const firstParts =
+        files[0].file.split("/");
+
+    if (firstParts.length <= 1) {
+        return "";
     }
 
     const root =
-        indexParts
-            .slice(0, -1)
-            .join("/") + "/";
+        firstParts[0];
+
+    const allSameRoot =
+        files.every(item => {
+            const parts =
+                item.file.split("/");
+
+            return (
+                parts.length > 1 &&
+                parts[0] === root
+            );
+        });
+
+    if (!allSameRoot) {
+        return "";
+    }
+
+    return `${root}/`;
+}
+
+function stripCommonRoot(files) {
+    const root =
+        getCommonZipRoot(files);
+
+    if (!root) {
+        return files;
+    }
 
     return files
-        .map(item => {
-            if (
-                item.file ===
-                indexFile.file
-            ) {
-                return {
-                    ...item,
-                    file: "index.html"
-                };
-            }
-
-            if (
-                item.file.startsWith(root)
-            ) {
-                return {
-                    ...item,
-                    file:
-                        item.file.slice(
-                            root.length
-                        )
-                };
-            }
-
-            return null;
-        })
+        .map(item => ({
+            ...item,
+            file:
+                item.file.slice(
+                    root.length
+                )
+        }))
         .filter(
             item =>
-                item &&
                 item.file
         );
 }
@@ -498,7 +1087,9 @@ function readZip(zipPath) {
             );
 
         if (!filename) {
-            continue;
+            throw new Error(
+                "ZIP memiliki path file yang tidak valid"
+            );
         }
 
         const buffer =
@@ -528,18 +1119,8 @@ function readZip(zipPath) {
         );
     }
 
-    const indexFile =
-        findIndexFile(files);
-
-    if (!indexFile) {
-        throw new Error(
-            "index.html tidak ditemukan di dalam ZIP"
-        );
-    }
-
-    return stripIndexRoot(
-        files,
-        indexFile
+    return stripCommonRoot(
+        files
     );
 }
 
@@ -612,7 +1193,8 @@ async function prepareUploadedFiles(
 }
 
 async function uploadProjectFiles(
-    uploadedFile
+    uploadedFile,
+    project
 ) {
     const files =
         await prepareUploadedFiles(
@@ -634,21 +1216,13 @@ async function uploadProjectFiles(
         );
     }
 
-    const indexFile =
-        findIndexFile(files);
-
-    if (!indexFile) {
-        throw new Error(
-            "index.html tidak ditemukan"
-        );
-    }
-
     const uploaded = [];
 
     for (const item of files) {
         const result =
             await uploadVercelFile(
-                item.buffer
+                item.buffer,
+                project
             );
 
         uploaded.push({
@@ -665,9 +1239,7 @@ async function deployFiles(
     project,
     files
 ) {
-    if (
-        !project?.id
-    ) {
+    if (!project?.id) {
         throw new Error(
             "Vercel project ID tidak ditemukan"
         );
@@ -807,8 +1379,7 @@ async function syncDeploymentStatus(
             );
 
         if (
-            remote.readyState ===
-            "READY"
+            remote.readyState === "READY"
         ) {
             deployment.status =
                 "live";
@@ -1057,25 +1628,90 @@ async function createDeployment(
     }
 
     let normalizedRepo = "";
+    let projectSettings = {
+        framework: null
+    };
 
-    if (
-        sourceType === "repo"
-    ) {
-        normalizedRepo =
-            normalizeRepo(
-                repositoryUrl
-            );
-    }
-
-    const project =
-        await getOrCreateProject(
-            slug
-        );
-
-    let result;
-    let uploadFileName = "";
+    let preparedFiles = null;
+    let detectedFramework = null;
 
     try {
+        if (
+            sourceType === "repo"
+        ) {
+            normalizedRepo =
+                normalizeRepo(
+                    repositoryUrl
+                );
+
+            const {
+                owner,
+                repo
+            } =
+                parseGitHubRepo(
+                    normalizedRepo
+                );
+
+            const githubRepo =
+                await getGitHubRepo(
+                    owner,
+                    repo
+                );
+
+            const branch =
+                githubRepo.default_branch ||
+                "main";
+
+            const detected =
+                await inspectGitHubProject(
+                    owner,
+                    repo,
+                    branch
+                );
+
+            projectSettings =
+                detected.projectSettings;
+
+            detectedFramework =
+                detected.framework;
+        } else {
+            preparedFiles =
+                await prepareUploadedFiles(
+                    uploadedFile
+                );
+
+            const detected =
+                inspectProjectFiles(
+                    preparedFiles
+                );
+
+            projectSettings =
+                detected.projectSettings;
+
+            detectedFramework =
+                detected.framework;
+        }
+
+        console.log(
+            "FRAMEWORK DETECTED:",
+            detectedFramework ||
+            "static"
+        );
+
+        console.log(
+            "PROJECT SETTINGS:",
+            projectSettings
+        );
+
+        const project =
+            await getOrCreateProject(
+                slug,
+                projectSettings
+            );
+
+        let result;
+        let uploadFileName = "";
+
         if (
             sourceType === "repo"
         ) {
@@ -1086,7 +1722,7 @@ async function createDeployment(
                 );
         } else {
             uploadFileName =
-                uploadedFile.originalFilename ||
+                uploadedFile?.originalFilename ||
                 (
                     sourceType === "html"
                         ? "index.html"
@@ -1097,7 +1733,8 @@ async function createDeployment(
 
             const files =
                 await uploadProjectFiles(
-                    uploadedFile
+                    uploadedFile,
+                    project
                 );
 
             result =
@@ -1106,75 +1743,80 @@ async function createDeployment(
                     files
                 );
         }
+
+        const customUrl =
+            `https://${slug}.${domain}`;
+
+        let domainConfigured =
+            false;
+
+        try {
+            await addDomain(
+                project.id,
+                customUrl
+            );
+
+            domainConfigured =
+                true;
+        } catch (error) {
+            console.error(
+                "DOMAIN ERROR:",
+                error.message
+            );
+        }
+
+        const deployment =
+            await Deployment.create({
+                userId,
+                name,
+                slug,
+                domain,
+                vercelProjectId:
+                    project.id || "",
+                vercelUrl:
+                    result.url
+                        ? `https://${result.url}`
+                        : "",
+                customUrl,
+                sourceType,
+                repositoryUrl:
+                    sourceType === "repo"
+                        ? normalizedRepo
+                        : "",
+                zipFileName:
+                    [
+                        "zip",
+                        "file",
+                        "html"
+                    ].includes(sourceType)
+                        ? uploadFileName
+                        : "",
+                preset:
+                    detectedFramework ||
+                    preset ||
+                    "Auto Detect",
+                status: "deploying",
+                lastDeploymentId:
+                    result.id || "",
+                errorMessage: ""
+            });
+
+        return send(res, 201, {
+            success: true,
+            message:
+                "Deployment berhasil dikirim ke Vercel",
+            framework:
+                detectedFramework ||
+                "static",
+            projectSettings,
+            deployment,
+            domainConfigured
+        });
     } finally {
         await cleanupUpload(
             uploadedFile
         );
     }
-
-    const customUrl =
-        `https://${slug}.${domain}`;
-
-    let domainConfigured =
-        false;
-
-    try {
-        await addDomain(
-            project.id,
-            customUrl
-        );
-
-        domainConfigured =
-            true;
-    } catch (error) {
-        console.error(
-            "DOMAIN ERROR:",
-            error.message
-        );
-    }
-
-    const deployment =
-        await Deployment.create({
-            userId,
-            name,
-            slug,
-            domain,
-            vercelProjectId:
-                project.id || "",
-            vercelUrl:
-                result.url
-                    ? `https://${result.url}`
-                    : "",
-            customUrl,
-            sourceType,
-            repositoryUrl:
-                sourceType === "repo"
-                    ? normalizedRepo
-                    : "",
-            zipFileName:
-                [
-                    "zip",
-                    "file",
-                    "html"
-                ].includes(sourceType)
-                    ? uploadFileName
-                    : "",
-            preset:
-                preset ||
-                "Auto Detect",
-            status: "deploying",
-            lastDeploymentId:
-                result.id || "",
-            errorMessage: ""
-        });
-
-    return send(res, 201, {
-        success: true,
-        message:
-            "Deployment berhasil dikirim ke Vercel",
-        deployment,
-        domainConfigured
-    });
 }
 
 async function updateDeployment(
@@ -1328,12 +1970,11 @@ async function updateDeployment(
         });
     }
 
-    const project =
-        await getOrCreateProject(
-            deployment.slug
-        );
+    let projectSettings = {
+        framework: null
+    };
 
-    let result;
+    let detectedFramework = null;
     let normalizedRepo = "";
 
     try {
@@ -1345,6 +1986,71 @@ async function updateDeployment(
                     repositoryUrl
                 );
 
+            const {
+                owner,
+                repo
+            } =
+                parseGitHubRepo(
+                    normalizedRepo
+                );
+
+            const githubRepo =
+                await getGitHubRepo(
+                    owner,
+                    repo
+                );
+
+            const branch =
+                githubRepo.default_branch ||
+                "main";
+
+            const detected =
+                await inspectGitHubProject(
+                    owner,
+                    repo,
+                    branch
+                );
+
+            projectSettings =
+                detected.projectSettings;
+
+            detectedFramework =
+                detected.framework;
+        } else {
+            const files =
+                await prepareUploadedFiles(
+                    uploadedFile
+                );
+
+            const detected =
+                inspectProjectFiles(
+                    files
+                );
+
+            projectSettings =
+                detected.projectSettings;
+
+            detectedFramework =
+                detected.framework;
+        }
+
+        console.log(
+            "REDEPLOY FRAMEWORK:",
+            detectedFramework ||
+            "static"
+        );
+
+        const project =
+            await getOrCreateProject(
+                deployment.slug,
+                projectSettings
+            );
+
+        let result;
+
+        if (
+            sourceType === "repo"
+        ) {
             result =
                 await deployGitHub(
                     project,
@@ -1353,7 +2059,8 @@ async function updateDeployment(
         } else {
             const files =
                 await uploadProjectFiles(
-                    uploadedFile
+                    uploadedFile,
+                    project
                 );
 
             result =
@@ -1362,61 +2069,69 @@ async function updateDeployment(
                     files
                 );
         }
+
+        deployment.sourceType =
+            sourceType;
+
+        deployment.repositoryUrl =
+            sourceType === "repo"
+                ? normalizedRepo
+                : "";
+
+        deployment.zipFileName =
+            [
+                "zip",
+                "file",
+                "html"
+            ].includes(sourceType)
+                ? (
+                    uploadedFile?.originalFilename ||
+                    (
+                        sourceType === "html"
+                            ? "index.html"
+                            : "project.zip"
+                    )
+                )
+                : "";
+
+        deployment.vercelProjectId =
+            project.id || "";
+
+        deployment.lastDeploymentId =
+            result.id || "";
+
+        deployment.status =
+            "deploying";
+
+        deployment.errorMessage =
+            "";
+
+        deployment.preset =
+            detectedFramework ||
+            "Auto Detect";
+
+        if (result.url) {
+            deployment.vercelUrl =
+                `https://${result.url}`;
+        }
+
+        await deployment.save();
+
+        return send(res, 200, {
+            success: true,
+            message:
+                "Redeploy berhasil dikirim",
+            framework:
+                detectedFramework ||
+                "static",
+            projectSettings,
+            deployment
+        });
     } finally {
         await cleanupUpload(
             uploadedFile
         );
     }
-
-    deployment.sourceType =
-        sourceType;
-
-    deployment.repositoryUrl =
-        sourceType === "repo"
-            ? normalizedRepo
-            : "";
-
-    deployment.zipFileName =
-        [
-            "zip",
-            "file",
-            "html"
-        ].includes(sourceType)
-            ? (
-                uploadedFile?.originalFilename ||
-                (
-                    sourceType === "html"
-                        ? "index.html"
-                        : "project.zip"
-                )
-            )
-            : "";
-
-    deployment.vercelProjectId =
-        project.id || "";
-
-    deployment.lastDeploymentId =
-        result.id || "";
-
-    deployment.status =
-        "deploying";
-
-    deployment.errorMessage =
-        "";
-
-    if (result.url) {
-        deployment.vercelUrl =
-            `https://${result.url}`;
-    }
-
-    await deployment.save();
-
-    return send(res, 200, {
-        success: true,
-        message:
-            "Redeploy berhasil dikirim",
-        deployment
-    });
 }
 
 async function deleteDeployment(
