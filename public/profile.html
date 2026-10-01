@@ -7,667 +7,772 @@
     <title>Profile • ReyCode Digital</title>
 
     <style>
-        *{
-            box-sizing:border-box;
+        * {
+            box-sizing: border-box;
         }
 
-        body{
-            margin:0;
-            min-height:100vh;
-            font-family:Inter,Arial,sans-serif;
-            color:#fff;
+        :root {
+            --blue: #3185ff;
+            --blue-dark: #1762d0;
+            --text: #f4f7fb;
+            --muted: #778295;
+            --border: rgba(255,255,255,.075);
+            --panel: rgba(10,14,20,.78);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, Arial, sans-serif;
+            color: var(--text);
             background:
-                radial-gradient(circle at 15% 10%,rgba(49,133,255,.14),transparent 30%),
-                radial-gradient(circle at 85% 90%,rgba(49,133,255,.08),transparent 32%),
-                #05070a;
+                radial-gradient(
+                    circle at 12% 8%,
+                    rgba(49,133,255,.15),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 85%,
+                    rgba(49,133,255,.09),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    180deg,
+                    #05070a 0%,
+                    #070a0f 100%
+                );
         }
 
-        button,
-        input{
-            font-family:inherit;
-        }
-
-        .container{
-            width:100%;
-            max-width:900px;
-            margin:auto;
-            padding:28px 20px 50px;
-        }
-
-        .topbar{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:15px;
-            margin-bottom:22px;
-        }
-
-        .brand{
-            display:flex;
-            align-items:center;
-            gap:12px;
-        }
-
-        .brand-logo{
-            width:44px;
-            height:44px;
-            padding:6px;
-            border-radius:14px;
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.08);
-        }
-
-        .brand-logo img{
-            width:100%;
-            height:100%;
-            object-fit:contain;
-        }
-
-        .brand-text{
-            font-size:16px;
-            font-weight:700;
-        }
-
-        .brand-sub{
-            margin-top:3px;
-            color:#6f7888;
-            font-size:10px;
-            letter-spacing:1.4px;
-        }
-
-        .back{
-            padding:11px 16px;
-            border-radius:12px;
-            border:1px solid rgba(255,255,255,.08);
-            background:rgba(255,255,255,.035);
-            color:#aeb7c5;
-            text-decoration:none;
-            font-size:12px;
-            transition:.2s;
-        }
-
-        .back:hover{
-            background:rgba(255,255,255,.07);
-            color:#fff;
-        }
-
-        .verification-alert{
-            display:none;
-            margin-bottom:18px;
-            padding:17px 18px;
-            border-radius:17px;
-            border:1px solid rgba(255,177,92,.18);
-            background:rgba(255,177,92,.055);
-        }
-
-        .verification-alert .alert-title{
-            display:flex;
-            align-items:center;
-            gap:9px;
-            margin-bottom:7px;
-            color:#ffc27d;
-            font-size:13px;
-            font-weight:700;
-        }
-
-        .verification-alert .alert-text{
-            color:#aeb4bf;
-            font-size:12px;
-            line-height:1.7;
-        }
-
-        .verification-alert strong{
-            color:#e8edf5;
-        }
-
-        .profile-card{
-            overflow:hidden;
-            border-radius:26px;
-            border:1px solid rgba(255,255,255,.08);
-            background:rgba(12,16,22,.76);
-            backdrop-filter:blur(24px);
-            -webkit-backdrop-filter:blur(24px);
-            box-shadow:0 30px 90px rgba(0,0,0,.42);
-        }
-
-        .profile-head{
-            position:relative;
-            padding:34px;
-            border-bottom:1px solid rgba(255,255,255,.07);
-            background:linear-gradient(
-                135deg,
-                rgba(49,133,255,.11),
-                transparent 55%
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .28;
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                );
+            background-size: 42px 42px;
+            mask-image: linear-gradient(
+                to bottom,
+                black,
+                transparent 80%
             );
         }
 
-        .avatar{
-            width:78px;
-            height:78px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            margin-bottom:18px;
-            border-radius:24px;
-            background:linear-gradient(135deg,#3185ff,#1658c7);
-            color:#fff;
-            font-size:30px;
-            font-weight:800;
-            box-shadow:0 15px 40px rgba(49,133,255,.22);
+        button,
+        input {
+            font-family: inherit;
         }
 
-        .profile-head h1{
-            margin:0;
-            font-size:27px;
-            letter-spacing:-.8px;
+        button {
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .profile-head p{
-            margin:8px 0 0;
-            color:#737e90;
-            font-size:13px;
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 920px;
+            margin: auto;
+            padding: 28px 20px 55px;
         }
 
-        .verified{
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            margin-top:16px;
-            padding:7px 11px;
-            border-radius:999px;
-            background:rgba(49,133,255,.08);
-            border:1px solid rgba(49,133,255,.16);
-            color:#70aaff;
-            font-size:11px;
-            font-weight:600;
+        /* TOPBAR */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
         }
 
-        .content{
-            padding:30px 34px 34px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .section-title{
-            margin:0 0 18px;
-            font-size:14px;
-            color:#fff;
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.045);
+            box-shadow:
+                inset 0 1px rgba(255,255,255,.04),
+                0 10px 35px rgba(0,0,0,.22);
         }
 
-        .fields{
-            display:grid;
-            grid-template-columns:repeat(2,1fr);
-            gap:16px;
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
-        .field{
-            padding:17px;
-            border-radius:16px;
-            background:rgba(255,255,255,.025);
-            border:1px solid rgba(255,255,255,.065);
+        .brand-text {
+            font-size: 16px;
+            font-weight: 750;
+            letter-spacing: -.2px;
         }
 
-        .label{
-            margin-bottom:8px;
-            color:#687386;
-            font-size:10px;
-            text-transform:uppercase;
-            letter-spacing:1.2px;
+        .brand-sub {
+            margin-top: 3px;
+            color: #626d7e;
+            font-size: 9px;
+            letter-spacing: 1.7px;
         }
 
-        .value{
-            color:#e9edf4;
-            font-size:13px;
-            word-break:break-word;
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.035);
+            color: #aeb7c5;
+            text-decoration: none;
+            font-size: 11px;
+            transition: .2s ease;
         }
 
-        .status{
-            display:inline-flex;
-            align-items:center;
-            gap:7px;
-            color:#70aaff;
+        .back:hover {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+            border-color: rgba(255,255,255,.12);
+            transform: translateY(-1px);
         }
 
-        .dot{
-            width:7px;
-            height:7px;
-            border-radius:50%;
-            background:#3185ff;
-            box-shadow:0 0 10px rgba(49,133,255,.7);
-        }
+        /* EMAIL ALERT */
 
-        .phone-box{
-            margin-top:24px;
-            padding:20px;
-            border-radius:19px;
-            border:1px solid rgba(49,133,255,.13);
+        .verification-alert {
+            display: none;
+            margin-bottom: 18px;
+            padding: 17px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,177,92,.16);
             background:
                 linear-gradient(
                     135deg,
-                    rgba(49,133,255,.075),
+                    rgba(255,177,92,.075),
+                    rgba(255,255,255,.015)
+                );
+        }
+
+        .alert-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 7px;
+            color: #ffc27d;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .alert-text {
+            color: #9da6b5;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .alert-text strong {
+            color: #e8edf5;
+        }
+
+        /* MAIN CARD */
+
+        .profile-card {
+            overflow: hidden;
+            border-radius: 27px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            box-shadow:
+                0 35px 100px rgba(0,0,0,.48),
+                inset 0 1px rgba(255,255,255,.025);
+        }
+
+        /* PROFILE HEADER */
+
+        .profile-head {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            border-bottom: 1px solid rgba(255,255,255,.065);
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(49,133,255,.15),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    rgba(49,133,255,.095),
+                    transparent 58%
+                );
+        }
+
+        .profile-head::after {
+            content: "";
+            position: absolute;
+            right: -90px;
+            top: -110px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            border: 1px solid rgba(49,133,255,.07);
+            box-shadow:
+                0 0 0 35px rgba(49,133,255,.018),
+                0 0 0 70px rgba(49,133,255,.012);
+            pointer-events: none;
+        }
+
+        .avatar {
+            position: relative;
+            z-index: 1;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            border-radius: 25px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #3c91ff,
+                    #1658c7
+                );
+            color: #fff;
+            font-size: 30px;
+            font-weight: 850;
+            box-shadow:
+                0 18px 45px rgba(49,133,255,.24),
+                inset 0 1px rgba(255,255,255,.2);
+        }
+
+        .profile-head h1 {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -.9px;
+        }
+
+        .profile-head p {
+            position: relative;
+            z-index: 1;
+            margin: 8px 0 0;
+            color: #778295;
+            font-size: 12px;
+            word-break: break-word;
+        }
+
+        .verified {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 16px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(49,133,255,.075);
+            border: 1px solid rgba(49,133,255,.15);
+            color: #72aaff;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px 34px 34px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.08),
+                    transparent
+                );
+        }
+
+        /* ACCOUNT INFO */
+
+        .fields {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 13px;
+        }
+
+        .field {
+            position: relative;
+            min-width: 0;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,.055);
+            background: rgba(255,255,255,.022);
+            transition: .2s ease;
+        }
+
+        .field:hover {
+            border-color: rgba(255,255,255,.09);
+            background: rgba(255,255,255,.032);
+            transform: translateY(-1px);
+        }
+
+        .label {
+            margin-bottom: 8px;
+            color: #626d7e;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.25px;
+        }
+
+        .value {
+            color: #e9edf4;
+            font-size: 12px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #70aaff;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 12px rgba(49,133,255,.75);
+        }
+
+        /* WHATSAPP */
+
+        .phone-box {
+            position: relative;
+            overflow: hidden;
+            margin-top: 22px;
+            padding: 21px;
+            border-radius: 20px;
+            border: 1px solid rgba(49,133,255,.13);
+            background:
+                radial-gradient(
+                    circle at 100% 0%,
+                    rgba(49,133,255,.09),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    rgba(49,133,255,.065),
                     rgba(255,255,255,.018)
                 );
         }
 
-        .phone-box-head{
-            display:flex;
-            align-items:flex-start;
-            justify-content:space-between;
-            gap:15px;
+        .phone-box::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            border-radius: 10px;
+            background: var(--blue);
+            box-shadow: 0 0 18px rgba(49,133,255,.5);
         }
 
-        .phone-title{
-            color:#fff;
-            font-size:14px;
-            font-weight:700;
+        .phone-box-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding-left: 5px;
         }
 
-        .phone-description{
-            margin-top:6px;
-            color:#737e90;
-            font-size:11px;
-            line-height:1.6;
+        .phone-title {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 750;
         }
 
-        .phone-status{
-            flex-shrink:0;
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            padding:6px 9px;
-            border-radius:999px;
-            font-size:10px;
-            font-weight:600;
+        .phone-description {
+            max-width: 620px;
+            margin-top: 6px;
+            color: #727d8e;
+            font-size: 10px;
+            line-height: 1.7;
         }
 
-        .phone-status.pending{
-            color:#ffc27d;
-            background:rgba(255,177,92,.07);
-            border:1px solid rgba(255,177,92,.14);
+        .phone-status {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 700;
         }
 
-        .phone-status.success{
-            color:#70aaff;
-            background:rgba(49,133,255,.08);
-            border:1px solid rgba(49,133,255,.15);
+        .phone-status.pending {
+            color: #ffc27d;
+            background: rgba(255,177,92,.065);
+            border: 1px solid rgba(255,177,92,.13);
         }
 
-        .phone-row{
-            display:flex;
-            gap:10px;
-            margin-top:17px;
+        .phone-status.success {
+            color: #72aaff;
+            background: rgba(49,133,255,.075);
+            border: 1px solid rgba(49,133,255,.14);
         }
 
-        .phone-input{
-            flex:1;
-            min-width:0;
-            height:45px;
-            padding:0 14px;
-            border-radius:12px;
-            outline:none;
-            border:1px solid rgba(255,255,255,.08);
-            background:rgba(0,0,0,.18);
-            color:#fff;
-            font-size:12px;
-            transition:.2s;
+        .phone-row {
+            display: flex;
+            gap: 9px;
+            margin-top: 17px;
         }
 
-        .phone-input::placeholder{
-            color:#566071;
+        .phone-input,
+        .otp-input {
+            min-width: 0;
+            height: 46px;
+            outline: none;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.075);
+            background: rgba(0,0,0,.2);
+            color: #fff;
+            transition: .2s ease;
         }
 
-        .phone-input:focus{
-            border-color:rgba(49,133,255,.45);
-            box-shadow:0 0 0 3px rgba(49,133,255,.08);
+        .phone-input {
+            flex: 1;
+            padding: 0 14px;
+            font-size: 12px;
         }
 
-        .verify-phone-button{
-            min-width:145px;
-            height:45px;
-            padding:0 16px;
-            border:1px solid #3185ff;
-            border-radius:12px;
-            background:#3185ff;
-            color:#fff;
-            font-size:11px;
-            font-weight:700;
-            cursor:pointer;
-            transition:.2s;
+        .phone-input::placeholder,
+        .otp-input::placeholder {
+            color: #515c6d;
         }
 
-        .verify-phone-button:hover{
-            background:#2877ea;
+        .phone-input:focus,
+        .otp-input:focus {
+            border-color: rgba(49,133,255,.42);
+            box-shadow: 0 0 0 3px rgba(49,133,255,.075);
         }
 
-        .verify-phone-button:disabled{
-            opacity:.55;
-            cursor:not-allowed;
+        .phone-input:disabled {
+            opacity: .65;
+            cursor: not-allowed;
         }
 
-        .phone-message{
-            display:none;
-            margin-top:12px;
-            padding:11px 13px;
-            border-radius:11px;
-            font-size:11px;
-            line-height:1.5;
+        .verify-phone-button {
+            min-width: 148px;
+            height: 46px;
+            padding: 0 16px;
+            border: 1px solid var(--blue);
+            border-radius: 12px;
+            background: var(--blue);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: .2s ease;
+            box-shadow: 0 8px 24px rgba(49,133,255,.12);
         }
 
-        .phone-message.error{
-            display:block;
-            color:#ff9b9b;
-            background:rgba(255,70,70,.06);
-            border:1px solid rgba(255,70,70,.12);
+        .verify-phone-button:hover:not(:disabled) {
+            background: #2877ea;
+            transform: translateY(-1px);
         }
 
-        .phone-message.success{
-            display:block;
-            color:#79b0ff;
-            background:rgba(49,133,255,.06);
-            border:1px solid rgba(49,133,255,.12);
+        .verify-phone-button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
         }
 
-        .otp-section{
-            display:none;
-            margin-top:14px;
-            padding-top:16px;
-            border-top:1px solid rgba(255,255,255,.06);
+        .phone-message {
+            display: none;
+            margin-top: 11px;
+            padding: 10px 12px;
+            border-radius: 11px;
+            font-size: 10px;
+            line-height: 1.55;
         }
 
-        .otp-section.show{
-            display:block;
+        .phone-message.error {
+            display: block;
+            color: #ff9d9d;
+            background: rgba(255,70,70,.055);
+            border: 1px solid rgba(255,70,70,.11);
         }
 
-        .otp-label{
-            margin-bottom:8px;
-            color:#687386;
-            font-size:10px;
-            text-transform:uppercase;
-            letter-spacing:1.2px;
+        .phone-message.success {
+            display: block;
+            color: #79b0ff;
+            background: rgba(49,133,255,.055);
+            border: 1px solid rgba(49,133,255,.11);
         }
 
-        .otp-row{
-            display:flex;
-            gap:10px;
+        /* OTP */
+
+        .otp-section {
+            display: none;
+            margin-top: 15px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,.055);
         }
 
-        .otp-input{
-            flex:1;
-            min-width:0;
-            height:45px;
-            padding:0 14px;
-            outline:none;
-            border-radius:12px;
-            border:1px solid rgba(255,255,255,.08);
-            background:rgba(0,0,0,.18);
-            color:#fff;
-            font-size:16px;
-            letter-spacing:5px;
-            text-align:center;
+        .otp-section.show {
+            display: block;
+            animation: fadeUp .25s ease;
         }
 
-        .otp-input:focus{
-            border-color:rgba(49,133,255,.45);
-            box-shadow:0 0 0 3px rgba(49,133,255,.08);
+        .otp-label {
+            margin-bottom: 8px;
+            color: #626d7e;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
         }
 
-        .otp-button{
-            min-width:125px;
-            height:45px;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:12px;
-            background:rgba(255,255,255,.045);
-            color:#cbd3df;
-            font-size:11px;
-            font-weight:700;
-            cursor:pointer;
-            transition:.2s;
+        .otp-row {
+            display: flex;
+            gap: 9px;
         }
 
-        .otp-button:hover{
-            background:rgba(255,255,255,.08);
-            color:#fff;
+        .otp-input {
+            flex: 1;
+            padding: 0 14px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 7px;
+            text-align: center;
         }
 
-        .otp-button:disabled{
-            opacity:.45;
-            cursor:not-allowed;
+        .otp-button {
+            min-width: 130px;
+            height: 46px;
+            border: 1px solid rgba(255,255,255,.085);
+            border-radius: 12px;
+            background: rgba(255,255,255,.045);
+            color: #cbd3df;
+            font-size: 10px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: .2s ease;
         }
 
-        .cooldown{
-            margin-top:9px;
-            color:#687386;
-            font-size:10px;
+        .otp-button:hover:not(:disabled) {
+            color: #fff;
+            background: rgba(255,255,255,.08);
         }
 
-        .actions{
-            display:flex;
-            gap:12px;
-            margin-top:24px;
+        .otp-button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
         }
 
-        .button{
-            flex:1;
-            min-height:46px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:13px;
-            text-decoration:none;
-            border:1px solid rgba(255,255,255,.08);
-            background:rgba(255,255,255,.035);
-            color:#c6ceda;
-            font-size:12px;
-            transition:.2s;
+        .cooldown {
+            min-height: 15px;
+            margin-top: 9px;
+            color: #687386;
+            font-size: 9px;
         }
 
-        .button:hover{
-            background:rgba(255,255,255,.07);
-            color:#fff;
+        /* ACTIONS */
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 23px;
         }
 
-        .button.primary{
-            background:#3185ff;
-            border-color:#3185ff;
-            color:#fff;
-            box-shadow:0 10px 30px rgba(49,133,255,.16);
+        .button {
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,.075);
+            background: rgba(255,255,255,.035);
+            color: #c6ceda;
+            font-size: 11px;
+            font-weight: 650;
+            transition: .2s ease;
         }
 
-        .button.primary:hover{
-            background:#2877ea;
+        .button:hover {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+            transform: translateY(-1px);
         }
 
-        .loading{
-            padding:70px 20px;
-            text-align:center;
-            color:#6f7888;
-            font-size:13px;
+        .button.primary {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(49,133,255,.15);
         }
 
-        .spinner{
-            width:28px;
-            height:28px;
-            margin:0 auto 16px;
-            border:3px solid rgba(255,255,255,.1);
-            border-top-color:#3185ff;
-            border-radius:50%;
-            animation:spin .7s linear infinite;
+        .button.primary:hover {
+            background: #2877ea;
         }
 
-        .error{
-            padding:50px 20px;
-            text-align:center;
-            color:#ff8b8b;
-            font-size:13px;
+        /* LOADING */
+
+        .loading {
+            padding: 85px 20px;
+            text-align: center;
+            color: #697486;
+            font-size: 12px;
         }
 
-        .modal{
-            position:fixed;
-            inset:0;
-            z-index:1000;
-            display:none;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-            background:rgba(0,0,0,.72);
-            backdrop-filter:blur(10px);
-            -webkit-backdrop-filter:blur(10px);
+        .spinner {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto 16px;
+            border: 3px solid rgba(255,255,255,.08);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
         }
 
-        .modal.show{
-            display:flex;
+        .error {
+            padding: 60px 20px;
+            text-align: center;
+            color: #ff8b8b;
+            font-size: 12px;
         }
 
-        .modal-card{
-            width:100%;
-            max-width:430px;
-            padding:25px;
-            border-radius:22px;
-            border:1px solid rgba(255,255,255,.09);
-            background:rgba(12,16,22,.96);
-            box-shadow:0 30px 100px rgba(0,0,0,.6);
+        footer {
+            margin-top: 22px;
+            text-align: center;
+            color: #3e4756;
+            font-size: 9px;
+            letter-spacing: .7px;
         }
 
-        .modal-head{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:15px;
-            margin-bottom:20px;
-        }
-
-        .modal-title{
-            font-size:17px;
-            font-weight:700;
-        }
-
-        .modal-close{
-            width:34px;
-            height:34px;
-            border:1px solid rgba(255,255,255,.07);
-            border-radius:10px;
-            background:rgba(255,255,255,.035);
-            color:#8791a1;
-            cursor:pointer;
-            font-size:16px;
-        }
-
-        .modal-text{
-            margin-bottom:18px;
-            color:#737e90;
-            font-size:11px;
-            line-height:1.7;
-        }
-
-        .modal-input{
-            width:100%;
-            height:46px;
-            padding:0 14px;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:12px;
-            outline:none;
-            background:rgba(255,255,255,.035);
-            color:#fff;
-            font-size:12px;
-        }
-
-        .modal-input:focus{
-            border-color:rgba(49,133,255,.45);
-        }
-
-        .modal-button{
-            width:100%;
-            height:46px;
-            margin-top:12px;
-            border:0;
-            border-radius:12px;
-            background:#3185ff;
-            color:#fff;
-            font-size:12px;
-            font-weight:700;
-            cursor:pointer;
-        }
-
-        .modal-button:disabled{
-            opacity:.5;
-            cursor:not-allowed;
-        }
-
-        .modal-message{
-            display:none;
-            margin-top:12px;
-            font-size:11px;
-            line-height:1.6;
-        }
-
-        .modal-message.error{
-            display:block;
-            color:#ff9696;
-        }
-
-        .modal-message.success{
-            display:block;
-            color:#72aaff;
-        }
-
-        footer{
-            margin-top:22px;
-            text-align:center;
-            color:#404958;
-            font-size:10px;
-            letter-spacing:.5px;
-        }
-
-        @keyframes spin{
-            to{
-                transform:rotate(360deg);
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        @media(max-width:650px){
-
-            .container{
-                padding:20px 14px 40px;
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
             }
 
-            .topbar{
-                margin-bottom:18px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media(max-width:650px) {
+
+            .container {
+                padding: 18px 13px 40px;
             }
 
-            .profile-head{
-                padding:26px 22px;
+            .topbar {
+                margin-bottom: 17px;
             }
 
-            .content{
-                padding:24px 22px 26px;
+            .brand-logo {
+                width: 42px;
+                height: 42px;
             }
 
-            .fields{
-                grid-template-columns:1fr;
+            .brand-text {
+                font-size: 14px;
             }
 
-            .profile-head h1{
-                font-size:24px;
+            .back {
+                min-height: 38px;
+                padding: 0 12px;
+                font-size: 10px;
             }
 
-            .actions{
-                flex-direction:column;
+            .profile-head {
+                padding: 27px 22px;
             }
 
-            .phone-box-head{
-                flex-direction:column;
+            .content {
+                padding: 24px 20px 25px;
+            }
+
+            .profile-head h1 {
+                font-size: 24px;
+            }
+
+            .fields {
+                grid-template-columns: 1fr;
+            }
+
+            .phone-box-head {
+                flex-direction: column;
             }
 
             .phone-row,
-            .otp-row{
-                flex-direction:column;
+            .otp-row {
+                flex-direction: column;
             }
 
             .verify-phone-button,
-            .otp-button{
-                width:100%;
+            .otp-button {
+                width: 100%;
             }
 
-            .modal-card{
-                padding:22px;
+            .actions {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -700,43 +805,52 @@
 
         </div>
 
-        <a href="/dashboard" class="back">
+        <a
+            href="/dashboard"
+            class="back"
+        >
             ← Dashboard
         </a>
 
     </div>
 
-    <div id="verificationAlert" class="verification-alert">
-
+    <div
+        id="verificationAlert"
+        class="verification-alert"
+    >
         <div class="alert-title">
             ⚠️ Email belum terverifikasi
         </div>
 
         <div class="alert-text">
             Cek email kamu, termasuk folder
-            <strong>Spam</strong>, lalu klik tombol
-            <strong>Verifikasi Email</strong>.
-            Setelah berhasil diverifikasi, status akun kamu
-            akan berubah menjadi <strong>aktif</strong>.
+            <strong>Spam</strong>, lalu lakukan
+            verifikasi email untuk mengaktifkan
+            seluruh fitur akun.
         </div>
-
     </div>
 
     <div class="profile-card">
 
-        <div id="loading" class="loading">
-
+        <div
+            id="loading"
+            class="loading"
+        >
             <div class="spinner"></div>
-
             Memuat profile...
-
         </div>
 
-        <div id="content" style="display:none;">
+        <div
+            id="content"
+            style="display:none;"
+        >
 
             <div class="profile-head">
 
-                <div id="avatar" class="avatar">
+                <div
+                    id="avatar"
+                    class="avatar"
+                >
                     R
                 </div>
 
@@ -748,7 +862,10 @@
                     -
                 </p>
 
-                <div id="verified" class="verified">
+                <div
+                    id="verified"
+                    class="verified"
+                >
                     ✓ Email terverifikasi
                 </div>
 
@@ -756,99 +873,116 @@
 
             <div class="content">
 
-                <h2 class="section-title">
-                    Informasi Akun
-                </h2>
+                <div class="section-head">
+
+                    <h2 class="section-title">
+                        Informasi Akun
+                    </h2>
+
+                    <div class="section-line"></div>
+
+                </div>
 
                 <div class="fields">
 
                     <div class="field">
-
                         <div class="label">
                             Nama
                         </div>
 
-                        <div id="nameValue" class="value">
+                        <div
+                            id="nameValue"
+                            class="value"
+                        >
                             -
                         </div>
-
                     </div>
 
                     <div class="field">
-
                         <div class="label">
                             Email
                         </div>
 
-                        <div id="emailValue" class="value">
+                        <div
+                            id="emailValue"
+                            class="value"
+                        >
                             -
                         </div>
-
                     </div>
 
                     <div class="field">
-
                         <div class="label">
                             WhatsApp
                         </div>
 
-                        <div id="whatsappValue" class="value">
-                            -
+                        <div
+                            id="whatsappValue"
+                            class="value"
+                        >
+                            Belum ditambahkan
                         </div>
-
                     </div>
 
                     <div class="field">
-
                         <div class="label">
                             Status Email
                         </div>
 
-                        <div id="statusValue" class="value">
+                        <div
+                            id="statusValue"
+                            class="value"
+                        >
                             -
                         </div>
-
                     </div>
 
                     <div class="field">
-
                         <div class="label">
                             Bergabung
                         </div>
 
-                        <div id="createdValue" class="value">
+                        <div
+                            id="createdValue"
+                            class="value"
+                        >
                             -
                         </div>
-
                     </div>
 
                     <div class="field">
-
                         <div class="label">
                             User ID
                         </div>
 
-                        <div id="idValue" class="value">
+                        <div
+                            id="idValue"
+                            class="value"
+                        >
                             -
                         </div>
-
                     </div>
 
                 </div>
+
+                <!-- WHATSAPP VERIFICATION -->
 
                 <div class="phone-box">
 
                     <div class="phone-box-head">
 
                         <div>
+
                             <div class="phone-title">
                                 Verifikasi WhatsApp
                             </div>
 
                             <div class="phone-description">
-                                Verifikasi nomor WhatsApp untuk keamanan akun
-                                dan menerima notifikasi penting dari ReyCode.
+                                Verifikasi nomor WhatsApp untuk
+                                keamanan akun dan menerima
+                                notifikasi penting dari ReyCode.
                             </div>
+
                         </div>
 
                         <div
@@ -892,7 +1026,7 @@
                     >
 
                         <div class="otp-label">
-                            Kode OTP
+                            Masukkan Kode OTP
                         </div>
 
                         <div class="otp-row">
@@ -948,7 +1082,11 @@
 
         </div>
 
-        <div id="error" class="error" style="display:none;">
+        <div
+            id="error"
+            class="error"
+            style="display:none;"
+        >
             Gagal memuat profile.
         </div>
 
@@ -957,61 +1095,6 @@
     <footer>
         © ReyCode Digital • MonikaLabs
     </footer>
-
-</div>
-
-<div
-    id="otpModal"
-    class="modal"
->
-
-    <div class="modal-card">
-
-        <div class="modal-head">
-
-            <div class="modal-title">
-                Verifikasi Nomor
-            </div>
-
-            <button
-                id="closeModal"
-                class="modal-close"
-                type="button"
-            >
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-text">
-            Masukkan nomor WhatsApp yang ingin kamu
-            gunakan untuk verifikasi. Kode OTP akan
-            dikirim ke nomor tersebut.
-        </div>
-
-        <input
-            id="modalPhoneInput"
-            class="modal-input"
-            type="tel"
-            inputmode="numeric"
-            autocomplete="tel"
-            placeholder="628xxxxxxxxxx"
-        >
-
-        <button
-            id="modalRequestButton"
-            class="modal-button"
-            type="button"
-        >
-            Kirim Kode OTP
-        </button>
-
-        <div
-            id="modalMessage"
-            class="modal-message"
-        ></div>
-
-    </div>
 
 </div>
 
@@ -1026,10 +1109,14 @@ const errorBox =
     document.getElementById("error");
 
 const verificationAlert =
-    document.getElementById("verificationAlert");
+    document.getElementById(
+        "verificationAlert"
+    );
 
 const phoneInput =
-    document.getElementById("phoneInput");
+    document.getElementById(
+        "phoneInput"
+    );
 
 const requestOtpButton =
     document.getElementById(
@@ -1042,7 +1129,9 @@ const verifyOtpButton =
     );
 
 const otpInput =
-    document.getElementById("otpInput");
+    document.getElementById(
+        "otpInput"
+    );
 
 const otpSection =
     document.getElementById(
@@ -1064,30 +1153,14 @@ const cooldownText =
         "cooldownText"
     );
 
-const otpModal =
-    document.getElementById("otpModal");
-
-const closeModal =
-    document.getElementById("closeModal");
-
-const modalPhoneInput =
-    document.getElementById(
-        "modalPhoneInput"
-    );
-
-const modalRequestButton =
-    document.getElementById(
-        "modalRequestButton"
-    );
-
-const modalMessage =
-    document.getElementById(
-        "modalMessage"
-    );
-
 let currentPhone = "";
 
 let cooldownTimer = null;
+
+
+/* =========================
+   PHONE
+========================= */
 
 function normalizePhone(phone) {
 
@@ -1096,6 +1169,7 @@ function normalizePhone(phone) {
         .replace(/^00/, "+")
         .trim();
 }
+
 
 function showPhoneMessage(
     message,
@@ -1109,48 +1183,62 @@ function showPhoneMessage(
         `phone-message ${type}`;
 }
 
+
 function clearPhoneMessage() {
 
-    phoneMessage.textContent = "";
+    phoneMessage.textContent =
+        "";
 
     phoneMessage.className =
         "phone-message";
 }
 
-function showModalMessage(
-    message,
-    type = "error"
-) {
 
-    modalMessage.textContent =
-        message;
+/* =========================
+   COOLDOWN
+========================= */
 
-    modalMessage.className =
-        `modal-message ${type}`;
+function clearCooldown() {
+
+    if (cooldownTimer) {
+
+        clearInterval(
+            cooldownTimer
+        );
+
+        cooldownTimer = null;
+    }
+
+    cooldownText.textContent =
+        "";
 }
 
-function startCooldown(seconds) {
 
-    clearInterval(
-        cooldownTimer
-    );
+function startCooldown(
+    seconds = 300
+) {
+
+    clearCooldown();
 
     let remaining =
-        Number(seconds) || 0;
+        Number(seconds);
 
     function update() {
 
-        if (remaining <= 0) {
+        if (
+            remaining <= 0
+        ) {
 
-            cooldownText.textContent =
-                "";
+            clearCooldown();
 
-            requestOtpButton.disabled =
-                false;
-
-            clearInterval(
-                cooldownTimer
-            );
+            if (
+                phoneStatus.classList.contains(
+                    "pending"
+                )
+            ) {
+                requestOtpButton.disabled =
+                    false;
+            }
 
             return;
         }
@@ -1164,9 +1252,9 @@ function startCooldown(seconds) {
             remaining % 60;
 
         cooldownText.textContent =
-            `Tunggu ${minutes} menit ${String(
+            `OTP berikutnya dapat diminta dalam ${minutes}:${String(
                 secondsLeft
-            ).padStart(2, "0")} detik sebelum meminta OTP lagi.`;
+            ).padStart(2, "0")}`;
 
         requestOtpButton.disabled =
             true;
@@ -1182,6 +1270,11 @@ function startCooldown(seconds) {
             1000
         );
 }
+
+
+/* =========================
+   PHONE STATE
+========================= */
 
 function setPhoneVerified(
     phone
@@ -1209,8 +1302,9 @@ function setPhoneVerified(
         "show"
     );
 
-    clearPhoneMessage();
+    clearCooldown();
 }
+
 
 function setPhonePending(
     phone
@@ -1231,11 +1325,20 @@ function setPhonePending(
     requestOtpButton.style.display =
         "";
 
+    requestOtpButton.disabled =
+        false;
+
     if (currentPhone) {
+
         phoneInput.value =
             currentPhone;
     }
 }
+
+
+/* =========================
+   REQUEST OTP
+========================= */
 
 async function requestOtp() {
 
@@ -1276,14 +1379,9 @@ async function requestOtp() {
 
     try {
 
-        /*
-         * Endpoint ini akan kita sambungkan
-         * setelah API OTP selesai dibuat.
-         */
-
         const response =
             await fetch(
-                "/api/otp/request",
+                "/api/otp",
                 {
                     method: "POST",
                     credentials: "include",
@@ -1292,6 +1390,7 @@ async function requestOtp() {
                             "application/json"
                     },
                     body: JSON.stringify({
+                        action: "request",
                         phone
                     })
                 }
@@ -1304,18 +1403,6 @@ async function requestOtp() {
             !response.ok ||
             !data.success
         ) {
-
-            if (
-                data.cooldownSeconds
-            ) {
-                startCooldown(
-                    data.cooldownSeconds
-                );
-            } else {
-                requestOtpButton.disabled =
-                    false;
-            }
-
             throw new Error(
                 data.message ||
                 "Gagal meminta OTP."
@@ -1327,35 +1414,39 @@ async function requestOtp() {
         );
 
         showPhoneMessage(
-            "Kode OTP berhasil diminta. Cek WhatsApp kamu.",
+            "OTP berhasil dibuat. Silakan cek WhatsApp kamu.",
             "success"
         );
 
-        if (
-            data.cooldownSeconds
-        ) {
-            startCooldown(
-                data.cooldownSeconds
-            );
-        }
+        /*
+         * Cooldown backend:
+         * 5 menit.
+         */
+        startCooldown(
+            300
+        );
+
+        otpInput.value =
+            "";
 
         otpInput.focus();
 
     } catch (error) {
 
+        requestOtpButton.disabled =
+            false;
+
         showPhoneMessage(
             error.message ||
             "Gagal meminta OTP."
         );
-
-        if (
-            !cooldownTimer
-        ) {
-            requestOtpButton.disabled =
-                false;
-        }
     }
 }
+
+
+/* =========================
+   VERIFY OTP
+========================= */
 
 async function verifyOtp() {
 
@@ -1379,11 +1470,17 @@ async function verifyOtp() {
         return;
     }
 
-    if (!/^\d{6}$/.test(otp)) {
+    if (
+        !/^\d{6}$/.test(
+            otp
+        )
+    ) {
 
         showPhoneMessage(
             "OTP harus terdiri dari 6 angka."
         );
+
+        otpInput.focus();
 
         return;
     }
@@ -1397,7 +1494,7 @@ async function verifyOtp() {
 
         const response =
             await fetch(
-                "/api/otp/verify",
+                "/api/otp",
                 {
                     method: "POST",
                     credentials: "include",
@@ -1406,6 +1503,7 @@ async function verifyOtp() {
                             "application/json"
                     },
                     body: JSON.stringify({
+                        action: "verify",
                         phone,
                         otp
                     })
@@ -1426,38 +1524,54 @@ async function verifyOtp() {
         }
 
         setPhoneVerified(
+            data.phone ||
             phone
         );
 
+        document.getElementById(
+            "whatsappValue"
+        ).textContent =
+            data.phone ||
+            phone;
+
         showPhoneMessage(
-            "Nomor WhatsApp berhasil diverifikasi.",
+            "✓ Nomor WhatsApp berhasil diverifikasi.",
             "success"
         );
 
+        otpInput.value =
+            "";
+
     } catch (error) {
+
+        verifyOtpButton.disabled =
+            false;
 
         showPhoneMessage(
             error.message ||
             "Verifikasi OTP gagal."
         );
-
-        verifyOtpButton.disabled =
-            false;
     }
 }
+
+
+/* =========================
+   LOAD PROFILE
+========================= */
 
 async function loadProfile() {
 
     try {
 
-        const response = await fetch(
-            `/api/user/me?_=${Date.now()}`,
-            {
-                method: "GET",
-                credentials: "include",
-                cache: "no-store"
-            }
-        );
+        const response =
+            await fetch(
+                `/api/user/me?_=${Date.now()}`,
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store"
+                }
+            );
 
         const data =
             await response.json();
@@ -1468,7 +1582,7 @@ async function loadProfile() {
         ) {
             throw new Error(
                 data.message ||
-                "Gagal memuat profile"
+                "Gagal memuat profile."
             );
         }
 
@@ -1507,6 +1621,9 @@ async function loadProfile() {
                 )
                 : "-";
 
+
+        /* HEADER */
+
         document.getElementById(
             "avatar"
         ).textContent =
@@ -1523,6 +1640,9 @@ async function loadProfile() {
             "email"
         ).textContent =
             email;
+
+
+        /* INFO */
 
         document.getElementById(
             "nameValue"
@@ -1549,65 +1669,90 @@ async function loadProfile() {
             "idValue"
         ).textContent =
             user._id ||
+            user.id ||
             "-";
 
-        if (!emailVerified) {
 
-            verificationAlert.style.display =
-                "block";
+        /* EMAIL STATUS */
 
+        const statusValue =
             document.getElementById(
                 "statusValue"
-            ).innerHTML = `
-                <span style="color:#ffb15c;">
-                    ⚠ Belum terverifikasi
-                </span>
-            `;
+            );
 
-            const verifiedBadge =
-                document.getElementById(
-                    "verified"
-                );
+        const verifiedBadge =
+            document.getElementById(
+                "verified"
+            );
 
-            verifiedBadge.textContent =
-                "⚠ Email belum terverifikasi";
-
-            verifiedBadge.style.color =
-                "#ffb15c";
-
-            verifiedBadge.style.background =
-                "rgba(255,177,92,.08)";
-
-            verifiedBadge.style.borderColor =
-                "rgba(255,177,92,.16)";
-
-        } else {
+        if (
+            emailVerified
+        ) {
 
             verificationAlert.style.display =
                 "none";
 
-            document.getElementById(
-                "statusValue"
-            ).innerHTML = `
+            statusValue.innerHTML = `
                 <span class="status">
                     <span class="dot"></span>
                     Terverifikasi
                 </span>
             `;
+
+            verifiedBadge.textContent =
+                "✓ Email terverifikasi";
+
+            verifiedBadge.style.color =
+                "#72aaff";
+
+            verifiedBadge.style.background =
+                "rgba(49,133,255,.075)";
+
+            verifiedBadge.style.borderColor =
+                "rgba(49,133,255,.15)";
+
+        } else {
+
+            verificationAlert.style.display =
+                "block";
+
+            statusValue.innerHTML = `
+                <span style="color:#ffc27d;">
+                    ⚠ Belum terverifikasi
+                </span>
+            `;
+
+            verifiedBadge.textContent =
+                "⚠ Email belum terverifikasi";
+
+            verifiedBadge.style.color =
+                "#ffc27d";
+
+            verifiedBadge.style.background =
+                "rgba(255,177,92,.075)";
+
+            verifiedBadge.style.borderColor =
+                "rgba(255,177,92,.15)";
         }
 
-        if (whatsapp) {
 
-            phoneInput.value =
-                whatsapp;
+        /* PHONE */
+
+        if (whatsapp) {
 
             currentPhone =
                 normalizePhone(
                     whatsapp
                 );
+
+            phoneInput.value =
+                whatsapp;
         }
 
-        if (phoneVerified) {
+        if (
+            phoneVerified &&
+            whatsapp
+        ) {
 
             setPhoneVerified(
                 currentPhone
@@ -1619,6 +1764,9 @@ async function loadProfile() {
                 currentPhone
             );
         }
+
+
+        /* SHOW */
 
         loading.style.display =
             "none";
@@ -1643,14 +1791,88 @@ async function loadProfile() {
             error.message ||
             "Gagal memuat profile.";
 
-        setTimeout(() => {
-
-            window.location.href =
-                "/login";
-
-        }, 1800);
+        setTimeout(
+            () => {
+                window.location.href =
+                    "/login";
+            },
+            1800
+        );
     }
 }
+
+
+/* =========================
+   INPUT EVENTS
+========================= */
+
+phoneInput.addEventListener(
+    "input",
+    () => {
+
+        phoneInput.value =
+            phoneInput.value
+                .replace(
+                    /[^\d+]/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    16
+                );
+    }
+);
+
+
+otpInput.addEventListener(
+    "input",
+    () => {
+
+        otpInput.value =
+            otpInput.value
+                .replace(
+                    /\D/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    6
+                );
+    }
+);
+
+
+otpInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+            verifyOtp();
+        }
+    }
+);
+
+
+phoneInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+            requestOtp();
+        }
+    }
+);
+
+
+/* =========================
+   BUTTONS
+========================= */
 
 requestOtpButton.addEventListener(
     "click",
@@ -1662,135 +1884,10 @@ verifyOtpButton.addEventListener(
     verifyOtp
 );
 
-otpInput.addEventListener(
-    "input",
-    () => {
 
-        otpInput.value =
-            otpInput.value
-                .replace(/\D/g, "")
-                .slice(0, 6);
-    }
-);
-
-closeModal.addEventListener(
-    "click",
-    () => {
-
-        otpModal.classList.remove(
-            "show"
-        );
-    }
-);
-
-otpModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            otpModal
-        ) {
-            otpModal.classList.remove(
-                "show"
-            );
-        }
-    }
-);
-
-modalRequestButton.addEventListener(
-    "click",
-    async () => {
-
-        const phone =
-            normalizePhone(
-                modalPhoneInput.value
-            );
-
-        if (!phone) {
-
-            showModalMessage(
-                "Nomor WhatsApp wajib diisi."
-            );
-
-            return;
-        }
-
-        modalRequestButton.disabled =
-            true;
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/otp/request",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body: JSON.stringify({
-                            phone
-                        })
-                    }
-                );
-
-            const data =
-                await response.json();
-
-            if (
-                !response.ok ||
-                !data.success
-            ) {
-                throw new Error(
-                    data.message ||
-                    "Gagal meminta OTP."
-                );
-            }
-
-            phoneInput.value =
-                phone;
-
-            currentPhone =
-                phone;
-
-            otpSection.classList.add(
-                "show"
-            );
-
-            showPhoneMessage(
-                "OTP berhasil dikirim ke WhatsApp kamu.",
-                "success"
-            );
-
-            if (
-                data.cooldownSeconds
-            ) {
-                startCooldown(
-                    data.cooldownSeconds
-                );
-            }
-
-            otpModal.classList.remove(
-                "show"
-            );
-
-            otpInput.focus();
-
-        } catch (error) {
-
-            showModalMessage(
-                error.message ||
-                "Gagal meminta OTP."
-            );
-
-            modalRequestButton.disabled =
-                false;
-        }
-    }
-);
+/* =========================
+   START
+========================= */
 
 loadProfile();
 </script>
