@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Alight Motion - ReyCode Digital</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(91, 74, 255, .16),
+                    transparent 35%
+                ),
+                #08090d;
+            color: #fff;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .container {
+            width: min(100% - 32px, 900px);
+            margin: auto;
+            padding: 32px 0 60px;
+        }
+
+        .top {
+            margin-bottom: 25px;
+        }
+
+        .hello {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+            color: #8d91a3;
+            font-size: 14px;
+        }
+
+        .card {
+            border: 1px solid #20232e;
+            background: rgba(15, 17, 23, .92);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow:
+                0 20px 50px rgba(0,0,0,.18);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .desc {
+            color: #8d91a3;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            border: 1px solid #272a35;
+            background: #11131a;
+            color: #8d91a3;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .tab.active {
+            background: #fff;
+            color: #090a0e;
+            border-color: #fff;
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #c5c8d3;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid #292c38;
+            background: #0b0d12;
+            color: #fff;
+            border-radius: 12px;
+            padding: 13px 14px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #777cff;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 17px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn.primary {
+            background: #fff;
+            color: #08090d;
+        }
+
+        .btn.secondary {
+            background: #191b24;
+            border: 1px solid #292c38;
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: rgba(43, 194, 125, .12);
+            color: #62e3aa;
+            border: 1px solid rgba(43, 194, 125, .2);
+        }
+
+        .status.error {
+            background: rgba(255, 74, 95, .1);
+            color: #ff8d9b;
+            border: 1px solid rgba(255, 74, 95, .2);
+        }
+
+        .result {
+            display: none;
+            margin-top: 18px;
+            border: 1px solid #272a35;
+            background: #0b0d12;
+            border-radius: 14px;
+            padding: 17px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-title {
+            font-weight: 800;
+            margin-bottom: 13px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 9px 0;
+            border-bottom: 1px solid #1b1e27;
+            font-size: 13px;
+        }
+
+        .result-row:last-child {
+            border-bottom: 0;
+        }
+
+        .result-label {
+            color: #858a9c;
+        }
+
+        .result-value {
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .history-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .history-item {
+            border: 1px solid #242731;
+            background: #0b0d12;
+            border-radius: 14px;
+            padding: 15px;
+        }
+
+        .history-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 9px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: rgba(43, 194, 125, .1);
+            color: #62e3aa;
+        }
+
+        .badge.failed {
+            background: rgba(255, 74, 95, .1);
+            color: #ff8d9b;
+        }
+
+        .history-email {
+            font-size: 14px;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .history-meta {
+            color: #777c8e;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777c8e;
+            padding: 30px 10px;
+            font-size: 13px;
+        }
+
+        .loading {
+            opacity: .7;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: min(100% - 20px, 900px);
+                padding-top: 20px;
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 15px;
+            }
+
+            .hello {
+                font-size: 24px;
+            }
+
+            .result-row {
+                display: block;
+            }
+
+            .result-value {
+                text-align: left;
+                margin-top: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top">
+        <div
+            class="hello"
+            id="greeting"
+        >
+            Halo 👋
+        </div>
+
+        <div class="subtitle">
+            Kelola Alight Motion melalui ReyCode Digital.
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="title">
+            Alight Motion
+        </div>
+
+        <div class="desc">
+            Pilih metode yang ingin kamu gunakan.
+        </div>
+
+        <div class="tabs">
+
+            <button
+                class="tab active"
+                data-tab="manual"
+                type="button"
+            >
+                Manual
+            </button>
+
+            <button
+                class="tab"
+                data-tab="auto"
+                type="button"
+            >
+                Auto
+            </button>
+
+        </div>
+
+        <!-- MANUAL -->
+
+        <div
+            class="panel active"
+            id="manual"
+        >
+
+            <div class="field">
+                <label for="manualEmail">
+                    Email
+                </label>
+
+                <input
+                    id="manualEmail"
+                    type="email"
+                    placeholder="contoh@email.com"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="btn secondary"
+                    id="sendLinkBtn"
+                    type="button"
+                >
+                    Kirim Link
+                </button>
+
+            </div>
+
+            <div
+                class="field"
+                style="margin-top:15px"
+            >
+                <label for="magicLink">
+                    Link Verifikasi
+                </label>
+
+                <input
+                    id="magicLink"
+                    type="url"
+                    placeholder="Tempel link verifikasi di sini"
+                >
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="btn primary"
+                    id="verifyBtn"
+                    type="button"
+                >
+                    Verify
+                </button>
+
+            </div>
+
+            <div
+                class="status"
+                id="manualStatus"
+            ></div>
+
+        </div>
+
+        <!-- AUTO -->
+
+        <div
+            class="panel"
+            id="auto"
+        >
+
+            <div class="field">
+                <label for="autoUsername">
+                    Nama / Username
+                    <span style="color:#777c8e">
+                        (opsional)
+                    </span>
+                </label>
+
+                <input
+                    id="autoUsername"
+                    type="text"
+                    placeholder="Kosongkan untuk nama random"
+                    maxlength="50"
+                >
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="btn primary"
+                    id="autoBtn"
+                    type="button"
+                >
+                    Auto Activate
+                </button>
+
+            </div>
+
+            <div
+                class="status"
+                id="autoStatus"
+            ></div>
+
+            <div
+                class="result"
+                id="autoResult"
+            >
+                <div class="result-title">
+                    Hasil Auto
+                </div>
+
+                <div class="result-row">
+                    <div class="result-label">
+                        Email
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="resultEmail"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="result-row">
+                    <div class="result-label">
+                        Animal
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="resultAnimal"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="result-row">
+                    <div class="result-label">
+                        Order ID
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="resultOrder"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="result-row">
+                    <div class="result-label">
+                        Berlaku Sampai
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="resultValid"
+                    >
+                        -
+                    </div>
+                </div>
+
+                <div class="result-row">
+                    <div class="result-label">
+                        Website
+                    </div>
+
+                    <div
+                        class="result-value"
+                        id="resultWeb"
+                    >
+                        -
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- HISTORY -->
+
+    <div class="card">
+
+        <div class="history-head">
+
+            <div>
+                <div class="title">
+                    History
+                </div>
+
+                <div class="desc">
+                    Riwayat proses akun kamu.
+                </div>
+            </div>
+
+            <button
+                class="btn secondary"
+                id="refreshHistory"
+                type="button"
+            >
+                Refresh
+            </button>
+
+        </div>
+
+        <div
+            class="history-list"
+            id="historyList"
+        >
+            <div class="empty">
+                Memuat history...
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function showStatus(element, message, type) {
+    element.textContent = message;
+    element.className =
+        "status show " + type;
+}
+
+function clearStatus(element) {
+    element.textContent = "";
+    element.className = "status";
+}
+
+async function loadUser() {
+    try {
+        const response = await fetch(
+            "/api/user/me",
+            {
+                credentials: "include"
+            }
+        );
+
+        if (!response.ok) {
+            location.href = "/login.html";
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        const user =
+            data.user || data.data || data;
+
+        const name =
+            user.name ||
+            user.username ||
+            "User";
+
+        $("greeting").textContent =
+            `Halo, ${name} 👋`;
+    } catch {
+        $("greeting").textContent =
+            "Halo 👋";
+    }
+}
+
+async function sendLink() {
+    const email =
+        $("manualEmail").value.trim();
+
+    if (!email) {
+        showStatus(
+            $("manualStatus"),
+            "Email wajib diisi.",
+            "error"
+        );
+        return;
+    }
+
+    const button =
+        $("sendLinkBtn");
+
+    button.disabled = true;
+    button.textContent =
+        "Mengirim...";
+
+    clearStatus(
+        $("manualStatus")
+    );
+
+    try {
+        const response =
+            await fetch(
+                "/api/alightmotion",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "send-link",
+                        email
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.status) {
+            throw new Error(
+                data.error ||
+                data.message ||
+                "Gagal mengirim link."
+            );
+        }
+
+        showStatus(
+            $("manualStatus"),
+            data.message ||
+            "Tautan verifikasi berhasil dikirim.",
+            "success"
+        );
+    } catch (error) {
+        showStatus(
+            $("manualStatus"),
+            error.message,
+            "error"
+        );
+    } finally {
+        button.disabled = false;
+        button.textContent =
+            "Kirim Link";
+    }
+}
+
+async function verifyLink() {
+    const email =
+        $("manualEmail").value.trim();
+
+    const magicLink =
+        $("magicLink").value.trim();
+
+    if (!email) {
+        showStatus(
+            $("manualStatus"),
+            "Email wajib diisi.",
+            "error"
+        );
+        return;
+    }
+
+    if (!magicLink) {
+        showStatus(
+            $("manualStatus"),
+            "Link verifikasi wajib diisi.",
+            "error"
+        );
+        return;
+    }
+
+    const button =
+        $("verifyBtn");
+
+    button.disabled = true;
+    button.textContent =
+        "Memproses...";
+
+    clearStatus(
+        $("manualStatus")
+    );
+
+    try {
+        const response =
+            await fetch(
+                "/api/alightmotion",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "verify-link",
+                        email,
+                        magicLink
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.status) {
+            throw new Error(
+                data.error ||
+                data.message ||
+                "Verifikasi gagal."
+            );
+        }
+
+        const orderId =
+            data.data?.orderId;
+
+        showStatus(
+            $("manualStatus"),
+            orderId
+                ? `Berhasil diverifikasi. Order ID: ${orderId}`
+                : "Berhasil diverifikasi.",
+            "success"
+        );
+
+        await loadHistory();
+    } catch (error) {
+        showStatus(
+            $("manualStatus"),
+            error.message,
+            "error"
+        );
+
+        await loadHistory();
+    } finally {
+        button.disabled = false;
+        button.textContent =
+            "Verify";
+    }
+}
+
+async function autoActivate() {
+    const username =
+        $("autoUsername").value.trim();
+
+    const button =
+        $("autoBtn");
+
+    button.disabled = true;
+    button.textContent =
+        "Memproses...";
+
+    clearStatus(
+        $("autoStatus")
+    );
+
+    $("autoResult")
+        .classList
+        .remove("show");
+
+    try {
+        const response =
+            await fetch(
+                "/api/alightmotion",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "auto",
+                        ...(username
+                            ? { username }
+                            : {})
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.status ||
+            !data.card
+        ) {
+            throw new Error(
+                data.error ||
+                data.message ||
+                "Auto gagal."
+            );
+        }
+
+        const card = data.card;
+
+        $("resultEmail").textContent =
+            card.email || "-";
+
+        $("resultAnimal").textContent =
+            card
+                .selamat_kamu_mendapatkan_animal ||
+            "-";
+
+        $("resultOrder").textContent =
+            card.orderId || "-";
+
+        $("resultValid").textContent =
+            card.validUntil || "-";
+
+        $("resultWeb").textContent =
+            card.weblogin || "-";
+
+        $("autoResult")
+            .classList
+            .add("show");
+
+        showStatus(
+            $("autoStatus"),
+            "Berhasil membuat akun.",
+            "success"
+        );
+
+        await loadHistory();
+    } catch (error) {
+        showStatus(
+            $("autoStatus"),
+            error.message,
+            "error"
+        );
+
+        await loadHistory();
+    } finally {
+        button.disabled = false;
+        button.textContent =
+            "Auto Activate";
+    }
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function formatDate(value) {
+    if (!value) return "-";
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleString(
+        "id-ID",
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    );
+}
+
+async function loadHistory() {
+    const list =
+        $("historyList");
+
+    list.innerHTML =
+        `<div class="empty">Memuat history...</div>`;
+
+    try {
+        const response =
+            await fetch(
+                "/api/alightmotion/history",
+                {
+                    credentials: "include"
+                }
+            );
+
+        if (response.status === 401) {
+            location.href =
+                "/login.html";
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+            throw new Error(
+                data.message ||
+                "Gagal mengambil history."
+            );
+        }
+
+        const history =
+            Array.isArray(data.history)
+                ? data.history
+                : [];
+
+        if (!history.length) {
+            list.innerHTML =
+                `<div class="empty">
+                    Belum ada history.
+                </div>`;
+            return;
+        }
+
+        list.innerHTML =
+            history.map(item => {
+                const failed =
+                    item.status === "failed";
+
+                return `
+                    <div class="history-item">
+
+                        <div class="history-top">
+
+                            <div class="history-email">
+                                ${escapeHtml(
+                                    item.email ||
+                                    item.username ||
+                                    "-"
+                                )}
+                            </div>
+
+                            <div class="badge ${
+                                failed
+                                    ? "failed"
+                                    : ""
+                            }">
+                                ${
+                                    failed
+                                        ? "FAILED"
+                                        : "SUCCESS"
+                                }
+                            </div>
+
+                        </div>
+
+                        <div class="history-meta">
+                            Mode:
+                            ${escapeHtml(
+                                item.action
+                            )}
+                            <br>
+
+                            ${
+                                item.orderId
+                                    ? `Order:
+                                        ${escapeHtml(
+                                            item.orderId
+                                        )}<br>`
+                                    : ""
+                            }
+
+                            ${
+                                item.validUntil
+                                    ? `Valid:
+                                        ${escapeHtml(
+                                            item.validUntil
+                                        )}<br>`
+                                    : ""
+                            }
+
+                            Dibuat:
+                            ${escapeHtml(
+                                formatDate(
+                                    item.createdAt
+                                )
+                            )}
+
+                            ${
+                                failed &&
+                                item.error
+                                    ? `<br>Error:
+                                        ${escapeHtml(
+                                            item.error
+                                        )}`
+                                    : ""
+                            }
+                        </div>
+
+                    </div>
+                `;
+            }).join("");
+    } catch (error) {
+        list.innerHTML =
+            `<div class="empty">
+                ${escapeHtml(
+                    error.message
+                )}
+            </div>`;
+    }
+}
+
+document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+        tab.addEventListener(
+            "click",
+            () => {
+                document
+                    .querySelectorAll(".tab")
+                    .forEach(item =>
+                        item.classList
+                            .remove("active")
+                    );
+
+                document
+                    .querySelectorAll(".panel")
+                    .forEach(item =>
+                        item.classList
+                            .remove("active")
+                    );
+
+                tab.classList
+                    .add("active");
+
+                const target =
+                    $(tab.dataset.tab);
+
+                if (target) {
+                    target.classList
+                        .add("active");
+                }
+            }
+        );
+    });
+
+$("sendLinkBtn")
+    .addEventListener(
+        "click",
+        sendLink
+    );
+
+$("verifyBtn")
+    .addEventListener(
+        "click",
+        verifyLink
+    );
+
+$("autoBtn")
+    .addEventListener(
+        "click",
+        autoActivate
+    );
+
+$("refreshHistory")
+    .addEventListener(
+        "click",
+        loadHistory
+    );
+
+loadUser();
+loadHistory();
+</script>
+
+</body>
+                      </html>
