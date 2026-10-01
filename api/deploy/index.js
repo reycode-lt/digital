@@ -297,13 +297,9 @@ function parseJsonBuffer(buffer, filename) {
     }
 
     try {
-        return JSON.parse(
-            buffer.toString("utf8")
-        );
+        return JSON.parse(buffer.toString("utf8"));
     } catch {
-        throw new Error(
-            `${filename} tidak valid`
-        );
+        throw new Error(`${filename} tidak valid`);
     }
 }
 
@@ -313,8 +309,7 @@ function findProjectFile(files, filename) {
     return (
         files.find(
             item =>
-                String(item.file)
-                    .toLowerCase() === target
+                String(item.file).toLowerCase() === target
         ) || null
     );
 }
@@ -336,6 +331,18 @@ function hasDependency(dependencies, names) {
     );
 }
 
+function scriptsContain(scripts, names) {
+    const values = Object.values(scripts || {});
+
+    const combined = values
+        .map(value => String(value || "").toLowerCase())
+        .join(" ");
+
+    return names.some(name =>
+        combined.includes(String(name).toLowerCase())
+    );
+}
+
 function detectFramework(
     packageJson = null,
     vercelJson = null
@@ -354,213 +361,265 @@ function detectFramework(
         getDependencies(packageJson);
 
     if (
-        hasDependency(dependencies, ["next"])
+        hasDependency(dependencies, [
+            "next"
+        ])
     ) {
         return "nextjs";
     }
 
     if (
-        hasDependency(dependencies, ["nuxt"])
+        hasDependency(dependencies, [
+            "nuxt"
+        ])
     ) {
         return "nuxtjs";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@sveltejs/kit"]
-        )
+        hasDependency(dependencies, [
+            "@sveltejs/kit"
+        ])
     ) {
         return "sveltekit";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["astro"]
-        )
+        hasDependency(dependencies, [
+            "astro"
+        ])
     ) {
         return "astro";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@remix-run/dev", "remix"]
-        )
+        hasDependency(dependencies, [
+            "@remix-run/dev",
+            "@remix-run/react",
+            "@remix-run/node",
+            "remix"
+        ])
     ) {
         return "remix";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@angular/core"]
-        )
+        hasDependency(dependencies, [
+            "@angular/core",
+            "@angular/cli"
+        ])
     ) {
         return "angular";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@tanstack/start"]
-        )
+        hasDependency(dependencies, [
+            "@tanstack/start"
+        ])
     ) {
         return "tanstack-start";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["solid-start"]
-        )
+        hasDependency(dependencies, [
+            "@solidjs/start",
+            "solid-start"
+        ])
     ) {
         return "solidstart";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@sveltejs/vite-plugin-svelte"]
-        )
+        hasDependency(dependencies, [
+            "@sveltejs/vite-plugin-svelte"
+        ])
     ) {
         return "svelte";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["vue"]
-        )
-    ) {
-        if (
-            hasDependency(
-                dependencies,
-                ["vite"]
-            )
-        ) {
-            return "vite";
-        }
-
-        return "vue";
-    }
-
-    if (
-        hasDependency(
-            dependencies,
-            ["react-router"]
-        )
-    ) {
-        return "react-routers";
-    }
-
-    if (
-        hasDependency(
-            dependencies,
-            ["vite"]
-        )
-    ) {
-        return "vite";
-    }
-
-    if (
-        hasDependency(
-            dependencies,
-            ["react-scripts"]
-        )
-    ) {
-        return "create-react-app";
-    }
-
-    if (
-        hasDependency(
-            dependencies,
-            ["gatsby"]
-        )
+        hasDependency(dependencies, [
+            "gatsby"
+        ])
     ) {
         return "gatsby";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["preact"]
-        )
+        hasDependency(dependencies, [
+            "react-scripts"
+        ])
+    ) {
+        return "create-react-app";
+    }
+
+    if (
+        hasDependency(dependencies, [
+            "preact"
+        ])
     ) {
         return "preact";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["express"]
-        )
+        hasDependency(dependencies, [
+            "vite"
+        ])
+    ) {
+        return "vite";
+    }
+
+    if (
+        hasDependency(dependencies, [
+            "vue"
+        ])
+    ) {
+        return "vue";
+    }
+
+    if (
+        hasDependency(dependencies, [
+            "svelte"
+        ])
+    ) {
+        return "svelte";
+    }
+
+    if (
+        hasDependency(dependencies, [
+            "express"
+        ])
     ) {
         return "express";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["fastify"]
-        )
+        hasDependency(dependencies, [
+            "fastify"
+        ])
     ) {
         return "fastify";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["hono"]
-        )
+        hasDependency(dependencies, [
+            "hono"
+        ])
     ) {
         return "hono";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@nestjs/core"]
-        )
+        hasDependency(dependencies, [
+            "@nestjs/core"
+        ])
     ) {
         return "nestjs";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["koa"]
-        )
+        hasDependency(dependencies, [
+            "koa"
+        ])
     ) {
         return "koa";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["@hapi/hapi"]
-        )
+        hasDependency(dependencies, [
+            "@hapi/hapi"
+        ])
     ) {
         return "hapi";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["elysia"]
-        )
+        hasDependency(dependencies, [
+            "elysia"
+        ])
     ) {
         return "elysia";
     }
 
     if (
-        hasDependency(
-            dependencies,
-            ["h3"]
-        )
+        hasDependency(dependencies, [
+            "h3"
+        ])
     ) {
         return "h3";
+    }
+
+    const scripts =
+        packageJson?.scripts || {};
+
+    if (
+        scriptsContain(scripts, [
+            "next build",
+            "next dev"
+        ])
+    ) {
+        return "nextjs";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "nuxt build",
+            "nuxt dev"
+        ])
+    ) {
+        return "nuxtjs";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "astro build",
+            "astro dev"
+        ])
+    ) {
+        return "astro";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "vite build",
+            "vite dev"
+        ])
+    ) {
+        return "vite";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "svelte-kit"
+        ])
+    ) {
+        return "sveltekit";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "ng build",
+            "ng serve"
+        ])
+    ) {
+        return "angular";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "remix build",
+            "remix vite"
+        ])
+    ) {
+        return "remix";
+    }
+
+    if (
+        scriptsContain(scripts, [
+            "react-scripts"
+        ])
+    ) {
+        return "create-react-app";
     }
 
     return null;
@@ -568,18 +627,17 @@ function detectFramework(
 
 function buildProjectSettings(
     packageJson = null,
-    vercelJson = null,
-    isStatic = false
+    vercelJson = null
 ) {
-    const framework = isStatic
-        ? null
-        : detectFramework(
+    const framework =
+        detectFramework(
             packageJson,
             vercelJson
         );
 
     const settings = {
-        framework
+        framework:
+            framework || null
     };
 
     if (
@@ -624,6 +682,17 @@ function buildProjectSettings(
     ) {
         settings.outputDirectory =
             vercelJson.outputDirectory;
+    }
+
+    if (
+        vercelJson &&
+        Object.prototype.hasOwnProperty.call(
+            vercelJson,
+            "nodeVersion"
+        )
+    ) {
+        settings.nodeVersion =
+            vercelJson.nodeVersion;
     }
 
     return settings;
@@ -677,7 +746,9 @@ function inspectProjectFiles(files) {
 
     if (
         isStatic &&
-        !hasIndex
+        !hasIndex &&
+        !packageJson &&
+        !vercelJson
     ) {
         throw new Error(
             "Framework tidak terdeteksi dan index.html tidak ditemukan"
@@ -691,8 +762,7 @@ function inspectProjectFiles(files) {
         projectSettings:
             buildProjectSettings(
                 packageJson,
-                vercelJson,
-                isStatic
+                vercelJson
             )
     };
 }
@@ -747,8 +817,7 @@ async function inspectGitHubProject(
         projectSettings:
             buildProjectSettings(
                 packageJson,
-                vercelJson,
-                !framework
+                vercelJson
             )
     };
 }
@@ -990,17 +1059,6 @@ function normalizeZipPath(filename) {
     return value;
 }
 
-function findIndexFile(files) {
-    return (
-        files.find(
-            item =>
-                String(item.file)
-                    .toLowerCase() ===
-                "index.html"
-        ) || null
-    );
-}
-
 function getCommonZipRoot(files) {
     if (!files.length) {
         return "";
@@ -1042,18 +1100,34 @@ function stripCommonRoot(files) {
         return files;
     }
 
-    return files
-        .map(item => ({
+    const rootFiles =
+        files.map(item => ({
             ...item,
             file:
                 item.file.slice(
                     root.length
                 )
-        }))
-        .filter(
-            item =>
-                item.file
+        }));
+
+    const hasProjectRootFile =
+        rootFiles.some(item =>
+            [
+                "package.json",
+                "vercel.json",
+                "index.html"
+            ].includes(
+                String(item.file).toLowerCase()
+            )
         );
+
+    if (!hasProjectRootFile) {
+        return files;
+    }
+
+    return rootFiles.filter(
+        item =>
+            item.file
+    );
 }
 
 function readZip(zipPath) {
@@ -1193,13 +1267,14 @@ async function prepareUploadedFiles(
 }
 
 async function uploadProjectFiles(
-    uploadedFile,
+    files,
     project
 ) {
-    const files =
-        await prepareUploadedFiles(
-            uploadedFile
+    if (!Array.isArray(files)) {
+        throw new Error(
+            "Daftar file project tidak valid"
         );
+    }
 
     if (!files.length) {
         throw new Error(
@@ -1237,7 +1312,10 @@ async function uploadProjectFiles(
 
 async function deployFiles(
     project,
-    files
+    files,
+    projectSettings = {
+        framework: null
+    }
 ) {
     if (!project?.id) {
         throw new Error(
@@ -1247,19 +1325,23 @@ async function deployFiles(
 
     return await vercel(
         "POST",
-        "/v13/deployments",
+        "/v13/deployments?skipAutoDetectionConfirmation=1",
         {
             name: project.name,
             project: project.id,
             target: "production",
-            files
+            files,
+            projectSettings
         }
     );
 }
 
 async function deployGitHub(
     project,
-    repositoryUrl
+    repositoryUrl,
+    projectSettings = {
+        framework: null
+    }
 ) {
     const repoUrl =
         normalizeRepo(
@@ -1301,7 +1383,7 @@ async function deployGitHub(
 
     return await vercel(
         "POST",
-        "/v13/deployments",
+        "/v13/deployments?skipAutoDetectionConfirmation=1",
         {
             name: project.name,
             project: project.id,
@@ -1311,7 +1393,8 @@ async function deployGitHub(
                 repoId:
                     githubRepo.id,
                 ref: branch
-            }
+            },
+            projectSettings
         }
     );
 }
@@ -1628,6 +1711,7 @@ async function createDeployment(
     }
 
     let normalizedRepo = "";
+
     let projectSettings = {
         framework: null
     };
@@ -1695,12 +1779,14 @@ async function createDeployment(
         console.log(
             "FRAMEWORK DETECTED:",
             detectedFramework ||
-            "static"
+            "static/auto"
         );
 
         console.log(
             "PROJECT SETTINGS:",
-            projectSettings
+            JSON.stringify(
+                projectSettings
+            )
         );
 
         const project =
@@ -1718,7 +1804,8 @@ async function createDeployment(
             result =
                 await deployGitHub(
                     project,
-                    normalizedRepo
+                    normalizedRepo,
+                    projectSettings
                 );
         } else {
             uploadFileName =
@@ -1733,14 +1820,15 @@ async function createDeployment(
 
             const files =
                 await uploadProjectFiles(
-                    uploadedFile,
+                    preparedFiles,
                     project
                 );
 
             result =
                 await deployFiles(
                     project,
-                    files
+                    files,
+                    projectSettings
                 );
         }
 
@@ -1976,6 +2064,7 @@ async function updateDeployment(
 
     let detectedFramework = null;
     let normalizedRepo = "";
+    let preparedFiles = null;
 
     try {
         if (
@@ -2017,14 +2106,14 @@ async function updateDeployment(
             detectedFramework =
                 detected.framework;
         } else {
-            const files =
+            preparedFiles =
                 await prepareUploadedFiles(
                     uploadedFile
                 );
 
             const detected =
                 inspectProjectFiles(
-                    files
+                    preparedFiles
                 );
 
             projectSettings =
@@ -2037,7 +2126,14 @@ async function updateDeployment(
         console.log(
             "REDEPLOY FRAMEWORK:",
             detectedFramework ||
-            "static"
+            "static/auto"
+        );
+
+        console.log(
+            "REDEPLOY PROJECT SETTINGS:",
+            JSON.stringify(
+                projectSettings
+            )
         );
 
         const project =
@@ -2054,19 +2150,21 @@ async function updateDeployment(
             result =
                 await deployGitHub(
                     project,
-                    normalizedRepo
+                    normalizedRepo,
+                    projectSettings
                 );
         } else {
             const files =
                 await uploadProjectFiles(
-                    uploadedFile,
+                    preparedFiles,
                     project
                 );
 
             result =
                 await deployFiles(
                     project,
-                    files
+                    files,
+                    projectSettings
                 );
         }
 
