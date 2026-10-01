@@ -89,8 +89,6 @@
             padding: 28px 20px 55px;
         }
 
-        /* TOPBAR */
-
         .topbar {
             display: flex;
             align-items: center;
@@ -161,8 +159,6 @@
             transform: translateY(-1px);
         }
 
-        /* EMAIL ALERT */
-
         .verification-alert {
             display: none;
             margin-bottom: 18px;
@@ -197,8 +193,6 @@
             color: #e8edf5;
         }
 
-        /* MAIN CARD */
-
         .profile-card {
             overflow: hidden;
             border-radius: 27px;
@@ -210,8 +204,6 @@
                 0 35px 100px rgba(0,0,0,.48),
                 inset 0 1px rgba(255,255,255,.025);
         }
-
-        /* PROFILE HEADER */
 
         .profile-head {
             position: relative;
@@ -303,8 +295,6 @@
             font-weight: 700;
         }
 
-        /* CONTENT */
-
         .content {
             padding: 30px 34px 34px;
         }
@@ -333,8 +323,6 @@
                     transparent
                 );
         }
-
-        /* ACCOUNT INFO */
 
         .fields {
             display: grid;
@@ -388,8 +376,6 @@
             background: var(--blue);
             box-shadow: 0 0 12px rgba(49,133,255,.75);
         }
-
-        /* WHATSAPP */
 
         .phone-box {
             position: relative;
@@ -556,8 +542,6 @@
             border: 1px solid rgba(49,133,255,.11);
         }
 
-        /* OTP */
-
         .otp-section {
             display: none;
             margin-top: 15px;
@@ -623,8 +607,6 @@
             font-size: 9px;
         }
 
-        /* ACTIONS */
-
         .actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -663,8 +645,6 @@
         .button.primary:hover {
             background: #2877ea;
         }
-
-        /* LOADING */
 
         .loading {
             padding: 85px 20px;
@@ -717,7 +697,6 @@
         }
 
         @media(max-width:650px) {
-
             .container {
                 padding: 18px 13px 40px;
             }
@@ -965,8 +944,6 @@
 
                 </div>
 
-                <!-- WHATSAPP VERIFICATION -->
-
                 <div class="phone-box">
 
                     <div class="phone-box-head">
@@ -1163,19 +1140,34 @@ let cooldownTimer = null;
 ========================= */
 
 function normalizePhone(phone) {
-
-    return String(phone || "")
+    let value = String(phone || "")
         .replace(/[^\d+]/g, "")
-        .replace(/^00/, "+")
         .trim();
+
+    if (value.startsWith("00")) {
+        value = "+" + value.slice(2);
+    }
+
+    if (value.startsWith("0")) {
+        value = "+62" + value.slice(1);
+    }
+
+    if (/^62\d+$/.test(value)) {
+        value = "+" + value;
+    }
+
+    return value;
 }
 
+
+/* =========================
+   MESSAGE
+========================= */
 
 function showPhoneMessage(
     message,
     type = "error"
 ) {
-
     phoneMessage.textContent =
         message;
 
@@ -1185,9 +1177,7 @@ function showPhoneMessage(
 
 
 function clearPhoneMessage() {
-
-    phoneMessage.textContent =
-        "";
+    phoneMessage.textContent = "";
 
     phoneMessage.className =
         "phone-message";
@@ -1199,9 +1189,7 @@ function clearPhoneMessage() {
 ========================= */
 
 function clearCooldown() {
-
     if (cooldownTimer) {
-
         clearInterval(
             cooldownTimer
         );
@@ -1209,31 +1197,23 @@ function clearCooldown() {
         cooldownTimer = null;
     }
 
-    cooldownText.textContent =
-        "";
+    cooldownText.textContent = "";
 }
 
 
-function startCooldown(
-    seconds = 300
-) {
-
+function startCooldown(seconds = 300) {
     clearCooldown();
 
     let remaining =
         Number(seconds);
 
     function update() {
-
-        if (
-            remaining <= 0
-        ) {
-
+        if (remaining <= 0) {
             clearCooldown();
 
             if (
-                phoneStatus.classList.contains(
-                    "pending"
+                !phoneStatus.classList.contains(
+                    "success"
                 )
             ) {
                 requestOtpButton.disabled =
@@ -1276,10 +1256,7 @@ function startCooldown(
    PHONE STATE
 ========================= */
 
-function setPhoneVerified(
-    phone
-) {
-
+function setPhoneVerified(phone) {
     currentPhone =
         phone || currentPhone;
 
@@ -1306,10 +1283,7 @@ function setPhoneVerified(
 }
 
 
-function setPhonePending(
-    phone
-) {
-
+function setPhonePending(phone) {
     currentPhone =
         phone || currentPhone;
 
@@ -1329,7 +1303,6 @@ function setPhonePending(
         false;
 
     if (currentPhone) {
-
         phoneInput.value =
             currentPhone;
     }
@@ -1341,14 +1314,12 @@ function setPhonePending(
 ========================= */
 
 async function requestOtp() {
-
     const phone =
         normalizePhone(
             phoneInput.value
         );
 
     if (!phone) {
-
         showPhoneMessage(
             "Nomor WhatsApp wajib diisi."
         );
@@ -1361,7 +1332,6 @@ async function requestOtp() {
             phone
         )
     ) {
-
         showPhoneMessage(
             "Format nomor WhatsApp tidak valid."
         );
@@ -1378,10 +1348,9 @@ async function requestOtp() {
     clearPhoneMessage();
 
     try {
-
         const response =
             await fetch(
-                "/api/otp",
+                "/api/user/update",
                 {
                     method: "POST",
                     credentials: "include",
@@ -1390,7 +1359,8 @@ async function requestOtp() {
                             "application/json"
                     },
                     body: JSON.stringify({
-                        action: "request",
+                        action:
+                            "request_otp",
                         phone
                     })
                 }
@@ -1414,15 +1384,12 @@ async function requestOtp() {
         );
 
         showPhoneMessage(
-            "OTP berhasil dibuat. Silakan cek WhatsApp kamu.",
+            "OTP berhasil dikirim. Silakan cek WhatsApp kamu.",
             "success"
         );
 
-        /*
-         * Cooldown backend:
-         * 5 menit.
-         */
         startCooldown(
+            data.cooldownSeconds ||
             300
         );
 
@@ -1432,7 +1399,6 @@ async function requestOtp() {
         otpInput.focus();
 
     } catch (error) {
-
         requestOtpButton.disabled =
             false;
 
@@ -1449,7 +1415,6 @@ async function requestOtp() {
 ========================= */
 
 async function verifyOtp() {
-
     const phone =
         normalizePhone(
             currentPhone ||
@@ -1462,7 +1427,6 @@ async function verifyOtp() {
         ).trim();
 
     if (!phone) {
-
         showPhoneMessage(
             "Nomor WhatsApp belum diisi."
         );
@@ -1475,7 +1439,6 @@ async function verifyOtp() {
             otp
         )
     ) {
-
         showPhoneMessage(
             "OTP harus terdiri dari 6 angka."
         );
@@ -1491,10 +1454,9 @@ async function verifyOtp() {
     clearPhoneMessage();
 
     try {
-
         const response =
             await fetch(
-                "/api/otp",
+                "/api/user/update",
                 {
                     method: "POST",
                     credentials: "include",
@@ -1503,7 +1465,8 @@ async function verifyOtp() {
                             "application/json"
                     },
                     body: JSON.stringify({
-                        action: "verify",
+                        action:
+                            "verify_otp",
                         phone,
                         otp
                     })
@@ -1523,27 +1486,27 @@ async function verifyOtp() {
             );
         }
 
+        const verifiedPhone =
+            data.user?.whatsapp ||
+            phone;
+
         setPhoneVerified(
-            data.phone ||
-            phone
+            verifiedPhone
         );
 
         document.getElementById(
             "whatsappValue"
         ).textContent =
-            data.phone ||
-            phone;
+            verifiedPhone;
 
         showPhoneMessage(
             "✓ Nomor WhatsApp berhasil diverifikasi.",
             "success"
         );
 
-        otpInput.value =
-            "";
+        otpInput.value = "";
 
     } catch (error) {
-
         verifyOtpButton.disabled =
             false;
 
@@ -1560,9 +1523,7 @@ async function verifyOtp() {
 ========================= */
 
 async function loadProfile() {
-
     try {
-
         const response =
             await fetch(
                 `/api/user/me?_=${Date.now()}`,
@@ -1622,8 +1583,6 @@ async function loadProfile() {
                 : "-";
 
 
-        /* HEADER */
-
         document.getElementById(
             "avatar"
         ).textContent =
@@ -1641,8 +1600,6 @@ async function loadProfile() {
         ).textContent =
             email;
 
-
-        /* INFO */
 
         document.getElementById(
             "nameValue"
@@ -1673,8 +1630,6 @@ async function loadProfile() {
             "-";
 
 
-        /* EMAIL STATUS */
-
         const statusValue =
             document.getElementById(
                 "statusValue"
@@ -1685,10 +1640,7 @@ async function loadProfile() {
                 "verified"
             );
 
-        if (
-            emailVerified
-        ) {
-
+        if (emailVerified) {
             verificationAlert.style.display =
                 "none";
 
@@ -1712,7 +1664,6 @@ async function loadProfile() {
                 "rgba(49,133,255,.15)";
 
         } else {
-
             verificationAlert.style.display =
                 "block";
 
@@ -1736,10 +1687,7 @@ async function loadProfile() {
         }
 
 
-        /* PHONE */
-
         if (whatsapp) {
-
             currentPhone =
                 normalizePhone(
                     whatsapp
@@ -1753,20 +1701,15 @@ async function loadProfile() {
             phoneVerified &&
             whatsapp
         ) {
-
             setPhoneVerified(
                 currentPhone
             );
-
         } else {
-
             setPhonePending(
                 currentPhone
             );
         }
 
-
-        /* SHOW */
 
         loading.style.display =
             "none";
@@ -1775,7 +1718,6 @@ async function loadProfile() {
             "block";
 
     } catch (error) {
-
         console.error(
             "PROFILE ERROR:",
             error
@@ -1809,7 +1751,6 @@ async function loadProfile() {
 phoneInput.addEventListener(
     "input",
     () => {
-
         phoneInput.value =
             phoneInput.value
                 .replace(
@@ -1827,7 +1768,6 @@ phoneInput.addEventListener(
 otpInput.addEventListener(
     "input",
     () => {
-
         otpInput.value =
             otpInput.value
                 .replace(
@@ -1845,7 +1785,6 @@ otpInput.addEventListener(
 otpInput.addEventListener(
     "keydown",
     event => {
-
         if (
             event.key ===
             "Enter"
@@ -1859,7 +1798,6 @@ otpInput.addEventListener(
 phoneInput.addEventListener(
     "keydown",
     event => {
-
         if (
             event.key ===
             "Enter"
