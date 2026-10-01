@@ -23,8 +23,8 @@ const ALLOWED_DOMAINS = [
     "web-api.my.id"
 ];
 
-const MAX_UPLOAD_SIZE = 45 * 1024 * 1024;
-const MAX_TOTAL_ZIP_SIZE = 150 * 1024 * 1024;
+const MAX_UPLOAD_SIZE = 4 * 1024 * 1024;
+const MAX_TOTAL_ZIP_SIZE = 20 * 1024 * 1024;
 const MAX_FILES = 1000;
 
 function send(res, status, data) {
@@ -41,14 +41,14 @@ function slugify(value) {
         .slice(0, 60) || "project";
 }
 
-function headers() {
+function headers(contentType = "application/json") {
     if (!process.env.API_VERCEL) {
         throw new Error("API_VERCEL belum diatur");
     }
 
     return {
         Authorization: `Bearer ${process.env.API_VERCEL}`,
-        "Content-Type": "application/json"
+        "Content-Type": contentType
     };
 }
 
@@ -181,6 +181,9 @@ function normalizeRepo(url) {
         throw new Error("Repository URL tidak valid");
     }
 
+    const hostname =
+        parsed.hostname.toLowerCase();
+
     if (
         parsed.protocol !== "https:" ||
         ![
@@ -190,7 +193,7 @@ function normalizeRepo(url) {
             "www.gitlab.com",
             "bitbucket.org",
             "www.bitbucket.org"
-        ].includes(parsed.hostname.toLowerCase())
+        ].includes(hostname)
     ) {
         throw new Error(
             "Repository hanya mendukung GitHub, GitLab, atau Bitbucket"
@@ -210,7 +213,9 @@ function parseGitHubRepo(url) {
         .split("/");
 
     if (parts.length < 2) {
-        throw new Error("Repository GitHub tidak valid");
+        throw new Error(
+            "Repository GitHub tidak valid"
+        );
     }
 
     return {
@@ -265,7 +270,8 @@ async function createProject(slug) {
 }
 
 async function getOrCreateProject(slug) {
-    const existing = await getProject(slug);
+    const existing =
+        await getProject(slug);
 
     if (existing) {
         return existing;
@@ -274,26 +280,66 @@ async function getOrCreateProject(slug) {
     return await createProject(slug);
 }
 
+/*
+ * Upload file ke Vercel.
+ *
+ * Penting:
+ * - SHA-1 dihitung dari buffer asli.
+ * - Content-Length dikirim eksplisit.
+ * - x-now-digest dan x-vercel-digest dikirim.
+ * - response error Vercel diteruskan secara lengkap.
+ */
 async function uploadVercelFile(buffer) {
-    const sha = crypto
-        .createHash("sha1")
-        .update(buffer)
-        .digest("hex");
+    if (!Buffer.isBuffer(buffer)) {
+        throw new Error(
+            "Data file tidak valid"
+        );
+    }
 
-    const result = await axios({
-        method: "POST",
-        url: `${VERCEL_API}/v2/files`,
-        headers: {
-            Authorization: `Bearer ${process.env.API_VERCEL}`,
-            "Content-Type": "application/octet-stream",
-            "x-now-digest": sha
-        },
-        data: buffer,
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        timeout: 120000,
-        validateStatus: () => true
-    });
+    if (!buffer.length) {
+        throw new Error(
+            "File kosong"
+        );
+    }
+
+    if (!process.env.API_VERCEL) {
+        throw new Error(
+            "API_VERCEL belum diatur"
+        );
+    }
+
+    const sha =
+        crypto
+            .createHash("sha1")
+            .update(buffer)
+            .digest("hex");
+
+    const result =
+        await axios({
+            method: "POST",
+            url:
+                `${VERCEL_API}/v2/files`,
+            headers: {
+                Authorization:
+                    `Bearer ${process.env.API_VERCEL}`,
+                "Content-Type":
+                    "application/octet-stream",
+                "Content-Length":
+                    String(buffer.length),
+                "x-now-digest":
+                    sha,
+                "x-vercel-digest":
+                    sha
+            },
+            data: buffer,
+            maxContentLength:
+                Infinity,
+            maxBodyLength:
+                Infinity,
+            timeout: 120000,
+            validateStatus:
+                () => true
+        });
 
     if (
         result.status !== 200 &&
@@ -301,10 +347,28 @@ async function uploadVercelFile(buffer) {
         result.status !== 202 &&
         result.status !== 409
     ) {
-        throw new Error(
+        const vercelMessage =
             result.data?.error?.message ||
-            "Gagal upload file ke Vercel"
-        );
+            result.data?.message ||
+            (
+                typeof result.data === "string"
+                    ? result.data
+                    : ""
+            );
+
+        const error =
+            new Error(
+                vercelMessage ||
+                `Upload Vercel gagal (${result.status})`
+            );
+
+        error.status =
+            result.status;
+
+        error.data =
+            result.data;
+
+        throw error;
     }
 
     return {
@@ -314,18 +378,24 @@ async function uploadVercelFile(buffer) {
 }
 
 function normalizeZipPath(filename) {
-    let value = String(filename || "")
-        .replace(/\\/g, "/")
-        .replace(/^\/+/g, "")
-        .replace(/^(\.\/)+/g, "");
+    let value =
+        String(filename || "")
+            .replace(/\\/g, "/")
+            .replace(/^\/+/g, "")
+            .replace(/^(\.\/)+/g, "");
 
-    value = path.posix
-        .normalize(value)
-        .replace(/^(\.\.\/)+/g, "");
+    value =
+        path.posix
+            .normalize(value)
+            .replace(/^(\.\.\/)+/g, "");
 
-    value = value.replace(/^\/+/g, "");
+    value =
+        value.replace(/^\/+/g, "");
 
-    if (!value || value === ".") {
+    if (
+        !value ||
+        value === "."
+    ) {
         return null;
     }
 
@@ -341,55 +411,73 @@ function normalizeZipPath(filename) {
 }
 
 function findIndexFile(files) {
-    const matches = files.filter(
-        item =>
-            item.file.toLowerCase() === "index.html"
+    return (
+        files.find(
+            item =>
+                String(item.file)
+                    .toLowerCase() ===
+                "index.html"
+        ) || null
     );
-
-    if (!matches.length) {
-        return null;
-    }
-
-    return matches[0];
 }
 
 function stripIndexRoot(files, indexFile) {
-    const indexParts = indexFile.file.split("/");
+    const indexParts =
+        indexFile.file.split("/");
 
     if (indexParts.length <= 1) {
         return files;
     }
 
     const root =
-        indexParts.slice(0, -1).join("/") + "/";
+        indexParts
+            .slice(0, -1)
+            .join("/") + "/";
 
     return files
         .map(item => {
-            if (item.file === indexFile.file) {
+            if (
+                item.file ===
+                indexFile.file
+            ) {
                 return {
                     ...item,
                     file: "index.html"
                 };
             }
 
-            if (item.file.startsWith(root)) {
+            if (
+                item.file.startsWith(root)
+            ) {
                 return {
                     ...item,
-                    file: item.file.slice(root.length)
+                    file:
+                        item.file.slice(
+                            root.length
+                        )
                 };
             }
 
             return null;
         })
-        .filter(item => item && item.file);
+        .filter(
+            item =>
+                item &&
+                item.file
+        );
 }
 
 function readZip(zipPath) {
-    const zip = new AdmZip(zipPath);
+    const zip =
+        new AdmZip(zipPath);
 
-    const entries = zip.getEntries();
+    const entries =
+        zip.getEntries();
 
-    if (entries.length > MAX_FILES) {
+    if (
+        entries.length >
+        MAX_FILES
+    ) {
         throw new Error(
             "ZIP berisi terlalu banyak file"
         );
@@ -416,7 +504,8 @@ function readZip(zipPath) {
         const buffer =
             entry.getData();
 
-        totalSize += buffer.length;
+        totalSize +=
+            buffer.length;
 
         if (
             totalSize >
@@ -457,7 +546,9 @@ function readZip(zipPath) {
 async function prepareUploadedFiles(
     uploadedFile
 ) {
-    if (!uploadedFile?.filepath) {
+    if (
+        !uploadedFile?.filepath
+    ) {
         throw new Error(
             "File upload tidak ditemukan"
         );
@@ -534,7 +625,10 @@ async function uploadProjectFiles(
         );
     }
 
-    if (files.length > MAX_FILES) {
+    if (
+        files.length >
+        MAX_FILES
+    ) {
         throw new Error(
             "Project berisi terlalu banyak file"
         );
@@ -571,6 +665,14 @@ async function deployFiles(
     project,
     files
 ) {
+    if (
+        !project?.id
+    ) {
+        throw new Error(
+            "Vercel project ID tidak ditemukan"
+        );
+    }
+
     return await vercel(
         "POST",
         "/v13/deployments",
@@ -595,11 +697,12 @@ async function deployGitHub(
     const parsed =
         new URL(repoUrl);
 
+    const hostname =
+        parsed.hostname.toLowerCase();
+
     if (
-        parsed.hostname !==
-            "github.com" &&
-        parsed.hostname !==
-            "www.github.com"
+        hostname !== "github.com" &&
+        hostname !== "www.github.com"
     ) {
         throw new Error(
             "Untuk deployment repository saat ini gunakan repository GitHub"
@@ -609,9 +712,10 @@ async function deployGitHub(
     const {
         owner,
         repo
-    } = parseGitHubRepo(
-        repoUrl
-    );
+    } =
+        parseGitHubRepo(
+            repoUrl
+        );
 
     const githubRepo =
         await getGitHubRepo(
@@ -632,7 +736,8 @@ async function deployGitHub(
             target: "production",
             gitSource: {
                 type: "github",
-                repoId: githubRepo.id,
+                repoId:
+                    githubRepo.id,
                 ref: branch
             }
         }
@@ -702,9 +807,11 @@ async function syncDeploymentStatus(
             );
 
         if (
-            remote.readyState === "READY"
+            remote.readyState ===
+            "READY"
         ) {
-            deployment.status = "live";
+            deployment.status =
+                "live";
 
             deployment.errorMessage =
                 "";
@@ -857,9 +964,11 @@ async function createDeployment(
             );
     }
 
-    name = name.trim();
+    name =
+        name.trim();
 
-    domain = domain.trim();
+    domain =
+        domain.trim();
 
     sourceType =
         sourceType
@@ -887,10 +996,12 @@ async function createDeployment(
     }
 
     if (
-        sourceType !== "repo" &&
-        sourceType !== "zip" &&
-        sourceType !== "file" &&
-        sourceType !== "html"
+        ![
+            "repo",
+            "zip",
+            "file",
+            "html"
+        ].includes(sourceType)
     ) {
         return send(res, 400, {
             success: false,
@@ -911,11 +1022,11 @@ async function createDeployment(
     }
 
     if (
-        (
-            sourceType === "zip" ||
-            sourceType === "file" ||
-            sourceType === "html"
-        ) &&
+        [
+            "zip",
+            "file",
+            "html"
+        ].includes(sourceType) &&
         !uploadedFile
     ) {
         return send(res, 400, {
@@ -962,7 +1073,6 @@ async function createDeployment(
         );
 
     let result;
-
     let uploadFileName = "";
 
     try {
@@ -976,8 +1086,7 @@ async function createDeployment(
                 );
         } else {
             uploadFileName =
-                uploadedFile
-                    .originalFilename ||
+                uploadedFile.originalFilename ||
                 (
                     sourceType === "html"
                         ? "index.html"
@@ -1043,11 +1152,11 @@ async function createDeployment(
                     ? normalizedRepo
                     : "",
             zipFileName:
-                (
-                    sourceType === "zip" ||
-                    sourceType === "file" ||
-                    sourceType === "html"
-                )
+                [
+                    "zip",
+                    "file",
+                    "html"
+                ].includes(sourceType)
                     ? uploadFileName
                     : "",
             preset:
@@ -1145,7 +1254,8 @@ async function updateDeployment(
             );
     }
 
-    id = id.trim();
+    id =
+        id.trim();
 
     sourceType =
         sourceType
@@ -1161,10 +1271,12 @@ async function updateDeployment(
     }
 
     if (
-        sourceType !== "repo" &&
-        sourceType !== "zip" &&
-        sourceType !== "file" &&
-        sourceType !== "html"
+        ![
+            "repo",
+            "zip",
+            "file",
+            "html"
+        ].includes(sourceType)
     ) {
         return send(res, 400, {
             success: false,
@@ -1185,11 +1297,11 @@ async function updateDeployment(
     }
 
     if (
-        (
-            sourceType === "zip" ||
-            sourceType === "file" ||
-            sourceType === "html"
-        ) &&
+        [
+            "zip",
+            "file",
+            "html"
+        ].includes(sourceType) &&
         !uploadedFile
     ) {
         return send(res, 400, {
@@ -1222,7 +1334,6 @@ async function updateDeployment(
         );
 
     let result;
-
     let normalizedRepo = "";
 
     try {
@@ -1266,11 +1377,11 @@ async function updateDeployment(
             : "";
 
     deployment.zipFileName =
-        (
-            sourceType === "zip" ||
-            sourceType === "file" ||
-            sourceType === "html"
-        )
+        [
+            "zip",
+            "file",
+            "html"
+        ].includes(sourceType)
             ? (
                 uploadedFile?.originalFilename ||
                 (
@@ -1498,7 +1609,7 @@ export default async function handler(
             return send(res, 413, {
                 success: false,
                 message:
-                    "Ukuran file terlalu besar. Maksimal 45 MB"
+                    "Ukuran file terlalu besar. Maksimal 4 MB untuk upload langsung."
             });
         }
 
@@ -1512,6 +1623,23 @@ export default async function handler(
             });
         }
 
+        const status =
+            Number(error?.status);
+
+        if (
+            status >= 400 &&
+            status < 500
+        ) {
+            return send(res, status, {
+                success: false,
+                message:
+                    error.message ||
+                    "Request ke Vercel ditolak",
+                vercel:
+                    error.data || null
+            });
+        }
+
         return send(res, 500, {
             success: false,
             message:
@@ -1519,4 +1647,4 @@ export default async function handler(
                 "Deployment gagal"
         });
     }
-}
+            }
