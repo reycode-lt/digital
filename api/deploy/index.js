@@ -431,14 +431,6 @@ function detectFramework(
 
     if (
         hasDependency(dependencies, [
-            "@sveltejs/vite-plugin-svelte"
-        ])
-    ) {
-        return "svelte";
-    }
-
-    if (
-        hasDependency(dependencies, [
             "gatsby"
         ])
     ) {
@@ -479,6 +471,7 @@ function detectFramework(
 
     if (
         hasDependency(dependencies, [
+            "@sveltejs/vite-plugin-svelte",
             "svelte"
         ])
     ) {
@@ -741,11 +734,8 @@ function inspectProjectFiles(files) {
             )
         );
 
-    const isStatic =
-        !framework;
-
     if (
-        isStatic &&
+        !framework &&
         !hasIndex &&
         !packageJson &&
         !vercelJson
@@ -849,34 +839,6 @@ async function createProject(
     );
 }
 
-async function updateProjectSettings(
-    project,
-    projectSettings
-) {
-    if (!project?.id) {
-        return project;
-    }
-
-    try {
-        return await vercel(
-            "PATCH",
-            `/v9/projects/${encodeURIComponent(
-                project.id
-            )}`,
-            {
-                projectSettings
-            }
-        );
-    } catch (error) {
-        console.error(
-            "PROJECT SETTINGS UPDATE ERROR:",
-            error.message
-        );
-
-        return project;
-    }
-}
-
 async function getOrCreateProject(
     slug,
     projectSettings
@@ -885,11 +847,6 @@ async function getOrCreateProject(
         await getProject(slug);
 
     if (existing) {
-        await updateProjectSettings(
-            existing,
-            projectSettings
-        );
-
         return existing;
     }
 
@@ -2460,4 +2417,4 @@ export default async function handler(
                 "Deployment gagal"
         });
     }
-}
+        }
