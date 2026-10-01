@@ -189,7 +189,9 @@ export default async function handler(req, res) {
         if (error?.code === 11000) {
             return res.status(409).json({
                 success: false,
-                message: "Email sudah terdaftar"
+                message: "Duplicate key",
+                keyPattern: error.keyPattern || null,
+                keyValue: error.keyValue || null
             });
         }
 
