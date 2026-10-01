@@ -1000,7 +1000,8 @@
 
         <p>
             Deploy, update, and manage your websites from one place.
-            Choose your domain, use a repository, or upload a ZIP.
+            Choose your domain, use a repository, upload a ZIP,
+            or deploy a single HTML file.
         </p>
 
     </section>
@@ -1104,31 +1105,31 @@
 
                     </div>
 
-                    <div id="zipBox" class="source-box">
+                    <div id="fileBox" class="source-box">
 
                         <div class="source-icon">
                             ↑
                         </div>
 
                         <div class="source-title">
-                            Upload ZIP
+                            Upload File
                         </div>
 
                         <div class="source-desc">
-                            Upload your project as a ZIP file.
+                            Upload a ZIP project or a single HTML file.
                         </div>
 
                         <label
                             class="file-label"
                             for="fileInput"
                         >
-                            Choose ZIP File
+                            Choose ZIP / HTML
                         </label>
 
                         <input
                             id="fileInput"
                             type="file"
-                            accept=".zip,application/zip"
+                            accept=".zip,.html,.htm,application/zip,text/html"
                         >
 
                         <div
@@ -1335,7 +1336,7 @@
         </div>
 
         <div class="source-note">
-            Or upload a new ZIP file. Only one source can be used.
+            Or upload a new ZIP project or a single HTML file. Only one source can be used.
         </div>
 
         <div
@@ -1344,7 +1345,7 @@
         >
 
             <label>
-                New ZIP
+                New File
                 <span class="optional">
                     optional
                 </span>
@@ -1354,13 +1355,13 @@
                 class="file-label"
                 for="updateFile"
             >
-                Choose New ZIP File
+                Choose New ZIP / HTML
             </label>
 
             <input
                 id="updateFile"
                 type="file"
-                accept=".zip,application/zip"
+                accept=".zip,.html,.htm,application/zip,text/html"
             >
 
             <div
@@ -1499,7 +1500,7 @@ const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
 
 const repoBox = document.getElementById("repoBox");
-const zipBox = document.getElementById("zipBox");
+const fileBox = document.getElementById("fileBox");
 
 const domainPreview = document.getElementById("domainPreview");
 
@@ -1561,8 +1562,12 @@ function slugify(value) {
 }
 
 function updateDomainPreview() {
-    const name = slugify(projectName.value || "project");
-    const selectedDomain = domain.value || "reycode.my.id";
+    const name = slugify(
+        projectName.value || "project"
+    );
+
+    const selectedDomain =
+        domain.value || "reycode.my.id";
 
     domainPreview.textContent =
         `https://${name}.${selectedDomain}`;
@@ -1571,51 +1576,98 @@ function updateDomainPreview() {
 function timeAgo(date) {
     if (!date) return "Unknown";
 
-    const timestamp = new Date(date).getTime();
+    const timestamp =
+        new Date(date).getTime();
 
     if (Number.isNaN(timestamp)) {
         return "Unknown";
     }
 
-    const diff = Math.max(0, Date.now() - timestamp);
+    const diff =
+        Math.max(
+            0,
+            Date.now() - timestamp
+        );
 
     const minute = 60 * 1000;
     const hour = 60 * minute;
     const day = 24 * hour;
 
-    if (diff < minute) return "Just now";
-    if (diff < hour) return `${Math.floor(diff / minute)}m ago`;
-    if (diff < day) return `${Math.floor(diff / hour)}h ago`;
+    if (diff < minute) {
+        return "Just now";
+    }
+
+    if (diff < hour) {
+        return `${Math.floor(diff / minute)}m ago`;
+    }
+
+    if (diff < day) {
+        return `${Math.floor(diff / hour)}h ago`;
+    }
 
     return `${Math.floor(diff / day)}d ago`;
 }
 
 function getSourceType(item) {
-    return item.sourceType === "repo"
-        ? "Repository"
-        : "ZIP Upload";
+    if (item.sourceType === "repo") {
+        return "Repository";
+    }
+
+    if (
+        item.sourceType === "html" ||
+        item.sourceType === "file"
+    ) {
+        return "HTML File";
+    }
+
+    if (item.sourceType === "zip") {
+        return "ZIP Upload";
+    }
+
+    return "File Upload";
 }
 
 function normalizeDeployment(item) {
     return {
         ...item,
         id: item._id || item.id,
-        slug: item.slug || slugify(item.name),
-        domain: item.domain || "reycode.my.id",
-        preset: item.preset || "Auto Detect",
-        status: item.status || "deploying",
+        slug:
+            item.slug ||
+            slugify(item.name),
+        domain:
+            item.domain ||
+            "reycode.my.id",
+        preset:
+            item.preset ||
+            "Auto Detect",
+        status:
+            item.status ||
+            "deploying",
         customUrl:
             item.customUrl ||
             `https://${item.slug || slugify(item.name)}.${item.domain || "reycode.my.id"}`,
-        vercelUrl: item.vercelUrl || "",
-        updatedAt: item.updatedAt || item.createdAt
+        vercelUrl:
+            item.vercelUrl ||
+            "",
+        updatedAt:
+            item.updatedAt ||
+            item.createdAt
     };
 }
 
 function statusLabel(status) {
-    if (status === "live") return "Live";
-    if (status === "failed") return "Failed";
-    if (status === "deleted") return "Deleted";
+    if (status === "live") {
+        return "Live";
+    }
+
+    if (status === "failed") {
+        return "Failed";
+    }
+
+    if (status === "deleted") {
+        return "Deleted";
+    }
+
     return "Deploying";
 }
 
@@ -1646,127 +1698,143 @@ function renderHistory() {
                 Belum ada deployment.
             </div>
         `;
+
         return;
     }
 
-    historyList.innerHTML = deployments.map(item => {
-        const customUrl =
-            item.customUrl ||
-            `https://${item.slug}.${item.domain}`;
+    historyList.innerHTML =
+        deployments.map(item => {
 
-        const openUrl =
-            item.customUrl ||
-            item.vercelUrl ||
-            "#";
+            const customUrl =
+                item.customUrl ||
+                `https://${item.slug}.${item.domain}`;
 
-        const canOpen =
-            !!item.customUrl ||
-            !!item.vercelUrl;
+            const openUrl =
+                item.customUrl ||
+                item.vercelUrl ||
+                "#";
 
-        return `
-            <article class="deployment">
+            const canOpen =
+                !!item.customUrl ||
+                !!item.vercelUrl;
 
-                <div class="deployment-top">
+            return `
+                <article class="deployment">
 
-                    <div>
-                        <div class="deployment-name">
-                            ${escapeHtml(item.name)}
+                    <div class="deployment-top">
+
+                        <div>
+
+                            <div class="deployment-name">
+                                ${escapeHtml(item.name)}
+                            </div>
+
+                            <div class="deployment-domain">
+                                ${escapeHtml(customUrl)}
+                            </div>
+
                         </div>
 
-                        <div class="deployment-domain">
-                            ${escapeHtml(customUrl)}
-                        </div>
+                        ${renderStatus(item.status)}
+
                     </div>
 
-                    ${renderStatus(item.status)}
+                    <div class="deployment-meta">
 
-                </div>
+                        <span>
+                            ${escapeHtml(getSourceType(item))}
+                        </span>
 
-                <div class="deployment-meta">
+                        <span class="meta-dot"></span>
 
-                    <span>
-                        ${escapeHtml(getSourceType(item))}
-                    </span>
+                        <span>
+                            ${escapeHtml(item.preset || "Auto Detect")}
+                        </span>
 
-                    <span class="meta-dot"></span>
+                        <span class="meta-dot"></span>
 
-                    <span>
-                        ${escapeHtml(item.preset || "Auto Detect")}
-                    </span>
+                        <span>
+                            ${escapeHtml(timeAgo(item.updatedAt))}
+                        </span>
 
-                    <span class="meta-dot"></span>
+                    </div>
 
-                    <span>
-                        ${escapeHtml(timeAgo(item.updatedAt))}
-                    </span>
+                    <div class="deployment-actions">
 
-                </div>
+                        ${
+                            canOpen
+                                ? `
+                                    <a
+                                        class="small-btn blue"
+                                        href="${escapeAttribute(openUrl)}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Open
+                                    </a>
+                                `
+                                : `
+                                    <button
+                                        class="small-btn"
+                                        disabled
+                                        style="opacity:.4;cursor:not-allowed;"
+                                    >
+                                        Open
+                                    </button>
+                                `
+                        }
 
-                <div class="deployment-actions">
+                        <button
+                            class="small-btn"
+                            data-update-id="${escapeAttribute(item.id)}"
+                        >
+                            Update
+                        </button>
 
-                    ${
-                        canOpen
-                            ? `
-                                <a
-                                    class="small-btn blue"
-                                    href="${escapeAttribute(openUrl)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Open
-                                </a>
-                            `
-                            : `
-                                <button
-                                    class="small-btn"
-                                    disabled
-                                    style="opacity:.4;cursor:not-allowed;"
-                                >
-                                    Open
-                                </button>
-                            `
-                    }
+                        <button
+                            class="small-btn danger"
+                            data-delete-id="${escapeAttribute(item.id)}"
+                        >
+                            Delete
+                        </button>
 
-                    <button
-                        class="small-btn"
-                        data-update-id="${escapeAttribute(item.id)}"
-                    >
-                        Update
-                    </button>
+                    </div>
 
-                    <button
-                        class="small-btn danger"
-                        data-delete-id="${escapeAttribute(item.id)}"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            </article>
-        `;
-    }).join("");
+                </article>
+            `;
+        }).join("");
 
     historyList
         .querySelectorAll("[data-update-id]")
         .forEach(button => {
-            button.addEventListener("click", () => {
-                openUpdate(button.dataset.updateId);
-            });
+            button.addEventListener(
+                "click",
+                () => {
+                    openUpdate(
+                        button.dataset.updateId
+                    );
+                }
+            );
         });
 
     historyList
         .querySelectorAll("[data-delete-id]")
         .forEach(button => {
-            button.addEventListener("click", () => {
-                openDelete(button.dataset.deleteId);
-            });
+            button.addEventListener(
+                "click",
+                () => {
+                    openDelete(
+                        button.dataset.deleteId
+                    );
+                }
+            );
         });
 }
 
 function showError(message) {
     errorBox.textContent =
-        message || "Terjadi kesalahan.";
+        message ||
+        "Terjadi kesalahan.";
 
     errorBox.classList.add("show");
 }
@@ -1789,7 +1857,8 @@ function setLoading(button, text) {
 
 function resetDeployButton() {
     deployBtn.disabled = false;
-    deployBtn.textContent = "🚀 Deploy Website";
+    deployBtn.textContent =
+        "🚀 Deploy Website";
 }
 
 function setSourceActive() {
@@ -1798,35 +1867,91 @@ function setSourceActive() {
         !!repoUrl.value.trim()
     );
 
-    zipBox.classList.toggle(
+    fileBox.classList.toggle(
         "active",
         !!fileInput.files[0]
     );
 }
 
-async function apiRequest(url, options = {}) {
-    const response = await fetch(url, {
-        credentials: "include",
-        ...options,
-        headers: {
-            ...(options.body instanceof FormData
-                ? {}
-                : {
-                    "Content-Type": "application/json"
-                }),
-            ...(options.headers || {})
-        }
-    });
+function getFileType(file) {
+    if (!file || !file.name) {
+        return null;
+    }
+
+    const name =
+        file.name.toLowerCase();
+
+    if (name.endsWith(".zip")) {
+        return "zip";
+    }
+
+    if (
+        name.endsWith(".html") ||
+        name.endsWith(".htm")
+    ) {
+        return "html";
+    }
+
+    return null;
+}
+
+function validateUpload(file) {
+    if (!file) {
+        return "File wajib dipilih.";
+    }
+
+    const type =
+        getFileType(file);
+
+    if (!type) {
+        return "File hanya boleh ZIP, HTML, atau HTM.";
+    }
+
+    if (
+        file.size >
+        4 * 1024 * 1024
+    ) {
+        return "Ukuran file maksimal 4 MB.";
+    }
+
+    return null;
+}
+
+async function apiRequest(
+    url,
+    options = {}
+) {
+    const response =
+        await fetch(
+            url,
+            {
+                credentials: "include",
+                ...options,
+                headers: {
+                    ...(options.body instanceof FormData
+                        ? {}
+                        : {
+                            "Content-Type":
+                                "application/json"
+                        }),
+                    ...(options.headers || {})
+                }
+            }
+        );
 
     let data = {};
 
     try {
-        data = await response.json();
+        data =
+            await response.json();
     } catch {
         data = {};
     }
 
-    if (!response.ok || data.success === false) {
+    if (
+        !response.ok ||
+        data.success === false
+    ) {
         throw new Error(
             data.message ||
             `Request gagal (${response.status})`
@@ -1838,26 +1963,37 @@ async function apiRequest(url, options = {}) {
 
 async function loadUser() {
     try {
-        const response = await fetch(
-            "/api/user/me",
-            {
-                credentials: "include"
-            }
-        );
+        const response =
+            await fetch(
+                "/api/user/me",
+                {
+                    credentials: "include"
+                }
+            );
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
-        if (!data.success || !data.user) {
-            window.location.href = "/login";
+        if (
+            !data.success ||
+            !data.user
+        ) {
+            window.location.href =
+                "/login";
+
             return false;
         }
 
         usernameEl.textContent =
-            data.user.name || "there";
+            data.user.name ||
+            "there";
 
         return true;
+
     } catch {
-        window.location.href = "/login";
+        window.location.href =
+            "/login";
+
         return false;
     }
 }
@@ -1871,16 +2007,21 @@ async function loadDeployments() {
 
     try {
         const data =
-            await apiRequest("/api/deploy");
+            await apiRequest(
+                "/api/deploy"
+            );
 
         deployments =
-            Array.isArray(data.deployments)
+            Array.isArray(
+                data.deployments
+            )
                 ? data.deployments.map(
                     normalizeDeployment
                 )
                 : [];
 
         renderHistory();
+
     } catch (error) {
         historyList.innerHTML = `
             <div class="empty">
@@ -1888,29 +2029,6 @@ async function loadDeployments() {
             </div>
         `;
     }
-}
-
-function validateZip(file) {
-    if (!file) {
-        return "File ZIP wajib dipilih.";
-    }
-
-    if (
-        !file.name
-            .toLowerCase()
-            .endsWith(".zip")
-    ) {
-        return "File harus berformat ZIP.";
-    }
-
-    if (
-        file.size >
-        4 * 1024 * 1024
-    ) {
-        return "Ukuran ZIP maksimal 4 MB.";
-    }
-
-    return null;
 }
 
 async function createDeployment() {
@@ -1948,7 +2066,7 @@ async function createDeployment() {
 
     if (!repo && !file) {
         showError(
-            "Masukkan URL repository atau upload ZIP."
+            "Masukkan URL repository atau upload ZIP/HTML."
         );
 
         return;
@@ -1956,20 +2074,25 @@ async function createDeployment() {
 
     if (repo && file) {
         showError(
-            "Gunakan repository atau ZIP, bukan keduanya."
+            "Gunakan repository atau file upload, bukan keduanya."
         );
 
         return;
     }
 
-    if (file) {
-        const zipError =
-            validateZip(file);
+    let fileType = null;
 
-        if (zipError) {
-            showError(zipError);
+    if (file) {
+        const fileError =
+            validateUpload(file);
+
+        if (fileError) {
+            showError(fileError);
             return;
         }
+
+        fileType =
+            getFileType(file);
     }
 
     setLoading(
@@ -1981,7 +2104,8 @@ async function createDeployment() {
         let body;
 
         if (file) {
-            body = new FormData();
+            body =
+                new FormData();
 
             body.append(
                 "name",
@@ -1995,7 +2119,7 @@ async function createDeployment() {
 
             body.append(
                 "sourceType",
-                "zip"
+                fileType
             );
 
             body.append(
@@ -2003,19 +2127,35 @@ async function createDeployment() {
                 "Auto Detect"
             );
 
-            body.append(
-                "zip",
-                file,
-                file.name
-            );
+            if (fileType === "zip") {
+                body.append(
+                    "zip",
+                    file,
+                    file.name
+                );
+            }
+
+            if (fileType === "html") {
+                body.append(
+                    "file",
+                    file,
+                    file.name
+                );
+            }
+
         } else {
-            body = JSON.stringify({
-                name,
-                domain: selectedDomain,
-                sourceType: "repo",
-                repositoryUrl: repo,
-                preset: "Auto Detect"
-            });
+            body =
+                JSON.stringify({
+                    name,
+                    domain:
+                        selectedDomain,
+                    sourceType:
+                        "repo",
+                    repositoryUrl:
+                        repo,
+                    preset:
+                        "Auto Detect"
+                });
         }
 
         const data =
@@ -2047,7 +2187,9 @@ async function createDeployment() {
             item.customUrl ||
             "#";
 
-        result.classList.add("show");
+        result.classList.add(
+            "show"
+        );
 
         renderHistory();
 
@@ -2075,11 +2217,15 @@ function openUpdate(id) {
     const item =
         deployments.find(
             deployment =>
-                String(deployment.id) ===
+                String(
+                    deployment.id
+                ) ===
                 String(id)
         );
 
-    if (!item) return;
+    if (!item) {
+        return;
+    }
 
     currentUpdateId = id;
 
@@ -2093,6 +2239,7 @@ function openUpdate(id) {
         "No file selected";
 
     redeployBtn.disabled = true;
+
     redeployBtn.textContent =
         "↻ Redeploy";
 
@@ -2115,6 +2262,7 @@ function closeUpdateModal() {
         "No file selected";
 
     redeployBtn.disabled = true;
+
     redeployBtn.textContent =
         "↻ Redeploy";
 }
@@ -2130,11 +2278,15 @@ async function redeploy() {
     const item =
         deployments.find(
             deployment =>
-                String(deployment.id) ===
+                String(
+                    deployment.id
+                ) ===
                 String(currentUpdateId)
         );
 
-    if (!item) return;
+    if (!item) {
+        return;
+    }
 
     const repo =
         updateRepo.value.trim();
@@ -2148,20 +2300,25 @@ async function redeploy() {
 
     if (repo && file) {
         alert(
-            "Gunakan repository atau ZIP, bukan keduanya."
+            "Gunakan repository atau file upload, bukan keduanya."
         );
 
         return;
     }
 
-    if (file) {
-        const zipError =
-            validateZip(file);
+    let fileType = null;
 
-        if (zipError) {
-            alert(zipError);
+    if (file) {
+        const fileError =
+            validateUpload(file);
+
+        if (fileError) {
+            alert(fileError);
             return;
         }
+
+        fileType =
+            getFileType(file);
     }
 
     setLoading(
@@ -2173,7 +2330,8 @@ async function redeploy() {
         let body;
 
         if (file) {
-            body = new FormData();
+            body =
+                new FormData();
 
             body.append(
                 "id",
@@ -2182,20 +2340,35 @@ async function redeploy() {
 
             body.append(
                 "sourceType",
-                "zip"
+                fileType
             );
 
-            body.append(
-                "zip",
-                file,
-                file.name
-            );
+            if (fileType === "zip") {
+                body.append(
+                    "zip",
+                    file,
+                    file.name
+                );
+            }
+
+            if (fileType === "html") {
+                body.append(
+                    "file",
+                    file,
+                    file.name
+                );
+            }
+
         } else {
-            body = JSON.stringify({
-                id: item.id,
-                sourceType: "repo",
-                repositoryUrl: repo
-            });
+            body =
+                JSON.stringify({
+                    id:
+                        item.id,
+                    sourceType:
+                        "repo",
+                    repositoryUrl:
+                        repo
+                });
         }
 
         const data =
@@ -2218,7 +2391,9 @@ async function redeploy() {
                     String(
                         deployment.id
                     ) ===
-                    String(updated.id)
+                    String(
+                        updated.id
+                    )
                         ? {
                             ...deployment,
                             ...updated
@@ -2246,7 +2421,9 @@ async function redeploy() {
         redeployBtn.textContent =
             "↻ Redeploy";
 
-        alert(error.message);
+        alert(
+            error.message
+        );
     }
 }
 
@@ -2254,11 +2431,15 @@ function openDelete(id) {
     const item =
         deployments.find(
             deployment =>
-                String(deployment.id) ===
+                String(
+                    deployment.id
+                ) ===
                 String(id)
         );
 
-    if (!item) return;
+    if (!item) {
+        return;
+    }
 
     currentDeleteId = id;
 
@@ -2284,6 +2465,7 @@ async function deleteDeployment() {
     }
 
     confirmDelete.disabled = true;
+
     confirmDelete.textContent =
         "Deleting...";
 
@@ -2292,24 +2474,34 @@ async function deleteDeployment() {
             "/api/deploy",
             {
                 method: "DELETE",
-                body: JSON.stringify({
-                    id: currentDeleteId
-                })
+                body:
+                    JSON.stringify({
+                        id:
+                            currentDeleteId
+                    })
             }
         );
 
         deployments =
             deployments.filter(
                 item =>
-                    String(item.id) !==
-                    String(currentDeleteId)
+                    String(
+                        item.id
+                    ) !==
+                    String(
+                        currentDeleteId
+                    )
             );
 
         renderHistory();
+
         closeDeleteModal();
 
     } catch (error) {
-        alert(error.message);
+        alert(
+            error.message
+        );
+
     } finally {
         confirmDelete.disabled =
             false;
@@ -2332,7 +2524,9 @@ domain.addEventListener(
 repoUrl.addEventListener(
     "input",
     () => {
-        if (repoUrl.value.trim()) {
+        if (
+            repoUrl.value.trim()
+        ) {
             fileInput.value = "";
 
             fileName.textContent =
@@ -2366,7 +2560,9 @@ fileInput.addEventListener(
 updateRepo.addEventListener(
     "input",
     () => {
-        if (updateRepo.value.trim()) {
+        if (
+            updateRepo.value.trim()
+        ) {
             updateFile.value = "";
 
             updateFileName.textContent =
@@ -2505,4 +2701,4 @@ init();
 </script>
 
 </body>
-</html>
+    </html>
