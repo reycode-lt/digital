@@ -508,6 +508,7 @@
         .message-row {
             display: flex;
             gap: 9px;
+            width: 100%;
             margin: 6px 0;
             align-items: flex-end;
         }
@@ -516,31 +517,56 @@
             justify-content: flex-end;
         }
 
+        .message-row:not(.own) {
+            justify-content: flex-start;
+        }
+
         .message-avatar {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             object-fit: cover;
-            flex-shrink: 0;
+            flex: 0 0 30px;
             border: 1px solid rgba(255, 255, 255, .08);
         }
 
         .message-content {
-            max-width: min(70%, 620px);
+            width: fit-content;
+            max-width: min(72%, 680px);
             min-width: 0;
+        }
+
+        .message-row.own .message-content {
+            align-items: flex-end;
+        }
+
+        .message-row:not(.own) .message-content {
+            align-items: flex-start;
         }
 
         .message-sender {
             display: flex;
             align-items: center;
             gap: 5px;
+            width: fit-content;
+            max-width: 100%;
             margin: 0 0 4px 5px;
             font-size: 10px;
             font-weight: 700;
             color: #91a0b4;
         }
 
+        .message-sender > span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .message-bubble {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+            min-width: 0;
             padding: 9px 12px;
             border: 1px solid rgba(255, 255, 255, .06);
             border-radius: 15px 15px 15px 4px;
@@ -549,6 +575,7 @@
             font-size: 13px;
             line-height: 1.5;
             word-break: break-word;
+            overflow-wrap: anywhere;
             white-space: pre-wrap;
         }
 
@@ -563,6 +590,7 @@
             align-items: center;
             justify-content: flex-end;
             gap: 5px;
+            width: 100%;
             margin-top: 4px;
             padding: 0 4px;
             color: #748196;
@@ -624,6 +652,11 @@
             color: #fff;
             background: var(--blue);
             box-shadow: 0 7px 20px rgba(22, 140, 255, .22);
+        }
+
+        .send-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
         }
 
         .attach-btn svg,
@@ -890,7 +923,7 @@
             }
 
             .message-content {
-                max-width: 78%;
+                max-width: 80%;
             }
 
             .composer {
@@ -912,8 +945,13 @@
                 font-size: 10px;
             }
 
+            .message-content {
+                max-width: 84%;
+            }
+
             .message-bubble {
                 font-size: 12px;
+                padding: 8px 11px;
             }
 
             .welcome {
@@ -1180,7 +1218,7 @@
                     <span class="verified">
                         <svg viewBox="0 0 24 24" fill="none">
                             <path
-                                d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
+                                d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 1.25-2.36 2.67.05L12 2.5z"
                                 fill="currentColor"
                             />
                             <path
@@ -1243,7 +1281,10 @@
             messages: [],
             loadingMessages: false,
             sending: false,
-            profileOpen: false
+            profileOpen: false,
+            initializedMessages: false,
+            pollingStarted: false,
+            heartbeatStarted: false
         };
 
         const FALLBACK_AVATAR =
@@ -1251,6 +1292,9 @@
 
         const GROUP_AVATAR =
             "https://k.top4top.io/p_392741enr1.png";
+
+        const CHAT_CACHE_KEY =
+            "monikalabs_comunity_messages_v2";
 
         const elements = {
             groupHeader: document.getElementById("groupHeader"),
@@ -1312,10 +1356,253 @@
                 .replace(/'/g, "&#039;");
         }
 
-        function formatTime(value) {
-            const date = new Date(value);
+        function getId(value) {
+            if (!value) {
+                return "";
+            }
 
-            if (Number.isNaN(date.getTime())) {
+            if (
+                typeof value === "string" ||
+                typeof value === "number"
+            ) {
+                return String(value);
+            }
+
+            if (
+                typeof value === "object"
+            ) {
+                return String(
+                    value.id ||
+                    value._id ||
+                    value.userId ||
+                    ""
+                );
+            }
+
+            return "";
+        }
+
+        function getUserId(user) {
+            if (!user) {
+                return "";
+            }
+
+            return getId(
+                user.id ||
+                user._id ||
+                user.userId
+            );
+        }
+
+        function getMessageId(message) {
+            if (!message) {
+                return "";
+            }
+
+            return getId(
+                message.id ||
+                message._id
+            );
+        }
+
+        function isOwnMessage(message) {
+            const currentId =
+                getUserId(state.user);
+
+            const senderId =
+                getUserId(message?.user);
+
+            return Boolean(
+                currentId &&
+                senderId &&
+                currentId === senderId
+            );
+        }
+
+        function normalizeMessage(message) {
+            if (!message) {
+                return null;
+            }
+
+            const id =
+                getMessageId(message);
+
+            if (!id) {
+                return null;
+            }
+
+            return {
+                ...message,
+                id,
+                _id:
+                    message._id ||
+                    id,
+                user: message.user
+                    ? {
+                        ...message.user,
+                        id: getUserId(
+                            message.user
+                        )
+                    }
+                    : null
+            };
+        }
+
+        function sortMessages() {
+            state.messages.sort(
+                (a, b) => {
+                    const first =
+                        new Date(
+                            a.createdAt || 0
+                        ).getTime();
+
+                    const second =
+                        new Date(
+                            b.createdAt || 0
+                        ).getTime();
+
+                    if (
+                        first !== second
+                    ) {
+                        return first - second;
+                    }
+
+                    return String(
+                        getMessageId(a)
+                    ).localeCompare(
+                        String(
+                            getMessageId(b)
+                        )
+                    );
+                }
+            );
+        }
+
+        function mergeMessages(
+            incoming,
+            replace = false
+        ) {
+            if (
+                !Array.isArray(incoming)
+            ) {
+                return;
+            }
+
+            const map =
+                new Map();
+
+            if (!replace) {
+                for (
+                    const message
+                    of state.messages
+                ) {
+                    const normalized =
+                        normalizeMessage(
+                            message
+                        );
+
+                    if (
+                        normalized
+                    ) {
+                        map.set(
+                            normalized.id,
+                            normalized
+                        );
+                    }
+                }
+            }
+
+            for (
+                const message
+                of incoming
+            ) {
+                const normalized =
+                    normalizeMessage(
+                        message
+                    );
+
+                if (
+                    normalized
+                ) {
+                    map.set(
+                        normalized.id,
+                        normalized
+                    );
+                }
+            }
+
+            state.messages =
+                Array.from(
+                    map.values()
+                );
+
+            sortMessages();
+
+            if (
+                state.messages.length >
+                100
+            ) {
+                state.messages =
+                    state.messages.slice(
+                        -100
+                    );
+            }
+        }
+
+        function saveMessagesCache() {
+            try {
+                localStorage.setItem(
+                    CHAT_CACHE_KEY,
+                    JSON.stringify(
+                        state.messages
+                    )
+                );
+            } catch {}
+        }
+
+        function loadMessagesCache() {
+            try {
+                const raw =
+                    localStorage.getItem(
+                        CHAT_CACHE_KEY
+                    );
+
+                if (!raw) {
+                    return false;
+                }
+
+                const parsed =
+                    JSON.parse(raw);
+
+                if (
+                    !Array.isArray(parsed) ||
+                    !parsed.length
+                ) {
+                    return false;
+                }
+
+                mergeMessages(
+                    parsed,
+                    true
+                );
+
+                renderMessages();
+
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        function formatTime(value) {
+            const date =
+                new Date(value);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
                 return "";
             }
 
@@ -1329,9 +1616,14 @@
         }
 
         function formatDate(value) {
-            const date = new Date(value);
+            const date =
+                new Date(value);
 
-            if (Number.isNaN(date.getTime())) {
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
                 return "";
             }
 
@@ -1346,45 +1638,65 @@
         }
 
         function avatarUrl(url) {
-            return url || FALLBACK_AVATAR;
+            return url ||
+                FALLBACK_AVATAR;
         }
 
         function showToast(message) {
             const toast =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            toast.className = "toast";
-            toast.textContent = message;
+            toast.className =
+                "toast";
+
+            toast.textContent =
+                message;
 
             elements.toastContainer.appendChild(
                 toast
             );
 
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
+            setTimeout(
+                () => {
+                    toast.remove();
+                },
+                3000
+            );
         }
 
         async function api(
             url,
             options = {}
         ) {
-            const response = await fetch(
-                url,
-                {
-                    credentials: "include",
-                    ...options,
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...(options.headers || {})
+            const response =
+                await fetch(
+                    url,
+                    {
+                        credentials:
+                            "include",
+                        cache:
+                            "no-store",
+                        ...options,
+                        headers: {
+                            ...(options.body
+                                ? {
+                                    "Content-Type":
+                                        "application/json"
+                                }
+                                : {}),
+                            ...(options.headers ||
+                                {})
+                        }
                     }
-                }
-            );
+                );
 
             let data = null;
 
             try {
-                data = await response.json();
+                data =
+                    await response.json();
             } catch {
                 data = null;
             }
@@ -1400,7 +1712,9 @@
                 );
             }
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
                 throw new Error(
                     data?.message ||
                     "Terjadi kesalahan"
@@ -1412,7 +1726,9 @@
 
         async function loadMe() {
             const data =
-                await api("/api/user/me");
+                await api(
+                    "/api/user/me"
+                );
 
             state.user =
                 data.user;
@@ -1434,6 +1750,12 @@
                 state.user.emailVerified
                     ? verifiedBadge()
                     : "";
+
+            if (
+                state.messages.length
+            ) {
+                renderMessages();
+            }
         }
 
         async function loadGroup() {
@@ -1482,45 +1804,61 @@
                     "/api/chat?action=users"
                 );
 
-            state.users =
-                Array.isArray(data.users)
-                    ? data.users
-                    : [];
+            if (
+                Array.isArray(
+                    data.users
+                )
+            ) {
+                state.users =
+                    data.users;
+            }
 
             renderUsers(
                 elements.searchInput.value
             );
         }
 
-        function renderUsers(search = "") {
+        function renderUsers(
+            search = ""
+        ) {
             const keyword =
                 search
                     .trim()
                     .toLowerCase();
 
             const filtered =
-                state.users.filter(user => {
-                    const name =
-                        String(
-                            user.name || ""
-                        ).toLowerCase();
+                state.users.filter(
+                    user => {
+                        const name =
+                            String(
+                                user.name ||
+                                ""
+                            ).toLowerCase();
 
-                    const email =
-                        String(
-                            user.email || ""
-                        ).toLowerCase();
+                        const email =
+                            String(
+                                user.email ||
+                                ""
+                            ).toLowerCase();
 
-                    return (
-                        !keyword ||
-                        name.includes(keyword) ||
-                        email.includes(keyword)
-                    );
-                });
+                        return (
+                            !keyword ||
+                            name.includes(
+                                keyword
+                            ) ||
+                            email.includes(
+                                keyword
+                            )
+                        );
+                    }
+                );
 
             elements.memberCount.textContent =
                 `${state.users.length} user`;
 
-            if (!filtered.length) {
+            if (
+                !filtered.length
+            ) {
                 elements.memberList.innerHTML = `
                     <div class="empty-state">
                         User tidak ditemukan
@@ -1532,78 +1870,92 @@
 
             elements.memberList.innerHTML =
                 filtered
-                    .map(user => {
-                        const verified =
-                            user.emailVerified
-                                ? verifiedBadge()
-                                : "";
+                    .map(
+                        user => {
+                            const verified =
+                                user.emailVerified
+                                    ? verifiedBadge()
+                                    : "";
 
-                        return `
-                            <div class="member">
-                                <div class="avatar-wrap">
-                                    <img
-                                        class="avatar"
-                                        src="${escapeHtml(
-                                            avatarUrl(
-                                                user.avatarUrl
-                                            )
-                                        )}"
-                                        alt="${escapeHtml(
-                                            user.name
-                                        )}"
-                                    >
-                                    <span
-                                        class="online-dot ${
-                                            user.online
-                                                ? "active"
-                                                : ""
-                                        }"
-                                    ></span>
-                                </div>
+                            return `
+                                <div class="member">
+                                    <div class="avatar-wrap">
+                                        <img
+                                            class="avatar"
+                                            src="${escapeHtml(
+                                                avatarUrl(
+                                                    user.avatarUrl
+                                                )
+                                            )}"
+                                            alt="${escapeHtml(
+                                                user.name
+                                            )}"
+                                        >
 
-                                <div class="member-info">
-                                    <div class="member-name">
-                                        <span>
+                                        <span
+                                            class="online-dot ${
+                                                user.online
+                                                    ? "active"
+                                                    : ""
+                                            }"
+                                        ></span>
+                                    </div>
+
+                                    <div class="member-info">
+                                        <div class="member-name">
+                                            <span>
+                                                ${escapeHtml(
+                                                    user.name ||
+                                                    "User"
+                                                )}
+                                            </span>
+                                            ${verified}
+                                        </div>
+
+                                        <div class="member-email">
                                             ${escapeHtml(
-                                                user.name ||
-                                                "User"
+                                                user.email ||
+                                                ""
                                             )}
-                                        </span>
-                                        ${verified}
-                                    </div>
-
-                                    <div class="member-email">
-                                        ${escapeHtml(
-                                            user.email ||
-                                            ""
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
-                    })
+                            `;
+                        }
+                    )
                     .join("");
         }
 
         async function loadMessages(
-            keepPosition = false
+            options = {}
         ) {
+            const {
+                forceScroll = false,
+                silent = false
+            } = options;
+
             if (
                 state.loadingMessages
             ) {
-                return;
+                return false;
             }
 
-            state.loadingMessages = true;
+            state.loadingMessages =
+                true;
 
-            const oldHeight =
-                elements.messages.scrollHeight;
+            const container =
+                elements.messages;
 
-            const oldTop =
-                elements.messages.scrollTop;
+            const wasNearBottom =
+                container.scrollHeight -
+                container.scrollTop -
+                container.clientHeight <
+                180;
 
-            elements.messageLoading.style.display =
-                "flex";
+            if (!silent) {
+                elements.messageLoading.style.display =
+                    "flex";
+            }
 
             try {
                 const data =
@@ -1611,30 +1963,58 @@
                         "/api/chat?action=messages&limit=100"
                     );
 
-                state.messages =
-                    Array.isArray(data.messages)
+                const incoming =
+                    Array.isArray(
+                        data.messages
+                    )
                         ? data.messages
                         : [];
 
-                renderMessages();
+                if (
+                    incoming.length
+                ) {
+                    mergeMessages(
+                        incoming,
+                        true
+                    );
 
-                if (keepPosition) {
-                    const newHeight =
-                        elements.messages.scrollHeight;
+                    saveMessagesCache();
 
-                    elements.messages.scrollTop =
-                        oldTop +
-                        (
-                            newHeight -
-                            oldHeight
-                        );
-                } else {
-                    scrollToBottom();
+                    renderMessages();
+
+                    if (
+                        forceScroll ||
+                        !state.initializedMessages ||
+                        wasNearBottom
+                    ) {
+                        scrollToBottom();
+                    }
+                } else if (
+                    !state.messages.length
+                ) {
+                    renderMessages();
                 }
+
+                state.initializedMessages =
+                    true;
+
+                return true;
             } catch (error) {
-                showToast(
-                    error.message
-                );
+                if (
+                    !state.messages.length
+                ) {
+                    loadMessagesCache();
+                }
+
+                if (
+                    !silent
+                ) {
+                    showToast(
+                        error.message
+                    );
+                }
+
+                return false;
             } finally {
                 state.loadingMessages =
                     false;
@@ -1645,7 +2025,9 @@
         }
 
         function renderMessages() {
-            if (!state.messages.length) {
+            if (
+                !state.messages.length
+            ) {
                 elements.messageList.innerHTML = `
                     <div class="empty-state">
                         Belum ada pesan. Jadilah yang pertama menyapa 👋
@@ -1659,131 +2041,135 @@
 
             const html =
                 state.messages
-                    .map(message => {
-                        const dateLabel =
-                            formatDate(
-                                message.createdAt
-                            );
+                    .map(
+                        message => {
+                            const dateLabel =
+                                formatDate(
+                                    message.createdAt
+                                );
 
-                        let separator = "";
+                            let separator =
+                                "";
 
-                        if (
-                            dateLabel &&
-                            dateLabel !== lastDate
-                        ) {
-                            lastDate =
-                                dateLabel;
+                            if (
+                                dateLabel &&
+                                dateLabel !==
+                                lastDate
+                            ) {
+                                lastDate =
+                                    dateLabel;
 
-                            separator = `
-                                <div class="date-separator">
-                                    <span>
-                                        ${escapeHtml(
-                                            dateLabel
-                                        )}
-                                    </span>
-                                </div>
-                            `;
-                        }
+                                separator = `
+                                    <div class="date-separator">
+                                        <span>
+                                            ${escapeHtml(
+                                                dateLabel
+                                            )}
+                                        </span>
+                                    </div>
+                                `;
+                            }
 
-                        const own =
-                            String(
-                                message.user?.id ||
-                                message.user?._id ||
-                                ""
-                            ) ===
-                            String(
-                                state.user?.id ||
-                                state.user?._id ||
-                                ""
-                            );
+                            const own =
+                                isOwnMessage(
+                                    message
+                                );
 
-                        const name =
-                            message.user?.name ||
-                            "User";
+                            const name =
+                                message.user?.name ||
+                                "User";
 
-                        const verified =
-                            message.user?.emailVerified
-                                ? verifiedBadge()
-                                : "";
+                            const verified =
+                                message.user?.emailVerified
+                                    ? verifiedBadge()
+                                    : "";
 
-                        return `
-                            ${separator}
+                            const avatar =
+                                avatarUrl(
+                                    message.user?.avatarUrl ||
+                                    (
+                                        own
+                                            ? state.user?.avatarUrl
+                                            : ""
+                                    )
+                                );
 
-                            <div class="message-row ${
-                                own
-                                    ? "own"
-                                    : ""
-                            }">
-                                ${
+                            return `
+                                ${separator}
+
+                                <div class="message-row ${
                                     own
-                                        ? ""
-                                        : `
-                                            <img
-                                                class="message-avatar"
-                                                src="${escapeHtml(
-                                                    avatarUrl(
-                                                        message.user?.avatarUrl
-                                                    )
-                                                )}"
-                                                alt="${escapeHtml(
-                                                    name
-                                                )}"
-                                            >
-                                        `
-                                }
+                                        ? "own"
+                                        : ""
+                                }">
 
-                                <div class="message-content">
                                     ${
                                         own
                                             ? ""
                                             : `
-                                                <div class="message-sender">
-                                                    <span>
-                                                        ${escapeHtml(
-                                                            name
-                                                        )}
-                                                    </span>
-                                                    ${verified}
-                                                </div>
+                                                <img
+                                                    class="message-avatar"
+                                                    src="${escapeHtml(
+                                                        avatar
+                                                    )}"
+                                                    alt="${escapeHtml(
+                                                        name
+                                                    )}"
+                                                >
                                             `
                                     }
 
-                                    <div class="message-bubble">
-                                        ${escapeHtml(
-                                            message.message
-                                        )}
-                                    </div>
+                                    <div class="message-content">
+                                        ${
+                                            own
+                                                ? ""
+                                                : `
+                                                    <div class="message-sender">
+                                                        <span>
+                                                            ${escapeHtml(
+                                                                name
+                                                            )}
+                                                        </span>
+                                                        ${verified}
+                                                    </div>
+                                                `
+                                        }
 
-                                    <div class="message-meta">
-                                        <span>
-                                            ${formatTime(
-                                                message.createdAt
+                                        <div class="message-bubble">
+                                            ${escapeHtml(
+                                                message.message ||
+                                                ""
                                             )}
-                                        </span>
-                                    </div>
-                                </div>
+                                        </div>
 
-                                ${
-                                    own
-                                        ? `
-                                            <img
-                                                class="message-avatar"
-                                                src="${escapeHtml(
-                                                    avatarUrl(
-                                                        message.user?.avatarUrl ||
-                                                        state.user?.avatarUrl
-                                                    )
-                                                )}"
-                                                alt="${escapeHtml(
-                                                    name
-                                                )}"
-                                            >
-                                        `
-                                        : ""
-                                }
-                            </div>
-                        `;
-                    })
+                                        <div class="message-meta">
+                                            <span>
+                                                ${formatTime(
+                                                    message.createdAt
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    ${
+                                        own
+                                            ? `
+                                                <img
+                                                    class="message-avatar"
+                                                    src="${escapeHtml(
+                                                        avatar
+                                                    )}"
+                                                    alt="${escapeHtml(
+                                                        name
+                                                    )}"
+                                                >
+                                            `
+                                            : ""
+                                    }
+                                </div>
+                            `;
+                        }
+                    )
                     .join("");
 
             elements.messageList.innerHTML =
@@ -1791,25 +2177,32 @@
         }
 
         function scrollToBottom() {
-            requestAnimationFrame(() => {
-                elements.messages.scrollTop =
-                    elements.messages.scrollHeight;
-            });
+            requestAnimationFrame(
+                () => {
+                    elements.messages.scrollTop =
+                        elements.messages.scrollHeight;
+                }
+            );
         }
 
         async function sendMessage() {
-            if (state.sending) {
+            if (
+                state.sending
+            ) {
                 return;
             }
 
             const message =
                 elements.messageInput.value.trim();
 
-            if (!message) {
+            if (
+                !message
+            ) {
                 return;
             }
 
-            state.sending = true;
+            state.sending =
+                true;
 
             elements.sendBtn.disabled =
                 true;
@@ -1819,19 +2212,28 @@
                     await api(
                         "/api/chat",
                         {
-                            method: "POST",
-                            body: JSON.stringify({
-                                action: "send",
-                                message
-                            })
+                            method:
+                                "POST",
+                            body:
+                                JSON.stringify({
+                                    action:
+                                        "send",
+                                    message
+                                })
                         }
                     );
 
-                if (data.message) {
-                    state.messages.push(
-                        data.message
+                if (
+                    data?.message
+                ) {
+                    mergeMessages(
+                        [
+                            data.message
+                        ],
+                        false
                     );
 
+                    saveMessagesCache();
                     renderMessages();
                     scrollToBottom();
                 }
@@ -1840,12 +2242,17 @@
                     "";
 
                 autoResizeTextarea();
+
+                elements.typingIndicator.textContent =
+                    "";
             } catch (error) {
                 showToast(
                     error.message
                 );
             } finally {
-                state.sending = false;
+                state.sending =
+                    false;
+
                 elements.sendBtn.disabled =
                     false;
             }
@@ -1856,21 +2263,37 @@
                 await api(
                     "/api/chat",
                     {
-                        method: "POST",
-                        body: JSON.stringify({
-                            action: "heartbeat"
-                        })
+                        method:
+                            "POST",
+                        body:
+                            JSON.stringify({
+                                action:
+                                    "heartbeat"
+                            })
                     }
                 );
             } catch {}
         }
 
         async function refreshAll() {
-            await Promise.all([
+            const previousScroll =
+                elements.messages.scrollTop;
+
+            await Promise.allSettled([
                 loadGroup(),
                 loadUsers(),
-                loadMessages()
+                loadMessages({
+                    forceScroll:
+                        false
+                })
             ]);
+
+            if (
+                state.messages.length
+            ) {
+                elements.messages.scrollTop =
+                    previousScroll;
+            }
         }
 
         function openProfile() {
@@ -1878,9 +2301,12 @@
                 "active"
             );
 
-            state.profileOpen = true;
+            state.profileOpen =
+                true;
 
-            loadGroup().catch(() => {});
+            loadGroup().catch(
+                () => {}
+            );
         }
 
         function closeProfile() {
@@ -1888,7 +2314,8 @@
                 "active"
             );
 
-            state.profileOpen = false;
+            state.profileOpen =
+                false;
         }
 
         function autoResizeTextarea() {
@@ -1907,14 +2334,70 @@
                 await fetch(
                     "/api/auth/logout",
                     {
-                        method: "POST",
-                        credentials: "include"
+                        method:
+                            "POST",
+                        credentials:
+                            "include",
+                        cache:
+                            "no-store"
                     }
                 );
             } catch {}
 
             window.location.href =
                 "/login";
+        }
+
+        function startPolling() {
+            if (
+                state.pollingStarted
+            ) {
+                return;
+            }
+
+            state.pollingStarted =
+                true;
+
+            setInterval(
+                async () => {
+                    if (
+                        document.visibilityState !==
+                        "visible"
+                    ) {
+                        return;
+                    }
+
+                    await Promise.allSettled([
+                        loadGroup(),
+                        loadUsers(),
+                        loadMessages({
+                            forceScroll:
+                                false,
+                            silent:
+                                true
+                        })
+                    ]);
+                },
+                8000
+            );
+        }
+
+        function startHeartbeat() {
+            if (
+                state.heartbeatStarted
+            ) {
+                return;
+            }
+
+            state.heartbeatStarted =
+                true;
+
+            heartbeat();
+
+            setInterval(
+                heartbeat,
+                25000
+            );
         }
 
         elements.sendBtn.addEventListener(
@@ -1938,10 +2421,12 @@
             "keydown",
             event => {
                 if (
-                    event.key === "Enter" &&
+                    event.key ===
+                        "Enter" &&
                     !event.shiftKey
                 ) {
                     event.preventDefault();
+
                     sendMessage();
                 }
             }
@@ -2021,7 +2506,8 @@
             "keydown",
             event => {
                 if (
-                    event.key === "Escape" &&
+                    event.key ===
+                        "Escape" &&
                     state.profileOpen
                 ) {
                     closeProfile();
@@ -2029,36 +2515,84 @@
             }
         );
 
+        window.addEventListener(
+            "pageshow",
+            async () => {
+                if (
+                    !state.user
+                ) {
+                    return;
+                }
+
+                await loadMessages({
+                    forceScroll:
+                        false,
+                    silent:
+                        true
+                });
+
+                await heartbeat();
+            }
+        );
+
+        document.addEventListener(
+            "visibilitychange",
+            async () => {
+                if (
+                    document.visibilityState !==
+                    "visible"
+                ) {
+                    return;
+                }
+
+                if (
+                    !state.user
+                ) {
+                    return;
+                }
+
+                await loadMessages({
+                    forceScroll:
+                        false,
+                    silent:
+                        true
+                });
+
+                await heartbeat();
+            }
+        );
+
         async function init() {
             try {
+                loadMessagesCache();
+
                 await loadMe();
 
-                await Promise.all([
+                await Promise.allSettled([
                     loadGroup(),
-                    loadUsers(),
-                    loadMessages()
+                    loadUsers()
                 ]);
+
+                await loadMessages({
+                    forceScroll:
+                        true,
+                    silent:
+                        false
+                });
 
                 await heartbeat();
 
-                setInterval(
-                    heartbeat,
-                    25000
-                );
-
-                setInterval(
-                    async () => {
-                        try {
-                            await loadGroup();
-                            await loadUsers();
-                            await loadMessages(
-                                true
-                            );
-                        } catch {}
-                    },
-                    8000
-                );
+                startHeartbeat();
+                startPolling();
             } catch (error) {
+                if (
+                    state.messages.length
+                ) {
+                    renderMessages();
+                } else {
+                    loadMessagesCache();
+                }
+
                 showToast(
                     error.message ||
                     "Gagal memuat chat"
@@ -2069,4 +2603,4 @@
         init();
     </script>
 </body>
-</html>
+    </html>
