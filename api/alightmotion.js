@@ -1,5 +1,8 @@
 import { connectDB } from "./_lib/mongodb.js";
-import { getAuthToken, verifyToken } from "./_lib/auth.js";
+import {
+    getAuthToken,
+    verifyToken
+} from "./_lib/auth.js";
 import AlightMotionHistory from "../models/AlightMotionHistory.js";
 
 const PROVIDER =
@@ -82,16 +85,38 @@ export default async function handler(req, res) {
         await connectDB();
 
         const body = req.body || {};
+
         const action = String(
             body.action || ""
         ).toLowerCase();
 
-        if (!["send-link", "verify-link", "auto"].includes(action)) {
+        if (
+            ![
+                "send-link",
+                "verify-link",
+                "auto",
+                "history"
+            ].includes(action)
+        ) {
             return sendError(
                 res,
                 400,
                 "Action tidak valid."
             );
+        }
+
+        if (action === "history") {
+            const history =
+                await AlightMotionHistory
+                    .find({ userId })
+                    .sort({ createdAt: -1 })
+                    .limit(50)
+                    .lean();
+
+            return res.status(200).json({
+                success: true,
+                history
+            });
         }
 
         if (action === "send-link") {
@@ -107,14 +132,15 @@ export default async function handler(req, res) {
                 );
             }
 
-            const result = await providerRequest({
-                action: "send-link",
-                email
-            });
+            const result =
+                await providerRequest({
+                    action: "send-link",
+                    email
+                });
 
-            return res.status(result.statusCode).json(
-                result.data
-            );
+            return res
+                .status(result.statusCode)
+                .json(result.data);
         }
 
         if (action === "verify-link") {
@@ -142,11 +168,12 @@ export default async function handler(req, res) {
                 );
             }
 
-            const result = await providerRequest({
-                action: "verify-link",
-                email,
-                magicLink
-            });
+            const result =
+                await providerRequest({
+                    action: "verify-link",
+                    email,
+                    magicLink
+                });
 
             const data = result.data;
 
@@ -179,7 +206,9 @@ export default async function handler(req, res) {
                 });
             }
 
-            return res.status(result.statusCode).json(data);
+            return res
+                .status(result.statusCode)
+                .json(data);
         }
 
         if (action === "auto") {
@@ -196,7 +225,9 @@ export default async function handler(req, res) {
             }
 
             const result =
-                await providerRequest(providerBody);
+                await providerRequest(
+                    providerBody
+                );
 
             const data = result.data;
 
@@ -237,7 +268,9 @@ export default async function handler(req, res) {
                 });
             }
 
-            return res.status(result.statusCode).json(data);
+            return res
+                .status(result.statusCode)
+                .json(data);
         }
     } catch (error) {
         console.error(
