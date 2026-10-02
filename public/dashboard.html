@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ReyCode Digital</title>
-    <meta name="theme-color" content="#050b18">
+    <meta name="theme-color" content="#05070d">
+    <title>Dashboard — ReyCode Digital</title>
 
     <style>
         * {
@@ -14,16 +14,20 @@
         }
 
         :root {
-            --bg: #050b18;
-            --bg-soft: #081225;
-            --card: rgba(12, 24, 45, .72);
-            --card-border: rgba(255, 255, 255, .08);
-            --text: #f5f8ff;
-            --muted: #8d9ab0;
+            --bg: #05070d;
+            --bg-soft: #080c14;
+            --card: rgba(12, 17, 28, .72);
+            --card-strong: rgba(15, 21, 34, .92);
+            --border: rgba(255, 255, 255, .08);
+            --border-blue: rgba(37, 150, 255, .24);
+            --text: #f5f7fb;
+            --muted: #8d97aa;
             --blue: #168cff;
-            --blue-2: #4da6ff;
-            --green: #22c55e;
-            --danger: #ef4444;
+            --blue-2: #3ba0ff;
+            --blue-soft: rgba(22, 140, 255, .12);
+            --green: #2bd576;
+            --danger: #ff5b6e;
+            --radius: 22px;
         }
 
         html {
@@ -33,17 +37,24 @@
         body {
             min-height: 100vh;
             background:
-                radial-gradient(circle at 15% 10%, rgba(22, 140, 255, .12), transparent 28%),
-                radial-gradient(circle at 85% 20%, rgba(0, 102, 255, .08), transparent 25%),
-                var(--bg);
+                radial-gradient(circle at 10% 0%, rgba(22, 140, 255, .13), transparent 30%),
+                radial-gradient(circle at 90% 15%, rgba(45, 101, 255, .09), transparent 28%),
+                linear-gradient(180deg, #05070d 0%, #060910 55%, #04060b 100%);
             color: var(--text);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             overflow-x: hidden;
         }
 
-        button,
-        a {
-            font: inherit;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
         }
 
         a {
@@ -53,23 +64,16 @@
 
         button {
             border: 0;
+            font: inherit;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
         }
 
         .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            width: 100%;
-            border-bottom: 1px solid rgba(255, 255, 255, .06);
-            background: rgba(5, 11, 24, .78);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .nav {
-            width: min(1180px, calc(100% - 32px));
-            height: 74px;
-            margin: auto;
+            height: 82px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -79,22 +83,31 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 11px;
-            min-width: 0;
+            gap: 12px;
         }
 
         .brand img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 11px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 30px rgba(22, 140, 255, .18);
         }
 
-        .brand-name {
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: -.3px;
-            white-space: nowrap;
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-text strong {
+            font-size: 15px;
+            letter-spacing: -.2px;
+        }
+
+        .brand-text span {
+            color: var(--muted);
+            font-size: 11px;
         }
 
         .nav-actions {
@@ -104,268 +117,456 @@
         }
 
         .nav-btn {
-            height: 40px;
-            padding: 0 14px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
+            min-height: 40px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, .08);
-            background: rgba(255, 255, 255, .035);
-            color: #dce8fb;
+            background: rgba(255,255,255,.035);
+            color: #dbe2ed;
+            font-size: 13px;
             cursor: pointer;
             transition: .2s ease;
         }
 
         .nav-btn:hover {
-            border-color: rgba(22, 140, 255, .4);
-            background: rgba(22, 140, 255, .08);
+            background: rgba(255,255,255,.065);
+            border-color: rgba(255,255,255,.13);
             transform: translateY(-1px);
         }
 
-        .nav-btn.primary {
-            background: linear-gradient(135deg, #168cff, #0768d9);
-            border-color: transparent;
+        .nav-btn.logout:hover {
             color: #fff;
-            box-shadow: 0 8px 25px rgba(22, 140, 255, .18);
-        }
-
-        .nav-btn.chat-btn {
-            background: rgba(22, 140, 255, .08);
-            border-color: rgba(22, 140, 255, .2);
-            color: #6db9ff;
-        }
-
-        .page {
-            width: min(1180px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 28px 0 50px;
+            border-color: rgba(255, 91, 110, .3);
+            background: rgba(255, 91, 110, .08);
         }
 
         .hero {
-            width: 100%;
-            height: 270px;
             position: relative;
+            min-height: 390px;
             overflow: hidden;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, .07);
-            background: #081225;
-            box-shadow: 0 20px 70px rgba(0, 0, 0, .24);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: #080c14;
+            box-shadow: 0 25px 80px rgba(0,0,0,.28);
         }
 
         .hero video {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            display: block;
             object-fit: cover;
+            opacity: .48;
         }
 
         .hero::after {
             content: "";
             position: absolute;
             inset: 0;
-            pointer-events: none;
             background:
-                linear-gradient(
-                    180deg,
-                    rgba(5, 11, 24, .02),
-                    rgba(5, 11, 24, .15)
-                );
+                linear-gradient(90deg, rgba(4,7,13,.96) 0%, rgba(4,7,13,.76) 40%, rgba(4,7,13,.2) 100%),
+                linear-gradient(0deg, rgba(4,7,13,.9) 0%, transparent 55%);
         }
 
-        .welcome {
-            margin-top: 20px;
-            padding: 24px;
-            border: 1px solid var(--card-border);
-            border-radius: 22px;
-            background: linear-gradient(
-                145deg,
-                rgba(15, 30, 55, .86),
-                rgba(8, 18, 35, .68)
-            );
-            box-shadow: 0 18px 55px rgba(0, 0, 0, .2);
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            min-height: 390px;
+            padding: 48px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 25px;
         }
 
-        .welcome-left {
-            display: flex;
+        .hero-copy {
+            max-width: 650px;
+        }
+
+        .hero-pill {
+            width: fit-content;
+            display: inline-flex;
             align-items: center;
-            gap: 17px;
-            min-width: 0;
+            gap: 8px;
+            padding: 7px 11px;
+            border: 1px solid rgba(22,140,255,.22);
+            border-radius: 999px;
+            background: rgba(22,140,255,.09);
+            color: #75bdff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
         }
 
-        .avatar {
-            width: 68px;
-            height: 68px;
-            flex: 0 0 68px;
-            border-radius: 20px;
+        .hero-pill i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #36a2ff;
+            box-shadow: 0 0 12px #168cff;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            line-height: 1.03;
+            letter-spacing: -2.4px;
+            max-width: 680px;
+        }
+
+        .hero h1 span {
+            color: #55aaff;
+        }
+
+        .hero p {
+            max-width: 560px;
+            margin-top: 18px;
+            color: #aab3c3;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: linear-gradient(135deg, #168cff, #0754b8);
-            color: #fff;
-            font-size: 25px;
-            font-weight: 800;
-            border: 1px solid rgba(255, 255, 255, .12);
-            box-shadow: 0 10px 30px rgba(22, 140, 255, .18);
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 27px;
         }
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .welcome-content {
-            min-width: 0;
-        }
-
-        .welcome-label {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .welcome-greeting {
-            font-size: clamp(21px, 3vw, 29px);
-            line-height: 1.2;
-            font-weight: 800;
-            letter-spacing: -.7px;
-            word-break: break-word;
-        }
-
-        .welcome-greeting .name {
-            color: #fff;
-        }
-
-        .verified-badge {
+        .primary-btn,
+        .secondary-btn {
+            min-height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 19px;
-            height: 19px;
-            margin-left: 5px;
-            border-radius: 50%;
-            background: #168cff;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 900;
-            vertical-align: 2px;
-            box-shadow: 0 0 14px rgba(22, 140, 255, .4);
+            gap: 9px;
+            padding: 0 17px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: .2s ease;
         }
 
-        .welcome-email {
-            margin-top: 7px;
-            color: #91a0b8;
-            font-size: 13px;
+        .primary-btn {
+            color: #fff;
+            background: linear-gradient(135deg, #168cff, #0968d8);
+            box-shadow: 0 12px 28px rgba(22,140,255,.2);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 32px rgba(22,140,255,.28);
+        }
+
+        .secondary-btn {
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.045);
+            color: #e1e7f0;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255,255,255,.075);
+            transform: translateY(-2px);
+        }
+
+        .section {
+            margin-top: 24px;
+        }
+
+        .welcome {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 16px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: 0 20px 60px rgba(0,0,0,.18);
+        }
+
+        .profile-panel {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-width: 0;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        .avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 22px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid rgba(255,255,255,.1);
+            background: #111722;
+            box-shadow: 0 12px 35px rgba(0,0,0,.3);
+        }
+
+        .online-dot {
+            position: absolute;
+            right: -2px;
+            bottom: -2px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: var(--green);
+            border: 4px solid #0c121d;
+            box-shadow: 0 0 15px rgba(43,213,118,.32);
+        }
+
+        .profile-info {
+            min-width: 0;
+        }
+
+        .greeting {
+            color: #8ea0b7;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .profile-name {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: -.5px;
+        }
+
+        .email {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 460px;
+            max-width: 100%;
         }
 
-        .time-box {
+        .verified-badge {
+            width: 19px;
+            height: 19px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #168cff;
+            color: white;
             flex: 0 0 auto;
-            text-align: right;
+            box-shadow: 0 3px 12px rgba(22,140,255,.3);
         }
 
-        .clock {
-            font-size: clamp(24px, 4vw, 34px);
-            line-height: 1;
-            font-weight: 800;
-            letter-spacing: -.8px;
+        .verified-badge svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .date-info {
-            margin-top: 8px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-            margin-top: 18px;
-        }
-
-        .action-card {
-            position: relative;
-            min-height: 160px;
+        .clock-panel {
             padding: 24px;
-            border: 1px solid var(--card-border);
-            border-radius: 22px;
-            background: var(--card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
             overflow: hidden;
-            transition: .25s ease;
         }
 
-        .action-card::before {
+        .clock-panel::before {
             content: "";
             position: absolute;
             width: 160px;
             height: 160px;
-            right: -60px;
-            top: -65px;
+            right: -70px;
+            top: -70px;
             border-radius: 50%;
-            background: rgba(22, 140, 255, .08);
-            filter: blur(5px);
+            background: rgba(22,140,255,.13);
+            filter: blur(3px);
         }
 
-        .action-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(22, 140, 255, .25);
-            box-shadow: 0 18px 50px rgba(0, 0, 0, .2);
+        .clock-label {
+            position: relative;
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .action-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
+        .clock {
+            position: relative;
+            margin-top: 5px;
+            font-size: 31px;
+            font-weight: 750;
+            letter-spacing: -1px;
+        }
+
+        .date {
+            position: relative;
+            margin-top: 4px;
+            color: #7f899b;
+            font-size: 11px;
+        }
+
+        .community {
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            border-color: var(--border-blue);
+            background:
+                radial-gradient(circle at 100% 0%, rgba(22,140,255,.13), transparent 35%),
+                linear-gradient(145deg, rgba(14,22,36,.88), rgba(9,14,23,.72));
+        }
+
+        .community::before {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: -100px;
+            bottom: -150px;
+            border-radius: 50%;
+            background: rgba(22,140,255,.08);
+            filter: blur(15px);
+        }
+
+        .community-head {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: rgba(22, 140, 255, .1);
-            color: #5db0ff;
+            justify-content: space-between;
+            gap: 15px;
+            position: relative;
+        }
+
+        .eyebrow {
+            color: #5eabf7;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .community-title {
+            margin-top: 6px;
             font-size: 20px;
-            margin-bottom: 17px;
+            letter-spacing: -.5px;
         }
 
-        .action-card h3 {
-            font-size: 17px;
-            margin-bottom: 6px;
+        .community-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 17px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.1);
+            flex: 0 0 auto;
         }
 
-        .action-card p {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.55;
+        .community-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
         }
 
-        .action-arrow {
-            position: absolute;
-            right: 22px;
-            bottom: 20px;
-            color: #6faee8;
-            font-size: 18px;
+        .community-body {
+            position: relative;
+            margin-top: 17px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: end;
+            gap: 20px;
         }
 
-        .logout-card {
-            cursor: pointer;
+        .community-desc {
+            color: #8995a8;
+            font-size: 12px;
+            line-height: 1.7;
+            max-width: 680px;
         }
 
-        .logout-card .action-icon {
-            background: rgba(239, 68, 68, .1);
-            color: #ff6b6b;
+        .community-stats {
+            display: flex;
+            gap: 8px;
         }
 
-        .section {
-            margin-top: 30px;
+        .stat {
+            min-width: 90px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 13px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .stat span {
+            color: #6f7b8f;
+            font-size: 10px;
+        }
+
+        .community-footer {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,.06);
+        }
+
+        .community-online {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #8d98aa;
+            font-size: 11px;
+        }
+
+        .community-online i {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(43,213,118,.4);
+        }
+
+        .open-chat {
+            min-height: 40px;
+            padding: 0 15px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #168cff;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 750;
+            transition: .2s ease;
+        }
+
+        .open-chat:hover {
+            transform: translateY(-2px);
+            background: #2997ff;
+            box-shadow: 0 10px 24px rgba(22,140,255,.22);
         }
 
         .section-head {
@@ -373,580 +574,606 @@
             align-items: end;
             justify-content: space-between;
             gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 13px;
         }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: 800;
+        .section-head h2 {
+            font-size: 17px;
             letter-spacing: -.3px;
         }
 
-        .section-subtitle {
+        .section-head p {
             margin-top: 4px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 13px;
-        }
-
-        .quick-card {
-            min-height: 125px;
-            padding: 18px;
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            background: rgba(10, 21, 40, .62);
-            transition: .2s ease;
-        }
-
-        .quick-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(22, 140, 255, .25);
-            background: rgba(14, 30, 55, .75);
-        }
-
-        .quick-icon {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 11px;
-            background: rgba(22, 140, 255, .1);
-            color: #62b4ff;
-            margin-bottom: 13px;
-            font-size: 17px;
-        }
-
-        .quick-card h4 {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .quick-card p {
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.45;
-        }
-
-        .status {
-            margin-top: 18px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 13px;
-        }
-
-        .status-item {
-            padding: 17px;
-            border-radius: 17px;
-            border: 1px solid var(--card-border);
-            background: rgba(10, 21, 40, .55);
-        }
-
-        .status-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .status-name {
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 12px rgba(34, 197, 94, .5);
-        }
-
-        .status-item p {
             color: var(--muted);
             font-size: 11px;
         }
 
-        footer {
-            padding: 35px 0 10px;
-            text-align: center;
-            color: #66748a;
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .access-card {
+            min-height: 148px;
+            padding: 19px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: rgba(11,16,26,.7);
+            transition: .22s ease;
+        }
+
+        .access-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(22,140,255,.24);
+            background: rgba(14,21,34,.9);
+            box-shadow: 0 15px 40px rgba(0,0,0,.18);
+        }
+
+        .access-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(22,140,255,.09);
+            color: #62b3ff;
+        }
+
+        .access-icon svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .access-card strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .access-card span {
+            display: block;
+            margin-top: 4px;
+            color: #707b8e;
+            font-size: 10px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .status-card {
+            min-height: 82px;
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: rgba(11,16,26,.66);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(43,213,118,.4);
+            flex: 0 0 auto;
+        }
+
+        .status-name {
             font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-desc {
+            margin-top: 3px;
+            color: #6f7a8c;
+            font-size: 10px;
+        }
+
+        .status-state {
+            color: #6ee39d;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        footer {
+            padding: 30px 0 34px;
+            color: #596376;
+            text-align: center;
+            font-size: 10px;
         }
 
         .toast {
             position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 300;
-            max-width: min(360px, calc(100% - 40px));
-            padding: 13px 16px;
-            border-radius: 13px;
-            background: rgba(13, 25, 45, .95);
-            border: 1px solid rgba(255, 255, 255, .09);
-            box-shadow: 0 15px 45px rgba(0, 0, 0, .3);
-            color: #eaf2ff;
-            font-size: 13px;
+            left: 50%;
+            bottom: 24px;
+            z-index: 50;
+            transform: translate(-50%, 20px);
             opacity: 0;
-            transform: translateY(12px);
             pointer-events: none;
+            padding: 11px 15px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 12px;
+            background: rgba(13,18,29,.95);
+            color: #e8edf5;
+            box-shadow: 0 15px 40px rgba(0,0,0,.35);
+            font-size: 12px;
             transition: .25s ease;
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(-50%, 0);
         }
 
-        .toast.error {
-            border-color: rgba(239, 68, 68, .25);
-        }
-
-        @media (max-width: 1000px) {
-            .quick-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 850px) {
-            .quick-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+        @media (max-width: 900px) {
+            .welcome {
+                grid-template-columns: 1fr;
             }
 
-            .status {
+            .clock-panel {
+                min-height: 125px;
+            }
+
+            .access-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .status-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 680px) {
-            .nav {
-                height: 66px;
-                width: min(100% - 22px, 1180px);
+            .page {
+                width: min(100% - 20px, 1180px);
             }
 
-            .brand-name {
-                font-size: 15px;
+            .topbar {
+                height: 72px;
             }
 
-            .nav-actions {
-                gap: 6px;
-            }
-
-            .nav-btn {
-                padding: 0 10px;
-                font-size: 12px;
-            }
-
-            .nav-btn.profile-btn {
+            .brand-text span {
                 display: none;
             }
 
-            .page {
-                width: min(100% - 22px, 1180px);
-                padding-top: 18px;
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                min-height: 40px;
+                padding: 0;
+                justify-content: center;
+                font-size: 0;
+            }
+
+            .nav-btn svg {
+                width: 17px;
+                height: 17px;
             }
 
             .hero {
-                height: 190px;
-                border-radius: 19px;
+                min-height: 430px;
+                border-radius: 22px;
             }
 
-            .welcome {
+            .hero-content {
+                min-height: 430px;
+                padding: 30px 24px;
+                align-items: end;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+                letter-spacing: -1.8px;
+            }
+
+            .hero p {
+                font-size: 12px;
+                line-height: 1.65;
+            }
+
+            .profile-panel {
                 padding: 19px;
-                align-items: flex-start;
-                flex-direction: column;
             }
 
-            .welcome-left {
-                width: 100%;
+            .avatar {
+                width: 62px;
+                height: 62px;
+                border-radius: 18px;
             }
 
-            .time-box {
-                width: 100%;
-                text-align: left;
-                padding-left: 84px;
-                margin-top: -8px;
+            .profile-name {
+                font-size: 18px;
             }
 
-            .welcome-email {
-                max-width: 100%;
+            .community {
+                padding: 20px;
             }
 
-            .main-grid {
+            .community-body {
                 grid-template-columns: 1fr;
             }
 
-            .quick-grid {
-                grid-template-columns: 1fr 1fr;
+            .community-stats {
+                width: 100%;
+            }
+
+            .stat {
+                flex: 1;
+            }
+
+            .community-footer {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .open-chat {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .access-grid {
+                gap: 9px;
+            }
+
+            .access-card {
+                min-height: 132px;
+                padding: 15px;
+                border-radius: 16px;
+            }
+
+            .section {
+                margin-top: 18px;
             }
         }
 
         @media (max-width: 420px) {
             .brand img {
-                width: 34px;
-                height: 34px;
+                width: 36px;
+                height: 36px;
             }
 
-            .brand-name {
-                font-size: 14px;
+            .hero h1 {
+                font-size: 33px;
             }
 
-            .quick-grid {
-                grid-template-columns: 1fr;
+            .hero-actions {
+                flex-direction: column;
             }
 
-            .avatar {
-                width: 58px;
-                height: 58px;
-                flex-basis: 58px;
-                border-radius: 17px;
+            .primary-btn,
+            .secondary-btn {
+                width: 100%;
             }
 
-            .time-box {
-                padding-left: 75px;
+            .profile-panel {
+                align-items: flex-start;
             }
 
-            .welcome-greeting {
-                font-size: 20px;
+            .community-stats {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <header class="topbar">
-        <nav class="nav">
-            <a href="/dashboard" class="brand">
-                <img
-                    src="https://i.top4top.io/p_3925af3h26.png"
-                    alt="ReyCode"
-                >
-                <span class="brand-name">ReyCode Digital</span>
+    <div class="page">
+        <header class="topbar">
+            <a class="brand" href="/dashboard">
+                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+                <div class="brand-text">
+                    <strong>ReyCode Digital</strong>
+                    <span>Digital workspace</span>
+                </div>
             </a>
 
-            <div class="nav-actions">
-                <a href="/chat" class="nav-btn chat-btn">
-                    Chat
+            <nav class="nav-actions">
+                <a class="nav-btn" href="/profile" aria-label="Profil">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21c1.5-4 4.1-6 8-6s6.5 2 8 6"></path>
+                    </svg>
+                    <span>Profil</span>
                 </a>
 
-                <a href="/profile" class="nav-btn profile-btn">
-                    Profil
-                </a>
-
-                <button class="nav-btn primary" id="logoutTop">
-                    Keluar
+                <button class="nav-btn logout" id="logoutBtn" type="button" aria-label="Keluar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17l5-5-5-5"></path>
+                        <path d="M15 12H3"></path>
+                        <path d="M21 19V5a2 2 0 0 0-2-2h-6"></path>
+                    </svg>
+                    <span>Keluar</span>
                 </button>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
 
-    <main class="page">
+        <main>
+            <section class="hero">
+                <video autoplay muted loop playsinline preload="metadata">
+                    <source src="https://files.catbox.moe/9tcayz.mp4" type="video/mp4">
+                </video>
 
-        <section class="hero">
-            <video
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata">
-                <source
-                    src="https://files.catbox.moe/9tcayz.mp4"
-                    type="video/mp4"
-                >
-            </video>
-        </section>
+                <div class="hero-content">
+                    <div class="hero-copy">
+                        <div class="hero-pill">
+                            <i></i>
+                            ReyCode Digital
+                        </div>
 
-        <section class="welcome">
-            <div class="welcome-left">
-                <div class="avatar" id="welcomeAvatar">
-                    U
-                </div>
+                        <h1>
+                            Satu tempat untuk
+                            <span>semua aktivitasmu.</span>
+                        </h1>
 
-                <div class="welcome-content">
-                    <div class="welcome-label">
-                        Dashboard kamu
-                    </div>
+                        <p>
+                            Kelola profil, akses workspace, gunakan layanan digital,
+                            dan terhubung dengan komunitas dalam satu dashboard yang
+                            sederhana dan nyaman.
+                        </p>
 
-                    <div
-                        class="welcome-greeting"
-                        id="welcomeGreeting">
-                        Memuat...
-                    </div>
+                        <div class="hero-actions">
+                            <a href="/chat" class="primary-btn">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.8L3 21l1.8-4.4A8.1 8.1 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"></path>
+                                </svg>
+                                Buka Komunitas
+                            </a>
 
-                    <div
-                        class="welcome-email"
-                        id="welcomeEmail">
-                        Memuat data akun...
+                            <a href="/profile" class="secondary-btn">
+                                Lihat Profil
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="time-box">
-                <div
-                    class="clock"
-                    id="clock">
-                    00:00:00
-                </div>
-
-                <div
-                    class="date-info"
-                    id="dateInfo">
-                    Memuat tanggal...
-                </div>
-            </div>
-        </section>
-
-        <section class="main-grid">
-
-            <a
-                href="/profile"
-                class="action-card">
-                <div class="action-icon">
-                    ◉
-                </div>
-
-                <h3>
-                    Profil Saya
-                </h3>
-
-                <p>
-                    Kelola informasi akun, foto profil,
-                    dan pengaturan akun kamu.
-                </p>
-
-                <div class="action-arrow">
-                    →
-                </div>
-            </a>
-
-            <a
-                href="/chat"
-                class="action-card">
-                <div class="action-icon">
-                    💬
-                </div>
-
-                <h3>
-                    MonikaLabs Comunity
-                </h3>
-
-                <p>
-                    Bergabung dan ngobrol bersama
-                    pengguna ReyCode lainnya.
-                </p>
-
-                <div class="action-arrow">
-                    →
-                </div>
-            </a>
-
-            <div
-                class="action-card logout-card"
-                id="logoutCard">
-                <div class="action-icon">
-                    ↪
-                </div>
-
-                <h3>
-                    Keluar Akun
-                </h3>
-
-                <p>
-                    Akhiri sesi akun ReyCode Digital
-                    dengan aman.
-                </p>
-
-                <div class="action-arrow">
-                    →
-                </div>
-            </div>
-
-        </section>
-
-        <section class="section">
-
-            <div class="section-head">
-                <div>
-                    <div class="section-title">
-                        Akses Cepat
+            <section class="section welcome">
+                <div class="panel profile-panel">
+                    <div class="avatar-wrap">
+                        <img id="userAvatar" class="avatar" src="" alt="Avatar">
+                        <span class="online-dot"></span>
                     </div>
 
-                    <div class="section-subtitle">
-                        Akses fitur utama ReyCode Digital
+                    <div class="profile-info">
+                        <div class="greeting" id="greeting">Selamat datang kembali</div>
+
+                        <div class="profile-name">
+                            <span id="userName">Memuat...</span>
+
+                            <span class="verified-badge" id="verifiedBadge" hidden title="Email terverifikasi">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M5 12.5 9.2 17 19 7"></path>
+                                </svg>
+                            </span>
+                        </div>
+
+                        <div class="email" id="userEmail">Memuat informasi akun...</div>
                     </div>
                 </div>
-            </div>
 
-            <div class="quick-grid">
+                <div class="panel clock-panel">
+                    <span class="clock-label">Waktu sekarang</span>
+                    <div class="clock" id="clock">00:00:00</div>
+                    <div class="date" id="date">Memuat tanggal...</div>
+                </div>
+            </section>
 
-                <a
-                    href="/profile"
-                    class="quick-card">
-                    <div class="quick-icon">
-                        👤
+            <section class="section">
+                <div class="panel community">
+                    <div class="community-head">
+                        <div>
+                            <div class="eyebrow">Community</div>
+                            <h2 class="community-title">MonikaLabs Comunity</h2>
+                        </div>
+
+                        <div class="community-icon">
+                            <img src="https://k.top4top.io/p_392741enr1.png" alt="MonikaLabs Comunity">
+                        </div>
                     </div>
 
-                    <h4>
-                        Profile
-                    </h4>
+                    <div class="community-body">
+                        <p class="community-desc">
+                            Ruang komunitas ReyCode untuk berkomunikasi, berbagi informasi,
+                            dan terhubung dengan pengguna lainnya secara langsung.
+                        </p>
 
-                    <p>
-                        Kelola data akun dan profil.
-                    </p>
-                </a>
+                        <div class="community-stats">
+                            <div class="stat">
+                                <strong id="totalUsers">—</strong>
+                                <span>Total pengguna</span>
+                            </div>
 
-                <a
-                    href="/chat"
-                    class="quick-card">
-                    <div class="quick-icon">
-                        💬
+                            <div class="stat">
+                                <strong id="onlineUsers">—</strong>
+                                <span>Sedang online</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <h4>
-                        Chat
-                    </h4>
+                    <div class="community-footer">
+                        <div class="community-online">
+                            <i></i>
+                            Komunitas aktif
+                        </div>
 
-                    <p>
-                        Chat bersama komunitas ReyCode.
-                    </p>
-                </a>
-
-                <a
-                    href="/github"
-                    class="quick-card">
-                    <div class="quick-icon">
-                        ⌘
+                        <a href="/chat" class="open-chat">
+                            Masuk ke Chat
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m13 6 6 6-6 6"></path>
+                            </svg>
+                        </a>
                     </div>
+                </div>
+            </section>
 
-                    <h4>
-                        GitHub
-                    </h4>
-
-                    <p>
-                        Workspace dan integrasi GitHub.
-                    </p>
-                </a>
-
-                <a
-                    href="/deploy"
-                    class="quick-card">
-                    <div class="quick-icon">
-                        ▲
+            <section class="section">
+                <div class="section-head">
+                    <div>
+                        <h2>Akses cepat</h2>
+                        <p>Layanan yang sering kamu gunakan</p>
                     </div>
-
-                    <h4>
-                        Deploy
-                    </h4>
-
-                    <p>
-                        Kelola proses deployment project.
-                    </p>
-                </a>
-
-                <a
-                    href="/alightmotion"
-                    class="quick-card">
-                    <div class="quick-icon">
-                        ✦
-                    </div>
-
-                    <h4>
-                        Alight Motion
-                    </h4>
-
-                    <p>
-                        Akses fitur Alight Motion.
-                    </p>
-                </a>
-
-            </div>
-
-        </section>
-
-        <section class="status">
-
-            <div class="status-item">
-                <div class="status-top">
-                    <span class="status-name">
-                        Website
-                    </span>
-
-                    <span class="status-dot"></span>
                 </div>
 
-                <p>
-                    Operational
-                </p>
-            </div>
+                <div class="access-grid">
+                    <a class="access-card" href="/github">
+                        <div class="access-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.2-.4 6.5-1.6 6.5-7A5.5 5.5 0 0 0 19 3.7 5.1 5.1 0 0 0 18.9 0S17.7-.4 15 1.3a13.4 13.4 0 0 0-6 0C6.3-.4 5.1 0 5.1 0A5.1 5.1 0 0 0 5 3.7a5.5 5.5 0 0 0-1.5 3.8c0 5.4 3.3 6.6 6.5 7A4.8 4.8 0 0 0 9 18v4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>GitHub</strong>
+                            <span>Kelola workspace</span>
+                        </div>
+                    </a>
 
-            <div class="status-item">
-                <div class="status-top">
-                    <span class="status-name">
-                        API
-                    </span>
+                    <a class="access-card" href="/deploy">
+                        <div class="access-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="m12 3-8 8 8 8 8-8-8-8Z"></path>
+                                <path d="m8 7 8 10"></path>
+                                <path d="m16 7-8 10"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>Deploy</strong>
+                            <span>Deploy project kamu</span>
+                        </div>
+                    </a>
 
-                    <span class="status-dot"></span>
+                    <a class="access-card" href="/alightmotion">
+                        <div class="access-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3v18"></path>
+                                <path d="M5 7h14"></path>
+                                <path d="M5 17h14"></path>
+                                <circle cx="12" cy="7" r="2"></circle>
+                                <circle cx="8" cy="17" r="2"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>Alight Motion</strong>
+                            <span>Akses layanan</span>
+                        </div>
+                    </a>
+
+                    <a class="access-card" href="/profile">
+                        <div class="access-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21c1.5-4 4.1-6 8-6s6.5 2 8 6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>Profil</strong>
+                            <span>Kelola akun kamu</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-head">
+                    <div>
+                        <h2>Status layanan</h2>
+                        <p>Informasi ketersediaan sistem</p>
+                    </div>
                 </div>
 
-                <p>
-                    Operational
-                </p>
-            </div>
+                <div class="status-grid">
+                    <div class="status-card">
+                        <div class="status-left">
+                            <span class="status-dot"></span>
+                            <div>
+                                <div class="status-name">Website</div>
+                                <div class="status-desc">ReyCode Digital</div>
+                            </div>
+                        </div>
+                        <span class="status-state">Online</span>
+                    </div>
 
-            <div class="status-item">
-                <div class="status-top">
-                    <span class="status-name">
-                        Dashboard
-                    </span>
+                    <div class="status-card">
+                        <div class="status-left">
+                            <span class="status-dot"></span>
+                            <div>
+                                <div class="status-name">API</div>
+                                <div class="status-desc">Authentication & services</div>
+                            </div>
+                        </div>
+                        <span class="status-state">Online</span>
+                    </div>
 
-                    <span class="status-dot"></span>
+                    <div class="status-card">
+                        <div class="status-left">
+                            <span class="status-dot"></span>
+                            <div>
+                                <div class="status-name">Dashboard</div>
+                                <div class="status-desc">User workspace</div>
+                            </div>
+                        </div>
+                        <span class="status-state">Online</span>
+                    </div>
                 </div>
-
-                <p>
-                    Operational
-                </p>
-            </div>
-
-        </section>
+            </section>
+        </main>
 
         <footer>
-            ©
-            <span id="year"></span>
-            ReyCode Digital. All rights reserved.
+            © <span id="year"></span> ReyCode Digital. All rights reserved.
         </footer>
-
-    </main>
-
-    <div
-        class="toast"
-        id="toast">
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script>
-        const $ = id =>
-            document.getElementById(id);
+        const userAvatar = document.getElementById("userAvatar");
+        const userName = document.getElementById("userName");
+        const userEmail = document.getElementById("userEmail");
+        const greeting = document.getElementById("greeting");
+        const verifiedBadge = document.getElementById("verifiedBadge");
+        const clock = document.getElementById("clock");
+        const date = document.getElementById("date");
+        const totalUsers = document.getElementById("totalUsers");
+        const onlineUsers = document.getElementById("onlineUsers");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const toast = document.getElementById("toast");
 
-        let toastTimer = null;
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
 
-        function escapeHtml(value) {
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2800);
         }
 
         function getGreeting() {
-            const hour =
-                new Date().getHours();
+            const hour = new Date().getHours();
 
             if (hour >= 5 && hour < 11) {
                 return "Selamat pagi";
@@ -963,341 +1190,166 @@
             return "Selamat malam";
         }
 
-        function formatDate(date) {
-            return new Intl.DateTimeFormat(
-                "id-ID",
-                {
-                    weekday: "long",
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric"
-                }
-            ).format(date);
-        }
-
-        function setAvatar(user) {
-            const avatar =
-                $("welcomeAvatar");
-
-            if (!avatar) {
-                return;
-            }
-
-            const name =
-                user?.name ||
-                user?.username ||
-                user?.displayName ||
-                user?.fullName ||
-                "User";
-
-            const avatarUrl =
-                user?.avatarUrl || "";
-
-            if (avatarUrl) {
-                const image =
-                    document.createElement("img");
-
-                image.src = avatarUrl;
-                image.alt = name;
-
-                image.onerror = () => {
-                    avatar.textContent =
-                        name
-                            .charAt(0)
-                            .toUpperCase();
-                };
-
-                avatar.replaceChildren(image);
-                return;
-            }
-
-            avatar.textContent =
-                name
-                    .charAt(0)
-                    .toUpperCase();
-        }
-
-        function updateGreeting(user) {
-            const name =
-                user?.name ||
-                user?.username ||
-                user?.displayName ||
-                user?.fullName ||
-                "User";
-
-            const verified =
-                user?.emailVerified === true;
-
-            const greeting =
-                $("welcomeGreeting");
-
-            if (greeting) {
-                greeting.replaceChildren(
-                    document.createTextNode(
-                        `${getGreeting()}, `
-                    )
-                );
-
-                const nameElement =
-                    document.createElement("span");
-
-                nameElement.className =
-                    "name";
-
-                nameElement.textContent =
-                    name;
-
-                greeting.appendChild(
-                    nameElement
-                );
-
-                if (verified) {
-                    const badge =
-                        document.createElement("span");
-
-                    badge.className =
-                        "verified-badge";
-
-                    badge.title =
-                        "Akun terverifikasi";
-
-                    badge.textContent = "✓";
-
-                    greeting.appendChild(
-                        badge
-                    );
-                }
-            }
-
-            const email =
-                $("welcomeEmail");
-
-            if (email) {
-                email.textContent =
-                    user?.email ||
-                    "Email tidak tersedia";
-            }
-        }
-
         function updateClock() {
             const now = new Date();
 
-            const clock =
-                $("clock");
+            clock.textContent =
+                now.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                });
 
-            if (clock) {
-                clock.textContent =
-                    now.toLocaleTimeString(
-                        "id-ID",
-                        {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                            hour12: false
-                        }
-                    );
-            }
+            date.textContent =
+                now.toLocaleDateString("id-ID", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
 
-            const dateInfo =
-                $("dateInfo");
-
-            if (dateInfo) {
-                dateInfo.textContent =
-                    formatDate(now);
-            }
+            greeting.textContent = getGreeting();
         }
 
-        function showToast(
-            message,
-            error = false
-        ) {
-            const toast =
-                $("toast");
-
-            if (!toast) {
+        function setAvatar(url, name) {
+            if (url) {
+                userAvatar.src = url;
+                userAvatar.alt = `Avatar ${name || "User"}`;
                 return;
             }
 
-            clearTimeout(toastTimer);
+            const fallback =
+                "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(name || "User") +
+                "&background=168cff&color=ffffff&bold=true";
 
-            toast.textContent =
-                message;
-
-            toast.classList.toggle(
-                "error",
-                error
-            );
-
-            toast.classList.add(
-                "show"
-            );
-
-            toastTimer =
-                setTimeout(() => {
-                    toast.classList.remove(
-                        "show"
-                    );
-                }, 3000);
+            userAvatar.src = fallback;
+            userAvatar.alt = `Avatar ${name || "User"}`;
         }
 
         async function loadUser() {
             try {
-                const response =
-                    await fetch(
-                        "/api/user/me",
-                        {
-                            method: "GET",
-                            credentials: "include",
-                            cache: "no-store",
-                            headers: {
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
-
-                const raw =
-                    await response.text();
-
-                let data;
-
-                try {
-                    data =
-                        JSON.parse(raw);
-                } catch {
-                    throw new Error(
-                        "Response API bukan JSON"
-                    );
-                }
-
-                if (!response.ok) {
-                    throw new Error(
-                        data?.message ||
-                        "Gagal mengambil data akun"
-                    );
-                }
-
-                const user =
-                    data?.user || data;
-
-                if (!user) {
-                    throw new Error(
-                        "Data user tidak ditemukan"
-                    );
-                }
-
-                updateGreeting(user);
-                setAvatar(user);
-
-            } catch (error) {
-                console.error(
-                    "LOAD USER ERROR:",
-                    error
+                const response = await fetch(
+                    "/api/user/me",
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        cache: "no-store"
+                    }
                 );
 
-                const greeting =
-                    $("welcomeGreeting");
+                const data = await response.json();
 
-                if (greeting) {
-                    greeting.innerHTML = "";
-
-                    greeting.appendChild(
-                        document.createTextNode(
-                            `${getGreeting()}, `
-                        )
-                    );
-
-                    const name =
-                        document.createElement(
-                            "span"
-                        );
-
-                    name.className =
-                        "name";
-
-                    name.textContent =
-                        "User";
-
-                    greeting.appendChild(
-                        name
-                    );
+                if (!response.ok || !data.success || !data.user) {
+                    window.location.href = "/login";
+                    return;
                 }
 
-                const email =
-                    $("welcomeEmail");
+                const user = data.user;
+                const name = user.name || "User";
 
-                if (email) {
-                    email.textContent =
-                        "Data akun tidak dapat dimuat";
-                }
+                userName.textContent = name;
+                userEmail.textContent =
+                    user.email || "Email tidak tersedia";
 
-                showToast(
-                    error?.message ||
-                    "Gagal memuat data akun",
-                    true
+                setAvatar(
+                    user.avatarUrl || "",
+                    name
                 );
+
+                if (user.emailVerified === true) {
+                    verifiedBadge.hidden = false;
+                } else {
+                    verifiedBadge.hidden = true;
+                }
+            } catch {
+                window.location.href = "/login";
+            }
+        }
+
+        async function loadGroup() {
+            try {
+                const response = await fetch(
+                    "/api/chat?action=group",
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        cache: "no-store"
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success || !data.group) {
+                    return;
+                }
+
+                totalUsers.textContent =
+                    Number.isFinite(Number(data.group.totalUsers))
+                        ? data.group.totalUsers
+                        : "—";
+
+                onlineUsers.textContent =
+                    Number.isFinite(Number(data.group.onlineUsers))
+                        ? data.group.onlineUsers
+                        : "—";
+            } catch {
+                totalUsers.textContent = "—";
+                onlineUsers.textContent = "—";
             }
         }
 
         async function logout() {
-            try {
-                const response =
-                    await fetch(
-                        "/api/auth/logout",
-                        {
-                            method: "POST",
-                            credentials: "include",
-                            headers: {
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
+            logoutBtn.disabled = true;
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Logout gagal"
-                    );
+            try {
+                const response = await fetch(
+                    "/api/auth/logout",
+                    {
+                        method: "POST",
+                        credentials: "include"
+                    }
+                );
+
+                if (response.ok) {
+                    window.location.href = "/login";
+                    return;
                 }
 
-                window.location.href =
-                    "/login";
-
-            } catch (error) {
-                console.error(
-                    "LOGOUT ERROR:",
-                    error
-                );
-
-                showToast(
-                    "Gagal keluar dari akun",
-                    true
-                );
+                showToast("Gagal keluar dari akun");
+            } catch {
+                showToast("Koneksi ke server gagal");
+            } finally {
+                logoutBtn.disabled = false;
             }
         }
 
-        $("logoutTop")?.addEventListener(
+        userAvatar.addEventListener("error", () => {
+            const name =
+                userName.textContent.trim() || "User";
+
+            userAvatar.onerror = null;
+            userAvatar.src =
+                "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(name) +
+                "&background=168cff&color=ffffff&bold=true";
+        });
+
+        logoutBtn.addEventListener(
             "click",
             logout
         );
-
-        $("logoutCard")?.addEventListener(
-            "click",
-            logout
-        );
-
-        $("year").textContent =
-            new Date().getFullYear();
 
         updateClock();
-
-        setInterval(
-            updateClock,
-            1000
-        );
+        setInterval(updateClock, 1000);
 
         loadUser();
-    </script>
+        loadGroup();
 
+        setInterval(
+            loadGroup,
+            10000
+        );
+    </script>
 </body>
 </html>
