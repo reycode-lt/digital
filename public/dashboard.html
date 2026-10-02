@@ -1,1516 +1,1306 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="theme-color" content="#06080d">
-
-    <title>Dashboard • ReyCode Digital</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        :root {
-            --bg: #05070c;
-            --bg-2: #080b12;
-            --panel: rgba(14,18,27,.72);
-            --panel-strong: rgba(16,21,31,.88);
-            --soft: rgba(255,255,255,.045);
-            --soft-2: rgba(255,255,255,.025);
-            --border: rgba(255,255,255,.075);
-            --border-hover: rgba(91,157,255,.28);
-            --text: #f5f7fb;
-            --muted: #7c8797;
-            --muted-2: #566170;
-            --blue: #3185ff;
-            --blue-light: #79b5ff;
-            --blue-dark: #145dcc;
-            --green: #4ddf9a;
-            --orange: #ffb15c;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at 7% -8%, rgba(49,133,255,.18), transparent 29%),
-                radial-gradient(circle at 100% 24%, rgba(49,133,255,.075), transparent 27%),
-                radial-gradient(circle at 50% 100%, rgba(49,133,255,.055), transparent 34%),
-                linear-gradient(180deg, #05070c 0%, #060910 52%, #05070c 100%);
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            pointer-events: none;
-            background:
-                linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
-            background-size: 46px 46px;
-            mask-image: linear-gradient(to bottom, black, transparent 88%);
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            width: 520px;
-            height: 520px;
-            top: 15%;
-            left: 50%;
-            z-index: -1;
-            pointer-events: none;
-            transform: translate(-50%,-50%);
-            border-radius: 50%;
-            background: rgba(49,133,255,.035);
-            filter: blur(110px);
-        }
-
-        button,
-        a {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: 72px;
-            padding: 0 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,.065);
-            background: rgba(5,7,12,.72);
-            backdrop-filter: blur(26px) saturate(140%);
-            -webkit-backdrop-filter: blur(26px) saturate(140%);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 760;
-            letter-spacing: -.45px;
-        }
-
-        .brand-logo {
-            width: 38px;
-            height: 38px;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 12px;
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025));
-            box-shadow:
-                0 10px 28px rgba(0,0,0,.28),
-                inset 0 1px 0 rgba(255,255,255,.06);
-        }
-
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .nav-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 11px;
-            border: 1px solid rgba(77,223,154,.13);
-            border-radius: 10px;
-            color: #78dcae;
-            background: rgba(77,223,154,.045);
-            font-size: 9px;
-            font-weight: 650;
-            letter-spacing: .2px;
-        }
-
-        .nav-status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 12px rgba(77,223,154,.8);
-        }
-
-        .logout {
-            padding: 9px 15px;
-            border: 1px solid rgba(255,255,255,.085);
-            border-radius: 10px;
-            color: #cbd3dd;
-            background: rgba(255,255,255,.04);
-            cursor: pointer;
-            font: inherit;
-            font-size: 11px;
-            transition: .22s ease;
-        }
-
-        .logout:hover {
-            color: #fff;
-            border-color: rgba(255,255,255,.17);
-            background: rgba(255,255,255,.075);
-            transform: translateY(-1px);
-        }
-
-        .logout:active {
-            transform: translateY(0);
-        }
-
-        .container {
-            width: min(1160px, 92%);
-            margin: 0 auto;
-            padding: 30px 0 72px;
-        }
-
-        .banner {
-            position: relative;
-            width: 100%;
-            height: 330px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,.085);
-            border-radius: 26px;
-            background: #080b11;
-            box-shadow:
-                0 35px 100px rgba(0,0,0,.38),
-                inset 0 1px 0 rgba(255,255,255,.04);
-        }
-
-        .banner video {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-            filter: brightness(.52) contrast(1.06) saturate(.88);
-            transform: scale(1.02);
-        }
-
-        .banner::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background:
-                linear-gradient(90deg, rgba(3,5,9,.95) 0%, rgba(3,5,9,.62) 43%, rgba(3,5,9,.12) 100%),
-                linear-gradient(0deg, rgba(3,5,9,.88) 0%, rgba(3,5,9,.05) 66%);
-        }
-
-        .banner::after {
-            content: "";
-            position: absolute;
-            width: 330px;
-            height: 330px;
-            right: 3%;
-            top: -130px;
-            z-index: 1;
-            pointer-events: none;
-            border-radius: 50%;
-            background: rgba(49,133,255,.13);
-            filter: blur(90px);
-        }
-
-        .banner-content {
-            position: absolute;
-            left: 34px;
-            bottom: 32px;
-            z-index: 3;
-            max-width: 600px;
-        }
-
-        .banner-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 11px;
-            border: 1px solid rgba(49,133,255,.23);
-            border-radius: 9px;
-            color: #82baff;
-            background: rgba(49,133,255,.09);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-            backdrop-filter: blur(12px);
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-        }
-
-        .banner-label span {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 13px var(--blue);
-        }
-
-        .banner h2 {
-            margin: 14px 0 9px;
-            font-size: 34px;
-            line-height: 1.08;
-            letter-spacing: -1.8px;
-        }
-
-        .banner p {
-            margin: 0;
-            max-width: 520px;
-            color: #abb5c2;
-            font-size: 12px;
-            line-height: 1.75;
-        }
-
-        .video-time {
-            position: absolute;
-            right: 15px;
-            bottom: 15px;
-            z-index: 5;
-            padding: 6px 9px;
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 8px;
-            color: #dce3eb;
-            background: rgba(0,0,0,.46);
-            backdrop-filter: blur(13px);
-            font-size: 9px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .welcome {
-            margin: 38px 0 28px;
-        }
-
-        .welcome-top {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            color: #579dff;
-            font-size: 9px;
-            font-weight: 750;
-            text-transform: uppercase;
-            letter-spacing: 1.6px;
-        }
-
-        .welcome-line {
-            width: 26px;
-            height: 1px;
-            background: var(--blue);
-            box-shadow: 0 0 10px rgba(49,133,255,.45);
-        }
-
-        .welcome h1 {
-            margin: 10px 0 8px;
-            font-size: 40px;
-            line-height: 1.1;
-            letter-spacing: -2px;
-        }
-
-        .welcome h1 span {
-            color: #fff;
-        }
-
-        .welcome p {
-            margin: 0;
-            color: #748091;
-            font-size: 12px;
-            line-height: 1.7;
-        }
-
-        .top-grid {
-            display: grid;
-            grid-template-columns: 1.8fr 1fr;
-            gap: 16px;
-        }
-
-        .card {
-            position: relative;
-            overflow: hidden;
-            padding: 25px;
-            border: 1px solid var(--border);
-            border-radius: 21px;
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.018), transparent 45%),
-                var(--panel);
-            box-shadow:
-                0 24px 70px rgba(0,0,0,.22),
-                inset 0 1px 0 rgba(255,255,255,.018);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease;
-        }
-
-        .card::before {
-            content: "";
-            position: absolute;
-            width: 210px;
-            height: 210px;
-            right: -105px;
-            top: -130px;
-            border-radius: 50%;
-            background: rgba(49,133,255,.075);
-            filter: blur(45px);
-            pointer-events: none;
-        }
-
-        .card:hover {
-            border-color: rgba(255,255,255,.1);
-        }
-
-        .label {
-            color: #687585;
-            font-size: 9px;
-            font-weight: 650;
-            text-transform: uppercase;
-            letter-spacing: 1.15px;
-        }
-
-        .balance-row {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .balance-value {
-            margin-top: 12px;
-            color: #f7f9fc;
-            font-size: 35px;
-            font-weight: 780;
-            letter-spacing: -1.6px;
-        }
-
-        .balance-sub {
-            margin-top: 7px;
-            color: #5e6977;
-            font-size: 10px;
-        }
-
-        .balance-icon {
-            width: 51px;
-            height: 51px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(49,133,255,.13);
-            border-radius: 15px;
-            color: var(--blue-light);
-            background:
-                linear-gradient(145deg, rgba(49,133,255,.12), rgba(49,133,255,.035));
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
-            font-size: 19px;
-            font-weight: 700;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 19px;
-            color: #76b1ff;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 13px rgba(49,133,255,.9);
-        }
-
-        .profile-card {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .profile-top {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-        .avatar {
-            width: 51px;
-            height: 51px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 16px;
-            color: #fff;
-            background: linear-gradient(145deg, #3c91ff, #145dcc);
-            box-shadow:
-                0 13px 36px rgba(49,133,255,.2),
-                inset 0 1px 0 rgba(255,255,255,.16);
-            font-size: 17px;
-            font-weight: 780;
-        }
-
-        .name {
-            font-size: 15px;
-            font-weight: 720;
-            letter-spacing: -.25px;
-        }
-
-        .email {
-            margin-top: 5px;
-            color: #697585;
-            font-size: 10px;
-            line-height: 1.5;
-            word-break: break-all;
-        }
-
-        .verified {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            margin-top: 17px;
-            padding: 6px 9px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-size: 8px;
-            font-weight: 700;
-        }
-
-        .section {
-            margin-top: 34px;
-        }
-
-        .section-head {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 14px;
-        }
-
-        .section-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .section-mark {
-            width: 3px;
-            height: 16px;
-            border-radius: 10px;
-            background: var(--blue);
-            box-shadow: 0 0 13px rgba(49,133,255,.65);
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 730;
-            letter-spacing: -.2px;
-        }
-
-        .section-sub {
-            color: #596574;
-            font-size: 9px;
-            font-weight: 600;
-        }
-
-        .actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .action {
-            position: relative;
-            min-height: 148px;
-            padding: 20px;
-            display: block;
-            overflow: hidden;
-            color: #e7ebf1;
-            text-decoration: none;
-            border: 1px solid rgba(255,255,255,.065);
-            border-radius: 18px;
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
-            transition: .23s ease;
-        }
-
-        .action::before {
-            content: "";
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            right: -65px;
-            bottom: -65px;
-            border-radius: 50%;
-            background: rgba(49,133,255,.065);
-            filter: blur(25px);
-            pointer-events: none;
-        }
-
-        .action::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            opacity: 0;
-            background: linear-gradient(135deg, rgba(49,133,255,.06), transparent 50%);
-            transition: opacity .23s ease;
-        }
-
-        .action:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-hover);
-            background:
-                linear-gradient(145deg, rgba(49,133,255,.065), rgba(255,255,255,.018));
-            box-shadow:
-                0 20px 45px rgba(0,0,0,.2),
-                0 0 0 1px rgba(49,133,255,.025);
-        }
-
-        .action:hover::after {
-            opacity: 1;
-        }
-
-        .action-icon {
-            position: relative;
-            z-index: 2;
-            width: 37px;
-            height: 37px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(49,133,255,.11);
-            border-radius: 11px;
-            color: #78b2ff;
-            background: rgba(49,133,255,.08);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
-            font-size: 15px;
-        }
-
-        .action strong,
-        .action span.description {
-            position: relative;
-            z-index: 2;
-        }
-
-        .action strong {
-            display: block;
-            font-size: 12px;
-            font-weight: 720;
-        }
-
-        .action span.description {
-            display: block;
-            margin-top: 6px;
-            max-width: 95%;
-            color: #687585;
-            font-size: 9px;
-            line-height: 1.65;
-        }
-
-        .badge {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            z-index: 3;
-            padding: 5px 8px;
-            border: 1px solid rgba(49,133,255,.12);
-            border-radius: 7px;
-            color: #71aaff;
-            background: rgba(49,133,255,.07);
-            font-size: 7px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .6px;
-        }
-
-        .github-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 22px;
-        }
-
-        .github-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .github-icon {
-            width: 49px;
-            height: 49px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 15px;
-            color: #fff;
-            background: rgba(255,255,255,.05);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
-            font-size: 20px;
-        }
-
-        .github-title {
-            font-size: 13px;
-            font-weight: 720;
-        }
-
-        .github-description {
-            margin-top: 5px;
-            max-width: 580px;
-            color: #697585;
-            font-size: 10px;
-            line-height: 1.6;
-        }
-
-        .github-button {
-            position: relative;
-            flex-shrink: 0;
-            padding: 11px 16px;
-            color: #fff;
-            text-decoration: none;
-            border: 1px solid rgba(49,133,255,.22);
-            border-radius: 11px;
-            background: rgba(49,133,255,.08);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
-            font-size: 9px;
-            font-weight: 650;
-            transition: .22s ease;
-        }
-
-        .github-button:hover {
-            border-color: rgba(49,133,255,.4);
-            background: rgba(49,133,255,.15);
-            transform: translateY(-1px);
-        }
-
-        .platform-card {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .platform-title {
-            margin-top: 9px;
-            font-size: 17px;
-            font-weight: 720;
-            letter-spacing: -.55px;
-        }
-
-        .platform-description {
-            margin-top: 5px;
-            color: #697585;
-            font-size: 10px;
-            line-height: 1.6;
-        }
-
-        .platform-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border: 1px solid rgba(77,223,154,.12);
-            border-radius: 11px;
-            color: #75d9a9;
-            background: rgba(77,223,154,.045);
-            font-size: 9px;
-            font-weight: 650;
-            white-space: nowrap;
-        }
-
-        .platform-status .dot {
-            background: var(--green);
-            box-shadow: 0 0 12px rgba(77,223,154,.75);
-        }
-
-        .footer {
-            margin-top: 48px;
-            text-align: center;
-            color: #414b58;
-            font-size: 9px;
-        }
-
-        .loading {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #697585;
-            font-size: 11px;
-            background:
-                radial-gradient(circle at 50% 45%, rgba(49,133,255,.07), transparent 30%),
-                #05070c;
-        }
-
-        .loading-wrap {
-            display: flex;
-            align-items: center;
-            padding: 13px 16px;
-            border: 1px solid rgba(255,255,255,.065);
-            border-radius: 13px;
-            background: rgba(255,255,255,.025);
-            box-shadow: 0 18px 50px rgba(0,0,0,.25);
-        }
-
-        .loading-spinner {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-            border: 2px solid rgba(255,255,255,.09);
-            border-top-color: var(--blue);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 900px) {
-            .actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .top-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .nav-status {
-                display: none;
-            }
-
-            .banner {
-                height: 280px;
-            }
-
-            .banner-content {
-                left: 25px;
-                right: 25px;
-                bottom: 25px;
-            }
-
-            .banner h2 {
-                font-size: 27px;
-            }
-
-            .github-card {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .github-button {
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .navbar {
-                height: 68px;
-                padding: 0 20px;
-            }
-
-            .container {
-                width: 92%;
-                padding: 20px 0 56px;
-            }
-
-            .banner {
-                height: 245px;
-                border-radius: 20px;
-            }
-
-            .banner-content {
-                left: 19px;
-                right: 19px;
-                bottom: 19px;
-            }
-
-            .banner-label {
-                padding: 6px 9px;
-                font-size: 8px;
-            }
-
-            .banner h2 {
-                margin-top: 10px;
-                font-size: 23px;
-                letter-spacing: -1px;
-            }
-
-            .banner p {
-                font-size: 10px;
-                line-height: 1.65;
-            }
-
-            .welcome {
-                margin-top: 29px;
-                margin-bottom: 24px;
-            }
-
-            .welcome h1 {
-                font-size: 30px;
-                letter-spacing: -1.3px;
-            }
-
-            .welcome p {
-                font-size: 11px;
-            }
-
-            .actions {
-                grid-template-columns: 1fr;
-            }
-
-            .card {
-                padding: 20px;
-                border-radius: 18px;
-            }
-
-            .balance-value {
-                font-size: 30px;
-            }
-
-            .platform-card {
-                grid-template-columns: 1fr;
-            }
-
-            .platform-status {
-                width: fit-content;
-            }
-
-            .section-head {
-                align-items: center;
-            }
-
-            .section-sub {
-                display: none;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .brand span {
-                display: none;
-            }
-
-            .logout {
-                padding: 8px 12px;
-            }
-
-            .banner {
-                height: 225px;
-            }
-
-            .banner h2 {
-                font-size: 21px;
-            }
-
-            .banner p {
-                font-size: 9px;
-            }
-
-            .welcome h1 {
-                font-size: 27px;
-            }
-
-            .balance-value {
-                font-size: 27px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="ReyCode Digital Dashboard">
+  <title>Dashboard • ReyCode Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050b14;
+      --bg-soft: #08111f;
+      --card: rgba(10, 21, 37, .78);
+      --card-strong: rgba(12, 26, 45, .94);
+      --line: rgba(148, 163, 184, .12);
+      --line-bright: rgba(96, 165, 250, .24);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --blue-light: #60a5fa;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --red: #fb7185;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .34);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 0%, rgba(37, 99, 235, .17), transparent 30%),
+        radial-gradient(circle at 95% 10%, rgba(6, 182, 212, .10), transparent 26%),
+        linear-gradient(180deg, #050b14 0%, #07101c 45%, #050a12 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(5, 11, 20, .72);
+      border-bottom: 1px solid rgba(148, 163, 184, .08);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    .nav-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 28px rgba(37, 99, 235, .2);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .nav-btn {
+      min-height: 40px;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      color: #dbeafe;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--line-bright);
+      background: rgba(59,130,246,.09);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn:hover {
+      border-color: rgba(251,113,133,.25);
+      background: rgba(251,113,133,.07);
+      color: #fecdd3;
+    }
+
+    .hero {
+      padding: 28px 0 18px;
+    }
+
+    .banner {
+      position: relative;
+      height: 230px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: #07111f;
+      box-shadow: var(--shadow);
+    }
+
+    .banner video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: .66;
+    }
+
+    .banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5,11,20,.88) 0%, rgba(5,11,20,.38) 48%, rgba(5,11,20,.7) 100%),
+        linear-gradient(0deg, rgba(5,11,20,.78), transparent 55%);
+      pointer-events: none;
+    }
+
+    .banner-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      pointer-events: none;
+    }
+
+    .banner-label {
+      width: fit-content;
+      margin-bottom: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(96,165,250,.18);
+      border-radius: 999px;
+      background: rgba(15,23,42,.5);
+      color: #bfdbfe;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
+    }
+
+    .banner h2 {
+      max-width: 600px;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+    }
+
+    .banner p {
+      max-width: 620px;
+      margin-top: 9px;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .welcome-card {
+      position: relative;
+      margin-top: 18px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      overflow: hidden;
+      border: 1px solid rgba(96,165,250,.15);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 0% 50%, rgba(59,130,246,.12), transparent 34%),
+        linear-gradient(135deg, rgba(12,26,45,.96), rgba(8,17,31,.9));
+      box-shadow: var(--shadow);
+    }
+
+    .welcome-card::before {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -80px;
+      top: -100px;
+      border-radius: 50%;
+      background: rgba(34,211,238,.07);
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .welcome-avatar {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 2px solid rgba(96,165,250,.42);
+      border-radius: 22px;
+      background: linear-gradient(135deg, #1d4ed8, #0891b2);
+      color: white;
+      font-size: 25px;
+      font-weight: 800;
+      box-shadow: 0 12px 35px rgba(37,99,235,.25);
+    }
+
+    .welcome-avatar.has-image {
+      background: #0f172a;
+    }
+
+    .welcome-avatar img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .online-dot {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 17px;
+      height: 17px;
+      border: 3px solid #0b1728;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(52,211,153,.08);
+    }
+
+    .welcome-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .welcome-kicker {
+      margin-bottom: 5px;
+      color: #60a5fa;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .welcome-copy h1 {
+      font-size: clamp(21px, 4vw, 29px);
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .welcome-copy h1 span {
+      color: #93c5fd;
+    }
+
+    .welcome-copy p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .welcome-action {
+      position: relative;
+      z-index: 2;
+      flex: 0 0 auto;
+      padding: 11px 15px;
+      border: 1px solid rgba(96,165,250,.18);
+      border-radius: 12px;
+      background: rgba(59,130,246,.08);
+      color: #bfdbfe;
+      font-size: 11px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .welcome-action:hover {
+      background: rgba(59,130,246,.15);
+      border-color: rgba(96,165,250,.3);
+      transform: translateY(-1px);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 18px 50px rgba(0,0,0,.2);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .balance-card {
+      position: relative;
+      min-height: 210px;
+      padding: 23px;
+      overflow: hidden;
+    }
+
+    .balance-card::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -90px;
+      bottom: -130px;
+      border-radius: 50%;
+      background: rgba(37,99,235,.13);
+      filter: blur(2px);
+    }
+
+    .card-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(96,165,250,.16);
+      border-radius: 11px;
+      background: rgba(59,130,246,.09);
+      color: #93c5fd;
+      font-size: 16px;
+    }
+
+    .balance {
+      position: relative;
+      z-index: 1;
+      margin-top: 25px;
+      font-size: clamp(30px, 5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -.05em;
+    }
+
+    .balance-note {
+      position: relative;
+      z-index: 1;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .account-card {
+      padding: 21px;
+    }
+
+    .account-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mini-avatar {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #1d4ed8, #0891b2);
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .mini-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .account-name {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .account-email {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .verified {
+      margin-left: auto;
+      padding: 6px 8px;
+      border: 1px solid rgba(52,211,153,.16);
+      border-radius: 999px;
+      background: rgba(52,211,153,.07);
+      color: #6ee7b7;
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .account-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .info-box {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .info-title {
+      color: #64748b;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .info-value {
+      margin-top: 5px;
+      color: #dbeafe;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.025em;
+    }
+
+    .section-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .section-link {
+      color: #60a5fa;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 11px;
+    }
+
+    .quick-card {
+      position: relative;
+      min-height: 120px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(10,21,37,.7);
+      transition: .2s ease;
+      overflow: hidden;
+    }
+
+    .quick-card::after {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      right: -35px;
+      bottom: -40px;
+      border-radius: 50%;
+      background: rgba(59,130,246,.08);
+    }
+
+    .quick-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--line-bright);
+      background: rgba(13,29,49,.88);
+      box-shadow: 0 15px 35px rgba(0,0,0,.22);
+    }
+
+    .quick-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(96,165,250,.13);
+      border-radius: 12px;
+      background: rgba(59,130,246,.08);
+      color: #93c5fd;
+      font-size: 16px;
+    }
+
+    .quick-name {
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .quick-desc {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .workspace {
+      padding: 20px;
+    }
+
+    .workspace-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(10,21,37,.82), rgba(8,17,31,.65));
+    }
+
+    .workspace-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .github-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 14px;
+      background: #111827;
+      border: 1px solid rgba(255,255,255,.08);
+      color: white;
+      font-size: 19px;
+    }
+
+    .workspace-name {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .workspace-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .workspace-btn {
+      flex: 0 0 auto;
+      padding: 10px 14px;
+      border-radius: 11px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 10px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .workspace-btn:hover {
+      transform: translateY(-1px);
+      background: white;
+    }
+
+    .status-card {
+      padding: 20px;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .status-name {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #cbd5e1;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(52,211,153,.08);
+    }
+
+    .status-value {
+      color: #6ee7b7;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 32px 0 28px;
+      color: #64748b;
+      text-align: center;
+      font-size: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 200;
+      min-width: 230px;
+      max-width: calc(100% - 32px);
+      padding: 13px 16px;
+      transform: translate(-50%, 120px);
+      opacity: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(10,21,37,.94);
+      color: #e2e8f0;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      transition: .3s ease;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page,
+      .nav-inner {
+        width: min(100% - 22px, 1180px);
+      }
+
+      .navbar {
+        padding: 11px 0;
+      }
+
+      .brand-logo {
+        width: 38px;
+        height: 38px;
+      }
+
+      .brand-name {
+        font-size: 12px;
+      }
+
+      .brand-sub {
+        font-size: 9px;
+      }
+
+      .nav-btn {
+        width: 40px;
+        padding: 0;
+        font-size: 0;
+      }
+
+      .nav-btn span {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 16px;
+      }
+
+      .banner {
+        height: 185px;
+        border-radius: 20px;
+      }
+
+      .banner-content {
+        padding: 20px;
+      }
+
+      .banner h2 {
+        font-size: 23px;
+      }
+
+      .banner p {
+        font-size: 10px;
+        max-width: 95%;
+      }
+
+      .welcome-card {
+        padding: 16px;
+        gap: 13px;
+        border-radius: 20px;
+      }
+
+      .welcome-avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        font-size: 20px;
+      }
+
+      .online-dot {
+        width: 14px;
+        height: 14px;
+      }
+
+      .welcome-copy h1 {
+        font-size: 18px;
+      }
+
+      .welcome-copy p {
+        font-size: 10px;
+      }
+
+      .welcome-action {
+        display: none;
+      }
+
+      .balance-card,
+      .account-card {
+        min-height: auto;
+        padding: 17px;
+        border-radius: 20px;
+      }
+
+      .balance {
+        margin-top: 19px;
+        font-size: 32px;
+      }
+
+      .account-head {
+        align-items: flex-start;
+      }
+
+      .verified {
+        font-size: 8px;
+      }
+
+      .quick-grid {
+        gap: 9px;
+      }
+
+      .quick-card {
+        min-height: 112px;
+        padding: 13px;
+      }
+
+      .workspace-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .workspace-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .section-title {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-card {
+        min-height: 92px;
+      }
+
+      .account-info {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="brand">
+        <img class="brand-logo" src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode Digital">
+        <div class="brand-text">
+          <div class="brand-name">ReyCode Digital</div>
+          <div class="brand-sub">Digital Workspace</div>
+        </div>
+      </a>
 
-<div id="loading" class="loading">
-    <div class="loading-wrap">
-        <div class="loading-spinner"></div>
-        Memuat dashboard...
+      <div class="nav-actions">
+        <a href="/profile" class="nav-btn">
+          <span>Profil</span>
+          <span>↗</span>
+        </a>
+        <button id="logoutBtn" class="nav-btn logout-btn" type="button">
+          <span>Keluar</span>
+          <span>↪</span>
+        </button>
+      </div>
     </div>
-</div>
+  </nav>
 
-<div id="app" style="display:none;">
+  <main class="page">
+    <section class="hero">
+      <div class="banner">
+        <video autoplay muted loop playsinline preload="metadata">
+          <source src="https://files.catbox.moe/9tcayz.mp4" type="video/mp4">
+        </video>
 
-    <nav class="navbar">
+        <div class="banner-content">
+          <div class="banner-label">ReyCode Digital</div>
+          <h2>Semua kebutuhan digital dalam satu tempat.</h2>
+          <p>Kelola akun, layanan, deployment, workspace, dan berbagai kebutuhan digital kamu dengan tampilan yang lebih simpel.</p>
+        </div>
+      </div>
 
-        <div class="brand">
-            <div class="brand-logo">
-                <img
-                    src="https://i.top4top.io/p_3925af3h26.png"
-                    alt="ReyCode"
-                >
-            </div>
-            <span>ReyCode Digital</span>
+      <section class="welcome-card">
+        <div class="avatar-wrap">
+          <div id="welcomeAvatar" class="welcome-avatar">U</div>
+          <span class="online-dot"></span>
         </div>
 
-        <div class="nav-right">
-
-            <div class="nav-status">
-                <span class="nav-status-dot"></span>
-                Online
-            </div>
-
-            <button
-                class="logout"
-                onclick="logout()"
-            >
-                Logout
-            </button>
-
+        <div class="welcome-copy">
+          <div class="welcome-kicker">Dashboard</div>
+          <h1 id="welcomeGreeting">Halo, <span id="welcomeName">User</span> 👋</h1>
+          <p id="welcomeEmail">Memuat informasi akun...</p>
         </div>
 
-    </nav>
-
-    <main class="container">
-
-        <section class="banner">
-
-            <video
-                id="bannerVideo"
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
-            >
-                <source
-                    src="https://files.catbox.moe/9tcayz.mp4"
-                    type="video/mp4"
-                >
-            </video>
-
-            <div class="banner-content">
-
-                <div class="banner-label">
-                    <span></span>
-                    ReyCode Digital
-                </div>
-
-                <h2>
-                    Build. Deploy. Create.
-                </h2>
-
-                <p>
-                    Satu workspace untuk mengelola akun,
-                    GitHub, deployment, dan layanan digital
-                    kamu dengan lebih cepat.
-                </p>
-
-            </div>
-
-            <div
-                id="videoTime"
-                class="video-time"
-            >
-                00:00
-            </div>
-
-        </section>
-
-        <section class="welcome">
-
-            <div class="welcome-top">
-                <span class="welcome-line"></span>
-                ReyCode Digital
-            </div>
-
-            <h1>
-                Halo,
-                <span id="welcomeName">...</span> 👋
-            </h1>
-
-            <p>
-                Selamat datang kembali. Kelola semua kebutuhan
-                digital kamu dari satu tempat.
-            </p>
-
-        </section>
-
-        <section class="top-grid">
-
-            <div class="card">
-
-                <div class="balance-row">
-
-                    <div>
-
-                        <div class="label">
-                            Account Balance
-                        </div>
-
-                        <div
-                            id="balanceValue"
-                            class="balance-value"
-                        >
-                            Rp 0
-                        </div>
-
-                        <div class="balance-sub">
-                            Saldo akun kamu
-                        </div>
-
-                    </div>
-
-                    <div class="balance-icon">
-                        $
-                    </div>
-
-                </div>
-
-                <div class="status">
-                    <span class="dot"></span>
-                    Account Active
-                </div>
-
-            </div>
-
-            <div class="card profile-card">
-
-                <div class="profile-top">
-
-                    <div
-                        id="avatar"
-                        class="avatar"
-                    >
-                        R
-                    </div>
-
-                    <div>
-
-                        <div
-                            id="profileName"
-                            class="name"
-                        >
-                            Loading...
-                        </div>
-
-                        <div
-                            id="profileEmail"
-                            class="email"
-                        >
-                            Loading...
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div
-                    id="verified"
-                    class="verified"
-                >
-                    Checking...
-                </div>
-
-            </div>
-
-        </section>
-
-        <section class="section">
-
-            <div class="section-head">
-
-                <div class="section-title-wrap">
-                    <span class="section-mark"></span>
-
-                    <div class="section-title">
-                        Quick Access
-                    </div>
-                </div>
-
-                <div class="section-sub">
-                    ReyCode Services
-                </div>
-
-            </div>
-
-            <div class="actions">
-
-                <a
-                    class="action"
-                    href="/profile"
-                >
-
-                    <div class="action-icon">
-                        👤
-                    </div>
-
-                    <strong>
-                        Profile
-                    </strong>
-
-                    <span class="description">
-                        Kelola informasi dan data akun kamu.
-                    </span>
-
-                </a>
-
-                <a
-                    class="action"
-                    href="/github"
-                >
-
-                    <div class="action-icon">
-                        ◉
-                    </div>
-
-                    <strong>
-                        GitHub Workspace
-                    </strong>
-
-                    <span class="description">
-                        Kelola repository, file, ZIP,
-                        upload, edit, dan hapus file.
-                    </span>
-
-                    <span class="badge">
-                        GitHub
-                    </span>
-
-                </a>
-
-                <a
-                    class="action"
-                    href="/deploy"
-                >
-
-                    <div class="action-icon">
-                        🚀
-                    </div>
-
-                    <strong>
-                        Deploy Website
-                    </strong>
-
-                    <span class="description">
-                        Deploy project website dan kelola
-                        deployment kamu.
-                    </span>
-
-                    <span class="badge">
-                        Vercel
-                    </span>
-
-                </a>
-
-                <a
-                    class="action"
-                    href="/alightmotion"
-                >
-
-                    <div class="action-icon">
-                        ✦
-                    </div>
-
-                    <strong>
-                        Alight Motion
-                    </strong>
-
-                    <span class="description">
-                        Kelola layanan Alight Motion
-                        dan lihat hasil aktivitas kamu.
-                    </span>
-
-                    <span class="badge">
-                        New
-                    </span>
-
-                </a>
-
-                <a
-                    class="action"
-                    href="/forgot-password"
-                >
-
-                    <div class="action-icon">
-                        🔐
-                    </div>
-
-                    <strong>
-                        Security
-                    </strong>
-
-                    <span class="description">
-                        Kelola password dan keamanan akun.
-                    </span>
-
-                </a>
-
-                <a
-                    class="action"
-                    href="#"
-                    onclick="return false;"
-                >
-
-                    <div class="action-icon">
-                        ↔
-                    </div>
-
-                    <strong>
-                        Transactions
-                    </strong>
-
-                    <span class="description">
-                        Riwayat transaksi dan aktivitas akun.
-                    </span>
-
-                    <span class="badge">
-                        Soon
-                    </span>
-
-                </a>
-
-            </div>
-
-        </section>
-
-        <section class="section">
-
-            <div class="section-head">
-
-                <div class="section-title-wrap">
-                    <span class="section-mark"></span>
-
-                    <div class="section-title">
-                        GitHub Workspace
-                    </div>
-                </div>
-
-                <div class="section-sub">
-                    Developer Tools
-                </div>
-
-            </div>
-
-            <div class="card github-card">
-
-                <div class="github-left">
-
-                    <div class="github-icon">
-                        ◉
-                    </div>
-
-                    <div>
-
-                        <div class="github-title">
-                            Manage your GitHub
-                        </div>
-
-                        <div class="github-description">
-                            Hubungkan akun GitHub kamu dan
-                            kelola repository langsung dari
-                            ReyCode Digital.
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <a
-                    class="github-button"
-                    href="/github"
-                >
-                    Open Workspace →
-                </a>
-
-            </div>
-
-        </section>
-
-        <section class="section">
-
-            <div class="section-head">
-
-                <div class="section-title-wrap">
-                    <span class="section-mark"></span>
-
-                    <div class="section-title">
-                        Platform
-                    </div>
-                </div>
-
-                <div class="section-sub">
-                    System
-                </div>
-
-            </div>
-
-            <div class="card platform-card">
-
-                <div>
-
-                    <div class="label">
-                        ReyCode Digital
-                    </div>
-
-                    <div class="platform-title">
-                        Everything is running smoothly.
-                    </div>
-
-                    <div class="platform-description">
-                        Sistem dashboard dan layanan utama
-                        tersedia untuk digunakan.
-                    </div>
-
-                </div>
-
-                <div class="platform-status">
-                    <span class="dot"></span>
-                    All systems operational
-                </div>
-
-            </div>
-
-        </section>
-
-        <div class="footer">
-            © 2026 ReyCode Digital · All rights reserved.
+        <a href="/profile" class="welcome-action">Kelola Profil →</a>
+      </section>
+
+      <div class="main-grid">
+        <div class="card balance-card">
+          <div class="card-label">
+            <span>Saldo Akun</span>
+            <div class="card-icon">Rp</div>
+          </div>
+
+          <div id="balance" class="balance">Rp 0</div>
+          <div class="balance-note">Saldo tersedia pada akun kamu</div>
         </div>
 
-    </main>
+        <div class="card account-card">
+          <div class="account-head">
+            <div id="miniAvatar" class="mini-avatar">U</div>
 
-</div>
+            <div style="min-width:0;">
+              <div id="profileName" class="account-name">Loading...</div>
+              <div id="profileEmail" class="account-email">Loading...</div>
+            </div>
 
-<script>
-async function loadUser() {
-    try {
-        const response = await fetch(
-            `/api/user/me?_=${Date.now()}`,
-            {
-                method: "GET",
-                cache: "no-store",
-                credentials: "include",
-                headers: {
-                    "Accept": "application/json",
-                    "Cache-Control": "no-cache"
-                }
-            }
-        );
+            <div id="verified" class="verified">Checking...</div>
+          </div>
 
-        const data = await response.json();
+          <div class="account-info">
+            <div class="info-box">
+              <div class="info-title">Status</div>
+              <div id="accountStatus" class="info-value">Aktif</div>
+            </div>
 
-        if (!response.ok || !data.success) {
+            <div class="info-box">
+              <div class="info-title">Member Sejak</div>
+              <div id="memberSince" class="info-value">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Akses Cepat</div>
+          <div class="section-desc">Akses layanan yang sering kamu gunakan.</div>
+        </div>
+      </div>
+
+      <div class="quick-grid">
+        <a href="/profile" class="quick-card">
+          <div class="quick-icon">👤</div>
+          <div>
+            <div class="quick-name">Profil Saya</div>
+            <div class="quick-desc">Kelola informasi akun dan foto profil.</div>
+          </div>
+        </a>
+
+        <a href="/github" class="quick-card">
+          <div class="quick-icon">⌘</div>
+          <div>
+            <div class="quick-name">GitHub Workspace</div>
+            <div class="quick-desc">Kelola workspace dan repository.</div>
+          </div>
+        </a>
+
+        <a href="/deploy" class="quick-card">
+          <div class="quick-icon">▲</div>
+          <div>
+            <div class="quick-name">Deployment</div>
+            <div class="quick-desc">Deploy project digital kamu dengan mudah.</div>
+          </div>
+        </a>
+
+        <a href="/alightmotion" class="quick-card">
+          <div class="quick-icon">✦</div>
+          <div>
+            <div class="quick-name">Alight Motion</div>
+            <div class="quick-desc">Akses layanan Alight Motion kamu.</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card workspace">
+        <div class="section-head">
+          <div>
+            <div class="section-title">GitHub Workspace</div>
+            <div class="section-desc">Hubungkan dan kelola project GitHub kamu.</div>
+          </div>
+          <a href="/github" class="section-link">Buka Workspace →</a>
+        </div>
+
+        <div class="workspace-card">
+          <div class="workspace-left">
+            <div class="github-icon">⌘</div>
+            <div>
+              <div class="workspace-name">GitHub Integration</div>
+              <div class="workspace-desc">Repository dan project dalam satu workspace.</div>
+            </div>
+          </div>
+
+          <a href="/github" class="workspace-btn">Buka GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card status-card">
+        <div class="section-title">Status Platform</div>
+        <div class="section-desc">Informasi singkat mengenai layanan ReyCode Digital.</div>
+
+        <div class="status-list">
+          <div class="status-row">
+            <div class="status-name">
+              <span class="status-dot"></span>
+              Website
+            </div>
+            <div class="status-value">Online</div>
+          </div>
+
+          <div class="status-row">
+            <div class="status-name">
+              <span class="status-dot"></span>
+              API
+            </div>
+            <div class="status-value">Online</div>
+          </div>
+
+          <div class="status-row">
+            <div class="status-name">
+              <span class="status-dot"></span>
+              Account Service
+            </div>
+            <div class="status-value">Online</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> ReyCode Digital. All rights reserved.
+    </footer>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getGreeting() {
+      const hour = new Date().getHours();
+
+      if (hour >= 4 && hour < 11) {
+        return "Selamat pagi";
+      }
+
+      if (hour >= 11 && hour < 15) {
+        return "Selamat siang";
+      }
+
+      if (hour >= 15 && hour < 18) {
+        return "Selamat sore";
+      }
+
+      return "Selamat malam";
+    }
+
+    function formatRupiah(value) {
+      const number = Number(value || 0);
+
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(number);
+    }
+
+    function formatDate(value) {
+      if (!value) {
+        return "-";
+      }
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return "-";
+      }
+
+      return new Intl.DateTimeFormat("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      }).format(date);
+    }
+
+    function setAvatar(element, name, avatarUrl) {
+      const initial = String(name || "User").trim().charAt(0).toUpperCase() || "U";
+
+      element.classList.remove("has-image");
+      element.innerHTML = "";
+
+      if (avatarUrl) {
+        const image = document.createElement("img");
+        image.src = avatarUrl;
+        image.alt = name || "User";
+        image.loading = "eager";
+        image.decoding = "async";
+
+        image.onerror = () => {
+          element.classList.remove("has-image");
+          element.textContent = initial;
+        };
+
+        element.classList.add("has-image");
+        element.appendChild(image);
+      } else {
+        element.textContent = initial;
+      }
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(window.toastTimer);
+
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2600);
+    }
+
+    function updateGreeting(user) {
+      const name = user.name || "User";
+      const greeting = getGreeting();
+
+      $("welcomeGreeting").innerHTML = `${greeting}, <span>${escapeHtml(name)}</span> 👋`;
+      $("welcomeName").textContent = name;
+      $("welcomeEmail").textContent = user.email || "Selamat datang kembali di ReyCode Digital";
+
+      setAvatar($("welcomeAvatar"), name, user.avatarUrl);
+      setAvatar($("miniAvatar"), name, user.avatarUrl);
+
+      $("profileName").textContent = name;
+      $("profileEmail").textContent = user.email || "-";
+
+      if (user.emailVerified) {
+        $("verified").textContent = "✓ Terverifikasi";
+        $("verified").style.color = "#6ee7b7";
+      } else {
+        $("verified").textContent = "Belum Verifikasi";
+        $("verified").style.color = "#fbbf24";
+        $("verified").style.borderColor = "rgba(251,191,36,.16)";
+        $("verified").style.background = "rgba(251,191,36,.07)";
+      }
+
+      $("accountStatus").textContent = user.emailVerified ? "Aktif & Terverifikasi" : "Aktif";
+      $("memberSince").textContent = formatDate(user.createdAt);
+
+      const balance = user.balance ?? 0;
+      $("balance").textContent = formatRupiah(balance);
+    }
+
+    async function loadUser() {
+      try {
+        const response = await fetch(`/api/user/me?_=${Date.now()}`, {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
             window.location.href = "/login";
             return;
+          }
+
+          throw new Error("Gagal mengambil data pengguna");
         }
 
-        const user = data.user || {};
-        const name = user.name || "User";
+        const data = await response.json();
+        const user = data.user || data;
 
-        document.getElementById("welcomeName").textContent = name;
-        document.getElementById("profileName").textContent = name;
-        document.getElementById("profileEmail").textContent = user.email || "";
-        document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
-
-        const verified = document.getElementById("verified");
-
-        if (user.emailVerified === true) {
-            verified.textContent = "✓ Email Verified";
-            verified.style.color = "#71adff";
-            verified.style.background = "rgba(49,133,255,.07)";
-            verified.style.borderColor = "rgba(49,133,255,.12)";
-        } else {
-            verified.textContent = "⚠ Email Not Verified";
-            verified.style.color = "#ffb15c";
-            verified.style.background = "rgba(255,177,92,.07)";
-            verified.style.borderColor = "rgba(255,177,92,.12)";
+        if (!user || !user.name) {
+          throw new Error("Data pengguna tidak valid");
         }
 
-        if (
-            typeof user.balance === "number" ||
-            typeof user.balance === "string"
-        ) {
-            const balance = Number(user.balance) || 0;
+        updateGreeting(user);
+      } catch (error) {
+        console.error(error);
+        showToast("Gagal memuat data akun");
 
-            document.getElementById("balanceValue").textContent =
-                new Intl.NumberFormat(
-                    "id-ID",
-                    {
-                        style: "currency",
-                        currency: "IDR",
-                        maximumFractionDigits: 0
-                    }
-                ).format(balance);
-        }
-
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("app").style.display = "block";
-
-    } catch (error) {
-        console.error("DASHBOARD ERROR:", error);
-        window.location.href = "/login";
-    }
-}
-
-async function logout() {
-    try {
-        await fetch(
-            "/api/auth/logout",
-            {
-                method: "POST",
-                credentials: "include",
-                cache: "no-store"
-            }
-        );
-    } catch (error) {
-        console.error("LOGOUT ERROR:", error);
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1200);
+      }
     }
 
-    window.location.href = "/login";
-}
+    async function logout() {
+      const button = $("logoutBtn");
 
-function setupVideo() {
-    const video = document.getElementById("bannerVideo");
-    const time = document.getElementById("videoTime");
+      button.disabled = true;
+      button.style.opacity = ".6";
 
-    if (!video || !time) {
-        return;
+      try {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store"
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      window.location.href = "/login";
     }
 
-    video.addEventListener("timeupdate", () => {
-        const seconds = Math.floor(video.currentTime || 0);
-        const minutes = Math.floor(seconds / 60);
-        const remaining = seconds % 60;
+    $("logoutBtn").addEventListener("click", logout);
 
-        time.textContent =
-            `${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}`;
-    });
+    $("year").textContent = new Date().getFullYear();
 
-    video.play().catch(() => {});
-}
+    loadUser();
 
-setupVideo();
-loadUser();
-</script>
-
+    setInterval(() => {
+      const name = $("welcomeName").textContent || "User";
+      $("welcomeGreeting").innerHTML = `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
+    }, 60000);
+  </script>
 </body>
 </html>
