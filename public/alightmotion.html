@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#08090d">
-    <title>Alight Motion - ReyCode Digital</title>
+    <meta name="theme-color" content="#050914">
+    <title>Alight Motion — ReyCode Digital</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg: #050914;
+            --bg-soft: #080d1a;
+            --panel: rgba(13, 20, 37, .78);
+            --panel-strong: rgba(16, 24, 44, .94);
+            --border: rgba(255, 255, 255, .08);
+            --border-blue: rgba(37, 99, 235, .28);
+            --text: #f7f9ff;
+            --muted: #8c96ad;
+            --blue: #1683ff;
+            --blue-2: #0068ff;
+            --cyan: #26b8ff;
+            --green: #20d98b;
+            --red: #ff5573;
+            --shadow: 0 25px 80px rgba(0, 0, 0, .38);
+            --radius: 24px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-
-        :root {
-            --bg: #07080c;
-            --card: rgba(15, 17, 24, .78);
-            --input: rgba(7, 9, 14, .86);
-            --border: rgba(255, 255, 255, .08);
-            --border-hover: rgba(255, 255, 255, .15);
-            --text: #f7f8fb;
-            --muted: #858b9d;
-            --muted-2: #606678;
-            --accent: #8b7cff;
-            --success: #59e6a7;
-            --danger: #ff7183;
-            --blue: #168cff;
-            --shadow: 0 30px 90px rgba(0, 0, 0, .35);
         }
 
         html {
@@ -35,13 +41,13 @@
 
         body {
             min-height: 100vh;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             color: var(--text);
             background:
-                radial-gradient(800px 500px at -10% -10%, rgba(111, 92, 255, .18), transparent 60%),
-                radial-gradient(700px 450px at 110% 15%, rgba(145, 86, 255, .11), transparent 60%),
-                radial-gradient(600px 400px at 50% 100%, rgba(63, 108, 255, .07), transparent 60%),
+                radial-gradient(circle at 8% 0%, rgba(0, 119, 255, .15), transparent 28%),
+                radial-gradient(circle at 92% 12%, rgba(0, 191, 255, .09), transparent 25%),
+                radial-gradient(circle at 50% 100%, rgba(37, 99, 235, .08), transparent 35%),
                 var(--bg);
+            font-family: Inter, sans-serif;
             overflow-x: hidden;
         }
 
@@ -50,11 +56,11 @@
             position: fixed;
             inset: 0;
             pointer-events: none;
-            background:
+            background-image:
                 linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
-            background-size: 42px 42px;
-            mask-image: linear-gradient(to bottom, black, transparent 75%);
+            background-size: 45px 45px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent);
         }
 
         button,
@@ -63,7 +69,8 @@
         }
 
         button {
-            -webkit-tap-highlight-color: transparent;
+            border: 0;
+            cursor: pointer;
         }
 
         a {
@@ -71,74 +78,86 @@
             text-decoration: none;
         }
 
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,.06);
-            background: rgba(7,8,12,.78);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
+        .page {
+            position: relative;
+            width: min(1240px, calc(100% - 32px));
+            margin: 0 auto;
+            padding-bottom: 50px;
         }
 
-        .nav-inner {
-            width: min(100% - 32px, 1100px);
-            height: 70px;
-            margin: auto;
+        .navbar {
+            position: sticky;
+            top: 14px;
+            z-index: 50;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 18px;
+            gap: 20px;
+            min-height: 70px;
+            margin-top: 14px;
+            padding: 10px 14px 10px 18px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: rgba(5, 9, 20, .72);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: 0 16px 50px rgba(0,0,0,.25);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             min-width: 0;
         }
 
-        .brand img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 11px;
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            object-fit: cover;
+            box-shadow: 0 0 30px rgba(0, 119, 255, .22);
+        }
+
+        .brand-text {
+            min-width: 0;
         }
 
         .brand-name {
             font-size: 15px;
-            font-weight: 850;
-            white-space: nowrap;
+            font-weight: 800;
+            letter-spacing: -.3px;
         }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 9px;
+        .brand-subtitle {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 11px;
         }
 
         .nav-user {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 5px 10px 5px 5px;
+            gap: 10px;
+            min-width: 0;
+            padding: 5px 8px 5px 5px;
             border: 1px solid var(--border);
-            border-radius: 13px;
+            border-radius: 15px;
             background: rgba(255,255,255,.035);
         }
 
         .nav-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: grid;
+            place-items: center;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #8b7cff, #6050df);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #126cff, #20bfff);
             color: white;
-            font-size: 12px;
-            font-weight: 850;
+            font-size: 14px;
+            font-weight: 800;
         }
 
         .nav-avatar img {
@@ -147,424 +166,591 @@
             object-fit: cover;
         }
 
-        .nav-name {
-            max-width: 150px;
+        .nav-user-info {
+            min-width: 0;
+        }
+
+        .nav-user-name {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            max-width: 190px;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            color: #fff;
             font-size: 12px;
-            font-weight: 750;
+            font-weight: 700;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .nav-user-label {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 10px;
         }
 
         .verified-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 17px;
-            height: 17px;
-            margin-left: 3px;
+            position: relative;
+            display: inline-grid;
+            place-items: center;
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
             border-radius: 50%;
-            background: var(--blue);
-            color: white;
+            background: #1683ff;
+            color: #fff;
             font-size: 10px;
             font-weight: 900;
-            vertical-align: 2px;
-            box-shadow: 0 0 14px rgba(22,140,255,.42);
+            line-height: 1;
+            box-shadow: 0 0 0 2px rgba(22,131,255,.08), 0 3px 12px rgba(22,131,255,.3);
         }
 
-        .nav-btn {
-            height: 38px;
-            padding: 0 13px;
+        .verified-badge::after {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 50%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 7px;
+            min-height: 40px;
+            padding: 0 14px;
             border: 1px solid var(--border);
-            border-radius: 11px;
+            border-radius: 13px;
             background: rgba(255,255,255,.035);
-            color: #e7e8ef;
-            cursor: pointer;
+            color: #dce4f7;
             font-size: 12px;
-            font-weight: 750;
+            font-weight: 700;
             transition: .2s ease;
         }
 
-        .nav-btn:hover {
-            border-color: rgba(139,124,255,.35);
-            background: rgba(139,124,255,.08);
+        .nav-button:hover {
+            border-color: rgba(37, 131, 255, .3);
+            background: rgba(22,131,255,.08);
+            color: #fff;
             transform: translateY(-1px);
         }
 
-        .nav-btn.logout {
-            color: #ff8d9b;
+        .nav-button.primary {
+            border-color: rgba(22,131,255,.28);
+            background: linear-gradient(135deg, rgba(22,131,255,.18), rgba(0,104,255,.08));
+            color: #fff;
         }
 
-        .container {
-            width: min(100% - 32px, 920px);
-            margin: auto;
-            padding: 38px 0 70px;
+        .hero {
             position: relative;
-            z-index: 1;
+            display: grid;
+            grid-template-columns: 1.25fr .75fr;
+            gap: 18px;
+            margin-top: 20px;
         }
 
-        .top {
-            margin-bottom: 25px;
-            animation: fadeUp .5s ease both;
+        .hero-main,
+        .hero-side,
+        .panel,
+        .history-panel {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: var(--shadow);
         }
 
-        .top-layout {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 25px;
+        .hero-main {
+            position: relative;
+            min-height: 290px;
+            overflow: hidden;
+            padding: 34px;
+            border-radius: 30px;
+        }
+
+        .hero-main::before {
+            content: "";
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            top: -180px;
+            right: -80px;
+            border-radius: 50%;
+            background: rgba(0, 119, 255, .18);
+            filter: blur(45px);
+        }
+
+        .hero-main::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            bottom: -150px;
+            left: 20%;
+            border-radius: 50%;
+            background: rgba(0, 200, 255, .08);
+            filter: blur(40px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
 
         .eyebrow {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: #aaa2ff;
-            font-size: 11px;
+            width: fit-content;
+            padding: 8px 11px;
+            border: 1px solid rgba(37, 131, 255, .18);
+            border-radius: 999px;
+            background: rgba(22,131,255,.07);
+            color: #73b8ff;
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: .14em;
+            letter-spacing: .5px;
             text-transform: uppercase;
-            margin-bottom: 12px;
         }
 
-        .eyebrow::before {
-            content: "";
+        .eyebrow-dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 18px rgba(139,124,255,.8);
+            background: #22d98b;
+            box-shadow: 0 0 12px rgba(32,217,139,.7);
         }
 
-        .hello {
-            font-size: clamp(27px, 5vw, 40px);
-            line-height: 1.08;
-            font-weight: 850;
-            letter-spacing: -.045em;
-            color: #fff;
+        .hero h1 {
+            max-width: 700px;
+            margin-top: 18px;
+            font-size: clamp(31px, 4vw, 52px);
+            line-height: 1.03;
+            letter-spacing: -2px;
         }
 
-        .hello .name {
-            background: linear-gradient(135deg, #fff 20%, #cfcaff 70%, #9d91ff);
+        .hero h1 .gradient {
+            background: linear-gradient(90deg, #fff, #72baff 55%, #28c8ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-        .subtitle {
-            margin-top: 11px;
+        .hero-description {
+            max-width: 650px;
+            margin-top: 14px;
             color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            line-height: 1.8;
         }
 
-        .clock-box {
-            flex: 0 0 auto;
-            text-align: right;
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 24px;
         }
 
-        .clock {
-            font-size: 25px;
-            font-weight: 850;
-            letter-spacing: -.04em;
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 34px;
+            padding: 0 11px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: rgba(255,255,255,.035);
+            color: #bfc9dc;
+            font-size: 10px;
+            font-weight: 700;
         }
 
-        .date {
+        .hero-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 290px;
+            padding: 22px;
+            border-radius: 30px;
+        }
+
+        .user-card-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .big-avatar {
+            width: 62px;
+            height: 62px;
+            flex: 0 0 62px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,.09);
+            border-radius: 19px;
+            background: linear-gradient(135deg, #0b65ff, #18bfff);
+            box-shadow: 0 12px 30px rgba(0,119,255,.2);
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .big-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-card-name {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .user-card-email {
             margin-top: 5px;
             color: var(--muted);
             font-size: 11px;
+            word-break: break-all;
         }
 
-        .card {
-            position: relative;
+        .clock-box {
+            margin-top: 25px;
+            padding: 18px;
             border: 1px solid var(--border);
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)),
-                var(--card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: 22px;
-            padding: 25px;
-            margin-bottom: 18px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            animation: fadeUp .55s ease both;
+            border-radius: 19px;
+            background: rgba(255,255,255,.025);
         }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            top: -110px;
-            right: -70px;
-            border-radius: 50%;
-            background: rgba(139,124,255,.09);
-            filter: blur(8px);
-            pointer-events: none;
+        .clock-label {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .7px;
         }
 
-        .title {
-            font-size: 18px;
+        .clock {
+            margin-top: 6px;
+            font-size: 31px;
             font-weight: 800;
-            letter-spacing: -.02em;
+            letter-spacing: -1px;
         }
 
-        .desc {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.6;
+        .date-info {
             margin-top: 5px;
-            margin-bottom: 20px;
+            color: #8490a7;
+            font-size: 11px;
         }
 
-        .tabs {
+        .stats {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 7px;
-            padding: 5px;
-            margin-bottom: 21px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .stat-card {
+            padding: 17px;
             border: 1px solid var(--border);
-            background: rgba(5,7,11,.62);
-            border-radius: 15px;
+            border-radius: 19px;
+            background: rgba(255,255,255,.025);
         }
 
-        .tab {
-            position: relative;
-            border: 0;
-            background: transparent;
-            color: var(--muted);
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
             border-radius: 11px;
-            padding: 12px 14px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 750;
-            transition: color .2s ease, background .2s ease, transform .2s ease;
+            background: rgba(22,131,255,.1);
+            color: #66b5ff;
+            font-size: 14px;
         }
 
-        .tab:hover {
-            color: #fff;
+        .stat-value {
+            margin-top: 13px;
+            font-size: 22px;
+            font-weight: 800;
         }
 
-        .tab.active {
-            color: #fff;
-            background: linear-gradient(135deg, rgba(139,124,255,.22), rgba(139,124,255,.08));
-            box-shadow: inset 0 0 0 1px rgba(139,124,255,.18), 0 8px 25px rgba(0,0,0,.15);
+        .stat-label {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .workspace {
+            margin-top: 18px;
         }
 
         .panel {
-            display: none;
-            animation: panelIn .25s ease both;
+            border-radius: var(--radius);
+            padding: 22px;
         }
 
-        .panel.active {
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title-wrap {
+            min-width: 0;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .panel-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .mode-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+            padding: 5px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: rgba(0,0,0,.16);
+        }
+
+        .mode-tab {
+            min-height: 42px;
+            border-radius: 11px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .mode-tab.active {
+            background: linear-gradient(135deg, rgba(22,131,255,.2), rgba(0,104,255,.08));
+            color: #fff;
+            box-shadow: inset 0 0 0 1px rgba(22,131,255,.15);
+        }
+
+        .mode-panel {
+            display: none;
+        }
+
+        .mode-panel.active {
             display: block;
         }
 
-        .field {
-            margin-bottom: 15px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 13px;
         }
 
-        label {
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #aeb8cb;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .input {
+            width: 100%;
+            height: 47px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            outline: none;
+            border-radius: 13px;
+            background: rgba(0,0,0,.16);
+            color: #fff;
+            font-size: 12px;
+            transition: .2s ease;
+        }
+
+        .input::placeholder {
+            color: #626d83;
+        }
+
+        .input:focus {
+            border-color: rgba(22,131,255,.5);
+            box-shadow: 0 0 0 4px rgba(22,131,255,.08);
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 16px;
+        }
+
+        .button {
+            min-height: 44px;
+            padding: 0 16px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255,255,255,.035);
+            color: #dbe5f8;
+            font-size: 11px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            border-color: rgba(22,131,255,.32);
+            background: rgba(22,131,255,.07);
+        }
+
+        .button.primary {
+            border-color: rgba(22,131,255,.34);
+            background: linear-gradient(135deg, #0878ff, #075be8);
+            color: #fff;
+            box-shadow: 0 12px 25px rgba(0,104,255,.2);
+        }
+
+        .button.success {
+            border-color: rgba(32,217,139,.25);
+            background: rgba(32,217,139,.08);
+            color: #62e9ae;
+        }
+
+        .button.danger {
+            border-color: rgba(255,85,115,.2);
+            background: rgba(255,85,115,.06);
+            color: #ff7890;
+        }
+
+        .button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 16px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: rgba(0,0,0,.16);
+            color: #bac5da;
+            font-size: 11px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box.success {
+            border-color: rgba(32,217,139,.18);
+            background: rgba(32,217,139,.05);
+        }
+
+        .result-box.error {
+            border-color: rgba(255,85,115,.18);
+            background: rgba(255,85,115,.05);
+        }
+
+        .history-panel {
+            margin-top: 18px;
+            border-radius: var(--radius);
+            padding: 22px;
+        }
+
+        .history-actions {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #c8cbd5;
-            margin-bottom: 8px;
-        }
-
-        input {
-            width: 100%;
-            border: 1px solid var(--border);
-            background: var(--input);
-            color: #fff;
-            border-radius: 13px;
-            padding: 13px 14px;
-            outline: none;
-            font-size: 13px;
-            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-        }
-
-        input::placeholder {
-            color: #555b6d;
-        }
-
-        input:hover {
-            border-color: var(--border-hover);
-        }
-
-        input:focus {
-            border-color: rgba(139,124,255,.7);
-            background: rgba(8,10,16,.98);
-            box-shadow: 0 0 0 4px rgba(139,124,255,.08), 0 12px 35px rgba(0,0,0,.18);
-        }
-
-        .buttons {
-            display: flex;
-            gap: 9px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .btn {
-            position: relative;
-            border: 1px solid transparent;
-            border-radius: 12px;
-            padding: 11px 17px;
-            cursor: pointer;
+        .history-list {
+            display: none;
+            margin-top: 17px;
+        }
+
+        .history-list.show {
+            display: grid;
+            gap: 12px;
+        }
+
+        .history-empty {
+            padding: 30px 18px;
+            border: 1px dashed rgba(255,255,255,.1);
+            border-radius: 18px;
+            background: rgba(255,255,255,.018);
+            text-align: center;
+        }
+
+        .history-empty-icon {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 12px;
+            border-radius: 14px;
+            background: rgba(22,131,255,.09);
+            color: #5aaeff;
+            font-size: 18px;
+        }
+
+        .history-empty-title {
             font-size: 13px;
             font-weight: 800;
-            transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
         }
 
-        .btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-        }
-
-        .btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn.primary {
-            color: #fff;
-            background: linear-gradient(135deg, #9b8cff, #705fff);
-            box-shadow: 0 10px 28px rgba(112,95,255,.22), inset 0 1px 0 rgba(255,255,255,.2);
-        }
-
-        .btn.primary:hover:not(:disabled) {
-            box-shadow: 0 14px 34px rgba(112,95,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
-        }
-
-        .btn.secondary {
-            background: rgba(255,255,255,.045);
-            border-color: var(--border);
-            color: #e8e9ef;
-        }
-
-        .btn.secondary:hover:not(:disabled) {
-            background: rgba(255,255,255,.075);
-            border-color: var(--border-hover);
-        }
-
-        .btn:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .status {
-            display: none;
-            padding: 12px 14px;
-            border-radius: 13px;
-            margin-top: 15px;
-            font-size: 12px;
-            line-height: 1.55;
-            animation: fadeIn .2s ease both;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .status.success {
-            background: rgba(43,194,125,.08);
-            color: #6be8b0;
-            border: 1px solid rgba(43,194,125,.17);
-        }
-
-        .status.error {
-            background: rgba(255,74,95,.07);
-            color: #ff8d9b;
-            border: 1px solid rgba(255,74,95,.16);
-        }
-
-        .result {
-            display: none;
-            margin-top: 18px;
-            border: 1px solid var(--border);
-            background: rgba(5,7,12,.65);
-            border-radius: 16px;
-            padding: 18px;
-            animation: panelIn .25s ease both;
-        }
-
-        .result.show {
-            display: block;
-        }
-
-        .result-title {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .result-title::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 14px rgba(89,230,167,.6);
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 11px 0;
-            border-bottom: 1px solid rgba(255,255,255,.055);
-            font-size: 12px;
-        }
-
-        .result-row:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .result-label {
-            color: var(--muted-2);
-        }
-
-        .result-value {
-            text-align: right;
-            color: #e7e8ee;
-            word-break: break-word;
-            font-weight: 600;
-        }
-
-        .history-head {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 17px;
-        }
-
-        .history-list {
-            display: grid;
-            gap: 10px;
+        .history-empty-text {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 10px;
         }
 
         .history-item {
             position: relative;
+            overflow: hidden;
+            padding: 17px;
             border: 1px solid var(--border);
-            background: rgba(6,8,13,.58);
-            border-radius: 16px;
-            padding: 16px;
-            transition: border-color .2s ease, transform .2s ease, background .2s ease;
+            border-radius: 19px;
+            background:
+                linear-gradient(135deg, rgba(22,131,255,.035), rgba(255,255,255,.015)),
+                rgba(255,255,255,.02);
         }
 
-        .history-item:hover {
-            border-color: rgba(139,124,255,.2);
-            background: rgba(10,12,19,.75);
-            transform: translateY(-1px);
+        .history-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: #1683ff;
+            opacity: .75;
         }
 
         .history-top {
@@ -572,1401 +758,1930 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 10px;
         }
 
-        .history-email {
+        .history-main {
+            min-width: 0;
+        }
+
+        .history-title {
             font-size: 13px;
-            font-weight: 750;
-            line-height: 1.5;
-            word-break: break-word;
-            color: #e9eaf0;
+            font-weight: 800;
         }
 
-        .badge {
-            flex: 0 0 auto;
+        .history-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
             font-size: 10px;
-            font-weight: 850;
-            letter-spacing: .05em;
-            padding: 5px 8px;
+        }
+
+        .history-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            flex: 0 0 auto;
+            min-height: 27px;
+            padding: 0 9px;
             border-radius: 999px;
-            background: rgba(43,194,125,.09);
-            color: var(--success);
-            border: 1px solid rgba(43,194,125,.12);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
 
-        .badge.failed {
-            background: rgba(255,74,95,.08);
-            color: var(--danger);
-            border-color: rgba(255,74,95,.13);
+        .history-badge.success {
+            border: 1px solid rgba(32,217,139,.2);
+            background: rgba(32,217,139,.07);
+            color: #54e7a4;
         }
 
-        .history-meta {
-            color: #777d90;
-            font-size: 11px;
-            line-height: 1.85;
+        .history-badge.failed {
+            border: 1px solid rgba(255,85,115,.2);
+            background: rgba(255,85,115,.07);
+            color: #ff7088;
         }
 
-        .empty {
-            text-align: center;
-            color: #6f7587;
-            padding: 32px 10px;
-            font-size: 12px;
-            border: 1px dashed var(--border);
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .history-data {
+            min-width: 0;
+            padding: 11px;
+            border: 1px solid rgba(255,255,255,.055);
+            border-radius: 12px;
+            background: rgba(0,0,0,.12);
+        }
+
+        .history-label {
+            color: #6f7b91;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        .history-value {
+            margin-top: 5px;
+            color: #dce5f7;
+            font-size: 10px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .history-value.empty {
+            color: #59657b;
+        }
+
+        .history-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 13px;
+            padding-top: 13px;
+            border-top: 1px solid rgba(255,255,255,.055);
+        }
+
+        .history-time {
+            color: #66738a;
+            font-size: 9px;
+        }
+
+        .copy-history {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 34px;
+            padding: 0 11px;
+            border: 1px solid rgba(22,131,255,.18);
+            border-radius: 10px;
+            background: rgba(22,131,255,.07);
+            color: #68b6ff;
+            font-size: 9px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .copy-history:hover {
+            background: rgba(22,131,255,.13);
+            color: #fff;
+        }
+
+        .copy-history.copied {
+            border-color: rgba(32,217,139,.2);
+            background: rgba(32,217,139,.07);
+            color: #54e7a4;
+        }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .spinner {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,.22);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast-container {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 100;
+            display: grid;
+            gap: 9px;
+            width: min(350px, calc(100% - 36px));
+        }
+
+        .toast {
+            padding: 13px 15px;
+            border: 1px solid var(--border);
             border-radius: 15px;
-            background: rgba(255,255,255,.012);
+            background: rgba(12,18,32,.94);
+            box-shadow: 0 18px 45px rgba(0,0,0,.3);
+            color: #e8eefb;
+            font-size: 11px;
+            line-height: 1.5;
+            animation: toastIn .25s ease;
         }
 
-        @keyframes fadeUp {
+        .toast.success {
+            border-color: rgba(32,217,139,.2);
+        }
+
+        .toast.error {
+            border-color: rgba(255,85,115,.2);
+        }
+
+        @keyframes toastIn {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(8px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+        .footer {
+            padding: 25px 5px 0;
+            text-align: center;
+            color: #59657a;
+            font-size: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
             }
 
-            to {
-                opacity: 1;
+            .hero-side {
+                min-height: auto;
             }
         }
 
-        @keyframes panelIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 20px, 1240px);
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .nav-inner {
-                width: min(100% - 20px, 1100px);
-            }
-
-            .nav-name {
-                display: none;
-            }
-
-            .nav-user {
-                padding-right: 5px;
-            }
-
-            .top-layout {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 18px;
-            }
-
-            .clock-box {
-                text-align: left;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: min(100% - 20px, 920px);
-                padding-top: 24px;
-                padding-bottom: 45px;
-            }
-
-            .card {
-                padding: 18px;
+            .navbar {
+                top: 8px;
+                margin-top: 8px;
+                padding: 8px 9px 8px 12px;
                 border-radius: 18px;
             }
 
-            .hello {
-                font-size: 28px;
-            }
-
-            .subtitle {
-                font-size: 13px;
-            }
-
-            .history-head {
-                align-items: center;
-            }
-
-            .result-row {
-                display: block;
-            }
-
-            .result-value {
-                text-align: left;
-                margin-top: 5px;
-            }
-        }
-
-        @media (max-width: 390px) {
-            .nav-inner {
-                width: calc(100% - 14px);
-            }
-
-            .brand-name {
+            .brand-subtitle,
+            .nav-user-info {
                 display: none;
             }
 
-            .nav-btn {
-                padding: 0 10px;
+            .brand-logo {
+                width: 39px;
+                height: 39px;
             }
 
-            .container {
-                width: calc(100% - 16px);
+            .nav-user {
+                padding: 4px;
+                border: 0;
+                background: transparent;
             }
 
-            .card {
-                padding: 15px;
+            .nav-user-name {
+                display: none;
             }
 
-            .history-head {
+            .nav-user-label {
+                display: none;
+            }
+
+            .nav-button {
+                min-height: 38px;
+                padding: 0 11px;
+            }
+
+            .nav-button span {
+                display: none;
+            }
+
+            .hero-main {
+                min-height: auto;
+                padding: 25px 20px;
+                border-radius: 23px;
+            }
+
+            .hero-side,
+            .panel,
+            .history-panel {
+                border-radius: 22px;
+                padding: 18px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+                letter-spacing: -1.5px;
+            }
+
+            .hero-description {
+                font-size: 12px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 7px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .stat-label {
+                font-size: 8px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .panel-header {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-            .history-head .btn {
+            .history-actions {
                 width: 100%;
             }
 
-            .buttons .btn {
+            .history-actions .button {
+                flex: 1;
+            }
+
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-top {
+                align-items: flex-start;
+            }
+
+            .history-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .copy-history {
                 width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="page">
 
-<header class="navbar">
-    <div class="nav-inner">
-
-        <a href="/dashboard" class="brand">
-            <img
-                src="https://i.top4top.io/p_3925af3h26.png"
-                alt="ReyCode"
-            >
-            <span class="brand-name">
-                ReyCode Digital
-            </span>
-        </a>
-
-        <div class="nav-right">
-
-            <div class="nav-user">
-                <div class="nav-avatar" id="navAvatar">
-                    U
-                </div>
-
-                <div
-                    class="nav-name"
-                    id="navName"
+        <nav class="navbar">
+            <a href="/dashboard" class="brand">
+                <img
+                    class="brand-logo"
+                    src="https://i.top4top.io/p_3925af3h26.png"
+                    alt="ReyCode"
                 >
-                    User
+                <div class="brand-text">
+                    <div class="brand-name">ReyCode Digital</div>
+                    <div class="brand-subtitle">Premium Workspace</div>
                 </div>
-            </div>
-
-            <a
-                href="/profile"
-                class="nav-btn"
-            >
-                Profil
             </a>
 
-            <button
-                class="nav-btn logout"
-                id="logoutBtn"
-                type="button"
-            >
-                Keluar
-            </button>
+            <div class="nav-actions">
+                <div class="nav-user">
+                    <div class="nav-avatar" id="navAvatar">U</div>
+                    <div class="nav-user-info">
+                        <div class="nav-user-name" id="navName">User</div>
+                        <div class="nav-user-label">Member</div>
+                    </div>
+                </div>
 
-        </div>
+                <a href="/dashboard" class="nav-button">
+                    <span>Dashboard</span>
+                    <strong>⌂</strong>
+                </a>
 
-    </div>
-</header>
+                <button
+                    type="button"
+                    class="nav-button primary"
+                    onclick="logout()"
+                >
+                    <span>Logout</span>
+                    <strong>↪</strong>
+                </button>
+            </div>
+        </nav>
 
-<div class="container">
+        <main>
+            <section class="hero">
+                <div class="hero-main">
+                    <div class="hero-content">
+                        <div class="eyebrow">
+                            <span class="eyebrow-dot"></span>
+                            ReyCode Service
+                        </div>
 
-    <div class="top">
+                        <h1>
+                            <span id="greeting">Selamat datang</span>,
+                            <span class="gradient">Alight Motion.</span>
+                        </h1>
 
-        <div class="top-layout">
+                        <p class="hero-description">
+                            Kelola aktivasi Alight Motion dengan workspace
+                            yang cepat, aman, dan terintegrasi dengan akun
+                            ReyCode Digital kamu.
+                        </p>
 
-            <div>
-                <div class="eyebrow">
-                    ReyCode Digital
+                        <div class="hero-meta">
+                            <div class="hero-chip">
+                                <span>●</span>
+                                Provider Online
+                            </div>
+
+                            <div class="hero-chip">
+                                <span>⚡</span>
+                                Fast Processing
+                            </div>
+
+                            <div class="hero-chip">
+                                <span>◈</span>
+                                History Terintegrasi
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-side">
+                    <div>
+                        <div class="user-card-top">
+                            <div class="big-avatar" id="bigAvatar">U</div>
+
+                            <div>
+                                <div class="user-card-name" id="userCardName">
+                                    User
+                                </div>
+
+                                <div class="user-card-email" id="userCardEmail">
+                                    Memuat akun...
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clock-box">
+                            <div class="clock-label">Waktu lokal</div>
+                            <div class="clock" id="clock">00:00:00</div>
+                            <div class="date-info" id="dateInfo">
+                                Memuat tanggal...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">✦</div>
+                    <div class="stat-value" id="manualCount">0</div>
+                    <div class="stat-label">Manual Activation</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="autoCount">0</div>
+                    <div class="stat-label">Auto Activation</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">◷</div>
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">Total History</div>
+                </div>
+            </section>
+
+            <section class="workspace">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <div class="panel-title">
+                                Alight Motion Workspace
+                            </div>
+
+                            <div class="panel-subtitle">
+                                Pilih metode aktivasi yang ingin digunakan.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mode-tabs">
+                        <button
+                            type="button"
+                            class="mode-tab active"
+                            id="manualTab"
+                            onclick="switchMode('manual')"
+                        >
+                            Manual Activation
+                        </button>
+
+                        <button
+                            type="button"
+                            class="mode-tab"
+                            id="autoTab"
+                            onclick="switchMode('auto')"
+                        >
+                            Auto Activation
+                        </button>
+                    </div>
+
+                    <div
+                        class="mode-panel active"
+                        id="manualPanel"
+                    >
+                        <div class="form-grid">
+                            <div class="field full">
+                                <label for="manualEmail">
+                                    Email Alight Motion
+                                </label>
+
+                                <input
+                                    id="manualEmail"
+                                    class="input"
+                                    type="email"
+                                    autocomplete="email"
+                                    placeholder="Masukkan email Alight Motion"
+                                >
+                            </div>
+
+                            <div class="field full">
+                                <label for="magicLink">
+                                    Magic Link
+                                </label>
+
+                                <input
+                                    id="magicLink"
+                                    class="input"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Tempel link verifikasi dari email"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <button
+                                type="button"
+                                class="button"
+                                id="sendLinkButton"
+                                onclick="sendLink()"
+                            >
+                                Kirim Link
+                            </button>
+
+                            <button
+                                type="button"
+                                class="button primary"
+                                id="verifyButton"
+                                onclick="verifyLink()"
+                            >
+                                Verifikasi Link
+                            </button>
+                        </div>
+
+                        <div
+                            class="result-box"
+                            id="manualResult"
+                        ></div>
+                    </div>
+
+                    <div
+                        class="mode-panel"
+                        id="autoPanel"
+                    >
+                        <div class="form-grid">
+                            <div class="field full">
+                                <label for="username">
+                                    Username
+                                </label>
+
+                                <input
+                                    id="username"
+                                    class="input"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Masukkan username jika diperlukan"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <button
+                                type="button"
+                                class="button primary"
+                                id="autoButton"
+                                onclick="autoActivate()"
+                            >
+                                Generate Activation
+                            </button>
+                        </div>
+
+                        <div
+                            class="result-box"
+                            id="autoResult"
+                        ></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="history-panel">
+                <div class="panel-header">
+                    <div class="panel-title-wrap">
+                        <div class="panel-title">
+                            Activation History
+                        </div>
+
+                        <div class="panel-subtitle">
+                            Riwayat aktivasi akun kamu tersimpan di server.
+                        </div>
+                    </div>
+
+                    <div class="history-actions">
+                        <button
+                            type="button"
+                            class="button primary"
+                            id="historyToggleButton"
+                            onclick="toggleHistory()"
+                        >
+                            History
+                        </button>
+
+                        <button
+                            type="button"
+                            class="button"
+                            id="historyRefreshButton"
+                            onclick="loadHistory()"
+                            style="display:none"
+                        >
+                            Refresh
+                        </button>
+                    </div>
                 </div>
 
                 <div
-                    class="hello"
-                    id="greeting"
-                >
-                    Memuat...
-                </div>
+                    class="history-list"
+                    id="historyList"
+                ></div>
+            </section>
+        </main>
 
-                <div class="subtitle">
-                    Kelola Alight Motion dengan cepat,
-                    aman, dan praktis.
-                </div>
-            </div>
-
-            <div class="clock-box">
-                <div
-                    class="clock"
-                    id="clock"
-                >
-                    00:00:00
-                </div>
-
-                <div
-                    class="date"
-                    id="dateInfo"
-                >
-                    Memuat tanggal...
-                </div>
-            </div>
-
-        </div>
-
+        <footer class="footer">
+            © <span id="year"></span> ReyCode Digital · Alight Motion Workspace
+        </footer>
     </div>
 
-    <div class="card">
+    <div
+        class="toast-container"
+        id="toastContainer"
+    ></div>
 
-        <div class="title">
-            Alight Motion
-        </div>
+    <script>
+        const $ = id => document.getElementById(id);
 
-        <div class="desc">
-            Pilih metode aktivasi yang ingin kamu gunakan.
-        </div>
+        let currentUserName = "User";
+        let currentUserVerified = false;
+        let historyVisible = false;
+        let historyLoading = false;
+        let alightMotionHistory = [];
 
-        <div class="tabs">
-
-            <button
-                class="tab active"
-                data-tab="manual"
-                type="button"
-            >
-                Manual
-            </button>
-
-            <button
-                class="tab"
-                data-tab="auto"
-                type="button"
-            >
-                Auto
-            </button>
-
-        </div>
-
-        <div
-            class="panel active"
-            id="manual"
-        >
-
-            <div class="field">
-                <label for="manualEmail">
-                    Email
-                </label>
-
-                <input
-                    id="manualEmail"
-                    type="email"
-                    placeholder="contoh@email.com"
-                    autocomplete="email"
-                >
-            </div>
-
-            <div class="buttons">
-
-                <button
-                    class="btn secondary"
-                    id="sendLinkBtn"
-                    type="button"
-                >
-                    Kirim Link
-                </button>
-
-            </div>
-
-            <div
-                class="field"
-                style="margin-top:15px"
-            >
-                <label for="magicLink">
-                    Link Verifikasi
-                </label>
-
-                <input
-                    id="magicLink"
-                    type="url"
-                    placeholder="Tempel link verifikasi di sini"
-                >
-            </div>
-
-            <div class="buttons">
-
-                <button
-                    class="btn primary"
-                    id="verifyBtn"
-                    type="button"
-                >
-                    Verify
-                </button>
-
-            </div>
-
-            <div
-                class="status"
-                id="manualStatus"
-            ></div>
-
-        </div>
-
-        <div
-            class="panel"
-            id="auto"
-        >
-
-            <div class="field">
-                <label for="autoUsername">
-                    Nama / Username
-                    <span style="color:#777c8e">
-                        (opsional)
-                    </span>
-                </label>
-
-                <input
-                    id="autoUsername"
-                    type="text"
-                    placeholder="Kosongkan untuk nama random"
-                    maxlength="50"
-                >
-            </div>
-
-            <div class="buttons">
-
-                <button
-                    class="btn primary"
-                    id="autoBtn"
-                    type="button"
-                >
-                    Auto Activate
-                </button>
-
-            </div>
-
-            <div
-                class="status"
-                id="autoStatus"
-            ></div>
-
-            <div
-                class="result"
-                id="autoResult"
-            >
-
-                <div class="result-title">
-                    Aktivasi Berhasil
-                </div>
-
-                <div class="result-row">
-                    <div class="result-label">
-                        Email
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="resultEmail"
-                    >
-                        -
-                    </div>
-                </div>
-
-                <div class="result-row">
-                    <div class="result-label">
-                        Animal
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="resultAnimal"
-                    >
-                        -
-                    </div>
-                </div>
-
-                <div class="result-row">
-                    <div class="result-label">
-                        Order ID
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="resultOrder"
-                    >
-                        -
-                    </div>
-                </div>
-
-                <div class="result-row">
-                    <div class="result-label">
-                        Berlaku Sampai
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="resultValid"
-                    >
-                        -
-                    </div>
-                </div>
-
-                <div class="result-row">
-                    <div class="result-label">
-                        Website
-                    </div>
-
-                    <div
-                        class="result-value"
-                        id="resultWeb"
-                    >
-                        -
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <div class="history-head">
-
-            <div>
-                <div class="title">
-                    History
-                </div>
-
-                <div class="desc">
-                    Riwayat proses akun kamu.
-                </div>
-            </div>
-
-            <button
-                class="btn secondary"
-                id="refreshHistory"
-                type="button"
-            >
-                Refresh
-            </button>
-
-        </div>
-
-        <div
-            class="history-list"
-            id="historyList"
-        >
-            <div class="empty">
-                Memuat history...
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-const $ = id => document.getElementById(id);
-
-let currentUserName = "User";
-
-let currentUserVerified = false;
-
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function getGreeting() {
-    const hour = new Date().getHours();
-
-    if (hour >= 5 && hour < 11) {
-        return "Selamat pagi";
-    }
-
-    if (hour >= 11 && hour < 15) {
-        return "Selamat siang";
-    }
-
-    if (hour >= 15 && hour < 18) {
-        return "Selamat sore";
-    }
-
-    return "Selamat malam";
-}
-
-function formatDate(date) {
-    return new Intl.DateTimeFormat(
-        "id-ID",
-        {
-            weekday: "long",
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
-    ).format(date);
-}
 
-function setAvatar(element, user) {
-    if (!element) {
-        return;
-    }
+        function getGreeting() {
+            const hour = new Date().getHours();
 
-    const name =
-        user?.name ||
-        user?.username ||
-        user?.displayName ||
-        user?.fullName ||
-        "User";
+            if (hour >= 5 && hour < 11) {
+                return "Selamat pagi";
+            }
 
-    const avatarUrl =
-        user?.avatarUrl || "";
+            if (hour >= 11 && hour < 15) {
+                return "Selamat siang";
+            }
 
-    if (avatarUrl) {
-        element.innerHTML = `
-            <img
-                src="${escapeHtml(avatarUrl)}"
-                alt="${escapeHtml(name)}"
-                onerror="this.parentElement.textContent='${escapeHtml(
-                    name.charAt(0).toUpperCase()
-                )}'"
-            >
-        `;
-    } else {
-        element.textContent =
-            name.charAt(0).toUpperCase();
-    }
-}
+            if (hour >= 15 && hour < 18) {
+                return "Selamat sore";
+            }
 
-function updateGreeting(user) {
-    const name =
-        user?.name ||
-        user?.username ||
-        user?.displayName ||
-        user?.fullName ||
-        "User";
+            return "Selamat malam";
+        }
 
-    currentUserName = name;
-
-    currentUserVerified =
-        user?.emailVerified === true;
-
-    const verified =
-        currentUserVerified
-            ? `<span
-                class="verified-badge"
-                title="Akun terverifikasi"
-            >✓</span>`
-            : "";
-
-    const greeting =
-        $("greeting");
-
-    if (greeting) {
-        greeting.innerHTML = `
-            ${getGreeting()},
-            <span class="name">
-                ${escapeHtml(name)}
-            </span>
-            ${verified}
-        `;
-    }
-
-    const navName =
-        $("navName");
-
-    if (navName) {
-        navName.innerHTML = `
-            ${escapeHtml(name)}
-            ${verified}
-        `;
-    }
-}
-
-function updateClock() {
-    const now = new Date();
-
-    const clock =
-        $("clock");
-
-    if (clock) {
-        clock.textContent =
-            now.toLocaleTimeString(
+        function formatDate(date) {
+            return new Intl.DateTimeFormat(
                 "id-ID",
                 {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
                 }
-            );
-    }
+            ).format(date);
+        }
 
-    const dateInfo =
-        $("dateInfo");
+        function formatDateTime(value) {
+            if (!value) {
+                return "-";
+            }
 
-    if (dateInfo) {
-        dateInfo.textContent =
-            formatDate(now);
-    }
+            const date = new Date(value);
 
-    const greeting =
-        $("greeting");
+            if (Number.isNaN(date.getTime())) {
+                return String(value);
+            }
 
-    if (greeting && currentUserName !== "User") {
-        const verified =
-            currentUserVerified
-                ? `<span
+            return new Intl.DateTimeFormat(
+                "id-ID",
+                {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }
+            ).format(date);
+        }
+
+        function verifiedBadge() {
+            if (!currentUserVerified) {
+                return "";
+            }
+
+            return `
+                <span
                     class="verified-badge"
                     title="Akun terverifikasi"
-                >✓</span>`
-                : "";
-
-        greeting.innerHTML = `
-            ${getGreeting()},
-            <span class="name">
-                ${escapeHtml(currentUserName)}
-            </span>
-            ${verified}
-        `;
-    }
-}
-
-async function loadUser() {
-    try {
-        const response =
-            await fetch(
-                "/api/user/me",
-                {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store",
-                    headers: {
-                        Accept:
-                            "application/json"
-                    }
-                }
-            );
-
-        if (response.status === 401) {
-            location.href = "/login";
-            return;
-        }
-
-        const raw =
-            await response.text();
-
-        let data;
-
-        try {
-            data =
-                JSON.parse(raw);
-        } catch {
-            throw new Error(
-                "Response API bukan JSON"
-            );
-        }
-
-        if (!response.ok) {
-            throw new Error(
-                data?.message ||
-                "Gagal mengambil data akun"
-            );
-        }
-
-        const user =
-            data?.user ||
-            data?.data ||
-            data;
-
-        if (!user) {
-            throw new Error(
-                "Data user tidak ditemukan"
-            );
-        }
-
-        updateGreeting(user);
-
-        setAvatar(
-            $("navAvatar"),
-            user
-        );
-
-    } catch (error) {
-        console.error(
-            "LOAD USER ERROR:",
-            error
-        );
-
-        const greeting =
-            $("greeting");
-
-        if (greeting) {
-            greeting.innerHTML = `
-                ${getGreeting()},
-                <span class="name">
-                    User
-                </span>
+                    aria-label="Akun terverifikasi"
+                >✓</span>
             `;
         }
 
-        const navName =
-            $("navName");
+        function setAvatar(element, user) {
+            if (!element) {
+                return;
+            }
 
-        if (navName) {
-            navName.textContent =
+            const name =
+                user?.name ||
+                user?.username ||
+                user?.displayName ||
+                user?.fullName ||
                 "User";
+
+            const avatarUrl =
+                user?.avatarUrl || "";
+
+            if (avatarUrl) {
+                element.innerHTML = `
+                    <img
+                        src="${escapeHtml(avatarUrl)}"
+                        alt="${escapeHtml(name)}"
+                        onerror="this.parentElement.textContent='${escapeHtml(
+                            name.charAt(0).toUpperCase()
+                        )}'"
+                    >
+                `;
+            } else {
+                element.textContent =
+                    name.charAt(0).toUpperCase();
+            }
         }
 
-        setAvatar(
-            $("navAvatar"),
-            {}
-        );
-    }
-}
+        function updateUserUI(user) {
+            const name =
+                user?.name ||
+                user?.username ||
+                user?.displayName ||
+                user?.fullName ||
+                "User";
 
-async function logout() {
-    const button =
-        $("logoutBtn");
+            currentUserName = name;
+            currentUserVerified =
+                user?.emailVerified === true;
 
-    if (button) {
-        button.disabled = true;
-        button.textContent =
-            "Keluar...";
-    }
+            const badge = verifiedBadge();
 
-    try {
-        const response =
-            await fetch(
-                "/api/auth/logout",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        Accept:
-                            "application/json"
-                    }
+            const greeting = $("greeting");
+
+            if (greeting) {
+                greeting.innerHTML = `
+                    ${getGreeting()},
+                    <span>${escapeHtml(name)}</span>
+                    ${badge}
+                `;
+            }
+
+            const navName = $("navName");
+
+            if (navName) {
+                navName.innerHTML = `
+                    ${escapeHtml(name)}
+                    ${badge}
+                `;
+            }
+
+            const userCardName = $("userCardName");
+
+            if (userCardName) {
+                userCardName.innerHTML = `
+                    <span>${escapeHtml(name)}</span>
+                    ${badge}
+                `;
+            }
+
+            const userCardEmail =
+                $("userCardEmail");
+
+            if (userCardEmail) {
+                userCardEmail.textContent =
+                    user?.email ||
+                    "Email tidak tersedia";
+            }
+
+            setAvatar(
+                $("navAvatar"),
+                user
+            );
+
+            setAvatar(
+                $("bigAvatar"),
+                user
+            );
+        }
+
+        function updateClock() {
+            const now = new Date();
+
+            const clock = $("clock");
+
+            if (clock) {
+                clock.textContent =
+                    now.toLocaleTimeString(
+                        "id-ID",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false
+                        }
+                    );
+            }
+
+            const dateInfo = $("dateInfo");
+
+            if (dateInfo) {
+                dateInfo.textContent =
+                    formatDate(now);
+            }
+
+            const greeting = $("greeting");
+
+            if (greeting) {
+                greeting.innerHTML = `
+                    ${getGreeting()},
+                    <span>${escapeHtml(currentUserName)}</span>
+                    ${verifiedBadge()}
+                `;
+            }
+        }
+
+        async function loadUser() {
+            try {
+                const response =
+                    await fetch(
+                        "/api/user/me",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+                const raw =
+                    await response.text();
+
+                let data = null;
+
+                try {
+                    data = raw
+                        ? JSON.parse(raw)
+                        : null;
+                } catch {
+                    data = null;
                 }
-            );
 
-        if (!response.ok) {
-            throw new Error(
-                "Logout gagal"
-            );
-        }
-
-        location.href = "/login";
-
-    } catch (error) {
-        console.error(
-            "LOGOUT ERROR:",
-            error
-        );
-
-        if (button) {
-            button.disabled = false;
-            button.textContent =
-                "Keluar";
-        }
-
-        alert(
-            error.message ||
-            "Gagal keluar akun."
-        );
-    }
-}
-
-function showStatus(
-    element,
-    message,
-    type
-) {
-    element.textContent =
-        message;
-
-    element.className =
-        "status show " + type;
-}
-
-function clearStatus(element) {
-    element.textContent = "";
-    element.className =
-        "status";
-}
-
-async function sendLink() {
-    const email =
-        $("manualEmail")
-            .value
-            .trim();
-
-    if (!email) {
-        showStatus(
-            $("manualStatus"),
-            "Email wajib diisi.",
-            "error"
-        );
-        return;
-    }
-
-    const button =
-        $("sendLinkBtn");
-
-    button.disabled = true;
-    button.textContent =
-        "Mengirim...";
-
-    clearStatus(
-        $("manualStatus")
-    );
-
-    try {
-        const response =
-            await fetch(
-                "/api/alightmotion",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body: JSON.stringify({
-                        action:
-                            "send-link",
-                        email
-                    })
+                if (response.status === 401) {
+                    window.location.href =
+                        "/login";
+                    return;
                 }
-            );
 
-        const data =
-            await response.json();
+                if (
+                    !response.ok ||
+                    !data?.success ||
+                    !data?.user
+                ) {
+                    throw new Error(
+                        data?.message ||
+                        "Gagal mengambil data akun."
+                    );
+                }
 
-        if (
-            !response.ok ||
-            !data.status
+                updateUserUI(data.user);
+            } catch (error) {
+                console.error(
+                    "LOAD USER ERROR:",
+                    error
+                );
+
+                showToast(
+                    error?.message ||
+                    "Gagal mengambil data akun.",
+                    "error"
+                );
+            }
+        }
+
+        function switchMode(mode) {
+            const manualTab =
+                $("manualTab");
+
+            const autoTab =
+                $("autoTab");
+
+            const manualPanel =
+                $("manualPanel");
+
+            const autoPanel =
+                $("autoPanel");
+
+            if (mode === "auto") {
+                manualTab.classList.remove("active");
+                autoTab.classList.add("active");
+
+                manualPanel.classList.remove("active");
+                autoPanel.classList.add("active");
+
+                return;
+            }
+
+            autoTab.classList.remove("active");
+            manualTab.classList.add("active");
+
+            autoPanel.classList.remove("active");
+            manualPanel.classList.add("active");
+        }
+
+        function setLoading(button, loading, text) {
+            if (!button) {
+                return;
+            }
+
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = `
+                    <span class="loading">
+                        <span class="spinner"></span>
+                        ${escapeHtml(text || "Memproses...")}
+                    </span>
+                `;
+            } else {
+                button.disabled = false;
+                button.textContent = text || "Submit";
+            }
+        }
+
+        function showResult(
+            element,
+            message,
+            type = ""
         ) {
-            throw new Error(
-                data.error ||
-                data.message ||
-                "Gagal mengirim link."
-            );
+            if (!element) {
+                return;
+            }
+
+            element.className =
+                `result-box show ${type}`;
+
+            element.textContent =
+                message;
         }
 
-        showStatus(
-            $("manualStatus"),
-            data.message ||
-                "Tautan verifikasi berhasil dikirim.",
-            "success"
-        );
+        function showToast(
+            message,
+            type = ""
+        ) {
+            const container =
+                $("toastContainer");
 
-    } catch (error) {
-        showStatus(
-            $("manualStatus"),
-            error.message,
-            "error"
-        );
-    } finally {
-        button.disabled = false;
-        button.textContent =
-            "Kirim Link";
-    }
-}
+            if (!container) {
+                return;
+            }
 
-async function verifyLink() {
-    const email =
-        $("manualEmail")
-            .value
-            .trim();
+            const toast =
+                document.createElement("div");
 
-    const magicLink =
-        $("magicLink")
-            .value
-            .trim();
+            toast.className =
+                `toast ${type}`;
 
-    if (!email) {
-        showStatus(
-            $("manualStatus"),
-            "Email wajib diisi.",
-            "error"
-        );
-        return;
-    }
+            toast.textContent =
+                message;
 
-    if (!magicLink) {
-        showStatus(
-            $("manualStatus"),
-            "Link verifikasi wajib diisi.",
-            "error"
-        );
-        return;
-    }
+            container.appendChild(toast);
 
-    const button =
-        $("verifyBtn");
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform =
+                    "translateY(8px)";
 
-    button.disabled = true;
-    button.textContent =
-        "Memproses...";
+                setTimeout(() => {
+                    toast.remove();
+                }, 220);
+            }, 3000);
+        }
 
-    clearStatus(
-        $("manualStatus")
-    );
+        async function postAlightMotion(body) {
+            const response =
+                await fetch(
+                    "/api/alightmotion",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify(body)
+                    }
+                );
 
-    try {
-        const response =
-            await fetch(
-                "/api/alightmotion",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body: JSON.stringify({
-                        action:
-                            "verify-link",
+            const raw =
+                await response.text();
+
+            let data = null;
+
+            try {
+                data = raw
+                    ? JSON.parse(raw)
+                    : null;
+            } catch {
+                data = null;
+            }
+
+            if (response.status === 401) {
+                window.location.href =
+                    "/login";
+                return null;
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    "Request gagal."
+                );
+            }
+
+            return data;
+        }
+
+        async function sendLink() {
+            const email =
+                $("manualEmail")
+                    .value
+                    .trim();
+
+            const button =
+                $("sendLinkButton");
+
+            if (!email) {
+                showResult(
+                    $("manualResult"),
+                    "Email wajib diisi.",
+                    "error"
+                );
+                return;
+            }
+
+            try {
+                setLoading(
+                    button,
+                    true,
+                    "Mengirim..."
+                );
+
+                showResult(
+                    $("manualResult"),
+                    "Sedang mengirim link verifikasi..."
+                );
+
+                const data =
+                    await postAlightMotion({
+                        action: "send-link",
+                        email
+                    });
+
+                const message =
+                    data?.message ||
+                    data?.error ||
+                    (
+                        data?.status
+                            ? "Link verifikasi berhasil dikirim."
+                            : "Gagal mengirim link."
+                    );
+
+                showResult(
+                    $("manualResult"),
+                    message,
+                    data?.status
+                        ? "success"
+                        : "error"
+                );
+
+                showToast(
+                    message,
+                    data?.status
+                        ? "success"
+                        : "error"
+                );
+            } catch (error) {
+                showResult(
+                    $("manualResult"),
+                    error?.message ||
+                    "Gagal mengirim link.",
+                    "error"
+                );
+
+                showToast(
+                    error?.message ||
+                    "Gagal mengirim link.",
+                    "error"
+                );
+            } finally {
+                setLoading(
+                    button,
+                    false,
+                    "Kirim Link"
+                );
+            }
+        }
+
+        async function verifyLink() {
+            const email =
+                $("manualEmail")
+                    .value
+                    .trim();
+
+            const magicLink =
+                $("magicLink")
+                    .value
+                    .trim();
+
+            const button =
+                $("verifyButton");
+
+            if (!email) {
+                showResult(
+                    $("manualResult"),
+                    "Email wajib diisi.",
+                    "error"
+                );
+                return;
+            }
+
+            if (!magicLink) {
+                showResult(
+                    $("manualResult"),
+                    "Magic Link wajib diisi.",
+                    "error"
+                );
+                return;
+            }
+
+            try {
+                setLoading(
+                    button,
+                    true,
+                    "Memverifikasi..."
+                );
+
+                showResult(
+                    $("manualResult"),
+                    "Sedang memverifikasi link..."
+                );
+
+                const data =
+                    await postAlightMotion({
+                        action: "verify-link",
                         email,
                         magicLink
-                    })
+                    });
+
+                const success =
+                    data?.status === true;
+
+                const message =
+                    data?.message ||
+                    data?.error ||
+                    (
+                        success
+                            ? "Aktivasi berhasil."
+                            : "Verifikasi gagal."
+                    );
+
+                let extra = "";
+
+                if (success && data?.data) {
+                    const result =
+                        data.data;
+
+                    if (result.orderId) {
+                        extra +=
+                            `\nOrder ID: ${result.orderId}`;
+                    }
+
+                    if (result.validUntil) {
+                        extra +=
+                            `\nBerlaku sampai: ${result.validUntil}`;
+                    }
                 }
-            );
 
-        const data =
-            await response.json();
+                showResult(
+                    $("manualResult"),
+                    message + extra,
+                    success
+                        ? "success"
+                        : "error"
+                );
 
-        if (
-            !response.ok ||
-            !data.status
-        ) {
-            throw new Error(
-                data.error ||
-                data.message ||
-                "Verifikasi gagal."
-            );
-        }
+                showToast(
+                    message,
+                    success
+                        ? "success"
+                        : "error"
+                );
 
-        const orderId =
-            data.data?.orderId;
-
-        showStatus(
-            $("manualStatus"),
-            orderId
-                ? `Berhasil diverifikasi. Order ID: ${orderId}`
-                : "Berhasil diverifikasi.",
-            "success"
-        );
-
-        await loadHistory();
-
-    } catch (error) {
-        showStatus(
-            $("manualStatus"),
-            error.message,
-            "error"
-        );
-
-        await loadHistory();
-
-    } finally {
-        button.disabled = false;
-        button.textContent =
-            "Verify";
-    }
-}
-
-async function autoActivate() {
-    const username =
-        $("autoUsername")
-            .value
-            .trim();
-
-    const button =
-        $("autoBtn");
-
-    button.disabled = true;
-    button.textContent =
-        "Memproses...";
-
-    clearStatus(
-        $("autoStatus")
-    );
-
-    $("autoResult")
-        .classList
-        .remove("show");
-
-    try {
-        const response =
-            await fetch(
-                "/api/alightmotion",
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "auto",
-                        ...(username
-                            ? {
-                                username
-                            }
-                            : {})
-                    })
+                if (historyVisible) {
+                    await loadHistory();
                 }
-            );
+            } catch (error) {
+                showResult(
+                    $("manualResult"),
+                    error?.message ||
+                    "Verifikasi gagal.",
+                    "error"
+                );
 
-        const data =
-            await response.json();
+                showToast(
+                    error?.message ||
+                    "Verifikasi gagal.",
+                    "error"
+                );
 
-        if (
-            !response.ok ||
-            !data.status ||
-            !data.card
-        ) {
-            throw new Error(
-                data.error ||
-                data.message ||
-                "Auto gagal."
-            );
-        }
-
-        const card =
-            data.card;
-
-        $("resultEmail")
-            .textContent =
-            card.email || "-";
-
-        $("resultAnimal")
-            .textContent =
-            card.selamat_kamu_mendapatkan_animal ||
-            "-";
-
-        $("resultOrder")
-            .textContent =
-            card.orderId || "-";
-
-        $("resultValid")
-            .textContent =
-            card.validUntil || "-";
-
-        $("resultWeb")
-            .textContent =
-            card.weblogin || "-";
-
-        $("autoResult")
-            .classList
-            .add("show");
-
-        showStatus(
-            $("autoStatus"),
-            "Berhasil membuat akun.",
-            "success"
-        );
-
-        await loadHistory();
-
-    } catch (error) {
-        showStatus(
-            $("autoStatus"),
-            error.message,
-            "error"
-        );
-
-        await loadHistory();
-
-    } finally {
-        button.disabled = false;
-        button.textContent =
-            "Auto Activate";
-    }
-}
-
-function formatHistoryDate(value) {
-    if (!value) {
-        return "-";
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return value;
-    }
-
-    return date.toLocaleString(
-        "id-ID",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
-    );
-}
-
-async function loadHistory() {
-    const list =
-        $("historyList");
-
-    list.innerHTML =
-        `<div class="empty">
-            Memuat history...
-        </div>`;
-
-    try {
-        const response =
-            await fetch(
-                "/api/alightmotion/history",
-                {
-                    credentials: "include",
-                    cache: "no-store"
+                if (historyVisible) {
+                    await loadHistory();
                 }
-            );
-
-        if (response.status === 401) {
-            location.href =
-                "/login";
-            return;
+            } finally {
+                setLoading(
+                    button,
+                    false,
+                    "Verifikasi Link"
+                );
+            }
         }
 
-        const data =
-            await response.json();
+        async function autoActivate() {
+            const username =
+                $("username")
+                    .value
+                    .trim();
 
-        if (
-            !response.ok ||
-            !data.success
+            const button =
+                $("autoButton");
+
+            try {
+                setLoading(
+                    button,
+                    true,
+                    "Memproses..."
+                );
+
+                showResult(
+                    $("autoResult"),
+                    "Sedang menjalankan auto activation..."
+                );
+
+                const body = {
+                    action: "auto"
+                };
+
+                if (username) {
+                    body.username =
+                        username;
+                }
+
+                const data =
+                    await postAlightMotion(
+                        body
+                    );
+
+                const success =
+                    data?.status === true;
+
+                let message =
+                    data?.message ||
+                    data?.error ||
+                    (
+                        success
+                            ? "Auto activation berhasil."
+                            : "Auto activation gagal."
+                    );
+
+                if (
+                    success &&
+                    data?.card
+                ) {
+                    const card =
+                        data.card;
+
+                    const lines = [];
+
+                    if (card.email) {
+                        lines.push(
+                            `Email: ${card.email}`
+                        );
+                    }
+
+                    if (
+                        card.selamat_kamu_mendapatkan_animal
+                    ) {
+                        lines.push(
+                            `Animal: ${card.selamat_kamu_mendapatkan_animal}`
+                        );
+                    }
+
+                    if (card.orderId) {
+                        lines.push(
+                            `Order ID: ${card.orderId}`
+                        );
+                    }
+
+                    if (card.validUntil) {
+                        lines.push(
+                            `Berlaku sampai: ${card.validUntil}`
+                        );
+                    }
+
+                    if (card.weblogin) {
+                        lines.push(
+                            `Website/Login: ${card.weblogin}`
+                        );
+                    }
+
+                    if (lines.length) {
+                        message +=
+                            `\n\n${lines.join("\n")}`;
+                    }
+                }
+
+                showResult(
+                    $("autoResult"),
+                    message,
+                    success
+                        ? "success"
+                        : "error"
+                );
+
+                showToast(
+                    success
+                        ? "Auto activation berhasil."
+                        : (
+                            data?.error ||
+                            "Auto activation gagal."
+                        ),
+                    success
+                        ? "success"
+                        : "error"
+                );
+
+                if (historyVisible) {
+                    await loadHistory();
+                }
+            } catch (error) {
+                showResult(
+                    $("autoResult"),
+                    error?.message ||
+                    "Auto activation gagal.",
+                    "error"
+                );
+
+                showToast(
+                    error?.message ||
+                    "Auto activation gagal.",
+                    "error"
+                );
+
+                if (historyVisible) {
+                    await loadHistory();
+                }
+            } finally {
+                setLoading(
+                    button,
+                    false,
+                    "Generate Activation"
+                );
+            }
+        }
+
+        function getHistoryValue(
+            item,
+            key
         ) {
-            throw new Error(
-                data.message ||
-                "Gagal mengambil history."
+            const value =
+                item?.[key];
+
+            if (
+                value === undefined ||
+                value === null ||
+                String(value).trim() === ""
+            ) {
+                return `<span class="empty">-</span>`;
+            }
+
+            return escapeHtml(
+                String(value)
             );
         }
 
-        const history =
-            Array.isArray(
-                data.history
-            )
-                ? data.history
-                : [];
+        function getHistoryCopyText(item) {
+            const status =
+                String(
+                    item?.status ||
+                    "-"
+                ).toUpperCase();
 
-        if (!history.length) {
+            return [
+                "REYCODE DIGITAL",
+                "ALIGHT MOTION",
+                "",
+                `Mode: ${item?.action || "-"}`,
+                `Status: ${status}`,
+                `Username: ${item?.username || "-"}`,
+                `Email: ${item?.email || "-"}`,
+                `Animal: ${item?.animal || "-"}`,
+                `Order ID: ${item?.orderId || "-"}`,
+                `Berlaku Sampai: ${item?.validUntil || "-"}`,
+                `Website / Login: ${item?.weblogin || "-"}`,
+                `Dibuat: ${formatDateTime(item?.createdAt)}`,
+                `Error: ${item?.error || "-"}`
+            ].join("\n");
+        }
+
+        function renderHistory(history) {
+            const list =
+                $("historyList");
+
+            if (!list) {
+                return;
+            }
+
+            if (
+                !Array.isArray(history) ||
+                history.length === 0
+            ) {
+                list.innerHTML = `
+                    <div class="history-empty">
+                        <div class="history-empty-icon">
+                            ◷
+                        </div>
+
+                        <div class="history-empty-title">
+                            Belum ada history
+                        </div>
+
+                        <div class="history-empty-text">
+                            Riwayat aktivasi akan muncul di sini.
+                        </div>
+                    </div>
+                `;
+
+                updateStats([]);
+                return;
+            }
+
             list.innerHTML =
-                `<div class="empty">
-                    Belum ada history.
-                </div>`;
-            return;
-        }
+                history
+                    .map((item, index) => {
+                        const status =
+                            String(
+                                item?.status ||
+                                "unknown"
+                            ).toLowerCase();
 
-        list.innerHTML =
-            history
-                .map(item => {
-                    const failed =
-                        item.status ===
-                        "failed";
+                        const success =
+                            status === "success";
 
-                    return `
-                        <div class="history-item">
+                        const mode =
+                            String(
+                                item?.action ||
+                                "manual"
+                            ).toLowerCase();
 
-                            <div class="history-top">
+                        const modeName =
+                            mode === "auto"
+                                ? "Auto Activation"
+                                : "Manual Activation";
 
-                                <div class="history-email">
-                                    ${escapeHtml(
-                                        item.email ||
-                                        item.username ||
-                                        "-"
-                                    )}
+                        return `
+                            <article class="history-item">
+                                <div class="history-top">
+                                    <div class="history-main">
+                                        <div class="history-title">
+                                            ${escapeHtml(modeName)}
+                                        </div>
+
+                                        <div class="history-subtitle">
+                                            ${escapeHtml(
+                                                item?.email ||
+                                                item?.username ||
+                                                "Alight Motion"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-badge ${
+                                        success
+                                            ? "success"
+                                            : "failed"
+                                    }">
+                                        <span>
+                                            ${success ? "✓" : "!"}
+                                        </span>
+                                        ${escapeHtml(status)}
+                                    </div>
                                 </div>
 
-                                <div class="badge ${
-                                    failed
-                                        ? "failed"
-                                        : ""
-                                }">
+                                <div class="history-grid">
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Username
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "username"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Email
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "email"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Animal
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "animal"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Order ID
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "orderId"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Berlaku Sampai
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "validUntil"
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div class="history-data">
+                                        <div class="history-label">
+                                            Website / Login
+                                        </div>
+                                        <div class="history-value">
+                                            ${getHistoryValue(
+                                                item,
+                                                "weblogin"
+                                            )}
+                                        </div>
+                                    </div>
+
                                     ${
-                                        failed
-                                            ? "FAILED"
-                                            : "SUCCESS"
+                                        item?.error
+                                            ? `
+                                                <div class="history-data">
+                                                    <div class="history-label">
+                                                        Error
+                                                    </div>
+                                                    <div class="history-value">
+                                                        ${getHistoryValue(
+                                                            item,
+                                                            "error"
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            `
+                                            : ""
                                     }
                                 </div>
 
+                                <div class="history-footer">
+                                    <div class="history-time">
+                                        ${escapeHtml(
+                                            formatDateTime(
+                                                item?.createdAt
+                                            )
+                                        )}
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="copy-history"
+                                        id="copyHistory-${index}"
+                                        onclick="copyHistory(${index})"
+                                    >
+                                        ⧉ Salin Data
+                                    </button>
+                                </div>
+                            </article>
+                        `;
+                    })
+                    .join("");
+
+            updateStats(history);
+        }
+
+        function updateStats(history) {
+            const list =
+                Array.isArray(history)
+                    ? history
+                    : [];
+
+            const manual =
+                list.filter(
+                    item =>
+                        String(
+                            item?.action || ""
+                        ).toLowerCase() ===
+                        "manual"
+                ).length;
+
+            const auto =
+                list.filter(
+                    item =>
+                        String(
+                            item?.action || ""
+                        ).toLowerCase() ===
+                        "auto"
+                ).length;
+
+            const manualCount =
+                $("manualCount");
+
+            const autoCount =
+                $("autoCount");
+
+            const totalCount =
+                $("totalCount");
+
+            if (manualCount) {
+                manualCount.textContent =
+                    manual;
+            }
+
+            if (autoCount) {
+                autoCount.textContent =
+                    auto;
+            }
+
+            if (totalCount) {
+                totalCount.textContent =
+                    list.length;
+            }
+        }
+
+        async function loadHistory() {
+            if (historyLoading) {
+                return;
+            }
+
+            historyLoading = true;
+
+            const refreshButton =
+                $("historyRefreshButton");
+
+            if (refreshButton) {
+                refreshButton.disabled = true;
+                refreshButton.innerHTML = `
+                    <span class="loading">
+                        <span class="spinner"></span>
+                        Loading
+                    </span>
+                `;
+            }
+
+            try {
+                const data =
+                    await postAlightMotion({
+                        action: "history"
+                    });
+
+                const history =
+                    Array.isArray(
+                        data?.history
+                    )
+                        ? data.history
+                        : [];
+
+                alightMotionHistory =
+                    history;
+
+                renderHistory(history);
+            } catch (error) {
+                console.error(
+                    "LOAD HISTORY ERROR:",
+                    error
+                );
+
+                const list =
+                    $("historyList");
+
+                if (list) {
+                    list.innerHTML = `
+                        <div class="history-empty">
+                            <div class="history-empty-icon">
+                                !
                             </div>
 
-                            <div class="history-meta">
-
-                                Mode:
-                                ${escapeHtml(
-                                    item.action
-                                )}
-
-                                <br>
-
-                                ${
-                                    item.orderId
-                                        ? `Order:
-                                            ${escapeHtml(
-                                                item.orderId
-                                            )}<br>`
-                                        : ""
-                                }
-
-                                ${
-                                    item.validUntil
-                                        ? `Valid:
-                                            ${escapeHtml(
-                                                item.validUntil
-                                            )}<br>`
-                                        : ""
-                                }
-
-                                Dibuat:
-                                ${escapeHtml(
-                                    formatHistoryDate(
-                                        item.createdAt
-                                    )
-                                )}
-
-                                ${
-                                    failed &&
-                                    item.error
-                                        ? `<br>Error:
-                                            ${escapeHtml(
-                                                item.error
-                                            )}`
-                                        : ""
-                                }
-
+                            <div class="history-empty-title">
+                                Gagal mengambil history
                             </div>
 
+                            <div class="history-empty-text">
+                                ${escapeHtml(
+                                    error?.message ||
+                                    "Terjadi kesalahan."
+                                )}
+                            </div>
                         </div>
                     `;
-                })
-                .join("");
+                }
 
-    } catch (error) {
-        list.innerHTML =
-            `<div class="empty">
-                ${escapeHtml(
-                    error.message
-                )}
-            </div>`;
-    }
-}
+                showToast(
+                    error?.message ||
+                    "Gagal mengambil history.",
+                    "error"
+                );
+            } finally {
+                historyLoading = false;
 
-document
-    .querySelectorAll(".tab")
-    .forEach(tab => {
-        tab.addEventListener(
-            "click",
-            () => {
+                if (refreshButton) {
+                    refreshButton.disabled =
+                        false;
 
-                document
-                    .querySelectorAll(
-                        ".tab"
-                    )
-                    .forEach(item =>
-                        item.classList
-                            .remove("active")
-                    );
-
-                document
-                    .querySelectorAll(
-                        ".panel"
-                    )
-                    .forEach(item =>
-                        item.classList
-                            .remove("active")
-                    );
-
-                tab.classList
-                    .add("active");
-
-                const target =
-                    $(tab.dataset.tab);
-
-                if (target) {
-                    target.classList
-                        .add("active");
+                    refreshButton.textContent =
+                        "Refresh";
                 }
             }
+        }
+
+        async function toggleHistory() {
+            const list =
+                $("historyList");
+
+            const refreshButton =
+                $("historyRefreshButton");
+
+            const toggleButton =
+                $("historyToggleButton");
+
+            historyVisible =
+                !historyVisible;
+
+            if (historyVisible) {
+                list.classList.add("show");
+
+                refreshButton.style.display =
+                    "inline-flex";
+
+                toggleButton.textContent =
+                    "Tutup History";
+
+                await loadHistory();
+
+                return;
+            }
+
+            list.classList.remove("show");
+
+            refreshButton.style.display =
+                "none";
+
+            toggleButton.textContent =
+                "History";
+        }
+
+        async function copyHistory(index) {
+            const item =
+                alightMotionHistory[index];
+
+            if (!item) {
+                return;
+            }
+
+            const text =
+                getHistoryCopyText(item);
+
+            try {
+                if (
+                    navigator.clipboard &&
+                    navigator.clipboard.writeText
+                ) {
+                    await navigator.clipboard
+                        .writeText(text);
+                } else {
+                    const textarea =
+                        document.createElement(
+                            "textarea"
+                        );
+
+                    textarea.value = text;
+                    textarea.style.position =
+                        "fixed";
+                    textarea.style.opacity =
+                        "0";
+
+                    document.body.appendChild(
+                        textarea
+                    );
+
+                    textarea.select();
+
+                    document.execCommand(
+                        "copy"
+                    );
+
+                    textarea.remove();
+                }
+
+                const button =
+                    $(
+                        `copyHistory-${index}`
+                    );
+
+                if (button) {
+                    button.classList.add(
+                        "copied"
+                    );
+
+                    button.textContent =
+                        "✓ Tersalin";
+
+                    setTimeout(() => {
+                        button.classList.remove(
+                            "copied"
+                        );
+
+                        button.textContent =
+                            "⧉ Salin Data";
+                    }, 1800);
+                }
+
+                showToast(
+                    "Data history berhasil disalin.",
+                    "success"
+                );
+            } catch (error) {
+                showToast(
+                    "Gagal menyalin data.",
+                    "error"
+                );
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch(
+                    "/api/auth/logout",
+                    {
+                        method: "POST",
+                        credentials: "include"
+                    }
+                );
+            } catch {}
+
+            window.location.href =
+                "/login";
+        }
+
+        $("year").textContent =
+            new Date().getFullYear();
+
+        updateClock();
+
+        setInterval(
+            updateClock,
+            1000
         );
-    });
 
-$("sendLinkBtn")
-    .addEventListener(
-        "click",
-        sendLink
-    );
-
-$("verifyBtn")
-    .addEventListener(
-        "click",
-        verifyLink
-    );
-
-$("autoBtn")
-    .addEventListener(
-        "click",
-        autoActivate
-    );
-
-$("refreshHistory")
-    .addEventListener(
-        "click",
-        loadHistory
-    );
-
-$("logoutBtn")
-    .addEventListener(
-        "click",
-        logout
-    );
-
-updateClock();
-
-setInterval(
-    updateClock,
-    1000
-);
-
-loadUser();
-
-loadHistory();
-</script>
-
+        loadUser();
+    </script>
 </body>
-    </html>
+</html>
