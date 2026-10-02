@@ -29,7 +29,8 @@ const DeploymentSchema = new mongoose.Schema(
             enum: [
                 "reycode.my.id",
                 "reycode.web.id",
-                "web-api.my.id"
+                "web-api.my.id",
+                "monikalabs.web.id"
             ]
         },
 
@@ -50,7 +51,12 @@ const DeploymentSchema = new mongoose.Schema(
 
         sourceType: {
             type: String,
-            enum: ["repo", "zip"],
+            enum: [
+                "repo",
+                "zip",
+                "file",
+                "html"
+            ],
             required: true
         },
 
@@ -95,11 +101,13 @@ const DeploymentSchema = new mongoose.Schema(
     }
 );
 
+// Index untuk deployment terbaru user
 DeploymentSchema.index({
     userId: 1,
     createdAt: -1
 });
 
+// Mencegah slug yang sama untuk user yang sama
 DeploymentSchema.index(
     {
         userId: 1,
