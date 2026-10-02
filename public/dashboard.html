@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="theme-color" content="#06080d">
 
     <title>Dashboard • ReyCode Digital</title>
 
@@ -17,95 +17,83 @@
         }
 
         :root {
-            --bg: #05070b;
-            --panel: rgba(13,17,24,.76);
-            --panel-soft: rgba(255,255,255,.035);
+            --bg: #05070c;
+            --bg-2: #080b12;
+            --panel: rgba(14,18,27,.72);
+            --panel-strong: rgba(16,21,31,.88);
+            --soft: rgba(255,255,255,.045);
+            --soft-2: rgba(255,255,255,.025);
             --border: rgba(255,255,255,.075);
-            --text: #f5f7fa;
-            --muted: #737e8c;
+            --border-hover: rgba(91,157,255,.28);
+            --text: #f5f7fb;
+            --muted: #7c8797;
+            --muted-2: #566170;
             --blue: #3185ff;
-            --blue-soft: #76b2ff;
+            --blue-light: #79b5ff;
+            --blue-dark: #145dcc;
+            --green: #4ddf9a;
+            --orange: #ffb15c;
         }
 
         body {
             margin: 0;
             min-height: 100vh;
             overflow-x: hidden;
-            font-family: Inter, Arial, sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
             color: var(--text);
             background:
-                radial-gradient(
-                    circle at 8% -5%,
-                    rgba(49,133,255,.20),
-                    transparent 27%
-                ),
-                radial-gradient(
-                    circle at 95% 35%,
-                    rgba(49,133,255,.075),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 50% 110%,
-                    rgba(49,133,255,.06),
-                    transparent 35%
-                ),
-                var(--bg);
+                radial-gradient(circle at 7% -8%, rgba(49,133,255,.18), transparent 29%),
+                radial-gradient(circle at 100% 24%, rgba(49,133,255,.075), transparent 27%),
+                radial-gradient(circle at 50% 100%, rgba(49,133,255,.055), transparent 34%),
+                linear-gradient(180deg, #05070c 0%, #060910 52%, #05070c 100%);
         }
 
         body::before {
             content: "";
             position: fixed;
             inset: 0;
-            z-index: -1;
+            z-index: -2;
             pointer-events: none;
-            opacity: .7;
             background:
-                linear-gradient(
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                );
-            background-size: 44px 44px;
-            mask-image:
-                linear-gradient(
-                    to bottom,
-                    black,
-                    transparent 88%
-                );
+                linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: linear-gradient(to bottom, black, transparent 88%);
         }
 
         body::after {
             content: "";
             position: fixed;
-            width: 420px;
-            height: 420px;
+            width: 520px;
+            height: 520px;
+            top: 15%;
             left: 50%;
-            top: 20%;
+            z-index: -1;
+            pointer-events: none;
             transform: translate(-50%,-50%);
             border-radius: 50%;
-            background: rgba(49,133,255,.045);
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: -1;
+            background: rgba(49,133,255,.035);
+            filter: blur(110px);
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
         }
 
         .navbar {
-            height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 72px;
             padding: 0 5%;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
             border-bottom: 1px solid rgba(255,255,255,.065);
-            background: rgba(5,7,11,.68);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: rgba(5,7,12,.72);
+            backdrop-filter: blur(26px) saturate(140%);
+            -webkit-backdrop-filter: blur(26px) saturate(140%);
         }
 
         .brand {
@@ -114,23 +102,25 @@
             gap: 11px;
             color: #fff;
             font-size: 15px;
-            font-weight: 750;
-            letter-spacing: -.5px;
+            font-weight: 760;
+            letter-spacing: -.45px;
         }
 
         .brand-logo {
-            width: 36px;
-            height: 36px;
-            padding: 5px;
+            width: 38px;
+            height: 38px;
+            padding: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border-radius: 11px;
             border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.045);
+            border-radius: 12px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025));
             box-shadow:
-                0 8px 25px rgba(0,0,0,.25);
+                0 10px 28px rgba(0,0,0,.28),
+                inset 0 1px 0 rgba(255,255,255,.06);
         }
 
         .brand-logo img {
@@ -148,58 +138,65 @@
         .nav-status {
             display: flex;
             align-items: center;
-            gap: 7px;
-            padding: 8px 10px;
-            border-radius: 9px;
-            border: 1px solid rgba(49,133,255,.13);
-            background: rgba(49,133,255,.045);
-            color: #79b4ff;
+            gap: 8px;
+            padding: 8px 11px;
+            border: 1px solid rgba(77,223,154,.13);
+            border-radius: 10px;
+            color: #78dcae;
+            background: rgba(77,223,154,.045);
             font-size: 9px;
+            font-weight: 650;
+            letter-spacing: .2px;
         }
 
         .nav-status-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #3185ff;
-            box-shadow: 0 0 12px #3185ff;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(77,223,154,.8);
         }
 
         .logout {
             padding: 9px 15px;
-            border: 1px solid rgba(255,255,255,.09);
+            border: 1px solid rgba(255,255,255,.085);
             border-radius: 10px;
-            background: rgba(255,255,255,.045);
-            color: #cbd2da;
+            color: #cbd3dd;
+            background: rgba(255,255,255,.04);
             cursor: pointer;
+            font: inherit;
             font-size: 11px;
-            transition: .2s ease;
+            transition: .22s ease;
         }
 
         .logout:hover {
             color: #fff;
             border-color: rgba(255,255,255,.17);
-            background: rgba(255,255,255,.08);
+            background: rgba(255,255,255,.075);
             transform: translateY(-1px);
+        }
+
+        .logout:active {
+            transform: translateY(0);
         }
 
         .container {
             width: min(1160px, 92%);
             margin: 0 auto;
-            padding: 28px 0 70px;
+            padding: 30px 0 72px;
         }
 
         .banner {
             position: relative;
             width: 100%;
-            height: 315px;
+            height: 330px;
             overflow: hidden;
-            border-radius: 25px;
-            border: 1px solid rgba(255,255,255,.09);
-            background: #080b10;
+            border: 1px solid rgba(255,255,255,.085);
+            border-radius: 26px;
+            background: #080b11;
             box-shadow:
-                0 35px 90px rgba(0,0,0,.38),
-                inset 0 1px 0 rgba(255,255,255,.035);
+                0 35px 100px rgba(0,0,0,.38),
+                inset 0 1px 0 rgba(255,255,255,.04);
         }
 
         .banner video {
@@ -207,11 +204,8 @@
             height: 100%;
             display: block;
             object-fit: cover;
-            filter:
-                brightness(.55)
-                contrast(1.04)
-                saturate(.88);
-            transform: scale(1.015);
+            filter: brightness(.52) contrast(1.06) saturate(.88);
+            transform: scale(1.02);
         }
 
         .banner::before {
@@ -219,122 +213,116 @@
             position: absolute;
             inset: 0;
             z-index: 1;
-            background:
-                linear-gradient(
-                    90deg,
-                    rgba(3,5,8,.94),
-                    rgba(3,5,8,.55) 45%,
-                    rgba(3,5,8,.12)
-                ),
-                linear-gradient(
-                    0deg,
-                    rgba(3,5,8,.82),
-                    transparent 60%
-                );
             pointer-events: none;
+            background:
+                linear-gradient(90deg, rgba(3,5,9,.95) 0%, rgba(3,5,9,.62) 43%, rgba(3,5,9,.12) 100%),
+                linear-gradient(0deg, rgba(3,5,9,.88) 0%, rgba(3,5,9,.05) 66%);
         }
 
         .banner::after {
             content: "";
             position: absolute;
-            width: 250px;
-            height: 250px;
-            right: 5%;
-            top: -80px;
-            border-radius: 50%;
-            background: rgba(49,133,255,.14);
-            filter: blur(80px);
-            pointer-events: none;
+            width: 330px;
+            height: 330px;
+            right: 3%;
+            top: -130px;
             z-index: 1;
+            pointer-events: none;
+            border-radius: 50%;
+            background: rgba(49,133,255,.13);
+            filter: blur(90px);
         }
 
         .banner-content {
             position: absolute;
-            left: 32px;
-            bottom: 30px;
+            left: 34px;
+            bottom: 32px;
             z-index: 3;
-            max-width: 570px;
+            max-width: 600px;
         }
 
         .banner-label {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 10px;
-            border-radius: 8px;
-            background: rgba(49,133,255,.10);
-            border: 1px solid rgba(49,133,255,.24);
-            color: #7bb5ff;
+            padding: 7px 11px;
+            border: 1px solid rgba(49,133,255,.23);
+            border-radius: 9px;
+            color: #82baff;
+            background: rgba(49,133,255,.09);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+            backdrop-filter: blur(12px);
             font-size: 9px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            backdrop-filter: blur(10px);
         }
 
         .banner-label span {
             width: 5px;
             height: 5px;
             border-radius: 50%;
-            background: #3185ff;
-            box-shadow: 0 0 14px #3185ff;
+            background: var(--blue);
+            box-shadow: 0 0 13px var(--blue);
         }
 
         .banner h2 {
-            margin: 13px 0 8px;
-            font-size: 31px;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
+            margin: 14px 0 9px;
+            font-size: 34px;
+            line-height: 1.08;
+            letter-spacing: -1.8px;
         }
 
         .banner p {
             margin: 0;
-            max-width: 490px;
-            color: #aab4c0;
+            max-width: 520px;
+            color: #abb5c2;
             font-size: 12px;
-            line-height: 1.7;
+            line-height: 1.75;
         }
 
         .video-time {
             position: absolute;
-            right: 14px;
-            bottom: 14px;
+            right: 15px;
+            bottom: 15px;
             z-index: 5;
             padding: 6px 9px;
-            border-radius: 8px;
-            background: rgba(0,0,0,.48);
             border: 1px solid rgba(255,255,255,.09);
-            color: #d9e0e8;
+            border-radius: 8px;
+            color: #dce3eb;
+            background: rgba(0,0,0,.46);
+            backdrop-filter: blur(13px);
             font-size: 9px;
-            backdrop-filter: blur(12px);
+            font-variant-numeric: tabular-nums;
         }
 
         .welcome {
-            margin: 36px 0 28px;
+            margin: 38px 0 28px;
         }
 
         .welcome-top {
             display: flex;
             align-items: center;
             gap: 9px;
-            color: #4f9aff;
+            color: #579dff;
             font-size: 9px;
-            font-weight: 700;
+            font-weight: 750;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.6px;
         }
 
         .welcome-line {
-            width: 24px;
+            width: 26px;
             height: 1px;
-            background: #3185ff;
-            opacity: .65;
+            background: var(--blue);
+            box-shadow: 0 0 10px rgba(49,133,255,.45);
         }
 
         .welcome h1 {
             margin: 10px 0 8px;
-            font-size: 38px;
-            line-height: 1.12;
-            letter-spacing: -1.8px;
+            font-size: 40px;
+            line-height: 1.1;
+            letter-spacing: -2px;
         }
 
         .welcome h1 span {
@@ -343,7 +331,7 @@
 
         .welcome p {
             margin: 0;
-            color: #737e8b;
+            color: #748091;
             font-size: 12px;
             line-height: 1.7;
         }
@@ -357,39 +345,43 @@
         .card {
             position: relative;
             overflow: hidden;
-            padding: 24px;
+            padding: 25px;
             border: 1px solid var(--border);
-            border-radius: 20px;
-            background: var(--panel);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            border-radius: 21px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.018), transparent 45%),
+                var(--panel);
             box-shadow:
-                0 24px 65px rgba(0,0,0,.22),
+                0 24px 70px rgba(0,0,0,.22),
                 inset 0 1px 0 rgba(255,255,255,.018);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease;
         }
 
         .card::before {
             content: "";
             position: absolute;
-            width: 180px;
-            height: 180px;
-            right: -90px;
-            top: -110px;
+            width: 210px;
+            height: 210px;
+            right: -105px;
+            top: -130px;
             border-radius: 50%;
-            background: rgba(49,133,255,.09);
-            filter: blur(35px);
+            background: rgba(49,133,255,.075);
+            filter: blur(45px);
             pointer-events: none;
         }
 
         .card:hover {
-            border-color: rgba(255,255,255,.10);
+            border-color: rgba(255,255,255,.1);
         }
 
         .label {
-            color: #687482;
+            color: #687585;
             font-size: 9px;
+            font-weight: 650;
             text-transform: uppercase;
-            letter-spacing: 1.1px;
+            letter-spacing: 1.15px;
         }
 
         .balance-row {
@@ -401,37 +393,42 @@
 
         .balance-value {
             margin-top: 12px;
-            font-size: 34px;
-            font-weight: 750;
-            letter-spacing: -1.4px;
+            color: #f7f9fc;
+            font-size: 35px;
+            font-weight: 780;
+            letter-spacing: -1.6px;
         }
 
         .balance-sub {
             margin-top: 7px;
-            color: #5d6875;
+            color: #5e6977;
             font-size: 10px;
         }
 
         .balance-icon {
-            width: 48px;
-            height: 48px;
+            width: 51px;
+            height: 51px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 14px;
-            color: #75adff;
-            background: rgba(49,133,255,.075);
-            border: 1px solid rgba(49,133,255,.12);
+            border: 1px solid rgba(49,133,255,.13);
+            border-radius: 15px;
+            color: var(--blue-light);
+            background:
+                linear-gradient(145deg, rgba(49,133,255,.12), rgba(49,133,255,.035));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
             font-size: 19px;
+            font-weight: 700;
         }
 
         .status {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            margin-top: 18px;
-            color: #72adff;
+            gap: 8px;
+            margin-top: 19px;
+            color: #76b1ff;
             font-size: 10px;
+            font-weight: 600;
         }
 
         .dot {
@@ -439,7 +436,7 @@
             height: 6px;
             flex-shrink: 0;
             border-radius: 50%;
-            background: #3185ff;
+            background: var(--blue);
             box-shadow: 0 0 13px rgba(49,133,255,.9);
         }
 
@@ -458,34 +455,32 @@
         }
 
         .avatar {
-            width: 49px;
-            height: 49px;
+            width: 51px;
+            height: 51px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 15px;
-            background:
-                linear-gradient(
-                    135deg,
-                    #3185ff,
-                    #145dcc
-                );
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 16px;
+            color: #fff;
+            background: linear-gradient(145deg, #3c91ff, #145dcc);
             box-shadow:
-                0 12px 35px rgba(49,133,255,.20);
+                0 13px 36px rgba(49,133,255,.2),
+                inset 0 1px 0 rgba(255,255,255,.16);
             font-size: 17px;
-            font-weight: 750;
+            font-weight: 780;
         }
 
         .name {
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 720;
             letter-spacing: -.25px;
         }
 
         .email {
             margin-top: 5px;
-            color: #687482;
+            color: #697585;
             font-size: 10px;
             line-height: 1.5;
             word-break: break-all;
@@ -493,22 +488,26 @@
 
         .verified {
             display: inline-flex;
+            align-items: center;
             width: fit-content;
-            margin-top: 16px;
-            padding: 5px 8px;
-            border-radius: 7px;
+            margin-top: 17px;
+            padding: 6px 9px;
+            border: 1px solid transparent;
+            border-radius: 8px;
             font-size: 8px;
+            font-weight: 700;
         }
 
         .section {
-            margin-top: 31px;
+            margin-top: 34px;
         }
 
         .section-head {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            margin-bottom: 13px;
+            gap: 15px;
+            margin-bottom: 14px;
         }
 
         .section-title-wrap {
@@ -519,21 +518,22 @@
 
         .section-mark {
             width: 3px;
-            height: 15px;
+            height: 16px;
             border-radius: 10px;
-            background: #3185ff;
-            box-shadow: 0 0 12px rgba(49,133,255,.6);
+            background: var(--blue);
+            box-shadow: 0 0 13px rgba(49,133,255,.65);
         }
 
         .section-title {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 730;
             letter-spacing: -.2px;
         }
 
         .section-sub {
-            color: #596471;
+            color: #596574;
             font-size: 9px;
+            font-weight: 600;
         }
 
         .actions {
@@ -544,85 +544,115 @@
 
         .action {
             position: relative;
-            min-height: 140px;
-            padding: 19px;
+            min-height: 148px;
+            padding: 20px;
             display: block;
             overflow: hidden;
-            color: #e7ebf0;
+            color: #e7ebf1;
             text-decoration: none;
-            border: 1px solid rgba(255,255,255,.07);
-            border-radius: 17px;
-            background: rgba(255,255,255,.025);
-            transition: .22s ease;
+            border: 1px solid rgba(255,255,255,.065);
+            border-radius: 18px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+            transition: .23s ease;
+        }
+
+        .action::before {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -65px;
+            bottom: -65px;
+            border-radius: 50%;
+            background: rgba(49,133,255,.065);
+            filter: blur(25px);
+            pointer-events: none;
         }
 
         .action::after {
             content: "";
             position: absolute;
-            width: 90px;
-            height: 90px;
-            right: -45px;
-            bottom: -45px;
-            border-radius: 50%;
-            background: rgba(49,133,255,.055);
-            filter: blur(15px);
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: linear-gradient(135deg, rgba(49,133,255,.06), transparent 50%);
+            transition: opacity .23s ease;
         }
 
         .action:hover {
-            transform: translateY(-3px);
-            border-color: rgba(49,133,255,.29);
-            background: rgba(49,133,255,.05);
-            box-shadow: 0 18px 42px rgba(0,0,0,.17);
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            background:
+                linear-gradient(145deg, rgba(49,133,255,.065), rgba(255,255,255,.018));
+            box-shadow:
+                0 20px 45px rgba(0,0,0,.2),
+                0 0 0 1px rgba(49,133,255,.025);
+        }
+
+        .action:hover::after {
+            opacity: 1;
         }
 
         .action-icon {
-            width: 35px;
-            height: 35px;
-            margin-bottom: 14px;
+            position: relative;
+            z-index: 2;
+            width: 37px;
+            height: 37px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            color: #75adff;
+            border: 1px solid rgba(49,133,255,.11);
+            border-radius: 11px;
+            color: #78b2ff;
             background: rgba(49,133,255,.08);
-            border: 1px solid rgba(49,133,255,.10);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
             font-size: 15px;
+        }
+
+        .action strong,
+        .action span.description {
+            position: relative;
+            z-index: 2;
         }
 
         .action strong {
             display: block;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 720;
         }
 
         .action span.description {
             display: block;
             margin-top: 6px;
             max-width: 95%;
-            color: #687381;
+            color: #687585;
             font-size: 9px;
-            line-height: 1.6;
+            line-height: 1.65;
         }
 
         .badge {
             position: absolute;
             top: 14px;
             right: 14px;
-            padding: 4px 7px;
-            border-radius: 7px;
-            color: #6faaff;
-            background: rgba(49,133,255,.07);
+            z-index: 3;
+            padding: 5px 8px;
             border: 1px solid rgba(49,133,255,.12);
+            border-radius: 7px;
+            color: #71aaff;
+            background: rgba(49,133,255,.07);
             font-size: 7px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .5px;
+            letter-spacing: .6px;
         }
 
         .github-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
+            gap: 22px;
         }
 
         .github-left {
@@ -632,47 +662,51 @@
         }
 
         .github-icon {
-            width: 47px;
-            height: 47px;
+            width: 49px;
+            height: 49px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 14px;
-            color: #fff;
-            background: rgba(255,255,255,.055);
             border: 1px solid rgba(255,255,255,.09);
+            border-radius: 15px;
+            color: #fff;
+            background: rgba(255,255,255,.05);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
             font-size: 20px;
         }
 
         .github-title {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 720;
         }
 
         .github-description {
             margin-top: 5px;
-            max-width: 560px;
-            color: #697482;
+            max-width: 580px;
+            color: #697585;
             font-size: 10px;
-            line-height: 1.55;
+            line-height: 1.6;
         }
 
         .github-button {
+            position: relative;
             flex-shrink: 0;
-            padding: 10px 15px;
+            padding: 11px 16px;
             color: #fff;
             text-decoration: none;
             border: 1px solid rgba(49,133,255,.22);
-            border-radius: 10px;
+            border-radius: 11px;
             background: rgba(49,133,255,.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
             font-size: 9px;
-            transition: .2s ease;
+            font-weight: 650;
+            transition: .22s ease;
         }
 
         .github-button:hover {
-            background: rgba(49,133,255,.16);
             border-color: rgba(49,133,255,.4);
+            background: rgba(49,133,255,.15);
             transform: translateY(-1px);
         }
 
@@ -686,13 +720,13 @@
         .platform-title {
             margin-top: 9px;
             font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -.5px;
+            font-weight: 720;
+            letter-spacing: -.55px;
         }
 
         .platform-description {
             margin-top: 5px;
-            color: #697482;
+            color: #697585;
             font-size: 10px;
             line-height: 1.6;
         }
@@ -701,19 +735,25 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 9px 11px;
-            border-radius: 10px;
-            color: #72adff;
-            background: rgba(49,133,255,.06);
-            border: 1px solid rgba(49,133,255,.11);
+            padding: 10px 12px;
+            border: 1px solid rgba(77,223,154,.12);
+            border-radius: 11px;
+            color: #75d9a9;
+            background: rgba(77,223,154,.045);
             font-size: 9px;
+            font-weight: 650;
             white-space: nowrap;
         }
 
+        .platform-status .dot {
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(77,223,154,.75);
+        }
+
         .footer {
-            margin-top: 46px;
+            margin-top: 48px;
             text-align: center;
-            color: #3f4853;
+            color: #414b58;
             font-size: 9px;
         }
 
@@ -722,14 +762,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #697482;
+            color: #697585;
             font-size: 11px;
-            background: #05070b;
+            background:
+                radial-gradient(circle at 50% 45%, rgba(49,133,255,.07), transparent 30%),
+                #05070c;
         }
 
         .loading-wrap {
             display: flex;
             align-items: center;
+            padding: 13px 16px;
+            border: 1px solid rgba(255,255,255,.065);
+            border-radius: 13px;
+            background: rgba(255,255,255,.025);
+            box-shadow: 0 18px 50px rgba(0,0,0,.25);
         }
 
         .loading-spinner {
@@ -737,7 +784,7 @@
             height: 18px;
             margin-right: 10px;
             border: 2px solid rgba(255,255,255,.09);
-            border-top-color: #3185ff;
+            border-top-color: var(--blue);
             border-radius: 50%;
             animation: spin .7s linear infinite;
         }
@@ -749,7 +796,6 @@
         }
 
         @media (max-width: 900px) {
-
             .actions {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -760,23 +806,22 @@
         }
 
         @media (max-width: 700px) {
-
             .nav-status {
                 display: none;
             }
 
             .banner {
-                height: 275px;
+                height: 280px;
             }
 
             .banner-content {
-                left: 24px;
-                right: 24px;
-                bottom: 24px;
+                left: 25px;
+                right: 25px;
+                bottom: 25px;
             }
 
             .banner h2 {
-                font-size: 26px;
+                font-size: 27px;
             }
 
             .github-card {
@@ -791,19 +836,19 @@
         }
 
         @media (max-width: 600px) {
-
             .navbar {
+                height: 68px;
                 padding: 0 20px;
             }
 
             .container {
                 width: 92%;
-                padding: 20px 0 55px;
+                padding: 20px 0 56px;
             }
 
             .banner {
-                height: 235px;
-                border-radius: 19px;
+                height: 245px;
+                border-radius: 20px;
             }
 
             .banner-content {
@@ -813,25 +858,29 @@
             }
 
             .banner-label {
+                padding: 6px 9px;
                 font-size: 8px;
             }
 
             .banner h2 {
                 margin-top: 10px;
-                font-size: 22px;
+                font-size: 23px;
+                letter-spacing: -1px;
             }
 
             .banner p {
                 font-size: 10px;
+                line-height: 1.65;
             }
 
             .welcome {
-                margin-top: 28px;
+                margin-top: 29px;
                 margin-bottom: 24px;
             }
 
             .welcome h1 {
                 font-size: 30px;
+                letter-spacing: -1.3px;
             }
 
             .welcome p {
@@ -844,6 +893,7 @@
 
             .card {
                 padding: 20px;
+                border-radius: 18px;
             }
 
             .balance-value {
@@ -857,10 +907,17 @@
             .platform-status {
                 width: fit-content;
             }
+
+            .section-head {
+                align-items: center;
+            }
+
+            .section-sub {
+                display: none;
+            }
         }
 
         @media (max-width: 380px) {
-
             .brand span {
                 display: none;
             }
@@ -870,11 +927,11 @@
             }
 
             .banner {
-                height: 220px;
+                height: 225px;
             }
 
             .banner h2 {
-                font-size: 20px;
+                font-size: 21px;
             }
 
             .banner p {
@@ -882,6 +939,10 @@
             }
 
             .welcome h1 {
+                font-size: 27px;
+            }
+
+            .balance-value {
                 font-size: 27px;
             }
         }
@@ -902,16 +963,13 @@
     <nav class="navbar">
 
         <div class="brand">
-
             <div class="brand-logo">
                 <img
                     src="https://i.top4top.io/p_3925af3h26.png"
                     alt="ReyCode"
                 >
             </div>
-
             <span>ReyCode Digital</span>
-
         </div>
 
         <div class="nav-right">
@@ -1082,13 +1140,11 @@
             <div class="section-head">
 
                 <div class="section-title-wrap">
-
                     <span class="section-mark"></span>
 
                     <div class="section-title">
                         Quick Access
                     </div>
-
                 </div>
 
                 <div class="section-sub">
@@ -1242,13 +1298,11 @@
             <div class="section-head">
 
                 <div class="section-title-wrap">
-
                     <span class="section-mark"></span>
 
                     <div class="section-title">
                         GitHub Workspace
                     </div>
-
                 </div>
 
                 <div class="section-sub">
@@ -1297,13 +1351,11 @@
             <div class="section-head">
 
                 <div class="section-title-wrap">
-
                     <span class="section-mark"></span>
 
                     <div class="section-title">
                         Platform
                     </div>
-
                 </div>
 
                 <div class="section-sub">
@@ -1332,11 +1384,8 @@
                 </div>
 
                 <div class="platform-status">
-
                     <span class="dot"></span>
-
                     All systems operational
-
                 </div>
 
             </div>
@@ -1352,114 +1401,57 @@
 </div>
 
 <script>
-
 async function loadUser() {
-
     try {
-
-        const response =
-            await fetch(
-                `/api/user/me?_=${Date.now()}`,
-                {
-                    method: "GET",
-                    cache: "no-store",
-                    credentials: "include",
-                    headers: {
-                        "Accept": "application/json",
-                        "Cache-Control": "no-cache"
-                    }
+        const response = await fetch(
+            `/api/user/me?_=${Date.now()}`,
+            {
+                method: "GET",
+                cache: "no-store",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "Cache-Control": "no-cache"
                 }
-            );
+            }
+        );
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
-        if (
-            !response.ok ||
-            !data.success
-        ) {
-
-            window.location.href =
-                "/login";
-
+        if (!response.ok || !data.success) {
+            window.location.href = "/login";
             return;
         }
 
-        const user =
-            data.user || {};
+        const user = data.user || {};
+        const name = user.name || "User";
 
-        const name =
-            user.name || "User";
+        document.getElementById("welcomeName").textContent = name;
+        document.getElementById("profileName").textContent = name;
+        document.getElementById("profileEmail").textContent = user.email || "";
+        document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
 
-        document.getElementById(
-            "welcomeName"
-        ).textContent =
-            name;
+        const verified = document.getElementById("verified");
 
-        document.getElementById(
-            "profileName"
-        ).textContent =
-            name;
-
-        document.getElementById(
-            "profileEmail"
-        ).textContent =
-            user.email || "";
-
-        document.getElementById(
-            "avatar"
-        ).textContent =
-            name
-                .charAt(0)
-                .toUpperCase();
-
-        const verified =
-            document.getElementById(
-                "verified"
-            );
-
-        if (
-            user.emailVerified === true
-        ) {
-
-            verified.textContent =
-                "✓ Email Verified";
-
-            verified.style.color =
-                "#71adff";
-
-            verified.style.background =
-                "rgba(49,133,255,.07)";
-
-            verified.style.borderColor =
-                "rgba(49,133,255,.12)";
-
+        if (user.emailVerified === true) {
+            verified.textContent = "✓ Email Verified";
+            verified.style.color = "#71adff";
+            verified.style.background = "rgba(49,133,255,.07)";
+            verified.style.borderColor = "rgba(49,133,255,.12)";
         } else {
-
-            verified.textContent =
-                "⚠ Email Not Verified";
-
-            verified.style.color =
-                "#ffb15c";
-
-            verified.style.background =
-                "rgba(255,177,92,.07)";
-
-            verified.style.borderColor =
-                "rgba(255,177,92,.12)";
+            verified.textContent = "⚠ Email Not Verified";
+            verified.style.color = "#ffb15c";
+            verified.style.background = "rgba(255,177,92,.07)";
+            verified.style.borderColor = "rgba(255,177,92,.12)";
         }
 
         if (
             typeof user.balance === "number" ||
             typeof user.balance === "string"
         ) {
+            const balance = Number(user.balance) || 0;
 
-            const balance =
-                Number(user.balance) || 0;
-
-            document.getElementById(
-                "balanceValue"
-            ).textContent =
+            document.getElementById("balanceValue").textContent =
                 new Intl.NumberFormat(
                     "id-ID",
                     {
@@ -1468,35 +1460,19 @@ async function loadUser() {
                         maximumFractionDigits: 0
                     }
                 ).format(balance);
-
         }
 
-        document.getElementById(
-            "loading"
-        ).style.display =
-            "none";
-
-        document.getElementById(
-            "app"
-        ).style.display =
-            "block";
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("app").style.display = "block";
 
     } catch (error) {
-
-        console.error(
-            "DASHBOARD ERROR:",
-            error
-        );
-
-        window.location.href =
-            "/login";
+        console.error("DASHBOARD ERROR:", error);
+        window.location.href = "/login";
     }
 }
 
 async function logout() {
-
     try {
-
         await fetch(
             "/api/auth/logout",
             {
@@ -1505,66 +1481,35 @@ async function logout() {
                 cache: "no-store"
             }
         );
-
     } catch (error) {
-
-        console.error(
-            "LOGOUT ERROR:",
-            error
-        );
+        console.error("LOGOUT ERROR:", error);
     }
 
-    window.location.href =
-        "/login";
+    window.location.href = "/login";
 }
 
 function setupVideo() {
-
-    const video =
-        document.getElementById(
-            "bannerVideo"
-        );
-
-    const time =
-        document.getElementById(
-            "videoTime"
-        );
+    const video = document.getElementById("bannerVideo");
+    const time = document.getElementById("videoTime");
 
     if (!video || !time) {
         return;
     }
 
-    video.addEventListener(
-        "timeupdate",
-        () => {
+    video.addEventListener("timeupdate", () => {
+        const seconds = Math.floor(video.currentTime || 0);
+        const minutes = Math.floor(seconds / 60);
+        const remaining = seconds % 60;
 
-            const seconds =
-                Math.floor(
-                    video.currentTime || 0
-                );
-
-            const minutes =
-                Math.floor(
-                    seconds / 60
-                );
-
-            const remaining =
-                seconds % 60;
-
-            time.textContent =
-                `${String(minutes).padStart(2,"0")}:${String(remaining).padStart(2,"0")}`;
-
-        }
-    );
+        time.textContent =
+            `${String(minutes).padStart(2, "0")}:${String(remaining).padStart(2, "0")}`;
+    });
 
     video.play().catch(() => {});
-
 }
 
 setupVideo();
-
 loadUser();
-
 </script>
 
 </body>
