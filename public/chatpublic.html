@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#07111f">
+    <title>MonikaLabs Comunity</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050a12;
+            --panel: rgba(10, 18, 31, .88);
+            --panel-2: rgba(14, 25, 42, .82);
+            --border: rgba(255, 255, 255, .08);
+            --text: #f4f7fb;
+            --muted: #8d9aae;
+            --blue: #168cff;
+            --blue-2: #0b6ee4;
+            --bubble: #101c2e;
+            --bubble-own: #0969d8;
+            --danger: #ff5263;
+            --shadow: 0 20px 60px rgba(0, 0, 0, .38);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 420px;
+            height: 420px;
+            left: -180px;
+            top: -160px;
+            background: rgba(0, 119, 255, .12);
+            filter: blur(90px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 380px;
+            height: 380px;
+            right: -180px;
+            bottom: -160px;
+            background: rgba(0, 140, 255, .09);
+            filter: blur(90px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .app {
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .chat-shell {
+            width: min(1500px, 100%);
+            height: min(900px, 100%);
+            display: grid;
+            grid-template-columns: 330px minmax(0, 1fr);
+            overflow: hidden;
+            background: rgba(5, 11, 20, .78);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+
+        .sidebar {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: rgba(7, 14, 25, .88);
+            border-right: 1px solid var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, .1);
+            box-shadow: 0 8px 25px rgba(0, 132, 255, .18);
+        }
+
+        .brand-title {
+            min-width: 0;
+        }
+
+        .brand-title strong {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -.2px;
+        }
+
+        .brand-title span {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .search-wrap {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .search-box svg {
+            width: 17px;
+            height: 17px;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .search-box input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .search-box input::placeholder {
+            color: #647287;
+        }
+
+        .members-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px 10px;
+        }
+
+        .members-head strong {
+            font-size: 12px;
+            letter-spacing: .3px;
+        }
+
+        .members-head span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .member-list {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 5px 10px 15px;
+        }
+
+        .member-list::-webkit-scrollbar,
+        .messages::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .member-list::-webkit-scrollbar-thumb,
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .08);
+            border-radius: 20px;
+        }
+
+        .member {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 9px;
+            border-radius: 13px;
+            background: transparent;
+            text-align: left;
+            color: var(--text);
+            transition: .2s ease;
+        }
+
+        .member:hover {
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #111d2e;
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .member .avatar {
+            width: 40px;
+            height: 40px;
+        }
+
+        .online-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            right: 0;
+            bottom: 1px;
+            border-radius: 50%;
+            background: #657286;
+            border: 2px solid #091321;
+        }
+
+        .online-dot.active {
+            background: #20d47a;
+            box-shadow: 0 0 10px rgba(32, 212, 122, .5);
+        }
+
+        .member-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .member-name {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .member-name span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .member-email {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .verified {
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--blue);
+        }
+
+        .verified svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .me-card {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 14px;
+            border-top: 1px solid var(--border);
+            background: rgba(255, 255, 255, .025);
+        }
+
+        .me-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .me-name {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .me-email {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .logout-btn {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            color: #a9b5c7;
+            background: rgba(255, 255, 255, .045);
+            transition: .2s ease;
+        }
+
+        .logout-btn:hover {
+            color: #fff;
+            background: rgba(255, 82, 99, .12);
+        }
+
+        .logout-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .chat-main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            height: 76px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(8, 16, 28, .72);
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .chat-header:hover {
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .group-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, .1);
+            box-shadow: 0 8px 22px rgba(0, 120, 255, .14);
+            flex-shrink: 0;
+        }
+
+        .group-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .group-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .group-name span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .group-status {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #a9b6c9;
+            background: rgba(255, 255, 255, .04);
+            transition: .2s ease;
+        }
+
+        .icon-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .075);
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .messages {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 25px 24px 18px;
+            scroll-behavior: smooth;
+        }
+
+        .welcome {
+            max-width: 540px;
+            margin: 35px auto 30px;
+            text-align: center;
+        }
+
+        .welcome-avatar {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 14px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, .1);
+            box-shadow: 0 15px 40px rgba(0, 122, 255, .17);
+        }
+
+        .welcome h1 {
+            font-size: 20px;
+            font-weight: 850;
+        }
+
+        .welcome p {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .date-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 18px 0;
+        }
+
+        .date-separator span {
+            padding: 6px 11px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .035);
+            color: #8390a3;
+            font-size: 10px;
+        }
+
+        .message-row {
+            display: flex;
+            gap: 9px;
+            margin: 6px 0;
+            align-items: flex-end;
+        }
+
+        .message-row.own {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .message-content {
+            max-width: min(70%, 620px);
+            min-width: 0;
+        }
+
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0 0 4px 5px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #91a0b4;
+        }
+
+        .message-bubble {
+            padding: 9px 12px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 15px 15px 15px 4px;
+            background: var(--bubble);
+            color: #edf3fa;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message-row.own .message-bubble {
+            border-radius: 15px 15px 4px 15px;
+            background: linear-gradient(135deg, #0878ed, #0964c6);
+            border-color: rgba(255, 255, 255, .07);
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            margin-top: 4px;
+            padding: 0 4px;
+            color: #748196;
+            font-size: 9px;
+        }
+
+        .message-row.own .message-meta {
+            color: #b8dcff;
+        }
+
+        .typing {
+            min-height: 24px;
+            padding: 0 25px 3px;
+            color: #728096;
+            font-size: 10px;
+        }
+
+        .composer {
+            flex-shrink: 0;
+            padding: 12px 18px 16px;
+            border-top: 1px solid var(--border);
+            background: rgba(7, 14, 25, .8);
+        }
+
+        .composer-box {
+            min-height: 50px;
+            display: flex;
+            align-items: flex-end;
+            gap: 9px;
+            padding: 7px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: rgba(255, 255, 255, .035);
+            transition: .2s ease;
+        }
+
+        .composer-box:focus-within {
+            border-color: rgba(22, 140, 255, .35);
+            box-shadow: 0 0 0 3px rgba(22, 140, 255, .06);
+        }
+
+        .attach-btn,
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+        }
+
+        .attach-btn {
+            color: #8d9bad;
+            background: transparent;
+        }
+
+        .send-btn {
+            color: #fff;
+            background: var(--blue);
+            box-shadow: 0 7px 20px rgba(22, 140, 255, .22);
+        }
+
+        .attach-btn svg,
+        .send-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .composer textarea {
+            flex: 1;
+            width: 100%;
+            min-height: 35px;
+            max-height: 130px;
+            resize: none;
+            border: 0;
+            outline: 0;
+            padding: 8px 3px;
+            background: transparent;
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .composer textarea::placeholder {
+            color: #647287;
+        }
+
+        .empty-state,
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .profile-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .58);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .profile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .profile-card {
+            width: min(410px, 100%);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            background: #091321;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+            transform: translateY(20px) scale(.97);
+            transition: .25s ease;
+        }
+
+        .profile-overlay.active .profile-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .profile-cover {
+            height: 145px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0b5cb9, #081321);
+        }
+
+        .profile-cover::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent, rgba(5, 11, 20, .65));
+        }
+
+        .profile-close {
+            position: absolute;
+            z-index: 3;
+            top: 13px;
+            right: 13px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            color: #fff;
+            background: rgba(0, 0, 0, .28);
+            backdrop-filter: blur(8px);
+        }
+
+        .profile-close svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .profile-avatar-large {
+            position: absolute;
+            z-index: 4;
+            left: 50%;
+            bottom: -42px;
+            width: 84px;
+            height: 84px;
+            transform: translateX(-50%);
+            border-radius: 24px;
+            object-fit: cover;
+            border: 4px solid #091321;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
+        }
+
+        .profile-body {
+            padding: 57px 22px 23px;
+            text-align: center;
+        }
+
+        .profile-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 18px;
+            font-weight: 850;
+        }
+
+        .profile-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .stat {
+            padding: 16px 10px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 21px;
+            font-weight: 850;
+        }
+
+        .stat span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .profile-description {
+            margin-top: 13px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            color: #8e9bae;
+            background: rgba(255, 255, 255, .025);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .toast-container {
+            position: fixed;
+            z-index: 100;
+            right: 18px;
+            bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            max-width: 300px;
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(12, 23, 39, .94);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            color: #eaf1f9;
+            font-size: 11px;
+            animation: toastIn .25s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-back {
+            display: none;
+        }
+
+        @media (max-width: 850px) {
+            .app {
+                padding: 0;
+            }
+
+            .chat-shell {
+                width: 100%;
+                height: 100dvh;
+                border: 0;
+                border-radius: 0;
+                display: block;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .chat-main {
+                width: 100%;
+                height: 100%;
+            }
+
+            .mobile-back {
+                display: flex;
+            }
+
+            .chat-header {
+                height: 68px;
+                padding: 9px 12px;
+            }
+
+            .group-avatar {
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+            }
+
+            .header-actions .refresh-btn {
+                display: none;
+            }
+
+            .messages {
+                padding: 18px 13px 14px;
+            }
+
+            .message-content {
+                max-width: 78%;
+            }
+
+            .composer {
+                padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+            }
+
+            .typing {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .group-name {
+                font-size: 14px;
+            }
+
+            .group-status {
+                font-size: 10px;
+            }
+
+            .message-bubble {
+                font-size: 12px;
+            }
+
+            .welcome {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="chat-shell">
+            <aside class="sidebar">
+                <div class="brand">
+                    <img
+                        class="brand-logo"
+                        src="https://k.top4top.io/p_392741enr1.png"
+                        alt="MonikaLabs"
+                    >
+
+                    <div class="brand-title">
+                        <strong>MonikaLabs Comunity</strong>
+                        <span>Public Community</span>
+                    </div>
+                </div>
+
+                <div class="search-wrap">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+                            <path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                        </svg>
+
+                        <input
+                            id="searchInput"
+                            type="text"
+                            placeholder="Cari anggota..."
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="members-head">
+                    <strong>Anggota</strong>
+                    <span id="memberCount">0 user</span>
+                </div>
+
+                <div class="member-list" id="memberList">
+                    <div class="loading-state">
+                        Memuat anggota...
+                    </div>
+                </div>
+
+                <div class="me-card">
+                    <div class="avatar-wrap">
+                        <img
+                            id="myAvatar"
+                            class="avatar"
+                            src=""
+                            alt="Avatar"
+                        >
+                        <span class="online-dot active"></span>
+                    </div>
+
+                    <div class="me-info">
+                        <div class="me-name">
+                            <span id="myName">Memuat...</span>
+                            <span id="myVerified"></span>
+                        </div>
+
+                        <div class="me-email" id="myEmail">
+                            Memuat...
+                        </div>
+                    </div>
+
+                    <button
+                        class="logout-btn"
+                        id="logoutBtn"
+                        title="Keluar"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M10 17l5-5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                            <path d="M21 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="chat-main">
+                <header
+                    class="chat-header"
+                    id="groupHeader"
+                >
+                    <button
+                        class="icon-btn mobile-back"
+                        id="mobileBackBtn"
+                        type="button"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+
+                    <img
+                        id="groupAvatar"
+                        class="group-avatar"
+                        src="https://k.top4top.io/p_392741enr1.png"
+                        alt="MonikaLabs Comunity"
+                    >
+
+                    <div class="group-info">
+                        <div class="group-name">
+                            <span id="groupName">
+                                MonikaLabs Comunity
+                            </span>
+
+                            <span
+                                class="verified"
+                                aria-label="Terverifikasi"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
+                                        fill="currentColor"
+                                    />
+                                    <path
+                                        d="M8.2 12.1l2.35 2.35 5.25-5.25"
+                                        stroke="#fff"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </span>
+                        </div>
+
+                        <div
+                            class="group-status"
+                            id="groupStatus"
+                        >
+                            Memuat informasi grup...
+                        </div>
+                    </div>
+
+                    <div class="header-actions">
+                        <button
+                            class="icon-btn refresh-btn"
+                            id="refreshBtn"
+                            type="button"
+                            title="Refresh"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M20 11a8.1 8.1 0 0 0-14.9-4L3 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M3 4v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M4 13a8.1 8.1 0 0 0 14.9 4L21 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M21 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+
+                <section
+                    class="messages"
+                    id="messages"
+                >
+                    <div class="welcome">
+                        <img
+                            class="welcome-avatar"
+                            src="https://k.top4top.io/p_392741enr1.png"
+                            alt="MonikaLabs Comunity"
+                        >
+
+                        <h1>MonikaLabs Comunity</h1>
+
+                        <p>
+                            Selamat datang di komunitas.
+                            Semua anggota dapat bergabung dan berkomunikasi di sini.
+                        </p>
+                    </div>
+
+                    <div
+                        class="loading-state"
+                        id="messageLoading"
+                    >
+                        Memuat pesan...
+                    </div>
+
+                    <div id="messageList"></div>
+                </section>
+
+                <div
+                    class="typing"
+                    id="typingIndicator"
+                ></div>
+
+                <div class="composer">
+                    <div class="composer-box">
+                        <button
+                            class="attach-btn"
+                            id="attachBtn"
+                            type="button"
+                            title="Lampiran"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M21.4 11.6l-8.9 8.9a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 1 1-2.8-2.8l8.5-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+
+                        <textarea
+                            id="messageInput"
+                            rows="1"
+                            maxlength="2000"
+                            placeholder="Tulis pesan..."
+                        ></textarea>
+
+                        <button
+                            class="send-btn"
+                            id="sendBtn"
+                            type="button"
+                            title="Kirim"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div
+        class="profile-overlay"
+        id="profileOverlay"
+    >
+        <div class="profile-card">
+            <div class="profile-cover">
+                <button
+                    class="profile-close"
+                    id="profileClose"
+                    type="button"
+                >
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                    </svg>
+                </button>
+
+                <img
+                    class="profile-avatar-large"
+                    id="profileAvatar"
+                    src="https://k.top4top.io/p_392741enr1.png"
+                    alt="Group"
+                >
+            </div>
+
+            <div class="profile-body">
+                <div class="profile-title">
+                    <span id="profileName">
+                        MonikaLabs Comunity
+                    </span>
+
+                    <span class="verified">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
+                                fill="currentColor"
+                            />
+                            <path
+                                d="M8.2 12.1l2.35 2.35 5.25-5.25"
+                                stroke="#fff"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </span>
+                </div>
+
+                <div
+                    class="profile-subtitle"
+                    id="profileSubtitle"
+                >
+                    Komunitas MonikaLabs
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <strong id="profileTotalUsers">
+                            0
+                        </strong>
+
+                        <span>
+                            Total User
+                        </span>
+                    </div>
+
+                    <div class="stat">
+                        <strong id="profileOnlineUsers">
+                            0
+                        </strong>
+
+                        <span>
+                            Online
+                        </span>
+                    </div>
+                </div>
+
+                <div class="profile-description">
+                    Ruang komunitas untuk seluruh pengguna MonikaLabs.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="toast-container"
+        id="toastContainer"
+    ></div>
+
+    <script>
+        const state = {
+            user: null,
+            group: null,
+            users: [],
+            messages: [],
+            loadingMessages: false,
+            sending: false,
+            profileOpen: false
+        };
+
+        const FALLBACK_AVATAR =
+            "https://i.top4top.io/p_3925af3h26.png";
+
+        const GROUP_AVATAR =
+            "https://k.top4top.io/p_392741enr1.png";
+
+        const elements = {
+            groupHeader: document.getElementById("groupHeader"),
+            groupAvatar: document.getElementById("groupAvatar"),
+            groupName: document.getElementById("groupName"),
+            groupStatus: document.getElementById("groupStatus"),
+            messages: document.getElementById("messages"),
+            messageList: document.getElementById("messageList"),
+            messageLoading: document.getElementById("messageLoading"),
+            messageInput: document.getElementById("messageInput"),
+            sendBtn: document.getElementById("sendBtn"),
+            refreshBtn: document.getElementById("refreshBtn"),
+            memberList: document.getElementById("memberList"),
+            memberCount: document.getElementById("memberCount"),
+            searchInput: document.getElementById("searchInput"),
+            myAvatar: document.getElementById("myAvatar"),
+            myName: document.getElementById("myName"),
+            myEmail: document.getElementById("myEmail"),
+            myVerified: document.getElementById("myVerified"),
+            logoutBtn: document.getElementById("logoutBtn"),
+            profileOverlay: document.getElementById("profileOverlay"),
+            profileClose: document.getElementById("profileClose"),
+            profileAvatar: document.getElementById("profileAvatar"),
+            profileName: document.getElementById("profileName"),
+            profileSubtitle: document.getElementById("profileSubtitle"),
+            profileTotalUsers: document.getElementById("profileTotalUsers"),
+            profileOnlineUsers: document.getElementById("profileOnlineUsers"),
+            toastContainer: document.getElementById("toastContainer"),
+            typingIndicator: document.getElementById("typingIndicator"),
+            mobileBackBtn: document.getElementById("mobileBackBtn")
+        };
+
+        function verifiedBadge() {
+            return `
+                <span class="verified" aria-label="Terverifikasi">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
+                            fill="currentColor"
+                        />
+                        <path
+                            d="M8.2 12.1l2.35 2.35 5.25-5.25"
+                            stroke="#fff"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </span>
+            `;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatTime(value) {
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+
+            return date.toLocaleTimeString(
+                "id-ID",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+        }
+
+        function formatDate(value) {
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+
+            return date.toLocaleDateString(
+                "id-ID",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+        }
+
+        function avatarUrl(url) {
+            return url || FALLBACK_AVATAR;
+        }
+
+        function showToast(message) {
+            const toast =
+                document.createElement("div");
+
+            toast.className = "toast";
+            toast.textContent = message;
+
+            elements.toastContainer.appendChild(
+                toast
+            );
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        async function api(
+            url,
+            options = {}
+        ) {
+            const response = await fetch(
+                url,
+                {
+                    credentials: "include",
+                    ...options,
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(options.headers || {})
+                    }
+                }
+            );
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch {
+                data = null;
+            }
+
+            if (
+                response.status === 401
+            ) {
+                window.location.href =
+                    "/login";
+
+                throw new Error(
+                    "Session berakhir"
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.message ||
+                    "Terjadi kesalahan"
+                );
+            }
+
+            return data;
+        }
+
+        async function loadMe() {
+            const data =
+                await api("/api/user/me");
+
+            state.user =
+                data.user;
+
+            elements.myName.textContent =
+                state.user.name ||
+                "User";
+
+            elements.myEmail.textContent =
+                state.user.email ||
+                "";
+
+            elements.myAvatar.src =
+                avatarUrl(
+                    state.user.avatarUrl
+                );
+
+            elements.myVerified.innerHTML =
+                state.user.emailVerified
+                    ? verifiedBadge()
+                    : "";
+        }
+
+        async function loadGroup() {
+            const data =
+                await api(
+                    "/api/chat?action=group"
+                );
+
+            state.group =
+                data.group;
+
+            elements.groupName.textContent =
+                state.group.name;
+
+            elements.groupAvatar.src =
+                avatarUrl(
+                    state.group.avatarUrl ||
+                    GROUP_AVATAR
+                );
+
+            elements.groupStatus.textContent =
+                `${state.group.onlineUsers} online dari ${state.group.totalUsers} user`;
+
+            elements.profileAvatar.src =
+                avatarUrl(
+                    state.group.avatarUrl ||
+                    GROUP_AVATAR
+                );
+
+            elements.profileName.textContent =
+                state.group.name;
+
+            elements.profileTotalUsers.textContent =
+                state.group.totalUsers;
+
+            elements.profileOnlineUsers.textContent =
+                state.group.onlineUsers;
+
+            elements.memberCount.textContent =
+                `${state.group.totalUsers} user`;
+        }
+
+        async function loadUsers() {
+            const data =
+                await api(
+                    "/api/chat?action=users"
+                );
+
+            state.users =
+                Array.isArray(data.users)
+                    ? data.users
+                    : [];
+
+            renderUsers(
+                elements.searchInput.value
+            );
+        }
+
+        function renderUsers(search = "") {
+            const keyword =
+                search
+                    .trim()
+                    .toLowerCase();
+
+            const filtered =
+                state.users.filter(user => {
+                    const name =
+                        String(
+                            user.name || ""
+                        ).toLowerCase();
+
+                    const email =
+                        String(
+                            user.email || ""
+                        ).toLowerCase();
+
+                    return (
+                        !keyword ||
+                        name.includes(keyword) ||
+                        email.includes(keyword)
+                    );
+                });
+
+            elements.memberCount.textContent =
+                `${state.users.length} user`;
+
+            if (!filtered.length) {
+                elements.memberList.innerHTML = `
+                    <div class="empty-state">
+                        User tidak ditemukan
+                    </div>
+                `;
+
+                return;
+            }
+
+            elements.memberList.innerHTML =
+                filtered
+                    .map(user => {
+                        const verified =
+                            user.emailVerified
+                                ? verifiedBadge()
+                                : "";
+
+                        return `
+                            <div class="member">
+                                <div class="avatar-wrap">
+                                    <img
+                                        class="avatar"
+                                        src="${escapeHtml(
+                                            avatarUrl(
+                                                user.avatarUrl
+                                            )
+                                        )}"
+                                        alt="${escapeHtml(
+                                            user.name
+                                        )}"
+                                    >
+                                    <span
+                                        class="online-dot ${
+                                            user.online
+                                                ? "active"
+                                                : ""
+                                        }"
+                                    ></span>
+                                </div>
+
+                                <div class="member-info">
+                                    <div class="member-name">
+                                        <span>
+                                            ${escapeHtml(
+                                                user.name ||
+                                                "User"
+                                            )}
+                                        </span>
+                                        ${verified}
+                                    </div>
+
+                                    <div class="member-email">
+                                        ${escapeHtml(
+                                            user.email ||
+                                            ""
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .join("");
+        }
+
+        async function loadMessages(
+            keepPosition = false
+        ) {
+            if (
+                state.loadingMessages
+            ) {
+                return;
+            }
+
+            state.loadingMessages = true;
+
+            const oldHeight =
+                elements.messages.scrollHeight;
+
+            const oldTop =
+                elements.messages.scrollTop;
+
+            elements.messageLoading.style.display =
+                "flex";
+
+            try {
+                const data =
+                    await api(
+                        "/api/chat?action=messages&limit=100"
+                    );
+
+                state.messages =
+                    Array.isArray(data.messages)
+                        ? data.messages
+                        : [];
+
+                renderMessages();
+
+                if (keepPosition) {
+                    const newHeight =
+                        elements.messages.scrollHeight;
+
+                    elements.messages.scrollTop =
+                        oldTop +
+                        (
+                            newHeight -
+                            oldHeight
+                        );
+                } else {
+                    scrollToBottom();
+                }
+            } catch (error) {
+                showToast(
+                    error.message
+                );
+            } finally {
+                state.loadingMessages =
+                    false;
+
+                elements.messageLoading.style.display =
+                    "none";
+            }
+        }
+
+        function renderMessages() {
+            if (!state.messages.length) {
+                elements.messageList.innerHTML = `
+                    <div class="empty-state">
+                        Belum ada pesan. Jadilah yang pertama menyapa 👋
+                    </div>
+                `;
+
+                return;
+            }
+
+            let lastDate = "";
+
+            const html =
+                state.messages
+                    .map(message => {
+                        const dateLabel =
+                            formatDate(
+                                message.createdAt
+                            );
+
+                        let separator = "";
+
+                        if (
+                            dateLabel &&
+                            dateLabel !== lastDate
+                        ) {
+                            lastDate =
+                                dateLabel;
+
+                            separator = `
+                                <div class="date-separator">
+                                    <span>
+                                        ${escapeHtml(
+                                            dateLabel
+                                        )}
+                                    </span>
+                                </div>
+                            `;
+                        }
+
+                        const own =
+                            String(
+                                message.user?.id ||
+                                message.user?._id ||
+                                ""
+                            ) ===
+                            String(
+                                state.user?.id ||
+                                state.user?._id ||
+                                ""
+                            );
+
+                        const name =
+                            message.user?.name ||
+                            "User";
+
+                        const verified =
+                            message.user?.emailVerified
+                                ? verifiedBadge()
+                                : "";
+
+                        return `
+                            ${separator}
+
+                            <div class="message-row ${
+                                own
+                                    ? "own"
+                                    : ""
+                            }">
+                                ${
+                                    own
+                                        ? ""
+                                        : `
+                                            <img
+                                                class="message-avatar"
+                                                src="${escapeHtml(
+                                                    avatarUrl(
+                                                        message.user?.avatarUrl
+                                                    )
+                                                )}"
+                                                alt="${escapeHtml(
+                                                    name
+                                                )}"
+                                            >
+                                        `
+                                }
+
+                                <div class="message-content">
+                                    ${
+                                        own
+                                            ? ""
+                                            : `
+                                                <div class="message-sender">
+                                                    <span>
+                                                        ${escapeHtml(
+                                                            name
+                                                        )}
+                                                    </span>
+                                                    ${verified}
+                                                </div>
+                                            `
+                                    }
+
+                                    <div class="message-bubble">
+                                        ${escapeHtml(
+                                            message.message
+                                        )}
+                                    </div>
+
+                                    <div class="message-meta">
+                                        <span>
+                                            ${formatTime(
+                                                message.createdAt
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                ${
+                                    own
+                                        ? `
+                                            <img
+                                                class="message-avatar"
+                                                src="${escapeHtml(
+                                                    avatarUrl(
+                                                        message.user?.avatarUrl ||
+                                                        state.user?.avatarUrl
+                                                    )
+                                                )}"
+                                                alt="${escapeHtml(
+                                                    name
+                                                )}"
+                                            >
+                                        `
+                                        : ""
+                                }
+                            </div>
+                        `;
+                    })
+                    .join("");
+
+            elements.messageList.innerHTML =
+                html;
+        }
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                elements.messages.scrollTop =
+                    elements.messages.scrollHeight;
+            });
+        }
+
+        async function sendMessage() {
+            if (state.sending) {
+                return;
+            }
+
+            const message =
+                elements.messageInput.value.trim();
+
+            if (!message) {
+                return;
+            }
+
+            state.sending = true;
+
+            elements.sendBtn.disabled =
+                true;
+
+            try {
+                const data =
+                    await api(
+                        "/api/chat",
+                        {
+                            method: "POST",
+                            body: JSON.stringify({
+                                action: "send",
+                                message
+                            })
+                        }
+                    );
+
+                if (data.message) {
+                    state.messages.push(
+                        data.message
+                    );
+
+                    renderMessages();
+                    scrollToBottom();
+                }
+
+                elements.messageInput.value =
+                    "";
+
+                autoResizeTextarea();
+            } catch (error) {
+                showToast(
+                    error.message
+                );
+            } finally {
+                state.sending = false;
+                elements.sendBtn.disabled =
+                    false;
+            }
+        }
+
+        async function heartbeat() {
+            try {
+                await api(
+                    "/api/chat",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            action: "heartbeat"
+                        })
+                    }
+                );
+            } catch {}
+        }
+
+        async function refreshAll() {
+            await Promise.all([
+                loadGroup(),
+                loadUsers(),
+                loadMessages()
+            ]);
+        }
+
+        function openProfile() {
+            elements.profileOverlay.classList.add(
+                "active"
+            );
+
+            state.profileOpen = true;
+
+            loadGroup().catch(() => {});
+        }
+
+        function closeProfile() {
+            elements.profileOverlay.classList.remove(
+                "active"
+            );
+
+            state.profileOpen = false;
+        }
+
+        function autoResizeTextarea() {
+            elements.messageInput.style.height =
+                "auto";
+
+            elements.messageInput.style.height =
+                Math.min(
+                    elements.messageInput.scrollHeight,
+                    130
+                ) + "px";
+        }
+
+        async function logout() {
+            try {
+                await fetch(
+                    "/api/auth/logout",
+                    {
+                        method: "POST",
+                        credentials: "include"
+                    }
+                );
+            } catch {}
+
+            window.location.href =
+                "/login";
+        }
+
+        elements.sendBtn.addEventListener(
+            "click",
+            sendMessage
+        );
+
+        elements.messageInput.addEventListener(
+            "input",
+            () => {
+                autoResizeTextarea();
+
+                elements.typingIndicator.textContent =
+                    elements.messageInput.value.trim()
+                        ? "Mengetik..."
+                        : "";
+            }
+        );
+
+        elements.messageInput.addEventListener(
+            "keydown",
+            event => {
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            }
+        );
+
+        elements.searchInput.addEventListener(
+            "input",
+            event => {
+                renderUsers(
+                    event.target.value
+                );
+            }
+        );
+
+        elements.refreshBtn.addEventListener(
+            "click",
+            refreshAll
+        );
+
+        elements.groupHeader.addEventListener(
+            "click",
+            event => {
+                if (
+                    event.target.closest(
+                        ".mobile-back"
+                    ) ||
+                    event.target.closest(
+                        ".icon-btn"
+                    )
+                ) {
+                    return;
+                }
+
+                openProfile();
+            }
+        );
+
+        elements.profileClose.addEventListener(
+            "click",
+            closeProfile
+        );
+
+        elements.profileOverlay.addEventListener(
+            "click",
+            event => {
+                if (
+                    event.target ===
+                    elements.profileOverlay
+                ) {
+                    closeProfile();
+                }
+            }
+        );
+
+        elements.logoutBtn.addEventListener(
+            "click",
+            logout
+        );
+
+        elements.mobileBackBtn.addEventListener(
+            "click",
+            () => {
+                window.history.back();
+            }
+        );
+
+        elements.attachBtn.addEventListener(
+            "click",
+            () => {
+                showToast(
+                    "Fitur lampiran akan ditambahkan nanti."
+                );
+            }
+        );
+
+        window.addEventListener(
+            "keydown",
+            event => {
+                if (
+                    event.key === "Escape" &&
+                    state.profileOpen
+                ) {
+                    closeProfile();
+                }
+            }
+        );
+
+        async function init() {
+            try {
+                await loadMe();
+
+                await Promise.all([
+                    loadGroup(),
+                    loadUsers(),
+                    loadMessages()
+                ]);
+
+                await heartbeat();
+
+                setInterval(
+                    heartbeat,
+                    25000
+                );
+
+                setInterval(
+                    async () => {
+                        try {
+                            await loadGroup();
+                            await loadUsers();
+                            await loadMessages(
+                                true
+                            );
+                        } catch {}
+                    },
+                    8000
+                );
+            } catch (error) {
+                showToast(
+                    error.message ||
+                    "Gagal memuat chat"
+                );
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
