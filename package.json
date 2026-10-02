@@ -7,15 +7,15 @@
     "dev": "vercel dev"
   },
   "dependencies": {
-  "@vercel/blob": "^2.0.0",
-  "axios": "^1.12.2",
-  "bcryptjs": "^3.0.2",
-  "jose": "^6.1.0",
-  "mongoose": "^8.18.0",
-  "nodemailer": "^7.0.6",
-  "formidable": "^3.5.4",
-  "adm-zip": "^0.5.16"
-  }
+    "@vercel/blob": "^2.4.0",
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.2",
+    "jose": "^6.1.0",
+    "mongoose": "^8.18.0",
+    "nodemailer": "^7.0.6",
+    "formidable": "^3.5.4",
+    "adm-zip": "^0.5.16"
+  },
   "devDependencies": {
     "vercel": "^48.0.0"
   }
