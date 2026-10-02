@@ -37,8 +37,9 @@
             min-height: 100vh;
             color: var(--text);
             background:
-                radial-gradient(circle at 50% -10%, rgba(22, 140, 255, .11), transparent 30%),
-                radial-gradient(circle at 100% 40%, rgba(34, 95, 190, .055), transparent 25%),
+                radial-gradient(circle at 50% -10%, rgba(22, 140, 255, .13), transparent 30%),
+                radial-gradient(circle at 100% 40%, rgba(34, 95, 190, .065), transparent 25%),
+                radial-gradient(circle at 0% 70%, rgba(22, 140, 255, .045), transparent 25%),
                 var(--bg);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -79,8 +80,8 @@
             height: 39px;
             border-radius: 12px;
             object-fit: cover;
-            border: 1px solid rgba(255,255,255,.1);
-            box-shadow: 0 8px 30px rgba(22,140,255,.14);
+            border: 1px solid rgba(255, 255, 255, .1);
+            box-shadow: 0 8px 30px rgba(22, 140, 255, .2);
         }
 
         .brand-text {
@@ -114,7 +115,7 @@
             padding: 9px 13px;
             border: 1px solid var(--border);
             border-radius: 14px;
-            background: rgba(255,255,255,.025);
+            background: rgba(255, 255, 255, .025);
             backdrop-filter: blur(15px);
         }
 
@@ -124,7 +125,7 @@
             flex: 0 0 auto;
             border-radius: 50%;
             background: var(--green);
-            box-shadow: 0 0 14px rgba(37,217,130,.75);
+            box-shadow: 0 0 14px rgba(37, 217, 130, .75);
         }
 
         #clock {
@@ -142,15 +143,20 @@
             border: 1px solid var(--border);
             border-radius: 13px;
             color: #b8c2d1;
-            background: rgba(255,255,255,.025);
+            background: rgba(255, 255, 255, .025);
             cursor: pointer;
             transition: .2s ease;
         }
 
         .logout-btn:hover {
             color: #fff;
-            border-color: rgba(255,95,109,.3);
-            background: rgba(255,95,109,.08);
+            border-color: rgba(255, 95, 109, .3);
+            background: rgba(255, 95, 109, .08);
+        }
+
+        .logout-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
         }
 
         .logout-btn svg {
@@ -165,11 +171,11 @@
             border: 1px solid var(--border);
             border-radius: 30px;
             background:
-                radial-gradient(circle at 50% 0%, rgba(22,140,255,.08), transparent 45%),
-                rgba(8, 13, 21, .72);
+                radial-gradient(circle at 50% 0%, rgba(22, 140, 255, .09), transparent 45%),
+                rgba(8, 13, 21, .78);
             box-shadow:
-                0 30px 100px rgba(0,0,0,.3),
-                0 0 80px rgba(22,140,255,.035);
+                0 30px 100px rgba(0, 0, 0, .3),
+                0 0 80px rgba(22, 140, 255, .045);
         }
 
         .hero-media {
@@ -187,8 +193,8 @@
             z-index: 1;
             inset: 0;
             background:
-                linear-gradient(90deg, rgba(3,7,13,.2), transparent 40%, rgba(3,7,13,.12)),
-                linear-gradient(180deg, transparent 55%, rgba(4,7,12,.55));
+                linear-gradient(90deg, rgba(3, 7, 13, .2), transparent 40%, rgba(3, 7, 13, .12)),
+                linear-gradient(180deg, transparent 55%, rgba(4, 7, 12, .55));
             pointer-events: none;
         }
 
@@ -201,7 +207,7 @@
             width: 55%;
             height: 130px;
             transform: translateX(-50%);
-            background: rgba(22,140,255,.15);
+            background: rgba(22, 140, 255, .15);
             filter: blur(70px);
             pointer-events: none;
         }
@@ -231,10 +237,10 @@
             align-items: center;
             gap: 8px;
             padding: 7px 11px;
-            border: 1px solid rgba(52,153,255,.18);
+            border: 1px solid rgba(52, 153, 255, .18);
             border-radius: 999px;
             color: #9fcfff;
-            background: rgba(22,140,255,.06);
+            background: rgba(22, 140, 255, .06);
             font-size: 10px;
             font-weight: 800;
             letter-spacing: .7px;
@@ -246,20 +252,55 @@
             height: 6px;
             border-radius: 50%;
             background: var(--blue);
-            box-shadow: 0 0 12px rgba(22,140,255,.8);
+            box-shadow: 0 0 12px rgba(22, 140, 255, .8);
         }
 
         .hero-title {
-            max-width: 650px;
+            max-width: 900px;
             margin-top: 13px;
             font-size: clamp(28px, 4vw, 46px);
-            line-height: 1.04;
+            line-height: 1.08;
             letter-spacing: -2px;
             font-weight: 850;
         }
 
-        .hero-title span {
+        .hero-greeting {
             color: #65b5ff;
+        }
+
+        .hero-user {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 100%;
+            gap: 8px;
+        }
+
+        .hero-user-name {
+            color: #f4f7fb;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .verified-badge {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: #2196f3;
+        }
+
+        .verified-badge svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .hero-verified {
+            width: 22px;
+            height: 22px;
         }
 
         .hero-description {
@@ -292,24 +333,24 @@
         .hero-btn.primary {
             color: #fff;
             background: linear-gradient(135deg, #168cff, #0968d7);
-            box-shadow: 0 10px 28px rgba(22,140,255,.2);
+            box-shadow: 0 10px 28px rgba(22, 140, 255, .2);
         }
 
         .hero-btn.primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 35px rgba(22,140,255,.28);
+            box-shadow: 0 14px 35px rgba(22, 140, 255, .28);
         }
 
         .hero-btn.secondary {
             border: 1px solid var(--border);
             color: #cbd3df;
-            background: rgba(255,255,255,.025);
+            background: rgba(255, 255, 255, .025);
         }
 
         .hero-btn.secondary:hover {
-            border-color: rgba(255,255,255,.14);
+            border-color: rgba(255, 255, 255, .14);
             color: #fff;
-            background: rgba(255,255,255,.05);
+            background: rgba(255, 255, 255, .05);
         }
 
         .section {
@@ -355,9 +396,9 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background:
-                linear-gradient(145deg, rgba(255,255,255,.035), transparent 50%),
+                linear-gradient(145deg, rgba(255, 255, 255, .035), transparent 50%),
                 var(--panel);
-            box-shadow: 0 18px 55px rgba(0,0,0,.18);
+            box-shadow: 0 18px 55px rgba(0, 0, 0, .18);
         }
 
         .profile-panel {
@@ -381,7 +422,7 @@
             display: block;
             border-radius: 21px;
             object-fit: cover;
-            border: 1px solid rgba(255,255,255,.1);
+            border: 1px solid rgba(255, 255, 255, .1);
             background: #111827;
         }
 
@@ -394,7 +435,7 @@
             border: 3px solid #0c121d;
             border-radius: 50%;
             background: var(--green);
-            box-shadow: 0 0 13px rgba(37,217,130,.55);
+            box-shadow: 0 0 13px rgba(37, 217, 130, .55);
         }
 
         .profile-info {
@@ -419,22 +460,6 @@
             min-width: 0;
             overflow-wrap: anywhere;
             word-break: break-word;
-        }
-
-        .verified-badge {
-            width: 18px;
-            height: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-            color: #2196f3;
-        }
-
-        .verified-badge svg {
-            width: 100%;
-            height: 100%;
-            display: block;
         }
 
         .email {
@@ -467,7 +492,7 @@
             height: 7px;
             border-radius: 50%;
             background: var(--green);
-            box-shadow: 0 0 12px rgba(37,217,130,.6);
+            box-shadow: 0 0 12px rgba(37, 217, 130, .6);
         }
 
         .profile-link {
@@ -528,9 +553,9 @@
             height: 48px;
             flex: 0 0 auto;
             padding: 3px;
-            border: 1px solid rgba(255,255,255,.08);
+            border: 1px solid rgba(255, 255, 255, .08);
             border-radius: 16px;
-            background: rgba(255,255,255,.035);
+            background: rgba(255, 255, 255, .035);
         }
 
         .community-icon img {
@@ -550,9 +575,9 @@
 
         .stat {
             padding: 14px;
-            border: 1px solid rgba(255,255,255,.055);
+            border: 1px solid rgba(255, 255, 255, .055);
             border-radius: 15px;
-            background: rgba(255,255,255,.018);
+            background: rgba(255, 255, 255, .018);
         }
 
         .stat-value {
@@ -584,8 +609,8 @@
             border: 1px solid var(--border);
             border-radius: 21px;
             background:
-                radial-gradient(circle at 100% 0%, rgba(22,140,255,.075), transparent 45%),
-                rgba(10,15,24,.75);
+                radial-gradient(circle at 100% 0%, rgba(22, 140, 255, .075), transparent 45%),
+                rgba(10, 15, 24, .75);
             transition: .22s ease;
         }
 
@@ -596,17 +621,22 @@
             left: 18px;
             right: 18px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(74,165,255,.35), transparent);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(74, 165, 255, .35),
+                transparent
+            );
             opacity: .7;
         }
 
         .access-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(54,157,255,.2);
+            border-color: rgba(54, 157, 255, .2);
             background:
-                radial-gradient(circle at 100% 0%, rgba(22,140,255,.12), transparent 50%),
-                rgba(11,18,29,.9);
-            box-shadow: 0 18px 45px rgba(0,0,0,.22);
+                radial-gradient(circle at 100% 0%, rgba(22, 140, 255, .12), transparent 50%),
+                rgba(11, 18, 29, .9);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, .22);
         }
 
         .access-icon {
@@ -615,10 +645,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(54,157,255,.13);
+            border: 1px solid rgba(54, 157, 255, .13);
             border-radius: 12px;
             color: #67b6ff;
-            background: rgba(22,140,255,.07);
+            background: rgba(22, 140, 255, .07);
         }
 
         .access-icon svg {
@@ -673,11 +703,11 @@
             transform: translate(-50%, 20px);
             max-width: calc(100% - 30px);
             padding: 11px 16px;
-            border: 1px solid rgba(255,255,255,.08);
+            border: 1px solid rgba(255, 255, 255, .08);
             border-radius: 13px;
             color: #e8eef8;
-            background: rgba(10,15,24,.92);
-            box-shadow: 0 15px 45px rgba(0,0,0,.35);
+            background: rgba(10, 15, 24, .92);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, .35);
             backdrop-filter: blur(20px);
             opacity: 0;
             pointer-events: none;
@@ -747,6 +777,11 @@
                 font-size: 12px;
             }
 
+            .hero-verified {
+                width: 19px;
+                height: 19px;
+            }
+
             .hero-actions {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -796,6 +831,10 @@
                 height: 58px;
                 border-radius: 17px;
             }
+
+            .hero-user {
+                gap: 6px;
+            }
         }
     </style>
 </head>
@@ -804,10 +843,19 @@
     <main class="page">
         <header class="topbar">
             <a href="/dashboard" class="brand">
-                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+                <img
+                    src="https://i.top4top.io/p_3925af3h26.png"
+                    alt="ReyCode"
+                >
+
                 <span class="brand-text">
-                    <span class="brand-name">ReyCode Digital</span>
-                    <span class="brand-sub">Digital workspace</span>
+                    <span class="brand-name">
+                        ReyCode Digital
+                    </span>
+
+                    <span class="brand-sub">
+                        Digital workspace
+                    </span>
                 </span>
             </a>
 
@@ -817,8 +865,18 @@
                     <span id="clock">00:00:00</span>
                 </div>
 
-                <button class="logout-btn" id="logoutBtn" type="button" title="Keluar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <button
+                    class="logout-btn"
+                    id="logoutBtn"
+                    type="button"
+                    title="Keluar"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
                         <path d="M10 17l5-5-5-5"></path>
                         <path d="M15 12H3"></path>
                         <path d="M21 3v18"></path>
@@ -829,8 +887,17 @@
 
         <section class="hero">
             <div class="hero-media">
-                <video autoplay muted loop playsinline preload="metadata">
-                    <source src="https://files.catbox.moe/9tcayz.mp4" type="video/mp4">
+                <video
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="metadata"
+                >
+                    <source
+                        src="https://files.catbox.moe/9tcayz.mp4"
+                        type="video/mp4"
+                    >
                 </video>
             </div>
 
@@ -842,22 +909,65 @@
                     </div>
 
                     <h1 class="hero-title">
-                        <span id="greeting">Selamat datang</span>
-                        di dashboard kamu.
+                        Halo,
+                        <span
+                            class="hero-greeting"
+                            id="greeting"
+                        >
+                            Selamat malam
+                        </span>
+
+                        <span class="hero-user">
+                            <span
+                                class="hero-user-name"
+                                id="heroUserName"
+                            >
+                                Username
+                            </span>
+
+                            <span
+                                class="verified-badge hero-verified"
+                                id="heroVerifiedBadge"
+                                hidden
+                                title="Verified"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
+                                    ></path>
+
+                                    <path
+                                        fill="#fff"
+                                        d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"
+                                    ></path>
+                                </svg>
+                            </span>
+                        </span>
                     </h1>
 
                     <p class="hero-description">
-                        Kelola akun, akses layanan digital, lihat komunitas,
-                        dan gunakan seluruh fitur ReyCode dari satu tempat.
+                        Kelola akun, akses layanan digital,
+                        lihat komunitas, dan gunakan seluruh
+                        fitur ReyCode dari satu tempat.
                     </p>
                 </div>
 
                 <div class="hero-actions">
-                    <a href="/chat" class="hero-btn primary">
+                    <a
+                        href="/chat"
+                        class="hero-btn primary"
+                    >
                         Buka Komunitas
                     </a>
 
-                    <a href="/profile" class="hero-btn secondary">
+                    <a
+                        href="/profile"
+                        class="hero-btn secondary"
+                    >
                         Lihat Profil
                     </a>
                 </div>
@@ -867,11 +977,19 @@
         <section class="section">
             <div class="section-head">
                 <div>
-                    <div class="section-label">Overview</div>
-                    <h2 class="section-title">Account & Community</h2>
+                    <div class="section-label">
+                        Overview
+                    </div>
+
+                    <h2 class="section-title">
+                        Account & Community
+                    </h2>
                 </div>
 
-                <div class="section-desc" id="date">
+                <div
+                    class="section-desc"
+                    id="date"
+                >
                     Memuat tanggal...
                 </div>
             </div>
@@ -886,12 +1004,16 @@
                                 src=""
                                 alt="Avatar User"
                             >
+
                             <span class="online-indicator"></span>
                         </div>
 
                         <div class="profile-info">
                             <div class="name">
-                                <span class="name-text" id="userName">
+                                <span
+                                    class="name-text"
+                                    id="userName"
+                                >
                                     Memuat...
                                 </span>
 
@@ -901,14 +1023,27 @@
                                     hidden
                                     title="Verified"
                                 >
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path fill="currentColor" d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"></path>
-                                        <path fill="#fff" d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"></path>
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            fill="currentColor"
+                                            d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
+                                        ></path>
+
+                                        <path
+                                            fill="#fff"
+                                            d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"
+                                        ></path>
                                     </svg>
                                 </span>
                             </div>
 
-                            <div class="email" id="userEmail">
+                            <div
+                                class="email"
+                                id="userEmail"
+                            >
                                 Memuat email...
                             </div>
                         </div>
@@ -920,7 +1055,10 @@
                             Account active
                         </div>
 
-                        <a href="/profile" class="profile-link">
+                        <a
+                            href="/profile"
+                            class="profile-link"
+                        >
                             Kelola profil →
                         </a>
                     </div>
@@ -929,10 +1067,15 @@
                 <article class="panel community-panel">
                     <div class="community-head">
                         <div class="community-info">
-                            <div class="eyebrow">Community</div>
+                            <div class="eyebrow">
+                                Community
+                            </div>
 
                             <div class="community-name-row">
-                                <h2 class="community-title" id="communityName">
+                                <h2
+                                    class="community-title"
+                                    id="communityName"
+                                >
                                     Memuat komunitas...
                                 </h2>
 
@@ -941,9 +1084,19 @@
                                     id="communityVerifiedBadge"
                                     title="Verified"
                                 >
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path fill="currentColor" d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"></path>
-                                        <path fill="#fff" d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"></path>
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            fill="currentColor"
+                                            d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
+                                        ></path>
+
+                                        <path
+                                            fill="#fff"
+                                            d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"
+                                        ></path>
                                     </svg>
                                 </span>
                             </div>
@@ -960,13 +1113,29 @@
 
                     <div class="community-stats">
                         <div class="stat">
-                            <div class="stat-value" id="totalUsers">—</div>
-                            <div class="stat-label">Total members</div>
+                            <div
+                                class="stat-value"
+                                id="totalUsers"
+                            >
+                                —
+                            </div>
+
+                            <div class="stat-label">
+                                Total members
+                            </div>
                         </div>
 
                         <div class="stat">
-                            <div class="stat-value" id="onlineUsers">—</div>
-                            <div class="stat-label">Currently online</div>
+                            <div
+                                class="stat-value"
+                                id="onlineUsers"
+                            >
+                                —
+                            </div>
+
+                            <div class="stat-label">
+                                Currently online
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -976,185 +1145,373 @@
         <section class="section">
             <div class="section-head">
                 <div>
-                    <div class="section-label">Workspace</div>
-                    <h2 class="section-title">Quick Access</h2>
+                    <div class="section-label">
+                        Workspace
+                    </div>
+
+                    <h2 class="section-title">
+                        Quick Access
+                    </h2>
                 </div>
             </div>
 
             <div class="access-grid">
-                <a href="/profile" class="access-card">
+                <a
+                    href="/profile"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                                <circle cx="12" cy="8" r="3.5"></circle>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="8"
+                                    r="3.5"
+                                ></circle>
+
                                 <path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Profile</div>
+                        <div class="access-name">
+                            Profile
+                        </div>
+
                         <div class="access-desc">
                             Kelola informasi akun
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/github" class="access-card">
+                <a
+                    href="/github"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
                                 <path d="M9 19c-4 .9-4-2-5-2m10 4v-3.9c0-1.1.1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.7 4.7 0 0 0-1.3-3.3A4.3 4.3 0 0 0 17.6 3S16.5 2.7 14 4a13.4 13.4 0 0 0-5 0C6.5 2.7 5.4 3 5.4 3a4.3 4.3 0 0 0-1.1 2.8A4.7 4.7 0 0 0 3 9.1c0 4.6 2.7 5.7 5.5 6-.6.5-.6 1.1-.5 2V21"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">GitHub</div>
+                        <div class="access-name">
+                            GitHub
+                        </div>
+
                         <div class="access-desc">
                             Repository & tools
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/deploy" class="access-card">
+                <a
+                    href="/deploy"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
                                 <path d="M12 3v12"></path>
                                 <path d="m7 8 5-5 5 5"></path>
                                 <path d="M5 14v4a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-4"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Deploy</div>
+                        <div class="access-name">
+                            Deploy
+                        </div>
+
                         <div class="access-desc">
                             Deploy project kamu
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/chat" class="access-card">
+                <a
+                    href="/chat"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
                                 <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.2-.6L4 20l1.5-3.8A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Community</div>
+                        <div class="access-name">
+                            Community
+                        </div>
+
                         <div class="access-desc">
                             Chat bersama member
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/alightmotion" class="access-card">
+                <a
+                    href="/alightmotion"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
                                 <path d="M5 4h14v16H5z"></path>
                                 <path d="m9 8 6 4-6 4V8Z"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Alight Motion</div>
+                        <div class="access-name">
+                            Alight Motion
+                        </div>
+
                         <div class="access-desc">
                             Tools & resources
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/forgot-password" class="access-card">
+                <a
+                    href="/forgot-password"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                                <circle cx="12" cy="12" r="8"></circle>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="8"
+                                ></circle>
+
                                 <path d="M12 8v4l2.5 1.5"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Security</div>
+                        <div class="access-name">
+                            Security
+                        </div>
+
                         <div class="access-desc">
                             Reset password akun
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/dashboard" class="access-card">
+                <a
+                    href="/dashboard"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                                <rect x="4" y="4" width="6" height="6" rx="1"></rect>
-                                <rect x="14" y="4" width="6" height="6" rx="1"></rect>
-                                <rect x="4" y="14" width="6" height="6" rx="1"></rect>
-                                <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
+                                <rect
+                                    x="4"
+                                    y="4"
+                                    width="6"
+                                    height="6"
+                                    rx="1"
+                                ></rect>
+
+                                <rect
+                                    x="14"
+                                    y="4"
+                                    width="6"
+                                    height="6"
+                                    rx="1"
+                                ></rect>
+
+                                <rect
+                                    x="4"
+                                    y="14"
+                                    width="6"
+                                    height="6"
+                                    rx="1"
+                                ></rect>
+
+                                <rect
+                                    x="14"
+                                    y="14"
+                                    width="6"
+                                    height="6"
+                                    rx="1"
+                                ></rect>
                             </svg>
                         </span>
 
-                        <div class="access-name">Dashboard</div>
+                        <div class="access-name">
+                            Dashboard
+                        </div>
+
                         <div class="access-desc">
                             Halaman utama kamu
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
 
-                <a href="/login" class="access-card">
+                <a
+                    href="/login"
+                    class="access-card"
+                >
                     <div>
                         <span class="access-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
                                 <path d="M10 17l5-5-5-5"></path>
                                 <path d="M15 12H3"></path>
                                 <path d="M21 3v18"></path>
                             </svg>
                         </span>
 
-                        <div class="access-name">Login</div>
+                        <div class="access-name">
+                            Login
+                        </div>
+
                         <div class="access-desc">
                             Halaman autentikasi
                         </div>
                     </div>
 
-                    <span class="access-arrow">→</span>
+                    <span class="access-arrow">
+                        →
+                    </span>
                 </a>
             </div>
         </section>
 
         <footer>
-            <span>© <span id="year"></span> ReyCode Digital</span>
-            <span>Built for digital workspace</span>
+            <span>
+                © <span id="year"></span> ReyCode Digital
+            </span>
+
+            <span>
+                Built for digital workspace
+            </span>
         </footer>
     </main>
 
-    <div class="toast" id="toast"></div>
+    <div
+        class="toast"
+        id="toast"
+    ></div>
 
     <script>
-        const userAvatar = document.getElementById("userAvatar");
-        const userName = document.getElementById("userName");
-        const userEmail = document.getElementById("userEmail");
-        const greeting = document.getElementById("greeting");
-        const verifiedBadge = document.getElementById("verifiedBadge");
-        const clock = document.getElementById("clock");
-        const date = document.getElementById("date");
-        const totalUsers = document.getElementById("totalUsers");
-        const onlineUsers = document.getElementById("onlineUsers");
-        const logoutBtn = document.getElementById("logoutBtn");
-        const toast = document.getElementById("toast");
-        const communityName = document.getElementById("communityName");
-        const communityAvatar = document.getElementById("communityAvatar");
+        const userAvatar =
+            document.getElementById("userAvatar");
 
-        const USER_CACHE_KEY = "reycode_dashboard_user_v3";
-        const GROUP_CACHE_KEY = "reycode_dashboard_group_v3";
+        const userName =
+            document.getElementById("userName");
+
+        const userEmail =
+            document.getElementById("userEmail");
+
+        const heroUserName =
+            document.getElementById("heroUserName");
+
+        const greeting =
+            document.getElementById("greeting");
+
+        const verifiedBadge =
+            document.getElementById("verifiedBadge");
+
+        const heroVerifiedBadge =
+            document.getElementById("heroVerifiedBadge");
+
+        const clock =
+            document.getElementById("clock");
+
+        const date =
+            document.getElementById("date");
+
+        const totalUsers =
+            document.getElementById("totalUsers");
+
+        const onlineUsers =
+            document.getElementById("onlineUsers");
+
+        const logoutBtn =
+            document.getElementById("logoutBtn");
+
+        const toast =
+            document.getElementById("toast");
+
+        const communityName =
+            document.getElementById("communityName");
+
+        const communityAvatar =
+            document.getElementById("communityAvatar");
+
+        const USER_CACHE_KEY =
+            "reycode_dashboard_user_v3";
+
+        const GROUP_CACHE_KEY =
+            "reycode_dashboard_group_v3";
 
         let toastTimer = null;
 
@@ -1173,7 +1530,8 @@
         }
 
         function getGreeting() {
-            const hour = new Date().getHours();
+            const hour =
+                new Date().getHours();
 
             if (hour >= 5 && hour < 11) {
                 return "Selamat pagi";
@@ -1194,27 +1552,38 @@
             const now = new Date();
 
             clock.textContent =
-                now.toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit"
-                });
+                now.toLocaleTimeString(
+                    "id-ID",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
 
             date.textContent =
-                now.toLocaleDateString("id-ID", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                });
+                now.toLocaleDateString(
+                    "id-ID",
+                    {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
 
-            greeting.textContent = getGreeting();
+            greeting.textContent =
+                getGreeting();
         }
 
         function createAvatar(name) {
-            return "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(name || "User") +
-                "&background=168cff&color=ffffff&bold=true";
+            return (
+                "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(
+                    name || "User"
+                ) +
+                "&background=168cff&color=ffffff&bold=true"
+            );
         }
 
         function setAvatar(url, name) {
@@ -1242,7 +1611,10 @@
                 `Avatar ${cleanName}`;
         }
 
-        function setCommunityAvatar(url, name) {
+        function setCommunityAvatar(
+            url,
+            name
+        ) {
             const cleanUrl =
                 typeof url === "string"
                     ? url.trim()
@@ -1257,13 +1629,15 @@
             communityAvatar.onerror = null;
 
             if (cleanUrl) {
-                communityAvatar.src = cleanUrl;
+                communityAvatar.src =
+                    cleanUrl;
             } else {
                 communityAvatar.src =
                     createAvatar(cleanName);
             }
 
-            communityAvatar.alt = cleanName;
+            communityAvatar.alt =
+                cleanName;
         }
 
         function saveUserCache(user) {
@@ -1271,9 +1645,15 @@
                 localStorage.setItem(
                     USER_CACHE_KEY,
                     JSON.stringify({
-                        name: user.name || "",
-                        email: user.email || "",
-                        avatarUrl: user.avatarUrl || "",
+                        name:
+                            user.name || "",
+
+                        email:
+                            user.email || "",
+
+                        avatarUrl:
+                            user.avatarUrl || "",
+
                         emailVerified:
                             user.emailVerified === true
                     })
@@ -1313,10 +1693,15 @@
                 localStorage.setItem(
                     GROUP_CACHE_KEY,
                     JSON.stringify({
-                        id: group.id || "",
-                        name: group.name || "",
+                        id:
+                            group.id || "",
+
+                        name:
+                            group.name || "",
+
                         avatarUrl:
                             group.avatarUrl || "",
+
                         totalUsers:
                             Number.isFinite(
                                 Number(
@@ -1327,6 +1712,7 @@
                                       group.totalUsers
                                   )
                                 : null,
+
                         onlineUsers:
                             Number.isFinite(
                                 Number(
@@ -1382,8 +1768,17 @@
                     ? user.email.trim()
                     : "Email tidak tersedia";
 
-            userName.textContent = name;
-            userEmail.textContent = email;
+            const isVerified =
+                user.emailVerified === true;
+
+            userName.textContent =
+                name;
+
+            heroUserName.textContent =
+                name;
+
+            userEmail.textContent =
+                email;
 
             setAvatar(
                 user.avatarUrl || "",
@@ -1391,7 +1786,10 @@
             );
 
             verifiedBadge.hidden =
-                user.emailVerified !== true;
+                !isVerified;
+
+            heroVerifiedBadge.hidden =
+                !isVerified;
 
             saveUserCache({
                 name,
@@ -1399,7 +1797,7 @@
                 avatarUrl:
                     user.avatarUrl || "",
                 emailVerified:
-                    user.emailVerified === true
+                    isVerified
             });
         }
 
@@ -1410,7 +1808,8 @@
                     ? group.name.trim()
                     : "MonikaLabs Comunity";
 
-            communityName.textContent = name;
+            communityName.textContent =
+                name;
 
             setCommunityAvatar(
                 group.avatarUrl || "",
@@ -1418,10 +1817,14 @@
             );
 
             const total =
-                Number(group.totalUsers);
+                Number(
+                    group.totalUsers
+                );
 
             const online =
-                Number(group.onlineUsers);
+                Number(
+                    group.onlineUsers
+                );
 
             totalUsers.textContent =
                 Number.isFinite(total)
@@ -1434,14 +1837,19 @@
                     : "—";
 
             saveGroupCache({
-                id: group.id || "",
+                id:
+                    group.id || "",
+
                 name,
+
                 avatarUrl:
                     group.avatarUrl || "",
+
                 totalUsers:
                     Number.isFinite(total)
                         ? total
                         : null,
+
                 onlineUsers:
                     Number.isFinite(online)
                         ? online
@@ -1494,6 +1902,7 @@
                     window.location.replace(
                         "/login"
                     );
+
                     return;
                 }
 
@@ -1508,16 +1917,22 @@
                     window.location.replace(
                         "/login"
                     );
+
                     return;
                 }
 
-                applyUser(data.user);
+                applyUser(
+                    data.user
+                );
             } catch {
                 const cached =
                     getUserCache();
 
                 if (cached) {
-                    applyUser(cached);
+                    applyUser(
+                        cached
+                    );
+
                     return;
                 }
 
@@ -1561,13 +1976,17 @@
                     return;
                 }
 
-                applyGroup(data.group);
+                applyGroup(
+                    data.group
+                );
             } catch {
                 const cached =
                     getGroupCache();
 
                 if (cached) {
-                    applyGroup(cached);
+                    applyGroup(
+                        cached
+                    );
                 }
             }
         }
@@ -1580,7 +1999,8 @@
         }
 
         async function logout() {
-            logoutBtn.disabled = true;
+            logoutBtn.disabled =
+                true;
 
             try {
                 const response =
@@ -1619,7 +2039,8 @@
                     "Koneksi ke server gagal"
                 );
             } finally {
-                logoutBtn.disabled = false;
+                logoutBtn.disabled =
+                    false;
             }
         }
 
@@ -1630,7 +2051,8 @@
                     userName.textContent.trim() ||
                     "User";
 
-                userAvatar.onerror = null;
+                userAvatar.onerror =
+                    null;
 
                 userAvatar.src =
                     createAvatar(name);
@@ -1644,7 +2066,8 @@
                     communityName.textContent.trim() ||
                     "Community";
 
-                communityAvatar.onerror = null;
+                communityAvatar.onerror =
+                    null;
 
                 communityAvatar.src =
                     createAvatar(name);
@@ -1686,6 +2109,7 @@
 
         restoreCachedUser();
         restoreCachedGroup();
+
         refreshDashboard();
 
         setInterval(
