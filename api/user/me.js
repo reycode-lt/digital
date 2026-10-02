@@ -55,10 +55,8 @@ export default async function handler(req, res) {
                 name: user.name || "",
                 email: user.email || "",
                 whatsapp: user.whatsapp || "",
-                profilePhoto:
-                    user.profilePhoto || "",
-                profileBackground:
-                    user.profileBackground || "",
+                avatarUrl: user.avatarUrl || "",
+                coverUrl: user.coverUrl || "",
                 emailVerified:
                     user.emailVerified === true,
                 phoneVerified:
