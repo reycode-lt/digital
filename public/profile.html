@@ -350,9 +350,30 @@
 
         .profile-name{
             margin:0;
+            display:flex;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:7px;
             font-size:29px;
             font-weight:850;
             letter-spacing:-1px;
+        }
+
+        .verified-badge{
+            width:20px;
+            height:20px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 auto;
+            color:#2196f3;
+            filter:drop-shadow(0 2px 6px rgba(33,150,243,.35));
+        }
+
+        .verified-badge svg{
+            width:100%;
+            height:100%;
+            display:block;
         }
 
         .profile-email{
@@ -739,6 +760,11 @@
                 font-size:25px;
             }
 
+            .verified-badge{
+                width:18px;
+                height:18px;
+            }
+
             .fields{
                 grid-template-columns:1fr;
             }
@@ -921,11 +947,34 @@
                     accept="image/jpeg,image/png,image/webp,image/gif"
                 >
 
-                <h1
-                    id="name"
-                    class="profile-name"
-                >
-                    ReyCode
+                <h1 class="profile-name">
+
+                    <span id="name">
+                        ReyCode
+                    </span>
+
+                    <span
+                        id="verifiedBadge"
+                        class="verified-badge"
+                        title="Verified"
+                        style="display:none;"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
+                            />
+
+                            <path
+                                fill="#fff"
+                                d="M10.3 15.8L6.8 12.3l1.4-1.4 2.1 2.1 5.5-5.5 1.4 1.4z"
+                            />
+                        </svg>
+                    </span>
+
                 </h1>
 
                 <p
@@ -1170,6 +1219,11 @@ const uploadStatus =
         "uploadStatus"
     );
 
+const verifiedBadge =
+    document.getElementById(
+        "verifiedBadge"
+    );
+
 let currentUser = null;
 
 function normalizePhone(phone){
@@ -1386,6 +1440,11 @@ function renderUser(user){
 
     const whatsapp =
         user.whatsapp || "";
+
+    verifiedBadge.style.display =
+        user.emailVerified === true
+            ? "inline-flex"
+            : "none";
 
     renderAvatar(user);
     renderCover(user);
