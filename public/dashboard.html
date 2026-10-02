@@ -1,1762 +1,1079 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="ReyCode Digital Dashboard">
-  <title>Dashboard • ReyCode Digital</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg: #050b14;
-      --bg-soft: #08111f;
-      --card: rgba(10, 21, 37, .78);
-      --card-strong: rgba(12, 26, 45, .94);
-      --line: rgba(148, 163, 184, .12);
-      --line-bright: rgba(96, 165, 250, .24);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --blue: #3b82f6;
-      --blue-light: #60a5fa;
-      --cyan: #22d3ee;
-      --green: #34d399;
-      --red: #fb7185;
-      --yellow: #fbbf24;
-      --shadow: 0 24px 70px rgba(0, 0, 0, .34);
-      --radius: 24px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 8% 0%, rgba(37, 99, 235, .17), transparent 30%),
-        radial-gradient(circle at 95% 10%, rgba(6, 182, 212, .10), transparent 26%),
-        linear-gradient(180deg, #050b14 0%, #07101c 45%, #050a12 100%);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
-      background-size: 50px 50px;
-      mask-image: linear-gradient(to bottom, black, transparent 85%);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font: inherit;
-    }
-
-    .page {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 16px 0;
-      background: rgba(5, 11, 20, .72);
-      border-bottom: 1px solid rgba(148, 163, 184, .08);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-    }
-
-    .nav-inner {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      min-width: 0;
-    }
-
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 10px 28px rgba(37, 99, 235, .2);
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand-name {
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: -.02em;
-    }
-
-    .brand-sub {
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .nav-btn {
-      min-height: 40px;
-      padding: 0 15px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255,255,255,.035);
-      color: #dbeafe;
-      font-size: 12px;
-      font-weight: 700;
-      transition: .2s ease;
-      cursor: pointer;
-    }
-
-    .nav-btn:hover {
-      border-color: var(--line-bright);
-      background: rgba(59,130,246,.09);
-      transform: translateY(-1px);
-    }
-
-    .logout-btn:hover {
-      border-color: rgba(251,113,133,.25);
-      background: rgba(251,113,133,.07);
-      color: #fecdd3;
-    }
-
-    .hero {
-      padding: 28px 0 18px;
-    }
-
-    .banner {
-      position: relative;
-      height: 230px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      background: #07111f;
-      box-shadow: var(--shadow);
-    }
-
-    .banner video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      opacity: .9;
-    }
-
-    .banner::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(5,11,20,.05), rgba(5,11,20,.25)),
-        linear-gradient(90deg, rgba(5,11,20,.08), transparent 50%, rgba(5,11,20,.12));
-      pointer-events: none;
-    }
-
-    .welcome-card {
-      position: relative;
-      margin-top: 18px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(96,165,250,.15);
-      border-radius: var(--radius);
-      background:
-        radial-gradient(circle at 0% 50%, rgba(59,130,246,.12), transparent 34%),
-        linear-gradient(135deg, rgba(12,26,45,.96), rgba(8,17,31,.9));
-      box-shadow: var(--shadow);
-    }
-
-    .welcome-card::before {
-      content: "";
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      right: -80px;
-      top: -100px;
-      border-radius: 50%;
-      background: rgba(34,211,238,.07);
-      filter: blur(5px);
-      pointer-events: none;
-    }
-
-    .avatar-wrap {
-      position: relative;
-      flex: 0 0 auto;
-    }
-
-    .welcome-avatar {
-      width: 72px;
-      height: 72px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      border: 2px solid rgba(96,165,250,.42);
-      border-radius: 22px;
-      background: linear-gradient(135deg, #1d4ed8, #0891b2);
-      color: white;
-      font-size: 25px;
-      font-weight: 800;
-      box-shadow: 0 12px 35px rgba(37,99,235,.25);
-    }
-
-    .welcome-avatar.has-image {
-      background: #0f172a;
-    }
-
-    .welcome-avatar img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .online-dot {
-      position: absolute;
-      right: -3px;
-      bottom: -3px;
-      width: 17px;
-      height: 17px;
-      border: 3px solid #0b1728;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(52,211,153,.08);
-    }
-
-    .welcome-copy {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .welcome-kicker {
-      margin-bottom: 5px;
-      color: #60a5fa;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .welcome-copy h1 {
-      font-size: clamp(21px, 4vw, 29px);
-      line-height: 1.2;
-      letter-spacing: -.04em;
-    }
-
-    .welcome-copy h1 span {
-      color: #93c5fd;
-    }
-
-    .welcome-copy p {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .datetime-box {
-      flex: 0 0 auto;
-      min-width: 175px;
-      padding: 13px 16px;
-      border: 1px solid rgba(96,165,250,.14);
-      border-radius: 16px;
-      background: rgba(255,255,255,.025);
-      text-align: right;
-    }
-
-    .clock {
-      color: #dbeafe;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -.03em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .date-info {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 600;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: 0 18px 50px rgba(0,0,0,.2);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .action-card {
-      position: relative;
-      min-height: 125px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      overflow: hidden;
-      color: inherit;
-      text-align: left;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .action-card::after {
-      content: "";
-      position: absolute;
-      width: 130px;
-      height: 130px;
-      right: -65px;
-      bottom: -70px;
-      border-radius: 50%;
-      background: rgba(59,130,246,.07);
-      pointer-events: none;
-    }
-
-    .action-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--line-bright);
-      background: rgba(13,29,49,.9);
-      box-shadow: 0 18px 45px rgba(0,0,0,.24);
-    }
-
-    .action-icon {
-      width: 52px;
-      height: 52px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      border-radius: 16px;
-    }
-
-    .action-icon svg {
-      width: 25px;
-      height: 25px;
-      stroke: currentColor;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .profile-icon {
-      border: 1px solid rgba(96,165,250,.18);
-      background: rgba(59,130,246,.1);
-      color: #93c5fd;
-    }
-
-    .logout-icon {
-      border: 1px solid rgba(251,113,133,.18);
-      background: rgba(251,113,133,.08);
-      color: #fda4af;
-    }
-
-    .action-content {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .action-title {
-      color: #64748b;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .action-name {
-      margin-top: 4px;
-      color: #f8fafc;
-      font-size: 14px;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .action-desc {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 9px;
-      line-height: 1.5;
-    }
-
-    .action-arrow {
-      flex: 0 0 auto;
-      color: #64748b;
-      font-size: 19px;
-      transition: .2s ease;
-    }
-
-    .action-card:hover .action-arrow {
-      color: #93c5fd;
-      transform: translateX(3px);
-    }
-
-    .logout-card {
-      width: 100%;
-      font-family: inherit;
-    }
-
-    .logout-card:hover {
-      border-color: rgba(251,113,133,.25);
-      background: rgba(50,20,30,.48);
-    }
-
-    .logout-card:hover .action-arrow {
-      color: #fda4af;
-    }
-
-    .section {
-      margin-top: 22px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: -.025em;
-    }
-
-    .section-desc {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .section-link {
-      color: #60a5fa;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 11px;
-    }
-
-    .quick-card {
-      position: relative;
-      min-height: 120px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(10,21,37,.7);
-      transition: .2s ease;
-      overflow: hidden;
-    }
-
-    .quick-card::after {
-      content: "";
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      right: -35px;
-      bottom: -40px;
-      border-radius: 50%;
-      background: rgba(59,130,246,.08);
-    }
-
-    .quick-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--line-bright);
-      background: rgba(13,29,49,.88);
-      box-shadow: 0 15px 35px rgba(0,0,0,.22);
-    }
-
-    .quick-icon {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(96,165,250,.13);
-      border-radius: 12px;
-      background: rgba(59,130,246,.08);
-      color: #93c5fd;
-      font-size: 16px;
-    }
-
-    .quick-name {
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .quick-desc {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 9px;
-      line-height: 1.45;
-    }
-
-    .workspace {
-      padding: 20px;
-    }
-
-    .workspace-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(10,21,37,.82), rgba(8,17,31,.65));
-    }
-
-    .workspace-left {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      min-width: 0;
-    }
-
-    .github-icon {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      border-radius: 14px;
-      background: #111827;
-      border: 1px solid rgba(255,255,255,.08);
-      color: white;
-      font-size: 19px;
-    }
-
-    .workspace-name {
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .workspace-desc {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .workspace-btn {
-      flex: 0 0 auto;
-      padding: 10px 14px;
-      border-radius: 11px;
-      background: #f8fafc;
-      color: #0f172a;
-      font-size: 10px;
-      font-weight: 800;
-      transition: .2s ease;
-    }
-
-    .workspace-btn:hover {
-      transform: translateY(-1px);
-      background: white;
-    }
-
-    .status-card {
-      padding: 20px;
-    }
-
-    .status-list {
-      display: grid;
-      gap: 9px;
-      margin-top: 14px;
-    }
-
-    .status-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 11px 12px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255,255,255,.02);
-    }
-
-    .status-name {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      color: #cbd5e1;
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(52,211,153,.08);
-    }
-
-    .status-value {
-      color: #6ee7b7;
-      font-size: 9px;
-      font-weight: 800;
-    }
-
-    footer {
-      padding: 32px 0 28px;
-      color: #64748b;
-      text-align: center;
-      font-size: 10px;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      z-index: 200;
-      min-width: 230px;
-      max-width: calc(100% - 32px);
-      padding: 13px 16px;
-      transform: translate(-50%, 120px);
-      opacity: 0;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(10,21,37,.94);
-      color: #e2e8f0;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-      font-size: 11px;
-      font-weight: 700;
-      text-align: center;
-      transition: .3s ease;
-    }
-
-    .toast.show {
-      transform: translate(-50%, 0);
-      opacity: 1;
-    }
-
-    .toast.error {
-      border-color: rgba(251,113,133,.25);
-      color: #fecdd3;
-    }
-
-    @media (max-width: 900px) {
-      .quick-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .page,
-      .nav-inner {
-        width: min(100% - 22px, 1180px);
-      }
-
-      .navbar {
-        padding: 11px 0;
-      }
-
-      .brand-logo {
-        width: 38px;
-        height: 38px;
-      }
-
-      .brand-name {
-        font-size: 12px;
-      }
-
-      .brand-sub {
-        font-size: 9px;
-      }
-
-      .nav-btn {
-        width: 40px;
-        padding: 0;
-        font-size: 0;
-      }
-
-      .nav-btn span {
-        display: none;
-      }
-
-      .hero {
-        padding-top: 16px;
-      }
-
-      .banner {
-        height: 185px;
-        border-radius: 20px;
-      }
-
-      .welcome-card {
-        padding: 15px;
-        gap: 12px;
-        border-radius: 20px;
-      }
-
-      .welcome-avatar {
-        width: 58px;
-        height: 58px;
-        border-radius: 18px;
-        font-size: 20px;
-      }
-
-      .online-dot {
-        width: 14px;
-        height: 14px;
-      }
-
-      .welcome-copy h1 {
-        font-size: 18px;
-      }
-
-      .welcome-copy p {
-        font-size: 10px;
-      }
-
-      .datetime-box {
-        min-width: 108px;
-        padding: 10px;
-      }
-
-      .clock {
-        font-size: 15px;
-      }
-
-      .date-info {
-        font-size: 8px;
-      }
-
-      .main-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-
-      .action-card {
-        min-height: 125px;
-        padding: 14px;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .action-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 13px;
-      }
-
-      .action-icon svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      .action-name {
-        font-size: 11px;
-      }
-
-      .action-desc {
-        font-size: 8px;
-      }
-
-      .action-arrow {
-        position: absolute;
-        right: 12px;
-        top: 13px;
-        font-size: 15px;
-      }
-
-      .quick-grid {
-        gap: 9px;
-      }
-
-      .quick-card {
-        min-height: 112px;
-        padding: 13px;
-      }
-
-      .workspace-card {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .workspace-btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      .section-title {
-        font-size: 14px;
-      }
-    }
-
-    @media (max-width: 500px) {
-      .welcome-card {
-        align-items: flex-start;
-      }
-
-      .datetime-box {
-        position: absolute;
-        right: 15px;
-        bottom: 15px;
-        min-width: 105px;
-      }
-
-      .welcome-copy {
-        padding-right: 110px;
-      }
-
-      .welcome-copy p {
-        max-width: 100%;
-      }
-    }
-
-    @media (max-width: 390px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .action-card {
-        min-height: 100px;
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .action-arrow {
-        position: static;
-        margin-left: auto;
-      }
-
-      .quick-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-card {
-        min-height: 92px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ReyCode Digital</title>
+    <meta name="theme-color" content="#050b18">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #050b18;
+            --bg-soft: #081225;
+            --card: rgba(12, 24, 45, .72);
+            --card-border: rgba(255, 255, 255, .08);
+            --text: #f5f8ff;
+            --muted: #8d9ab0;
+            --blue: #168cff;
+            --blue-2: #4da6ff;
+            --green: #22c55e;
+            --danger: #ef4444;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(22, 140, 255, .12), transparent 28%),
+                radial-gradient(circle at 85% 20%, rgba(0, 102, 255, .08), transparent 25%),
+                var(--bg);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            overflow-x: hidden;
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(5, 11, 24, .78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .nav {
+            width: min(1180px, calc(100% - 32px));
+            height: 74px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+        }
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 11px;
+        }
+
+        .brand-name {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -.3px;
+            white-space: nowrap;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            height: 40px;
+            padding: 0 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .08);
+            background: rgba(255, 255, 255, .035);
+            color: #dce8fb;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(22, 140, 255, .4);
+            background: rgba(22, 140, 255, .08);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #168cff, #0768d9);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(22, 140, 255, .18);
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 50px;
+        }
+
+        .hero {
+            width: 100%;
+            height: 270px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, .07);
+            background: #081225;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, .24);
+        }
+
+        .hero video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                180deg,
+                rgba(5, 11, 24, .02),
+                rgba(5, 11, 24, .12)
+            );
+        }
+
+        .welcome {
+            margin-top: 20px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            background: linear-gradient(
+                145deg,
+                rgba(15, 30, 55, .86),
+                rgba(8, 18, 35, .68)
+            );
+            box-shadow: 0 18px 55px rgba(0, 0, 0, .2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .welcome-left {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            min-width: 0;
+        }
+
+        .avatar {
+            width: 68px;
+            height: 68px;
+            flex: 0 0 68px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #168cff, #0754b8);
+            color: #fff;
+            font-size: 25px;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, .12);
+            box-shadow: 0 10px 30px rgba(22, 140, 255, .18);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .welcome-content {
+            min-width: 0;
+        }
+
+        .welcome-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-greeting {
+            font-size: clamp(21px, 3vw, 29px);
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -.7px;
+            word-break: break-word;
+        }
+
+        .welcome-greeting span.name {
+            color: #fff;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 19px;
+            height: 19px;
+            margin-left: 5px;
+            border-radius: 50%;
+            background: #168cff;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 900;
+            vertical-align: 2px;
+            box-shadow: 0 0 14px rgba(22, 140, 255, .4);
+        }
+
+        .welcome-email {
+            margin-top: 7px;
+            color: #91a0b8;
+            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 460px;
+        }
+
+        .time-box {
+            flex: 0 0 auto;
+            text-align: right;
+        }
+
+        .clock {
+            font-size: clamp(24px, 4vw, 34px);
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -.8px;
+        }
+
+        .date-info {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .action-card {
+            position: relative;
+            min-height: 160px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            background: var(--card);
+            overflow: hidden;
+            transition: .25s ease;
+        }
+
+        .action-card::before {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            right: -60px;
+            top: -65px;
+            border-radius: 50%;
+            background: rgba(22, 140, 255, .08);
+            filter: blur(5px);
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(22, 140, 255, .25);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, .2);
+        }
+
+        .action-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(22, 140, 255, .1);
+            color: #5db0ff;
+            font-size: 20px;
+            margin-bottom: 17px;
+        }
+
+        .action-card h3 {
+            font-size: 17px;
+            margin-bottom: 6px;
+        }
+
+        .action-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .action-arrow {
+            position: absolute;
+            right: 22px;
+            bottom: 20px;
+            color: #6faee8;
+            font-size: 18px;
+        }
+
+        .logout-card {
+            cursor: pointer;
+        }
+
+        .logout-card .action-icon {
+            background: rgba(239, 68, 68, .1);
+            color: #ff6b6b;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.3px;
+        }
+
+        .section-subtitle {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .quick-card {
+            min-height: 125px;
+            padding: 18px;
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            background: rgba(10, 21, 40, .62);
+            transition: .2s ease;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(22, 140, 255, .25);
+            background: rgba(14, 30, 55, .75);
+        }
+
+        .quick-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: rgba(22, 140, 255, .1);
+            color: #62b4ff;
+            margin-bottom: 13px;
+            font-size: 17px;
+        }
+
+        .quick-card h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .quick-card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .workspace {
+            margin-top: 18px;
+            padding: 22px;
+            border-radius: 21px;
+            border: 1px solid var(--card-border);
+            background:
+                linear-gradient(135deg, rgba(18, 42, 74, .7), rgba(7, 17, 33, .72));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .workspace-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .github-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, .07);
+            font-size: 22px;
+        }
+
+        .workspace h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .workspace p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .workspace-link {
+            padding: 10px 15px;
+            border-radius: 11px;
+            background: rgba(22, 140, 255, .1);
+            border: 1px solid rgba(22, 140, 255, .2);
+            color: #65b5ff;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 13px;
+        }
+
+        .status-item {
+            padding: 17px;
+            border-radius: 17px;
+            border: 1px solid var(--card-border);
+            background: rgba(10, 21, 40, .55);
+        }
+
+        .status-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .status-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(34, 197, 94, .5);
+        }
+
+        .status-item p {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        footer {
+            padding: 35px 0 10px;
+            text-align: center;
+            color: #66748a;
+            font-size: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 300;
+            max-width: min(360px, calc(100% - 40px));
+            padding: 13px 16px;
+            border-radius: 13px;
+            background: rgba(13, 25, 45, .95);
+            border: 1px solid rgba(255, 255, 255, .09);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, .3);
+            color: #eaf2ff;
+            font-size: 13px;
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, .25);
+        }
+
+        @media (max-width: 850px) {
+            .quick-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .status {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .nav {
+                height: 66px;
+                width: min(100% - 22px, 1180px);
+            }
+
+            .brand-name {
+                font-size: 15px;
+            }
+
+            .nav-btn {
+                padding: 0 11px;
+                font-size: 12px;
+            }
+
+            .page {
+                width: min(100% - 22px, 1180px);
+                padding-top: 18px;
+            }
+
+            .hero {
+                height: 190px;
+                border-radius: 19px;
+            }
+
+            .welcome {
+                padding: 19px;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .welcome-left {
+                width: 100%;
+            }
+
+            .time-box {
+                width: 100%;
+                text-align: left;
+                padding-left: 84px;
+                margin-top: -8px;
+            }
+
+            .welcome-email {
+                max-width: 100%;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .workspace {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .workspace-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar {
+                width: 58px;
+                height: 58px;
+                flex-basis: 58px;
+                border-radius: 17px;
+            }
+
+            .time-box {
+                padding-left: 75px;
+            }
+
+            .welcome-greeting {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <nav class="navbar">
-    <div class="nav-inner">
+    <header class="topbar">
+        <nav class="nav">
+            <a href="/dashboard" class="brand">
+                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+                <span class="brand-name">ReyCode Digital</span>
+            </a>
 
-      <a href="/" class="brand">
-        <img
-          class="brand-logo"
-          src="https://i.top4top.io/p_3925af3h26.png"
-          alt="ReyCode Digital"
-        >
+            <div class="nav-actions">
+                <a href="/profile" class="nav-btn">
+                    Profil
+                </a>
+                <button class="nav-btn primary" id="logoutTop">
+                    Keluar
+                </button>
+            </div>
+        </nav>
+    </header>
 
-        <div class="brand-text">
-          <div class="brand-name">ReyCode Digital</div>
-          <div class="brand-sub">Digital Workspace</div>
-        </div>
-      </a>
+    <main class="page">
 
-      <div class="nav-actions">
-        <a href="/profile" class="nav-btn">
-          <span>Profil</span>
-          <span>↗</span>
-        </a>
+        <section class="hero">
+            <video
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata">
+                <source src="https://files.catbox.moe/9tcayz.mp4" type="video/mp4">
+            </video>
+        </section>
 
-        <button
-          id="logoutBtn"
-          class="nav-btn logout-btn"
-          type="button"
-        >
-          <span>Keluar</span>
-          <span>↪</span>
-        </button>
-      </div>
+        <section class="welcome">
+            <div class="welcome-left">
+                <div class="avatar" id="welcomeAvatar">U</div>
 
-    </div>
-  </nav>
-
-  <main class="page">
-
-    <section class="hero">
-
-      <div class="banner">
-        <video
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-        >
-          <source
-            src="https://files.catbox.moe/9tcayz.mp4"
-            type="video/mp4"
-          >
-        </video>
-      </div>
-
-      <section class="welcome-card">
-
-        <div class="avatar-wrap">
-          <div
-            id="welcomeAvatar"
-            class="welcome-avatar"
-          >
-            U
-          </div>
-
-          <span class="online-dot"></span>
-        </div>
-
-        <div class="welcome-copy">
-          <div class="welcome-kicker">
-            Dashboard
-          </div>
-
-          <h1 id="welcomeGreeting">
-            Halo,
-            <span id="welcomeName">User</span>
-            👋
-          </h1>
-
-          <p id="welcomeEmail">
-            Memuat informasi akun...
-          </p>
-        </div>
-
-        <div class="datetime-box">
-          <div
-            id="clock"
-            class="clock"
-          >
-            00:00:00
-          </div>
-
-          <div
-            id="dateInfo"
-            class="date-info"
-          >
-            Memuat tanggal...
-          </div>
-        </div>
-
-      </section>
-
-      <div class="main-grid">
-
-        <a
-          href="/profile"
-          class="card action-card"
-        >
-
-          <div class="action-icon profile-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <circle
-                cx="12"
-                cy="8"
-                r="4"
-              ></circle>
-
-              <path
-                d="M4.5 20c.8-3.4 3.3-5.5 7.5-5.5s6.7 2.1 7.5 5.5"
-              ></path>
-            </svg>
-          </div>
-
-          <div class="action-content">
-
-            <div class="action-title">
-              Profil
+                <div class="welcome-content">
+                    <div class="welcome-label">Dashboard kamu</div>
+                    <div class="welcome-greeting" id="welcomeGreeting">
+                        Memuat...
+                    </div>
+                    <div class="welcome-email" id="welcomeEmail">
+                        Memuat data akun...
+                    </div>
+                </div>
             </div>
 
-            <div
-              id="actionProfileName"
-              class="action-name"
-            >
-              Memuat profil...
+            <div class="time-box">
+                <div class="clock" id="clock">00:00:00</div>
+                <div class="date-info" id="dateInfo">Memuat tanggal...</div>
+            </div>
+        </section>
+
+        <section class="main-grid">
+
+            <a href="/profile" class="action-card">
+                <div class="action-icon">◉</div>
+                <h3>Profil Saya</h3>
+                <p>
+                    Kelola informasi akun, foto profil, dan pengaturan akun kamu.
+                </p>
+                <div class="action-arrow">→</div>
+            </a>
+
+            <div class="action-card logout-card" id="logoutCard">
+                <div class="action-icon">↪</div>
+                <h3>Keluar Akun</h3>
+                <p>
+                    Akhiri sesi akun ReyCode Digital dengan aman.
+                </p>
+                <div class="action-arrow">→</div>
             </div>
 
-            <div class="action-desc">
-              Kelola informasi dan foto profil akun kamu.
+        </section>
+
+        <section class="section">
+
+            <div class="section-head">
+                <div>
+                    <div class="section-title">Akses Cepat</div>
+                    <div class="section-subtitle">
+                        Akses fitur utama ReyCode Digital
+                    </div>
+                </div>
             </div>
 
-          </div>
+            <div class="quick-grid">
 
-          <div class="action-arrow">
-            →
-          </div>
+                <a href="/profile" class="quick-card">
+                    <div class="quick-icon">👤</div>
+                    <h4>Profile</h4>
+                    <p>Kelola data akun dan profil.</p>
+                </a>
 
-        </a>
+                <a href="/github" class="quick-card">
+                    <div class="quick-icon">⌘</div>
+                    <h4>GitHub</h4>
+                    <p>Workspace dan integrasi GitHub.</p>
+                </a>
 
-        <button
-          id="logoutCard"
-          class="card action-card logout-card"
-          type="button"
-        >
+                <a href="/deploy" class="quick-card">
+                    <div class="quick-icon">▲</div>
+                    <h4>Deploy</h4>
+                    <p>Kelola proses deployment project.</p>
+                </a>
 
-          <div class="action-icon logout-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path
-                d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10"
-              ></path>
-
-              <path
-                d="M14 8l4 4-4 4"
-              ></path>
-
-              <path
-                d="M18 12H9"
-              ></path>
-            </svg>
-          </div>
-
-          <div class="action-content">
-
-            <div class="action-title">
-              Keluar
-            </div>
-
-            <div class="action-name">
-              Logout dari akun
-            </div>
-
-            <div class="action-desc">
-              Akhiri session akun ReyCode Digital dengan aman.
-            </div>
-
-          </div>
-
-          <div class="action-arrow">
-            →
-          </div>
-
-        </button>
-
-      </div>
-
-    </section>
-
-    <section class="section">
-
-      <div class="section-head">
-
-        <div>
-          <div class="section-title">
-            Akses Cepat
-          </div>
-
-          <div class="section-desc">
-            Akses layanan yang sering kamu gunakan.
-          </div>
-        </div>
-
-      </div>
-
-      <div class="quick-grid">
-
-        <a
-          href="/profile"
-          class="quick-card"
-        >
-
-          <div class="quick-icon">
-            👤
-          </div>
-
-          <div>
-            <div class="quick-name">
-              Profil Saya
-            </div>
-
-            <div class="quick-desc">
-              Kelola informasi akun dan foto profil.
-            </div>
-          </div>
-
-        </a>
-
-        <a
-          href="/github"
-          class="quick-card"
-        >
-
-          <div class="quick-icon">
-            ⌘
-          </div>
-
-          <div>
-            <div class="quick-name">
-              GitHub Workspace
-            </div>
-
-            <div class="quick-desc">
-              Kelola workspace dan repository.
-            </div>
-          </div>
-
-        </a>
-
-        <a
-          href="/deploy"
-          class="quick-card"
-        >
-
-          <div class="quick-icon">
-            ▲
-          </div>
-
-          <div>
-            <div class="quick-name">
-              Deployment
-            </div>
-
-            <div class="quick-desc">
-              Deploy project digital kamu dengan mudah.
-            </div>
-          </div>
-
-        </a>
-
-        <a
-          href="/alightmotion"
-          class="quick-card"
-        >
-
-          <div class="quick-icon">
-            ✦
-          </div>
-
-          <div>
-            <div class="quick-name">
-              Alight Motion
-            </div>
-
-            <div class="quick-desc">
-              Akses layanan Alight Motion kamu.
-            </div>
-          </div>
-
-        </a>
-
-      </div>
-
-    </section>
-
-    <section class="section">
-
-      <div class="card workspace">
-
-        <div class="section-head">
-
-          <div>
-            <div class="section-title">
-              GitHub Workspace
-            </div>
-
-            <div class="section-desc">
-              Hubungkan dan kelola project GitHub kamu.
-            </div>
-          </div>
-
-          <a
-            href="/github"
-            class="section-link"
-          >
-            Buka Workspace →
-          </a>
-
-        </div>
-
-        <div class="workspace-card">
-
-          <div class="workspace-left">
-
-            <div class="github-icon">
-              ⌘
-            </div>
-
-            <div>
-
-              <div class="workspace-name">
-                GitHub Integration
-              </div>
-
-              <div class="workspace-desc">
-                Repository dan project dalam satu workspace.
-              </div>
+                <a href="/alightmotion" class="quick-card">
+                    <div class="quick-icon">✦</div>
+                    <h4>Alight Motion</h4>
+                    <p>Akses fitur Alight Motion.</p>
+                </a>
 
             </div>
 
-          </div>
+        </section>
 
-          <a
-            href="/github"
-            class="workspace-btn"
-          >
-            Buka GitHub
-          </a>
+        <section class="workspace">
 
-        </div>
+            <div class="workspace-left">
+                <div class="github-icon">⌘</div>
 
-      </div>
-
-    </section>
-
-    <section class="section">
-
-      <div class="card status-card">
-
-        <div class="section-title">
-          Status Platform
-        </div>
-
-        <div class="section-desc">
-          Informasi singkat mengenai layanan ReyCode Digital.
-        </div>
-
-        <div class="status-list">
-
-          <div class="status-row">
-
-            <div class="status-name">
-              <span class="status-dot"></span>
-              Website
+                <div>
+                    <h3>GitHub Workspace</h3>
+                    <p>Kelola repository dan workflow GitHub kamu.</p>
+                </div>
             </div>
 
-            <div class="status-value">
-              Online
+            <a href="/github" class="workspace-link">
+                Buka Workspace
+            </a>
+
+        </section>
+
+        <section class="status">
+
+            <div class="status-item">
+                <div class="status-top">
+                    <span class="status-name">Website</span>
+                    <span class="status-dot"></span>
+                </div>
+                <p>Operational</p>
             </div>
 
-          </div>
-
-          <div class="status-row">
-
-            <div class="status-name">
-              <span class="status-dot"></span>
-              API
+            <div class="status-item">
+                <div class="status-top">
+                    <span class="status-name">API</span>
+                    <span class="status-dot"></span>
+                </div>
+                <p>Operational</p>
             </div>
 
-            <div class="status-value">
-              Online
+            <div class="status-item">
+                <div class="status-top">
+                    <span class="status-name">Dashboard</span>
+                    <span class="status-dot"></span>
+                </div>
+                <p>Operational</p>
             </div>
 
-          </div>
+        </section>
 
-          <div class="status-row">
+        <footer>
+            © <span id="year"></span> ReyCode Digital. All rights reserved.
+        </footer>
 
-            <div class="status-name">
-              <span class="status-dot"></span>
-              Account Service
-            </div>
+    </main>
 
-            <div class="status-value">
-              Online
-            </div>
+    <div class="toast" id="toast"></div>
 
-          </div>
+    <script>
+        const $ = id => document.getElementById(id);
 
-        </div>
+        let currentUserName = "User";
+        let toastTimer = null;
 
-      </div>
-
-    </section>
-
-    <footer>
-      ©
-      <span id="year"></span>
-      ReyCode Digital. All rights reserved.
-    </footer>
-
-  </main>
-
-  <div
-    id="toast"
-    class="toast"
-  ></div>
-
-  <script>
-    const $ = id => document.getElementById(id);
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function getGreeting() {
-      const hour = new Date().getHours();
-
-      if (hour >= 4 && hour < 11) {
-        return "Selamat pagi";
-      }
-
-      if (hour >= 11 && hour < 15) {
-        return "Selamat siang";
-      }
-
-      if (hour >= 15 && hour < 18) {
-        return "Selamat sore";
-      }
-
-      return "Selamat malam";
-    }
-
-    function formatDate(value) {
-      if (!value) {
-        return "-";
-      }
-
-      const date = new Date(value);
-
-      if (Number.isNaN(date.getTime())) {
-        return "-";
-      }
-
-      return new Intl.DateTimeFormat("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-      }).format(date);
-    }
-
-    function setAvatar(element, name, avatarUrl) {
-      if (!element) {
-        return;
-      }
-
-      const initial =
-        String(name || "User")
-          .trim()
-          .charAt(0)
-          .toUpperCase() || "U";
-
-      element.classList.remove("has-image");
-      element.innerHTML = "";
-
-      if (avatarUrl) {
-        const image = document.createElement("img");
-
-        image.src = avatarUrl;
-        image.alt = name || "User";
-        image.loading = "eager";
-        image.decoding = "async";
-
-        image.onerror = () => {
-          element.classList.remove("has-image");
-          element.textContent = initial;
-        };
-
-        element.classList.add("has-image");
-        element.appendChild(image);
-      } else {
-        element.textContent = initial;
-      }
-    }
-
-    function showToast(message, type = "") {
-      const toast = $("toast");
-
-      if (!toast) {
-        return;
-      }
-
-      toast.textContent = message;
-      toast.className = "toast";
-
-      if (type) {
-        toast.classList.add(type);
-      }
-
-      requestAnimationFrame(() => {
-        toast.classList.add("show");
-      });
-
-      clearTimeout(window.toastTimer);
-
-      window.toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3500);
-    }
-
-    function updateClock() {
-      const now = new Date();
-
-      const time = new Intl.DateTimeFormat("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false
-      }).format(now);
-
-      const date = new Intl.DateTimeFormat("id-ID", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-      }).format(now);
-
-      const clock = $("clock");
-      const dateInfo = $("dateInfo");
-
-      if (clock) {
-        clock.textContent = time;
-      }
-
-      if (dateInfo) {
-        dateInfo.textContent = date;
-      }
-
-      const name =
-        $("welcomeName")?.textContent || "User";
-
-      const greeting = $("welcomeGreeting");
-
-      if (greeting) {
-        greeting.innerHTML =
-          `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
-      }
-    }
-
-    function updateGreeting(user) {
-      const name = user?.name || "User";
-      const email = user?.email || "";
-
-      const greeting = $("welcomeGreeting");
-
-      if (greeting) {
-        greeting.innerHTML =
-          `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
-      }
-
-      const welcomeName = $("welcomeName");
-
-      if (welcomeName) {
-        welcomeName.textContent = name;
-      }
-
-      const welcomeEmail = $("welcomeEmail");
-
-      if (welcomeEmail) {
-        welcomeEmail.textContent =
-          email || "Selamat datang kembali di ReyCode Digital";
-      }
-
-      setAvatar(
-        $("welcomeAvatar"),
-        name,
-        user?.avatarUrl || ""
-      );
-
-      const miniAvatar = $("miniAvatar");
-
-      if (miniAvatar) {
-        setAvatar(
-          miniAvatar,
-          name,
-          user?.avatarUrl || ""
-        );
-      }
-
-      const profileName = $("profileName");
-
-      if (profileName) {
-        profileName.textContent = name;
-      }
-
-      const profileEmail = $("profileEmail");
-
-      if (profileEmail) {
-        profileEmail.textContent = email || "-";
-      }
-
-      const actionProfileName = $("actionProfileName");
-
-      if (actionProfileName) {
-        actionProfileName.textContent = name;
-      }
-
-      const verified = $("verified");
-      const accountStatus = $("accountStatus");
-
-      if (user?.emailVerified === true) {
-        if (verified) {
-          verified.textContent = "✓ Terverifikasi";
-          verified.style.color = "#6ee7b7";
-          verified.style.borderColor = "rgba(52,211,153,.16)";
-          verified.style.background = "rgba(52,211,153,.07)";
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
-        if (accountStatus) {
-          accountStatus.textContent = "Aktif & Terverifikasi";
-        }
-      } else {
-        if (verified) {
-          verified.textContent = "Belum Verifikasi";
-          verified.style.color = "#fbbf24";
-          verified.style.borderColor = "rgba(251,191,36,.16)";
-          verified.style.background = "rgba(251,191,36,.07)";
-        }
+        function getGreeting() {
+            const hour = new Date().getHours();
 
-        if (accountStatus) {
-          accountStatus.textContent = "Aktif";
-        }
-      }
-
-      const memberSince = $("memberSince");
-
-      if (memberSince) {
-        memberSince.textContent =
-          formatDate(user?.createdAt);
-      }
-    }
-
-    async function loadUser() {
-      try {
-        const response = await fetch(
-          `/api/user/me?_=${Date.now()}`,
-          {
-            method: "GET",
-            credentials: "include",
-            cache: "no-store",
-            headers: {
-              Accept: "application/json"
+            if (hour >= 5 && hour < 11) {
+                return "Selamat pagi";
             }
-          }
+
+            if (hour >= 11 && hour < 15) {
+                return "Selamat siang";
+            }
+
+            if (hour >= 15 && hour < 18) {
+                return "Selamat sore";
+            }
+
+            return "Selamat malam";
+        }
+
+        function formatDate(date) {
+            return new Intl.DateTimeFormat("id-ID", {
+                weekday: "long",
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }).format(date);
+        }
+
+        function setAvatar(user) {
+            const avatar = $("welcomeAvatar");
+
+            if (!avatar) {
+                return;
+            }
+
+            const name =
+                user?.name ||
+                user?.username ||
+                user?.displayName ||
+                user?.fullName ||
+                "User";
+
+            const avatarUrl = user?.avatarUrl || "";
+
+            if (avatarUrl) {
+                avatar.innerHTML = `
+                    <img
+                        src="${escapeHtml(avatarUrl)}"
+                        alt="${escapeHtml(name)}"
+                        onerror="this.parentElement.textContent='${escapeHtml(name.charAt(0).toUpperCase())}'"
+                    >
+                `;
+                return;
+            }
+
+            avatar.textContent = name
+                .charAt(0)
+                .toUpperCase();
+        }
+
+        function updateGreeting(user) {
+            const name =
+                user?.name ||
+                user?.username ||
+                user?.displayName ||
+                user?.fullName ||
+                "User";
+
+            currentUserName = name;
+
+            const verified =
+                user?.emailVerified === true
+                    ? `<span class="verified-badge" title="Akun terverifikasi">✓</span>`
+                    : "";
+
+            const greeting = $("welcomeGreeting");
+
+            if (greeting) {
+                greeting.innerHTML = `
+                    ${getGreeting()},
+                    <span class="name">${escapeHtml(name)}</span>
+                    ${verified}
+                `;
+            }
+
+            const email = $("welcomeEmail");
+
+            if (email) {
+                email.textContent =
+                    user?.email ||
+                    "Email tidak tersedia";
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+
+            const clock = $("clock");
+
+            if (clock) {
+                clock.textContent =
+                    now.toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    });
+            }
+
+            const dateInfo = $("dateInfo");
+
+            if (dateInfo) {
+                dateInfo.textContent = formatDate(now);
+            }
+        }
+
+        function showToast(message, error = false) {
+            const toast = $("toast");
+
+            if (!toast) {
+                return;
+            }
+
+            clearTimeout(toastTimer);
+
+            toast.textContent = message;
+            toast.classList.toggle("error", error);
+            toast.classList.add("show");
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        async function loadUser() {
+            try {
+                const response = await fetch("/api/user/me", {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                const raw = await response.text();
+
+                let data;
+
+                try {
+                    data = JSON.parse(raw);
+                } catch {
+                    throw new Error("Response API bukan JSON");
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        data?.message ||
+                        "Gagal mengambil data akun"
+                    );
+                }
+
+                const user = data?.user || data;
+
+                if (!user) {
+                    throw new Error("Data user tidak ditemukan");
+                }
+
+                updateGreeting(user);
+                setAvatar(user);
+
+            } catch (error) {
+                console.error("LOAD USER ERROR:", error);
+
+                const greeting = $("welcomeGreeting");
+
+                if (greeting) {
+                    greeting.innerHTML = `
+                        ${getGreeting()},
+                        <span class="name">User</span>
+                    `;
+                }
+
+                const email = $("welcomeEmail");
+
+                if (email) {
+                    email.textContent =
+                        "Data akun tidak dapat dimuat";
+                }
+
+                showToast(
+                    error?.message ||
+                    "Gagal memuat data akun",
+                    true
+                );
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch(
+                    "/api/auth/logout",
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Logout gagal");
+                }
+
+                window.location.href = "/login";
+
+            } catch (error) {
+                console.error("LOGOUT ERROR:", error);
+                showToast(
+                    "Gagal keluar dari akun",
+                    true
+                );
+            }
+        }
+
+        $("logoutTop")?.addEventListener(
+            "click",
+            logout
         );
 
-        const rawText = await response.text();
-
-        let data;
-
-        try {
-          data = JSON.parse(rawText);
-        } catch {
-          throw new Error(
-            `API /api/user/me mengembalikan response tidak valid (${response.status})`
-          );
-        }
-
-        console.log(
-          "ME API STATUS:",
-          response.status
+        $("logoutCard")?.addEventListener(
+            "click",
+            logout
         );
 
-        console.log(
-          "ME API RESPONSE:",
-          data
-        );
+        $("year").textContent =
+            new Date().getFullYear();
 
-        if (!response.ok) {
-          throw new Error(
-            data.message ||
-            `Gagal mengambil data akun (${response.status})`
-          );
-        }
+        updateClock();
+        setInterval(updateClock, 1000);
 
-        const user = data.user || data;
-
-        if (!user || !user.name) {
-          throw new Error(
-            "Data user dari API tidak lengkap"
-          );
-        }
-
-        updateGreeting(user);
-
-      } catch (error) {
-        console.error(
-          "LOAD USER ERROR:",
-          error
-        );
-
-        showToast(
-          error.message ||
-          "Gagal memuat data akun",
-          "error"
-        );
-
-        const welcomeEmail = $("welcomeEmail");
-        const profileName = $("profileName");
-        const profileEmail = $("profileEmail");
-        const accountStatus = $("accountStatus");
-        const memberSince = $("memberSince");
-        const actionProfileName = $("actionProfileName");
-
-        if (welcomeEmail) {
-          welcomeEmail.textContent =
-            error.message ||
-            "Gagal mengambil informasi akun";
-        }
-
-        if (profileName) {
-          profileName.textContent =
-            "Data akun gagal dimuat";
-        }
-
-        if (profileEmail) {
-          profileEmail.textContent =
-            "Periksa koneksi session akun";
-        }
-
-        if (actionProfileName) {
-          actionProfileName.textContent =
-            "Data akun tidak tersedia";
-        }
-
-        if (accountStatus) {
-          accountStatus.textContent =
-            "Gagal memuat";
-        }
-
-        if (memberSince) {
-          memberSince.textContent = "-";
-        }
-      }
-    }
-
-    async function logout() {
-      const buttons = [
-        $("logoutBtn"),
-        $("logoutCard")
-      ];
-
-      buttons.forEach(button => {
-        if (button) {
-          button.disabled = true;
-          button.style.opacity = ".6";
-        }
-      });
-
-      try {
-        const response = await fetch(
-          "/api/auth/logout",
-          {
-            method: "POST",
-            credentials: "include",
-            cache: "no-store"
-          }
-        );
-
-        if (!response.ok) {
-          console.error(
-            "LOGOUT STATUS:",
-            response.status
-          );
-        }
-      } catch (error) {
-        console.error(
-          "LOGOUT ERROR:",
-          error
-        );
-      }
-
-      window.location.href = "/login";
-    }
-
-    const logoutButton = $("logoutBtn");
-
-    if (logoutButton) {
-      logoutButton.addEventListener(
-        "click",
-        logout
-      );
-    }
-
-    const logoutCard = $("logoutCard");
-
-    if (logoutCard) {
-      logoutCard.addEventListener(
-        "click",
-        logout
-      );
-    }
-
-    const year = $("year");
-
-    if (year) {
-      year.textContent =
-        new Date().getFullYear();
-    }
-
-    updateClock();
-
-    setInterval(
-      updateClock,
-      1000
-    );
-
-    loadUser();
-  </script>
+        loadUser();
+    </script>
 
 </body>
-  </html>
+</html>
