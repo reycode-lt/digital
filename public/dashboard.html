@@ -84,6 +84,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0;
         }
 
         .brand img {
@@ -92,12 +93,14 @@
             border-radius: 12px;
             object-fit: cover;
             box-shadow: 0 8px 30px rgba(22, 140, 255, .18);
+            flex: 0 0 auto;
         }
 
         .brand-text {
             display: flex;
             flex-direction: column;
             gap: 2px;
+            min-width: 0;
         }
 
         .brand-text strong {
@@ -141,6 +144,12 @@
             color: #fff;
             border-color: rgba(255, 91, 110, .3);
             background: rgba(255, 91, 110, .08);
+        }
+
+        .nav-btn:disabled {
+            opacity: .6;
+            cursor: wait;
+            transform: none;
         }
 
         .hero {
@@ -328,6 +337,7 @@
 
         .profile-info {
             min-width: 0;
+            flex: 1;
         }
 
         .greeting {
@@ -344,6 +354,12 @@
             font-size: 21px;
             font-weight: 750;
             letter-spacing: -.5px;
+            min-width: 0;
+        }
+
+        .profile-name #userName {
+            max-width: 100%;
+            overflow-wrap: anywhere;
         }
 
         .email {
@@ -465,6 +481,7 @@
             margin-top: 6px;
             font-size: 20px;
             letter-spacing: -.5px;
+            overflow-wrap: anywhere;
         }
 
         .community-icon {
@@ -474,6 +491,7 @@
             overflow: hidden;
             border: 1px solid rgba(255,255,255,.1);
             flex: 0 0 auto;
+            background: #111722;
         }
 
         .community-icon img {
@@ -874,6 +892,10 @@
             .community-stats {
                 flex-direction: column;
             }
+
+            .community-title {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -882,7 +904,8 @@
     <div class="page">
         <header class="topbar">
             <a class="brand" href="/dashboard">
-                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode" id="brandLogo">
+
                 <div class="brand-text">
                     <strong>ReyCode Digital</strong>
                     <span>Digital workspace</span>
@@ -957,26 +980,43 @@
                     </div>
 
                     <div class="profile-info">
-                        <div class="greeting" id="greeting">Selamat datang kembali</div>
+                        <div class="greeting" id="greeting">
+                            Selamat datang kembali
+                        </div>
 
                         <div class="profile-name">
                             <span id="userName">Memuat...</span>
 
-                            <span class="verified-badge" id="verifiedBadge" hidden title="Email terverifikasi">
+                            <span
+                                class="verified-badge"
+                                id="verifiedBadge"
+                                hidden
+                                title="Email terverifikasi"
+                            >
                                 <svg viewBox="0 0 24 24">
                                     <path d="M5 12.5 9.2 17 19 7"></path>
                                 </svg>
                             </span>
                         </div>
 
-                        <div class="email" id="userEmail">Memuat informasi akun...</div>
+                        <div class="email" id="userEmail">
+                            Memuat informasi akun...
+                        </div>
                     </div>
                 </div>
 
                 <div class="panel clock-panel">
-                    <span class="clock-label">Waktu sekarang</span>
-                    <div class="clock" id="clock">00:00:00</div>
-                    <div class="date" id="date">Memuat tanggal...</div>
+                    <span class="clock-label">
+                        Waktu sekarang
+                    </span>
+
+                    <div class="clock" id="clock">
+                        00:00:00
+                    </div>
+
+                    <div class="date" id="date">
+                        Memuat tanggal...
+                    </div>
                 </div>
             </section>
 
@@ -984,12 +1024,24 @@
                 <div class="panel community">
                     <div class="community-head">
                         <div>
-                            <div class="eyebrow">Community</div>
-                            <h2 class="community-title">MonikaLabs Comunity</h2>
+                            <div class="eyebrow">
+                                Community
+                            </div>
+
+                            <h2
+                                class="community-title"
+                                id="communityName"
+                            >
+                                Memuat komunitas...
+                            </h2>
                         </div>
 
                         <div class="community-icon">
-                            <img src="https://k.top4top.io/p_392741enr1.png" alt="MonikaLabs Comunity">
+                            <img
+                                id="communityAvatar"
+                                src="https://k.top4top.io/p_392741enr1.png"
+                                alt="Community"
+                            >
                         </div>
                     </div>
 
@@ -1020,6 +1072,7 @@
 
                         <a href="/chat" class="open-chat">
                             Masuk ke Chat
+
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M5 12h14"></path>
                                 <path d="m13 6 6 6-6 6"></path>
@@ -1044,6 +1097,7 @@
                                 <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.2-.4 6.5-1.6 6.5-7A5.5 5.5 0 0 0 19 3.7 5.1 5.1 0 0 0 18.9 0S17.7-.4 15 1.3a13.4 13.4 0 0 0-6 0C6.3-.4 5.1 0 5.1 0A5.1 5.1 0 0 0 5 3.7a5.5 5.5 0 0 0-1.5 3.8c0 5.4 3.3 6.6 6.5 7A4.8 4.8 0 0 0 9 18v4"></path>
                             </svg>
                         </div>
+
                         <div>
                             <strong>GitHub</strong>
                             <span>Kelola workspace</span>
@@ -1058,6 +1112,7 @@
                                 <path d="m16 7-8 10"></path>
                             </svg>
                         </div>
+
                         <div>
                             <strong>Deploy</strong>
                             <span>Deploy project kamu</span>
@@ -1074,6 +1129,7 @@
                                 <circle cx="8" cy="17" r="2"></circle>
                             </svg>
                         </div>
+
                         <div>
                             <strong>Alight Motion</strong>
                             <span>Akses layanan</span>
@@ -1087,6 +1143,7 @@
                                 <path d="M4 21c1.5-4 4.1-6 8-6s6.5 2 8 6"></path>
                             </svg>
                         </div>
+
                         <div>
                             <strong>Profil</strong>
                             <span>Kelola akun kamu</span>
@@ -1107,34 +1164,61 @@
                     <div class="status-card">
                         <div class="status-left">
                             <span class="status-dot"></span>
+
                             <div>
-                                <div class="status-name">Website</div>
-                                <div class="status-desc">ReyCode Digital</div>
+                                <div class="status-name">
+                                    Website
+                                </div>
+
+                                <div class="status-desc">
+                                    ReyCode Digital
+                                </div>
                             </div>
                         </div>
-                        <span class="status-state">Online</span>
+
+                        <span class="status-state">
+                            Online
+                        </span>
                     </div>
 
                     <div class="status-card">
                         <div class="status-left">
                             <span class="status-dot"></span>
+
                             <div>
-                                <div class="status-name">API</div>
-                                <div class="status-desc">Authentication & services</div>
+                                <div class="status-name">
+                                    API
+                                </div>
+
+                                <div class="status-desc">
+                                    Authentication & services
+                                </div>
                             </div>
                         </div>
-                        <span class="status-state">Online</span>
+
+                        <span class="status-state">
+                            Online
+                        </span>
                     </div>
 
                     <div class="status-card">
                         <div class="status-left">
                             <span class="status-dot"></span>
+
                             <div>
-                                <div class="status-name">Dashboard</div>
-                                <div class="status-desc">User workspace</div>
+                                <div class="status-name">
+                                    Dashboard
+                                </div>
+
+                                <div class="status-desc">
+                                    User workspace
+                                </div>
                             </div>
                         </div>
-                        <span class="status-state">Online</span>
+
+                        <span class="status-state">
+                            Online
+                        </span>
                     </div>
                 </div>
             </section>
@@ -1159,6 +1243,15 @@
         const onlineUsers = document.getElementById("onlineUsers");
         const logoutBtn = document.getElementById("logoutBtn");
         const toast = document.getElementById("toast");
+        const communityName = document.getElementById("communityName");
+        const communityAvatar = document.getElementById("communityAvatar");
+
+        const USER_CACHE_KEY = "reycode_dashboard_user_v3";
+        const GROUP_CACHE_KEY = "reycode_dashboard_group_v3";
+
+        let toastTimer = null;
+        let userLoaded = false;
+        let groupLoaded = false;
 
         document.getElementById("year").textContent =
             new Date().getFullYear();
@@ -1167,7 +1260,9 @@
             toast.textContent = message;
             toast.classList.add("show");
 
-            setTimeout(() => {
+            clearTimeout(toastTimer);
+
+            toastTimer = setTimeout(() => {
                 toast.classList.remove("show");
             }, 2800);
         }
@@ -1211,140 +1306,478 @@
             greeting.textContent = getGreeting();
         }
 
+        function createAvatar(name) {
+            return (
+                "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(name || "User") +
+                "&background=168cff&color=ffffff&bold=true"
+            );
+        }
+
         function setAvatar(url, name) {
-            if (url) {
-                userAvatar.src = url;
-                userAvatar.alt = `Avatar ${name || "User"}`;
+            const cleanUrl =
+                typeof url === "string"
+                    ? url.trim()
+                    : "";
+
+            const cleanName =
+                typeof name === "string" && name.trim()
+                    ? name.trim()
+                    : "User";
+
+            userAvatar.onerror = null;
+
+            if (cleanUrl) {
+                userAvatar.src = cleanUrl;
+            } else {
+                userAvatar.src = createAvatar(cleanName);
+            }
+
+            userAvatar.alt =
+                `Avatar ${cleanName}`;
+        }
+
+        function setCommunityAvatar(url, name) {
+            const cleanUrl =
+                typeof url === "string"
+                    ? url.trim()
+                    : "";
+
+            const cleanName =
+                typeof name === "string" && name.trim()
+                    ? name.trim()
+                    : "Community";
+
+            communityAvatar.onerror = null;
+
+            if (cleanUrl) {
+                communityAvatar.src = cleanUrl;
+            } else {
+                communityAvatar.src =
+                    createAvatar(cleanName);
+            }
+
+            communityAvatar.alt =
+                cleanName;
+        }
+
+        function saveUserCache(user) {
+            try {
+                localStorage.setItem(
+                    USER_CACHE_KEY,
+                    JSON.stringify({
+                        name: user.name || "",
+                        email: user.email || "",
+                        avatarUrl: user.avatarUrl || "",
+                        emailVerified:
+                            user.emailVerified === true
+                    })
+                );
+            } catch {}
+        }
+
+        function getUserCache() {
+            try {
+                const raw =
+                    localStorage.getItem(
+                        USER_CACHE_KEY
+                    );
+
+                if (!raw) {
+                    return null;
+                }
+
+                const parsed =
+                    JSON.parse(raw);
+
+                if (
+                    !parsed ||
+                    typeof parsed !== "object"
+                ) {
+                    return null;
+                }
+
+                return parsed;
+            } catch {
+                return null;
+            }
+        }
+
+        function saveGroupCache(group) {
+            try {
+                localStorage.setItem(
+                    GROUP_CACHE_KEY,
+                    JSON.stringify({
+                        id: group.id || "",
+                        name: group.name || "",
+                        avatarUrl:
+                            group.avatarUrl || "",
+                        totalUsers:
+                            Number.isFinite(
+                                Number(group.totalUsers)
+                            )
+                                ? Number(group.totalUsers)
+                                : null,
+                        onlineUsers:
+                            Number.isFinite(
+                                Number(group.onlineUsers)
+                            )
+                                ? Number(group.onlineUsers)
+                                : null
+                    })
+                );
+            } catch {}
+        }
+
+        function getGroupCache() {
+            try {
+                const raw =
+                    localStorage.getItem(
+                        GROUP_CACHE_KEY
+                    );
+
+                if (!raw) {
+                    return null;
+                }
+
+                const parsed =
+                    JSON.parse(raw);
+
+                if (
+                    !parsed ||
+                    typeof parsed !== "object"
+                ) {
+                    return null;
+                }
+
+                return parsed;
+            } catch {
+                return null;
+            }
+        }
+
+        function applyUser(user) {
+            const name =
+                typeof user.name === "string" &&
+                user.name.trim()
+                    ? user.name.trim()
+                    : "User";
+
+            const email =
+                typeof user.email === "string" &&
+                user.email.trim()
+                    ? user.email.trim()
+                    : "Email tidak tersedia";
+
+            userName.textContent = name;
+            userEmail.textContent = email;
+
+            setAvatar(
+                user.avatarUrl || "",
+                name
+            );
+
+            verifiedBadge.hidden =
+                user.emailVerified !== true;
+
+            saveUserCache({
+                name,
+                email,
+                avatarUrl:
+                    user.avatarUrl || "",
+                emailVerified:
+                    user.emailVerified === true
+            });
+        }
+
+        function applyGroup(group) {
+            const name =
+                typeof group.name === "string" &&
+                group.name.trim()
+                    ? group.name.trim()
+                    : "MonikaLabs Comunity";
+
+            communityName.textContent = name;
+
+            setCommunityAvatar(
+                group.avatarUrl || "",
+                name
+            );
+
+            const total =
+                Number(group.totalUsers);
+
+            const online =
+                Number(group.onlineUsers);
+
+            totalUsers.textContent =
+                Number.isFinite(total)
+                    ? total
+                    : "—";
+
+            onlineUsers.textContent =
+                Number.isFinite(online)
+                    ? online
+                    : "—";
+
+            saveGroupCache({
+                id: group.id || "",
+                name,
+                avatarUrl:
+                    group.avatarUrl || "",
+                totalUsers:
+                    Number.isFinite(total)
+                        ? total
+                        : null,
+                onlineUsers:
+                    Number.isFinite(online)
+                        ? online
+                        : null
+            });
+        }
+
+        function restoreCachedUser() {
+            const cached =
+                getUserCache();
+
+            if (!cached) {
                 return;
             }
 
-            const fallback =
-                "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(name || "User") +
-                "&background=168cff&color=ffffff&bold=true";
+            applyUser(cached);
+        }
 
-            userAvatar.src = fallback;
-            userAvatar.alt = `Avatar ${name || "User"}`;
+        function restoreCachedGroup() {
+            const cached =
+                getGroupCache();
+
+            if (!cached) {
+                return;
+            }
+
+            applyGroup(cached);
         }
 
         async function loadUser() {
             try {
-                const response = await fetch(
-                    "/api/user/me",
-                    {
-                        method: "GET",
-                        credentials: "include",
-                        cache: "no-store"
-                    }
-                );
+                const response =
+                    await fetch(
+                        "/api/user/me",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store",
+                            headers: {
+                                Accept:
+                                    "application/json"
+                            }
+                        }
+                    );
 
-                const data = await response.json();
-
-                if (!response.ok || !data.success || !data.user) {
-                    window.location.href = "/login";
+                if (
+                    response.status === 401 ||
+                    response.status === 403
+                ) {
+                    window.location.replace(
+                        "/login"
+                    );
                     return;
                 }
 
-                const user = data.user;
-                const name = user.name || "User";
+                const data =
+                    await response.json();
 
-                userName.textContent = name;
-                userEmail.textContent =
-                    user.email || "Email tidak tersedia";
-
-                setAvatar(
-                    user.avatarUrl || "",
-                    name
-                );
-
-                if (user.emailVerified === true) {
-                    verifiedBadge.hidden = false;
-                } else {
-                    verifiedBadge.hidden = true;
+                if (
+                    !response.ok ||
+                    !data.success ||
+                    !data.user
+                ) {
+                    window.location.replace(
+                        "/login"
+                    );
+                    return;
                 }
+
+                applyUser(data.user);
+
+                userLoaded = true;
             } catch {
-                window.location.href = "/login";
+                const cached =
+                    getUserCache();
+
+                if (cached) {
+                    applyUser(cached);
+                    userLoaded = true;
+                    return;
+                }
+
+                window.location.replace(
+                    "/login"
+                );
             }
         }
 
         async function loadGroup() {
             try {
-                const response = await fetch(
-                    "/api/chat?action=group",
-                    {
-                        method: "GET",
-                        credentials: "include",
-                        cache: "no-store"
-                    }
-                );
+                const response =
+                    await fetch(
+                        "/api/chat?action=group",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store",
+                            headers: {
+                                Accept:
+                                    "application/json"
+                            }
+                        }
+                    );
 
-                const data = await response.json();
-
-                if (!response.ok || !data.success || !data.group) {
+                if (
+                    response.status === 401 ||
+                    response.status === 403
+                ) {
                     return;
                 }
 
-                totalUsers.textContent =
-                    Number.isFinite(Number(data.group.totalUsers))
-                        ? data.group.totalUsers
-                        : "—";
+                const data =
+                    await response.json();
 
-                onlineUsers.textContent =
-                    Number.isFinite(Number(data.group.onlineUsers))
-                        ? data.group.onlineUsers
-                        : "—";
+                if (
+                    !response.ok ||
+                    !data.success ||
+                    !data.group
+                ) {
+                    return;
+                }
+
+                applyGroup(data.group);
+
+                groupLoaded = true;
             } catch {
-                totalUsers.textContent = "—";
-                onlineUsers.textContent = "—";
+                const cached =
+                    getGroupCache();
+
+                if (cached) {
+                    applyGroup(cached);
+                    groupLoaded = true;
+                }
             }
+        }
+
+        async function refreshDashboard() {
+            await Promise.allSettled([
+                loadUser(),
+                loadGroup()
+            ]);
         }
 
         async function logout() {
             logoutBtn.disabled = true;
 
             try {
-                const response = await fetch(
-                    "/api/auth/logout",
-                    {
-                        method: "POST",
-                        credentials: "include"
-                    }
-                );
+                const response =
+                    await fetch(
+                        "/api/auth/logout",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
 
                 if (response.ok) {
-                    window.location.href = "/login";
+                    try {
+                        localStorage.removeItem(
+                            USER_CACHE_KEY
+                        );
+                        localStorage.removeItem(
+                            GROUP_CACHE_KEY
+                        );
+                    } catch {}
+
+                    window.location.replace(
+                        "/login"
+                    );
+
                     return;
                 }
 
-                showToast("Gagal keluar dari akun");
+                showToast(
+                    "Gagal keluar dari akun"
+                );
             } catch {
-                showToast("Koneksi ke server gagal");
+                showToast(
+                    "Koneksi ke server gagal"
+                );
             } finally {
                 logoutBtn.disabled = false;
             }
         }
 
-        userAvatar.addEventListener("error", () => {
-            const name =
-                userName.textContent.trim() || "User";
+        userAvatar.addEventListener(
+            "error",
+            () => {
+                const name =
+                    userName.textContent.trim() ||
+                    "User";
 
-            userAvatar.onerror = null;
-            userAvatar.src =
-                "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(name) +
-                "&background=168cff&color=ffffff&bold=true";
-        });
+                userAvatar.onerror = null;
+                userAvatar.src =
+                    createAvatar(name);
+            }
+        );
+
+        communityAvatar.addEventListener(
+            "error",
+            () => {
+                const name =
+                    communityName.textContent.trim() ||
+                    "Community";
+
+                communityAvatar.onerror = null;
+                communityAvatar.src =
+                    createAvatar(name);
+            }
+        );
 
         logoutBtn.addEventListener(
             "click",
             logout
         );
 
-        updateClock();
-        setInterval(updateClock, 1000);
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+                    loadUser();
+                    loadGroup();
+                }
+            }
+        );
 
-        loadUser();
-        loadGroup();
+        window.addEventListener(
+            "pageshow",
+            () => {
+                loadUser();
+                loadGroup();
+            }
+        );
+
+        updateClock();
+
+        setInterval(
+            updateClock,
+            1000
+        );
+
+        restoreCachedUser();
+        restoreCachedGroup();
+
+        refreshDashboard();
 
         setInterval(
             loadGroup,
