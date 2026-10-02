@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta name="theme-color" content="#070a0f">
+    <meta name="theme-color" content="#05070b">
     <title>Profile • ReyCode Digital</title>
 
     <style>
@@ -13,11 +13,15 @@
 
         :root{
             --blue:#3185ff;
-            --blue-light:#72aaff;
-            --text:#f4f7fb;
-            --muted:#778295;
+            --blue2:#6ca8ff;
+            --bg:#05070b;
+            --panel:rgba(10,14,22,.86);
+            --panel2:rgba(255,255,255,.035);
             --border:rgba(255,255,255,.075);
-            --panel:rgba(10,14,20,.82);
+            --text:#f5f7fb;
+            --muted:#7e899b;
+            --green:#35dc7d;
+            --danger:#ff7272;
         }
 
         html{
@@ -27,12 +31,14 @@
         body{
             margin:0;
             min-height:100vh;
-            font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+            overflow-x:hidden;
             color:var(--text);
+            font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
             background:
-                radial-gradient(circle at 10% 5%,rgba(49,133,255,.15),transparent 28%),
-                radial-gradient(circle at 90% 85%,rgba(49,133,255,.10),transparent 30%),
-                linear-gradient(180deg,#05070a,#070a0f);
+                radial-gradient(circle at 8% 0%,rgba(49,133,255,.18),transparent 28%),
+                radial-gradient(circle at 92% 18%,rgba(49,133,255,.09),transparent 24%),
+                radial-gradient(circle at 50% 100%,rgba(49,133,255,.08),transparent 30%),
+                linear-gradient(180deg,#04060a,#070a10 55%,#05070b);
         }
 
         body::before{
@@ -40,12 +46,12 @@
             position:fixed;
             inset:0;
             pointer-events:none;
-            opacity:.22;
+            opacity:.2;
             background-image:
                 linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
                 linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
             background-size:44px 44px;
-            mask-image:linear-gradient(to bottom,black,transparent 82%);
+            mask-image:linear-gradient(to bottom,black,transparent 88%);
         }
 
         button,
@@ -53,40 +59,46 @@
             font-family:inherit;
         }
 
+        button{
+            -webkit-tap-highlight-color:transparent;
+        }
+
         .container{
             position:relative;
             z-index:1;
             width:100%;
-            max-width:920px;
+            max-width:960px;
             margin:auto;
-            padding:25px 18px 50px;
+            padding:24px 18px 55px;
         }
 
         .topbar{
             display:flex;
             align-items:center;
             justify-content:space-between;
-            gap:15px;
+            gap:16px;
             margin-bottom:20px;
         }
 
         .brand{
             display:flex;
             align-items:center;
-            gap:11px;
+            gap:12px;
         }
 
         .brand-logo{
-            width:44px;
-            height:44px;
-            padding:6px;
+            width:45px;
+            height:45px;
+            padding:7px;
             display:flex;
             align-items:center;
             justify-content:center;
-            border-radius:14px;
             border:1px solid var(--border);
+            border-radius:15px;
             background:rgba(255,255,255,.045);
-            box-shadow:0 12px 35px rgba(0,0,0,.22);
+            box-shadow:
+                0 15px 40px rgba(0,0,0,.3),
+                inset 0 1px rgba(255,255,255,.05);
         }
 
         .brand-logo img{
@@ -97,28 +109,31 @@
 
         .brand-name{
             font-size:15px;
-            font-weight:750;
+            font-weight:800;
+            letter-spacing:-.2px;
         }
 
         .brand-sub{
             margin-top:3px;
-            color:#626d7e;
+            color:#606b7c;
             font-size:9px;
-            letter-spacing:1.6px;
+            font-weight:700;
+            letter-spacing:1.7px;
         }
 
         .back{
             display:inline-flex;
             align-items:center;
             justify-content:center;
-            min-height:40px;
+            min-height:41px;
             padding:0 15px;
             border:1px solid var(--border);
-            border-radius:12px;
+            border-radius:13px;
             background:rgba(255,255,255,.035);
-            color:#aeb7c5;
+            color:#aeb8c7;
             text-decoration:none;
             font-size:11px;
+            font-weight:650;
             transition:.2s ease;
         }
 
@@ -128,48 +143,27 @@
             transform:translateY(-1px);
         }
 
-        .verification-alert{
-            display:none;
-            margin-bottom:18px;
-            padding:16px 18px;
-            border:1px solid rgba(255,177,92,.15);
-            border-radius:17px;
-            background:rgba(255,177,92,.055);
-        }
-
-        .alert-title{
-            margin-bottom:6px;
-            color:#ffc27d;
-            font-size:12px;
-            font-weight:750;
-        }
-
-        .alert-text{
-            color:#9da6b5;
-            font-size:10px;
-            line-height:1.7;
-        }
-
         .profile-card{
+            position:relative;
             overflow:hidden;
             border:1px solid var(--border);
-            border-radius:27px;
+            border-radius:30px;
             background:var(--panel);
-            backdrop-filter:blur(28px);
-            -webkit-backdrop-filter:blur(28px);
+            backdrop-filter:blur(30px);
+            -webkit-backdrop-filter:blur(30px);
             box-shadow:
-                0 35px 100px rgba(0,0,0,.48),
-                inset 0 1px rgba(255,255,255,.025);
+                0 40px 110px rgba(0,0,0,.5),
+                inset 0 1px rgba(255,255,255,.035);
         }
 
         .profile-cover{
             position:relative;
-            height:245px;
+            height:285px;
             overflow:hidden;
             background:
-                radial-gradient(circle at 30% 20%,rgba(49,133,255,.35),transparent 30%),
-                radial-gradient(circle at 80% 70%,rgba(73,151,255,.18),transparent 35%),
-                linear-gradient(135deg,#0d1c32,#07101c 55%,#0a111d);
+                radial-gradient(circle at 25% 25%,rgba(49,133,255,.42),transparent 29%),
+                radial-gradient(circle at 78% 65%,rgba(68,150,255,.2),transparent 34%),
+                linear-gradient(135deg,#102544,#07101d 54%,#080d16);
         }
 
         .profile-cover::before{
@@ -178,25 +172,25 @@
             inset:0;
             background:
                 linear-gradient(
-                    120deg,
-                    rgba(255,255,255,.04),
-                    transparent 35%,
-                    rgba(49,133,255,.06)
+                    125deg,
+                    rgba(255,255,255,.05),
+                    transparent 32%,
+                    rgba(49,133,255,.08)
                 );
         }
 
         .profile-cover::after{
             content:"";
             position:absolute;
-            width:330px;
-            height:330px;
-            right:-100px;
-            top:-150px;
+            width:420px;
+            height:420px;
+            right:-130px;
+            top:-220px;
             border:1px solid rgba(255,255,255,.07);
             border-radius:50%;
             box-shadow:
-                0 0 0 45px rgba(255,255,255,.015),
-                0 0 0 90px rgba(255,255,255,.01);
+                0 0 0 55px rgba(255,255,255,.015),
+                0 0 0 110px rgba(255,255,255,.01);
         }
 
         .cover-image{
@@ -204,8 +198,8 @@
             inset:0;
             width:100%;
             height:100%;
-            object-fit:cover;
             display:none;
+            object-fit:cover;
         }
 
         .cover-overlay{
@@ -214,29 +208,37 @@
             background:
                 linear-gradient(
                     180deg,
-                    rgba(0,0,0,.04),
-                    rgba(0,0,0,.12) 50%,
-                    rgba(7,10,15,.92)
+                    rgba(3,7,13,.02),
+                    rgba(3,7,13,.05) 38%,
+                    rgba(5,7,11,.88) 100%
                 );
         }
 
-        .cover-label{
+        .cover-top{
             position:absolute;
-            left:25px;
-            top:22px;
-            z-index:2;
+            top:20px;
+            left:22px;
+            right:22px;
+            z-index:3;
             display:flex;
             align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+
+        .cover-label{
+            display:inline-flex;
+            align-items:center;
             gap:7px;
-            padding:7px 10px;
+            padding:8px 11px;
             border:1px solid rgba(255,255,255,.1);
             border-radius:999px;
-            background:rgba(0,0,0,.25);
-            backdrop-filter:blur(12px);
-            color:rgba(255,255,255,.75);
+            background:rgba(0,0,0,.24);
+            backdrop-filter:blur(14px);
+            color:rgba(255,255,255,.78);
             font-size:9px;
-            font-weight:700;
-            letter-spacing:.8px;
+            font-weight:800;
+            letter-spacing:.9px;
         }
 
         .cover-dot{
@@ -244,40 +246,62 @@
             height:6px;
             border-radius:50%;
             background:var(--blue);
-            box-shadow:0 0 10px rgba(49,133,255,.8);
+            box-shadow:0 0 12px rgba(49,133,255,.9);
+        }
+
+        .cover-upload{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            padding:8px 11px;
+            border:1px solid rgba(255,255,255,.1);
+            border-radius:999px;
+            background:rgba(0,0,0,.25);
+            color:#dce5f2;
+            font-size:9px;
+            font-weight:750;
+            cursor:pointer;
+            backdrop-filter:blur(14px);
+            transition:.2s ease;
+        }
+
+        .cover-upload:hover{
+            background:rgba(49,133,255,.2);
+            border-color:rgba(49,133,255,.35);
+            transform:translateY(-1px);
         }
 
         .profile-info{
             position:relative;
-            padding:0 32px 30px;
+            padding:0 34px 30px;
         }
 
         .avatar-wrap{
             position:relative;
-            width:104px;
-            height:104px;
-            margin-top:-52px;
+            width:112px;
+            height:112px;
+            margin-top:-56px;
             margin-bottom:17px;
-            z-index:4;
+            z-index:5;
         }
 
         .avatar{
-            width:104px;
-            height:104px;
+            width:112px;
+            height:112px;
             display:flex;
             align-items:center;
             justify-content:center;
             overflow:hidden;
-            border:5px solid #0b1017;
-            border-radius:31px;
+            border:6px solid #0a0f17;
+            border-radius:33px;
             background:
-                linear-gradient(135deg,#3d92ff,#1659c8);
+                linear-gradient(135deg,#4598ff,#1557c1);
             color:#fff;
-            font-size:37px;
+            font-size:40px;
             font-weight:850;
             box-shadow:
-                0 18px 45px rgba(0,0,0,.4),
-                0 0 0 1px rgba(255,255,255,.07);
+                0 20px 50px rgba(0,0,0,.48),
+                0 0 0 1px rgba(255,255,255,.08);
         }
 
         .avatar img{
@@ -286,23 +310,47 @@
             object-fit:cover;
         }
 
+        .avatar-upload{
+            position:absolute;
+            right:-6px;
+            bottom:-6px;
+            width:38px;
+            height:38px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:3px solid #0a0f17;
+            border-radius:13px;
+            background:var(--blue);
+            color:#fff;
+            cursor:pointer;
+            box-shadow:0 10px 25px rgba(49,133,255,.3);
+            transition:.2s ease;
+        }
+
+        .avatar-upload:hover{
+            background:#2877ea;
+            transform:translateY(-2px);
+        }
+
         .online{
             position:absolute;
-            right:3px;
-            bottom:3px;
+            right:1px;
+            bottom:2px;
             width:19px;
             height:19px;
-            border:4px solid #0b1017;
+            border:4px solid #0a0f17;
             border-radius:50%;
-            background:#36d978;
-            box-shadow:0 0 14px rgba(54,217,120,.35);
+            background:var(--green);
+            box-shadow:0 0 15px rgba(53,220,125,.4);
+            pointer-events:none;
         }
 
         .profile-name{
             margin:0;
-            font-size:27px;
-            font-weight:800;
-            letter-spacing:-.9px;
+            font-size:29px;
+            font-weight:850;
+            letter-spacing:-1px;
         }
 
         .profile-email{
@@ -316,26 +364,32 @@
             display:flex;
             flex-wrap:wrap;
             gap:8px;
-            margin-top:14px;
+            margin-top:15px;
         }
 
         .badge{
             display:inline-flex;
             align-items:center;
-            gap:6px;
+            gap:7px;
             padding:7px 10px;
             border:1px solid rgba(255,255,255,.07);
             border-radius:999px;
             background:rgba(255,255,255,.035);
-            color:#8f9aaa;
+            color:#8d98a9;
             font-size:9px;
-            font-weight:700;
+            font-weight:750;
         }
 
         .badge.blue{
-            border-color:rgba(49,133,255,.15);
-            background:rgba(49,133,255,.07);
-            color:#72aaff;
+            border-color:rgba(49,133,255,.18);
+            background:rgba(49,133,255,.075);
+            color:#75adff;
+        }
+
+        .badge.green{
+            border-color:rgba(53,220,125,.15);
+            background:rgba(53,220,125,.055);
+            color:#65e59a;
         }
 
         .badge-dot{
@@ -343,10 +397,11 @@
             height:6px;
             border-radius:50%;
             background:currentColor;
+            box-shadow:0 0 9px currentColor;
         }
 
         .content{
-            padding:0 32px 34px;
+            padding:0 34px 35px;
         }
 
         .section-head{
@@ -359,46 +414,52 @@
         .section-title{
             margin:0;
             font-size:14px;
-            font-weight:750;
+            font-weight:800;
+            letter-spacing:-.2px;
         }
 
         .section-line{
             flex:1;
             height:1px;
-            background:linear-gradient(90deg,rgba(255,255,255,.08),transparent);
+            background:linear-gradient(
+                90deg,
+                rgba(255,255,255,.08),
+                transparent
+            );
         }
 
         .fields{
             display:grid;
             grid-template-columns:repeat(2,1fr);
-            gap:12px;
+            gap:11px;
         }
 
         .field{
-            padding:16px;
+            min-width:0;
+            padding:17px;
             border:1px solid rgba(255,255,255,.055);
-            border-radius:16px;
+            border-radius:17px;
             background:rgba(255,255,255,.022);
             transition:.2s ease;
         }
 
         .field:hover{
-            border-color:rgba(255,255,255,.09);
-            background:rgba(255,255,255,.032);
+            border-color:rgba(255,255,255,.1);
+            background:rgba(255,255,255,.035);
             transform:translateY(-1px);
         }
 
         .label{
             margin-bottom:8px;
-            color:#626d7e;
+            color:#606c7e;
             font-size:9px;
-            font-weight:700;
-            letter-spacing:1.2px;
+            font-weight:800;
+            letter-spacing:1.25px;
             text-transform:uppercase;
         }
 
         .value{
-            color:#e9edf4;
+            color:#e9edf5;
             font-size:12px;
             line-height:1.5;
             word-break:break-word;
@@ -419,204 +480,141 @@
             box-shadow:0 0 12px rgba(49,133,255,.75);
         }
 
-        .phone-box{
-            position:relative;
-            overflow:hidden;
-            margin-top:21px;
-            padding:20px;
+        .editor{
+            margin-top:22px;
+            padding:21px;
             border:1px solid rgba(49,133,255,.13);
-            border-radius:20px;
+            border-radius:21px;
             background:
-                radial-gradient(circle at 100% 0%,rgba(49,133,255,.09),transparent 35%),
-                linear-gradient(135deg,rgba(49,133,255,.065),rgba(255,255,255,.018));
+                radial-gradient(circle at 100% 0%,rgba(49,133,255,.1),transparent 35%),
+                linear-gradient(135deg,rgba(49,133,255,.06),rgba(255,255,255,.018));
         }
 
-        .phone-box::before{
-            content:"";
-            position:absolute;
-            left:0;
-            top:20px;
-            bottom:20px;
-            width:2px;
-            border-radius:10px;
-            background:var(--blue);
-            box-shadow:0 0 18px rgba(49,133,255,.5);
-        }
-
-        .phone-head{
+        .editor-head{
             display:flex;
             align-items:flex-start;
             justify-content:space-between;
             gap:15px;
+            margin-bottom:18px;
         }
 
-        .phone-title{
+        .editor-title{
             color:#fff;
             font-size:13px;
-            font-weight:750;
+            font-weight:800;
         }
 
-        .phone-description{
-            max-width:620px;
+        .editor-description{
             margin-top:6px;
-            color:#727d8e;
+            color:#737f91;
             font-size:10px;
             line-height:1.7;
         }
 
-        .phone-status{
+        .editor-status{
             flex-shrink:0;
             padding:6px 9px;
+            border:1px solid rgba(53,220,125,.14);
             border-radius:999px;
+            background:rgba(53,220,125,.05);
+            color:#64e69a;
             font-size:9px;
-            font-weight:700;
+            font-weight:750;
         }
 
-        .phone-status.pending{
-            color:#ffc27d;
-            background:rgba(255,177,92,.065);
-            border:1px solid rgba(255,177,92,.13);
+        .edit-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
         }
 
-        .phone-status.success{
-            color:#72aaff;
-            background:rgba(49,133,255,.075);
-            border:1px solid rgba(49,133,255,.14);
+        .edit-box{
+            padding:15px;
+            border:1px solid rgba(255,255,255,.06);
+            border-radius:15px;
+            background:rgba(0,0,0,.15);
         }
 
-        .phone-row,
-        .otp-row{
+        .edit-label{
+            margin-bottom:8px;
+            color:#667284;
+            font-size:9px;
+            font-weight:800;
+            letter-spacing:1px;
+            text-transform:uppercase;
+        }
+
+        .edit-row{
             display:flex;
-            gap:9px;
-            margin-top:16px;
+            gap:8px;
         }
 
-        .phone-input,
-        .otp-input{
+        .edit-input{
+            width:100%;
             min-width:0;
-            height:46px;
+            height:43px;
+            padding:0 12px;
             outline:none;
-            border:1px solid rgba(255,255,255,.075);
-            border-radius:12px;
-            background:rgba(0,0,0,.2);
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:11px;
+            background:rgba(255,255,255,.035);
             color:#fff;
+            font-size:11px;
             transition:.2s ease;
         }
 
-        .phone-input{
-            flex:1;
-            padding:0 14px;
-            font-size:12px;
+        .edit-input:focus{
+            border-color:rgba(49,133,255,.4);
+            box-shadow:0 0 0 3px rgba(49,133,255,.07);
         }
 
-        .phone-input::placeholder,
-        .otp-input::placeholder{
-            color:#515c6d;
-        }
-
-        .phone-input:focus,
-        .otp-input:focus{
-            border-color:rgba(49,133,255,.42);
-            box-shadow:0 0 0 3px rgba(49,133,255,.075);
-        }
-
-        .verify-phone-button{
-            min-width:148px;
-            height:46px;
+        .save-button{
+            flex-shrink:0;
+            min-width:92px;
+            height:43px;
             border:1px solid var(--blue);
-            border-radius:12px;
+            border-radius:11px;
             background:var(--blue);
             color:#fff;
             font-size:10px;
-            font-weight:750;
+            font-weight:800;
             cursor:pointer;
             transition:.2s ease;
         }
 
-        .verify-phone-button:hover:not(:disabled){
+        .save-button:hover:not(:disabled){
             background:#2877ea;
             transform:translateY(-1px);
         }
 
-        .verify-phone-button:disabled{
-            opacity:.45;
+        .save-button:disabled{
+            opacity:.5;
             cursor:not-allowed;
         }
 
-        .phone-message{
+        .upload-status{
             display:none;
-            margin-top:10px;
+            margin-top:11px;
             padding:10px 12px;
             border-radius:11px;
             font-size:10px;
             line-height:1.5;
         }
 
-        .phone-message.error{
-            display:block;
-            color:#ff9d9d;
-            background:rgba(255,70,70,.055);
-            border:1px solid rgba(255,70,70,.11);
-        }
-
-        .phone-message.success{
-            display:block;
-            color:#79b0ff;
-            background:rgba(49,133,255,.055);
-            border:1px solid rgba(49,133,255,.11);
-        }
-
-        .otp-section{
-            display:none;
-            margin-top:15px;
-            padding-top:15px;
-            border-top:1px solid rgba(255,255,255,.055);
-        }
-
-        .otp-section.show{
+        .upload-status.show{
             display:block;
         }
 
-        .otp-label{
-            margin-bottom:8px;
-            color:#626d7e;
-            font-size:9px;
-            font-weight:700;
-            letter-spacing:1.2px;
-            text-transform:uppercase;
+        .upload-status.success{
+            color:#72e6a0;
+            border:1px solid rgba(53,220,125,.12);
+            background:rgba(53,220,125,.045);
         }
 
-        .otp-input{
-            flex:1;
-            padding:0 14px;
-            font-size:17px;
-            font-weight:700;
-            letter-spacing:7px;
-            text-align:center;
-        }
-
-        .otp-button{
-            min-width:130px;
-            height:46px;
-            border:1px solid rgba(255,255,255,.085);
-            border-radius:12px;
-            background:rgba(255,255,255,.045);
-            color:#cbd3df;
-            font-size:10px;
-            font-weight:750;
-            cursor:pointer;
-        }
-
-        .otp-button:disabled{
-            opacity:.45;
-            cursor:not-allowed;
-        }
-
-        .cooldown{
-            min-height:15px;
-            margin-top:9px;
-            color:#687386;
-            font-size:9px;
+        .upload-status.error{
+            color:#ff9a9a;
+            border:1px solid rgba(255,70,70,.12);
+            background:rgba(255,70,70,.045);
         }
 
         .actions{
@@ -627,17 +625,17 @@
         }
 
         .button{
-            min-height:46px;
+            min-height:47px;
             display:flex;
             align-items:center;
             justify-content:center;
             border:1px solid rgba(255,255,255,.075);
             border-radius:13px;
             background:rgba(255,255,255,.035);
-            color:#c6ceda;
+            color:#c7cfdb;
             text-decoration:none;
             font-size:11px;
-            font-weight:650;
+            font-weight:700;
             transition:.2s ease;
         }
 
@@ -651,7 +649,7 @@
             border-color:var(--blue);
             background:var(--blue);
             color:#fff;
-            box-shadow:0 10px 30px rgba(49,133,255,.15);
+            box-shadow:0 12px 32px rgba(49,133,255,.15);
         }
 
         .button.primary:hover{
@@ -659,15 +657,15 @@
         }
 
         .loading{
-            padding:90px 20px;
+            padding:100px 20px;
             text-align:center;
             color:#697486;
             font-size:12px;
         }
 
         .spinner{
-            width:30px;
-            height:30px;
+            width:32px;
+            height:32px;
             margin:0 auto 16px;
             border:3px solid rgba(255,255,255,.08);
             border-top-color:var(--blue);
@@ -676,18 +674,23 @@
         }
 
         .error{
-            padding:60px 20px;
+            padding:65px 20px;
             text-align:center;
             color:#ff8b8b;
             font-size:12px;
         }
 
         footer{
-            margin-top:20px;
-            color:#3e4756;
+            margin-top:21px;
+            color:#3f4857;
             font-size:9px;
+            font-weight:600;
             letter-spacing:.7px;
             text-align:center;
+        }
+
+        .hidden-file{
+            display:none;
         }
 
         @keyframes spin{
@@ -696,28 +699,17 @@
             }
         }
 
-        @media(max-width:650px){
+        @media(max-width:700px){
             .container{
-                padding:17px 12px 40px;
+                padding:17px 12px 42px;
             }
 
-            .brand-name{
-                font-size:14px;
-            }
-
-            .back{
-                min-height:38px;
-                padding:0 12px;
-                font-size:10px;
+            .profile-card{
+                border-radius:24px;
             }
 
             .profile-cover{
-                height:205px;
-            }
-
-            .cover-label{
-                left:18px;
-                top:17px;
+                height:225px;
             }
 
             .profile-info{
@@ -725,52 +717,87 @@
             }
 
             .content{
-                padding:0 20px 25px;
+                padding:0 20px 27px;
             }
 
             .avatar-wrap{
-                width:90px;
-                height:90px;
-                margin-top:-45px;
+                width:94px;
+                height:94px;
+                margin-top:-47px;
             }
 
             .avatar{
-                width:90px;
-                height:90px;
-                border-radius:27px;
-                font-size:32px;
-            }
-
-            .online{
-                width:17px;
-                height:17px;
-                border-width:3px;
+                width:94px;
+                height:94px;
+                border-radius:28px;
+                font-size:34px;
             }
 
             .profile-name{
-                font-size:24px;
+                font-size:25px;
             }
 
             .fields{
                 grid-template-columns:1fr;
             }
 
-            .phone-head{
-                flex-direction:column;
+            .edit-grid{
+                grid-template-columns:1fr;
             }
 
-            .phone-row,
-            .otp-row{
+            .editor-head{
                 flex-direction:column;
-            }
-
-            .verify-phone-button,
-            .otp-button{
-                width:100%;
             }
 
             .actions{
                 grid-template-columns:1fr;
+            }
+        }
+
+        @media(max-width:480px){
+            .brand-sub{
+                display:none;
+            }
+
+            .brand-logo{
+                width:41px;
+                height:41px;
+            }
+
+            .back{
+                min-height:38px;
+                padding:0 11px;
+                font-size:10px;
+            }
+
+            .profile-cover{
+                height:200px;
+            }
+
+            .cover-top{
+                top:15px;
+                left:15px;
+                right:15px;
+            }
+
+            .cover-label{
+                padding:7px 9px;
+            }
+
+            .cover-upload{
+                padding:7px 9px;
+            }
+
+            .editor{
+                padding:17px;
+            }
+
+            .edit-row{
+                flex-direction:column;
+            }
+
+            .save-button{
+                width:100%;
             }
         }
     </style>
@@ -812,22 +839,6 @@
 
     </div>
 
-    <div
-        id="verificationAlert"
-        class="verification-alert"
-    >
-        <div class="alert-title">
-            ⚠️ Email belum terverifikasi
-        </div>
-
-        <div class="alert-text">
-            Cek email kamu, termasuk folder
-            <strong>Spam</strong>, lalu lakukan
-            verifikasi email untuk mengaktifkan
-            seluruh fitur akun.
-        </div>
-    </div>
-
     <div class="profile-card">
 
         <div
@@ -848,15 +859,33 @@
                 <img
                     id="coverImage"
                     class="cover-image"
-                    alt="Cover"
+                    alt="Profile background"
                 >
 
                 <div class="cover-overlay"></div>
 
-                <div class="cover-label">
-                    <span class="cover-dot"></span>
-                    PROFILE
+                <div class="cover-top">
+
+                    <div class="cover-label">
+                        <span class="cover-dot"></span>
+                        PROFILE
+                    </div>
+
+                    <label
+                        class="cover-upload"
+                        for="coverInput"
+                    >
+                        ✦ Ganti Background
+                    </label>
+
                 </div>
+
+                <input
+                    id="coverInput"
+                    class="hidden-file"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                >
 
             </div>
 
@@ -871,9 +900,24 @@
                         R
                     </div>
 
+                    <label
+                        class="avatar-upload"
+                        for="avatarInput"
+                        title="Ganti foto profil"
+                    >
+                        ✦
+                    </label>
+
                     <div class="online"></div>
 
                 </div>
+
+                <input
+                    id="avatarInput"
+                    class="hidden-file"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                >
 
                 <h1
                     id="name"
@@ -901,10 +945,10 @@
 
                     <div
                         id="phoneBadge"
-                        class="badge"
+                        class="badge green"
                     >
                         <span class="badge-dot"></span>
-                        WhatsApp belum terverifikasi
+                        WhatsApp terverifikasi
                     </div>
 
                 </div>
@@ -975,94 +1019,79 @@
 
                 </div>
 
-                <div class="phone-box">
+                <div class="editor">
 
-                    <div class="phone-head">
+                    <div class="editor-head">
 
                         <div>
-                            <div class="phone-title">
-                                Verifikasi WhatsApp
+                            <div class="editor-title">
+                                Pengaturan Profile
                             </div>
 
-                            <div class="phone-description">
-                                Verifikasi nomor WhatsApp untuk
-                                keamanan akun dan menerima
-                                notifikasi penting dari ReyCode.
+                            <div class="editor-description">
+                                Kelola nomor WhatsApp kamu dan
+                                informasi profile dari satu tempat.
                             </div>
                         </div>
 
-                        <div
-                            id="phoneStatus"
-                            class="phone-status pending"
-                        >
-                            ⚠ Belum terverifikasi
+                        <div class="editor-status">
+                            ● AKTIF
                         </div>
 
                     </div>
 
-                    <div class="phone-row">
+                    <div class="edit-grid">
 
-                        <input
-                            id="phoneInput"
-                            class="phone-input"
-                            type="tel"
-                            inputmode="numeric"
-                            autocomplete="tel"
-                            placeholder="Contoh: 628xxxxxxxxxx"
-                        >
+                        <div class="edit-box">
 
-                        <button
-                            id="requestOtpButton"
-                            class="verify-phone-button"
-                            type="button"
-                        >
-                            Verifikasi Nomor
-                        </button>
+                            <div class="edit-label">
+                                WhatsApp
+                            </div>
+
+                            <div class="edit-row">
+
+                                <input
+                                    id="whatsappInput"
+                                    class="edit-input"
+                                    type="tel"
+                                    inputmode="numeric"
+                                    autocomplete="tel"
+                                    placeholder="628xxxxxxxxxx"
+                                >
+
+                                <button
+                                    id="saveWhatsappButton"
+                                    class="save-button"
+                                    type="button"
+                                >
+                                    Simpan
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="edit-box">
+
+                            <div class="edit-label">
+                                Status Nomor
+                            </div>
+
+                            <div
+                                id="phoneEditStatus"
+                                class="value"
+                            >
+                                ✓ Nomor dianggap terverifikasi
+                            </div>
+
+                        </div>
 
                     </div>
 
                     <div
-                        id="phoneMessage"
-                        class="phone-message"
+                        id="uploadStatus"
+                        class="upload-status"
                     ></div>
-
-                    <div
-                        id="otpSection"
-                        class="otp-section"
-                    >
-
-                        <div class="otp-label">
-                            Masukkan Kode OTP
-                        </div>
-
-                        <div class="otp-row">
-
-                            <input
-                                id="otpInput"
-                                class="otp-input"
-                                type="text"
-                                inputmode="numeric"
-                                maxlength="6"
-                                autocomplete="one-time-code"
-                                placeholder="••••••"
-                            >
-
-                            <button
-                                id="verifyOtpButton"
-                                class="otp-button"
-                                type="button"
-                            >
-                                Verifikasi OTP
-                            </button>
-
-                        </div>
-
-                        <div
-                            id="cooldownText"
-                            class="cooldown"
-                        ></div>
-
-                    </div>
 
                 </div>
 
@@ -1114,35 +1143,32 @@ const content =
 const errorBox =
     document.getElementById("error");
 
-const verificationAlert =
-    document.getElementById("verificationAlert");
+const avatar =
+    document.getElementById("avatar");
 
-const phoneInput =
-    document.getElementById("phoneInput");
+const avatarInput =
+    document.getElementById("avatarInput");
 
-const requestOtpButton =
-    document.getElementById("requestOtpButton");
+const coverImage =
+    document.getElementById("coverImage");
 
-const verifyOtpButton =
-    document.getElementById("verifyOtpButton");
+const coverInput =
+    document.getElementById("coverInput");
 
-const otpInput =
-    document.getElementById("otpInput");
+const whatsappInput =
+    document.getElementById("whatsappInput");
 
-const otpSection =
-    document.getElementById("otpSection");
+const saveWhatsappButton =
+    document.getElementById(
+        "saveWhatsappButton"
+    );
 
-const phoneStatus =
-    document.getElementById("phoneStatus");
+const uploadStatus =
+    document.getElementById(
+        "uploadStatus"
+    );
 
-const phoneMessage =
-    document.getElementById("phoneMessage");
-
-const cooldownText =
-    document.getElementById("cooldownText");
-
-let currentPhone = "";
-let cooldownTimer = null;
+let currentUser = null;
 
 function normalizePhone(phone){
     let value = String(phone || "")
@@ -1164,294 +1190,54 @@ function normalizePhone(phone){
     return value;
 }
 
-function showPhoneMessage(message,type="error"){
-    phoneMessage.textContent = message;
-    phoneMessage.className =
-        `phone-message ${type}`;
-}
-
-function clearPhoneMessage(){
-    phoneMessage.textContent = "";
-    phoneMessage.className = "phone-message";
-}
-
-function clearCooldown(){
-    if(cooldownTimer){
-        clearInterval(cooldownTimer);
-        cooldownTimer = null;
-    }
-
-    cooldownText.textContent = "";
-}
-
-function startCooldown(seconds=300){
-    clearCooldown();
-
-    let remaining = Number(seconds);
-
-    function update(){
-        if(remaining <= 0){
-            clearCooldown();
-
-            if(
-                !phoneStatus.classList.contains("success")
-            ){
-                requestOtpButton.disabled = false;
-            }
-
-            return;
-        }
-
-        const minutes =
-            Math.floor(remaining / 60);
-
-        const secondsLeft =
-            remaining % 60;
-
-        cooldownText.textContent =
-            `OTP berikutnya dapat diminta dalam ${minutes}:${String(secondsLeft).padStart(2,"0")}`;
-
-        requestOtpButton.disabled = true;
-        remaining--;
-    }
-
-    update();
-
-    cooldownTimer =
-        setInterval(update,1000);
-}
-
-function setPhoneVerified(phone){
-    currentPhone = phone || currentPhone;
-
-    phoneStatus.textContent =
-        "✓ Terverifikasi";
-
-    phoneStatus.className =
-        "phone-status success";
-
-    phoneInput.value = currentPhone;
-    phoneInput.disabled = true;
-
-    requestOtpButton.style.display = "none";
-
-    otpSection.classList.remove("show");
-
-    clearCooldown();
-
-    const badge =
-        document.getElementById("phoneBadge");
-
-    badge.className = "badge blue";
-    badge.innerHTML =
-        '<span class="badge-dot"></span> WhatsApp terverifikasi';
-}
-
-function setPhonePending(phone){
-    currentPhone = phone || currentPhone;
-
-    phoneStatus.textContent =
-        "⚠ Belum terverifikasi";
-
-    phoneStatus.className =
-        "phone-status pending";
-
-    phoneInput.disabled = false;
-    requestOtpButton.style.display = "";
-    requestOtpButton.disabled = false;
-}
-
-async function requestOtp(){
-    const phone =
-        normalizePhone(phoneInput.value);
-
+function displayPhone(phone){
     if(!phone){
-        showPhoneMessage(
-            "Nomor WhatsApp wajib diisi."
-        );
-        return;
+        return "";
     }
 
-    if(!/^\+?\d{8,15}$/.test(phone)){
-        showPhoneMessage(
-            "Format nomor WhatsApp tidak valid."
-        );
-        return;
-    }
-
-    currentPhone = phone;
-    requestOtpButton.disabled = true;
-    clearPhoneMessage();
-
-    try{
-        const response =
-            await fetch(
-                "/api/user/update",
-                {
-                    method:"POST",
-                    credentials:"include",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        action:"request_otp",
-                        phone
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if(
-            !response.ok ||
-            !data.success
-        ){
-            throw new Error(
-                data.message ||
-                "Gagal meminta OTP."
-            );
-        }
-
-        otpSection.classList.add("show");
-
-        showPhoneMessage(
-            "OTP berhasil dikirim. Silakan cek WhatsApp kamu.",
-            "success"
-        );
-
-        startCooldown(
-            data.cooldownSeconds || 300
-        );
-
-        otpInput.value = "";
-        otpInput.focus();
-
-    }catch(error){
-        requestOtpButton.disabled = false;
-
-        showPhoneMessage(
-            error.message ||
-            "Gagal meminta OTP."
-        );
-    }
+    return String(phone)
+        .replace(/^\+62/,"62");
 }
 
-async function verifyOtp(){
-    const phone =
-        normalizePhone(
-            currentPhone ||
-            phoneInput.value
-        );
+function showUploadStatus(
+    message,
+    type = "success"
+){
+    uploadStatus.textContent = message;
+    uploadStatus.className =
+        `upload-status show ${type}`;
+}
 
-    const otp =
-        String(
-            otpInput.value || ""
-        ).trim();
-
-    if(!phone){
-        showPhoneMessage(
-            "Nomor WhatsApp belum diisi."
-        );
-        return;
-    }
-
-    if(!/^\d{6}$/.test(otp)){
-        showPhoneMessage(
-            "OTP harus terdiri dari 6 angka."
-        );
-
-        otpInput.focus();
-        return;
-    }
-
-    verifyOtpButton.disabled = true;
-    clearPhoneMessage();
-
-    try{
-        const response =
-            await fetch(
-                "/api/user/update",
-                {
-                    method:"POST",
-                    credentials:"include",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        action:"verify_otp",
-                        phone,
-                        otp
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if(
-            !response.ok ||
-            !data.success
-        ){
-            throw new Error(
-                data.message ||
-                "OTP tidak valid."
-            );
-        }
-
-        const verifiedPhone =
-            data.user?.whatsapp || phone;
-
-        setPhoneVerified(
-            verifiedPhone
-        );
-
-        document.getElementById(
-            "whatsappValue"
-        ).textContent =
-            verifiedPhone;
-
-        showPhoneMessage(
-            "✓ Nomor WhatsApp berhasil diverifikasi.",
-            "success"
-        );
-
-        otpInput.value = "";
-
-    }catch(error){
-        verifyOtpButton.disabled = false;
-
-        showPhoneMessage(
-            error.message ||
-            "Verifikasi OTP gagal."
-        );
-    }
+function clearUploadStatus(){
+    uploadStatus.textContent = "";
+    uploadStatus.className =
+        "upload-status";
 }
 
 function renderAvatar(user){
-    const avatar =
-        document.getElementById("avatar");
-
     const name =
         user.name || "User";
 
-    if(user.avatarUrl){
-        avatar.innerHTML = "";
+    avatar.innerHTML = "";
 
+    if(user.profilePhoto){
         const image =
             document.createElement("img");
 
-        image.src = user.avatarUrl;
+        image.src =
+            user.profilePhoto;
+
         image.alt = name;
 
-        image.onerror = () => {
-            avatar.innerHTML =
-                name.charAt(0).toUpperCase();
+        image.onload = () => {
+            avatar.innerHTML = "";
+            avatar.appendChild(image);
         };
 
-        avatar.appendChild(image);
+        image.onerror = () => {
+            avatar.textContent =
+                name.charAt(0).toUpperCase();
+        };
     }else{
         avatar.textContent =
             name.charAt(0).toUpperCase();
@@ -1459,20 +1245,125 @@ function renderAvatar(user){
 }
 
 function renderCover(user){
-    const cover =
-        document.getElementById("coverImage");
-
-    if(!user.coverUrl){
-        cover.style.display = "none";
+    if(!user.profileBackground){
+        coverImage.style.display =
+            "none";
         return;
     }
 
-    cover.src = user.coverUrl;
-    cover.style.display = "block";
+    coverImage.src =
+        user.profileBackground;
 
-    cover.onerror = () => {
-        cover.style.display = "none";
+    coverImage.style.display =
+        "block";
+
+    coverImage.onerror = () => {
+        coverImage.style.display =
+            "none";
     };
+}
+
+function renderUser(user){
+    currentUser = user;
+
+    const name =
+        user.name || "User";
+
+    const email =
+        user.email || "-";
+
+    const whatsapp =
+        user.whatsapp || "";
+
+    renderAvatar(user);
+    renderCover(user);
+
+    document.getElementById(
+        "name"
+    ).textContent = name;
+
+    document.getElementById(
+        "email"
+    ).textContent = email;
+
+    document.getElementById(
+        "nameValue"
+    ).textContent = name;
+
+    document.getElementById(
+        "emailValue"
+    ).textContent = email;
+
+    document.getElementById(
+        "whatsappValue"
+    ).textContent =
+        whatsapp ||
+        "Belum ditambahkan";
+
+    whatsappInput.value =
+        displayPhone(whatsapp);
+
+    document.getElementById(
+        "createdValue"
+    ).textContent =
+        user.createdAt
+            ? new Date(
+                user.createdAt
+            ).toLocaleDateString(
+                "id-ID",
+                {
+                    day:"2-digit",
+                    month:"long",
+                    year:"numeric"
+                }
+            )
+            : "-";
+
+    document.getElementById(
+        "idValue"
+    ).textContent =
+        user._id ||
+        user.id ||
+        "-";
+
+    const emailBadge =
+        document.getElementById(
+            "emailBadge"
+        );
+
+    if(user.emailVerified === true){
+
+        emailBadge.className =
+            "badge blue";
+
+        emailBadge.innerHTML =
+            '<span class="badge-dot"></span> Email terverifikasi';
+
+        document.getElementById(
+            "statusValue"
+        ).innerHTML = `
+            <span class="status">
+                <span class="status-dot"></span>
+                Terverifikasi
+            </span>
+        `;
+
+    }else{
+
+        emailBadge.className =
+            "badge";
+
+        emailBadge.innerHTML =
+            '<span class="badge-dot"></span> Email belum terverifikasi';
+
+        document.getElementById(
+            "statusValue"
+        ).innerHTML = `
+            <span style="color:#ffc27d;">
+                ⚠ Belum terverifikasi
+            </span>
+        `;
+    }
 }
 
 async function loadProfile(){
@@ -1500,204 +1391,310 @@ async function loadProfile(){
             );
         }
 
-        const user = data.user;
+        renderUser(data.user);
 
-        const name =
-            user.name || "User";
+        loading.style.display =
+            "none";
 
-        const email =
-            user.email || "-";
-
-        const whatsapp =
-            user.whatsapp || "";
-
-        const emailVerified =
-            user.emailVerified === true;
-
-        const phoneVerified =
-            user.phoneVerified === true;
-
-        const created =
-            user.createdAt
-                ? new Date(
-                    user.createdAt
-                ).toLocaleDateString(
-                    "id-ID",
-                    {
-                        day:"2-digit",
-                        month:"long",
-                        year:"numeric"
-                    }
-                )
-                : "-";
-
-        renderAvatar(user);
-        renderCover(user);
-
-        document.getElementById(
-            "name"
-        ).textContent = name;
-
-        document.getElementById(
-            "email"
-        ).textContent = email;
-
-        document.getElementById(
-            "nameValue"
-        ).textContent = name;
-
-        document.getElementById(
-            "emailValue"
-        ).textContent = email;
-
-        document.getElementById(
-            "whatsappValue"
-        ).textContent =
-            whatsapp || "Belum ditambahkan";
-
-        document.getElementById(
-            "createdValue"
-        ).textContent = created;
-
-        document.getElementById(
-            "idValue"
-        ).textContent =
-            user._id ||
-            user.id ||
-            "-";
-
-        const emailBadge =
-            document.getElementById(
-                "emailBadge"
-            );
-
-        if(emailVerified){
-            verificationAlert.style.display =
-                "none";
-
-            document.getElementById(
-                "statusValue"
-            ).innerHTML = `
-                <span class="status">
-                    <span class="status-dot"></span>
-                    Terverifikasi
-                </span>
-            `;
-
-            emailBadge.className =
-                "badge blue";
-
-            emailBadge.innerHTML =
-                '<span class="badge-dot"></span> Email terverifikasi';
-
-        }else{
-            verificationAlert.style.display =
-                "block";
-
-            document.getElementById(
-                "statusValue"
-            ).innerHTML = `
-                <span style="color:#ffc27d;">
-                    ⚠ Belum terverifikasi
-                </span>
-            `;
-
-            emailBadge.className =
-                "badge";
-
-            emailBadge.innerHTML =
-                '<span class="badge-dot"></span> Email belum terverifikasi';
-        }
-
-        if(whatsapp){
-            currentPhone =
-                normalizePhone(whatsapp);
-
-            phoneInput.value =
-                whatsapp;
-        }
-
-        if(
-            phoneVerified &&
-            whatsapp
-        ){
-            setPhoneVerified(
-                currentPhone
-            );
-        }else{
-            setPhonePending(
-                currentPhone
-            );
-        }
-
-        loading.style.display = "none";
-        content.style.display = "block";
+        content.style.display =
+            "block";
 
     }catch(error){
+
         console.error(
             "PROFILE ERROR:",
             error
         );
 
-        loading.style.display = "none";
-        errorBox.style.display = "block";
+        loading.style.display =
+            "none";
+
+        errorBox.style.display =
+            "block";
 
         errorBox.textContent =
             error.message ||
             "Gagal memuat profile.";
 
         setTimeout(() => {
-            window.location.href = "/login";
+            window.location.href =
+                "/login";
         },1800);
     }
 }
 
-phoneInput.addEventListener(
+async function uploadImage(
+    file,
+    type
+){
+    if(!file){
+        return;
+    }
+
+    if(
+        !file.type.startsWith(
+            "image/"
+        )
+    ){
+        showUploadStatus(
+            "File harus berupa gambar.",
+            "error"
+        );
+        return;
+    }
+
+    if(
+        file.size >
+        8 * 1024 * 1024
+    ){
+        showUploadStatus(
+            "Ukuran gambar maksimal 8 MB.",
+            "error"
+        );
+        return;
+    }
+
+    clearUploadStatus();
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+    formData.append(
+        "type",
+        type
+    );
+
+    const label =
+        type === "profilePhoto"
+            ? "foto profil"
+            : "background profil";
+
+    showUploadStatus(
+        `Mengupload ${label}...`,
+        "success"
+    );
+
+    try{
+        const response =
+            await fetch(
+                "/api/user/update",
+                {
+                    method:"POST",
+                    credentials:"include",
+                    body:formData
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+            throw new Error(
+                data.message ||
+                `Gagal mengupload ${label}.`
+            );
+        }
+
+        if(
+            type === "profilePhoto"
+        ){
+            if(data.url){
+                avatar.innerHTML = "";
+
+                const image =
+                    document.createElement("img");
+
+                image.src = data.url;
+                image.alt =
+                    currentUser?.name ||
+                    "User";
+
+                avatar.appendChild(
+                    image
+                );
+            }
+        }
+
+        if(
+            type === "profileBackground"
+        ){
+            if(data.url){
+                coverImage.src =
+                    data.url;
+
+                coverImage.style.display =
+                    "block";
+            }
+        }
+
+        if(data.user){
+            renderUser(data.user);
+        }
+
+        showUploadStatus(
+            `${label} berhasil diperbarui.`,
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(
+            "UPLOAD ERROR:",
+            error
+        );
+
+        showUploadStatus(
+            error.message ||
+            `Gagal mengupload ${label}.`,
+            "error"
+        );
+    }
+}
+
+async function saveWhatsapp(){
+    let phone =
+        normalizePhone(
+            whatsappInput.value
+        );
+
+    if(
+        phone &&
+        !/^\+?\d{8,15}$/.test(phone)
+    ){
+        showUploadStatus(
+            "Format nomor WhatsApp tidak valid.",
+            "error"
+        );
+        return;
+    }
+
+    saveWhatsappButton.disabled =
+        true;
+
+    clearUploadStatus();
+
+    try{
+        const response =
+            await fetch(
+                "/api/user/update",
+                {
+                    method:"PATCH",
+                    credentials:"include",
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:JSON.stringify({
+                        whatsapp:phone
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+            throw new Error(
+                data.message ||
+                "Gagal memperbarui WhatsApp."
+            );
+        }
+
+        if(data.user){
+            renderUser(data.user);
+        }
+
+        showUploadStatus(
+            "Nomor WhatsApp berhasil diperbarui.",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(
+            "WHATSAPP UPDATE ERROR:",
+            error
+        );
+
+        showUploadStatus(
+            error.message ||
+            "Gagal memperbarui WhatsApp.",
+            "error"
+        );
+
+    }finally{
+        saveWhatsappButton.disabled =
+            false;
+    }
+}
+
+avatarInput.addEventListener(
+    "change",
+    event => {
+        const file =
+            event.target.files?.[0];
+
+        if(file){
+            uploadImage(
+                file,
+                "profilePhoto"
+            );
+        }
+
+        event.target.value = "";
+    }
+);
+
+coverInput.addEventListener(
+    "change",
+    event => {
+        const file =
+            event.target.files?.[0];
+
+        if(file){
+            uploadImage(
+                file,
+                "profileBackground"
+            );
+        }
+
+        event.target.value = "";
+    }
+);
+
+whatsappInput.addEventListener(
     "input",
     () => {
-        phoneInput.value =
-            phoneInput.value
+        whatsappInput.value =
+            whatsappInput.value
                 .replace(/[^\d+]/g,"")
                 .slice(0,16);
     }
 );
 
-otpInput.addEventListener(
-    "input",
-    () => {
-        otpInput.value =
-            otpInput.value
-                .replace(/\D/g,"")
-                .slice(0,6);
-    }
-);
-
-otpInput.addEventListener(
+whatsappInput.addEventListener(
     "keydown",
     event => {
         if(event.key === "Enter"){
-            verifyOtp();
+            saveWhatsapp();
         }
     }
 );
 
-phoneInput.addEventListener(
-    "keydown",
-    event => {
-        if(event.key === "Enter"){
-            requestOtp();
-        }
-    }
-);
-
-requestOtpButton.addEventListener(
+saveWhatsappButton.addEventListener(
     "click",
-    requestOtp
-);
-
-verifyOtpButton.addEventListener(
-    "click",
-    verifyOtp
+    saveWhatsapp
 );
 
 loadProfile();
