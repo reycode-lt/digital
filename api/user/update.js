@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import formidable from "formidable";
 import { connectDB } from "../_lib/mongodb.js";
 import User from "../../models/User.js";
 import {
@@ -5,9 +7,68 @@ import {
     verifyToken
 } from "../_lib/auth.js";
 import {
-    requestOtp,
-    verifyOtp
-} from "../../lib/otp.js";
+    uploadImage,
+    deleteImage
+} from "../../lib/upload.js";
+
+export const config = {
+    api: {
+        bodyParser: false
+    }
+};
+
+function getField(fields, name) {
+    const value = fields?.[name];
+
+    if (Array.isArray(value)) {
+        return value[0];
+    }
+
+    return value;
+}
+
+function getFile(files, name) {
+    const value = files?.[name];
+
+    if (Array.isArray(value)) {
+        return value[0];
+    }
+
+    return value;
+}
+
+async function parseForm(req) {
+    const form = formidable({
+        multiples: false,
+        maxFiles: 1,
+        maxFileSize: 8 * 1024 * 1024
+    });
+
+    const [fields, files] = await form.parse(req);
+
+    return {
+        fields,
+        files
+    };
+}
+
+function getUserResponse(user) {
+    return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        whatsapp: user.whatsapp || "",
+        profilePhoto: user.profilePhoto || "",
+        profileBackground:
+            user.profileBackground || "",
+        emailVerified:
+            user.emailVerified,
+        phoneVerified:
+            user.phoneVerified,
+        phoneVerifiedAt:
+            user.phoneVerifiedAt
+    };
+}
 
 export default async function handler(req, res) {
     try {
@@ -31,7 +92,9 @@ export default async function handler(req, res) {
 
         await connectDB();
 
-        const user = await User.findById(payload.userId);
+        const user = await User.findById(
+            payload.userId
+        );
 
         if (!user) {
             return res.status(404).json({
@@ -40,102 +103,103 @@ export default async function handler(req, res) {
             });
         }
 
-        /*
-         * REQUEST / VERIFY OTP
-         */
         if (req.method === "POST") {
             const {
-                action,
-                phone,
-                otp
-            } = req.body || {};
+                fields,
+                files
+            } = await parseForm(req);
 
-            if (action === "request_otp") {
-                const result = await requestOtp({
-                    userId: user._id,
-                    phone
-                });
+            const type = getField(
+                fields,
+                "type"
+            );
 
-                return res.status(200).json({
-                    success: true,
-                    message: "OTP berhasil dibuat.",
-                    requestId: result.requestId,
-                    phone: result.phone,
-                    expiresAt: result.expiresAt,
-                    cooldownSeconds:
-                        result.cooldownSeconds,
-                    event: result.event,
-
-                    /*
-                     * Sementara dikembalikan
-                     * untuk proses integrasi
-                     * WhatsApp notification.
-                     */
-                    otp: result.otp
-                });
-            }
-
-            if (action === "verify_otp") {
-                const result = await verifyOtp({
-                    userId: user._id,
-                    phone,
-                    otp
-                });
-
-                user.whatsapp = result.phone;
-                user.phoneVerified = true;
-                user.phoneVerifiedAt =
-                    result.verifiedAt;
-
-                await user.save();
-
-                return res.status(200).json({
-                    success: true,
+            if (
+                type !== "profilePhoto" &&
+                type !== "profileBackground"
+            ) {
+                return res.status(400).json({
+                    success: false,
                     message:
-                        "Nomor WhatsApp berhasil diverifikasi.",
-                    user: {
-                        id: user._id,
-                        name: user.name,
-                        email: user.email,
-                        whatsapp: user.whatsapp,
-                        emailVerified:
-                            user.emailVerified,
-                        phoneVerified:
-                            user.phoneVerified,
-                        phoneVerifiedAt:
-                            user.phoneVerifiedAt
-                    }
+                        "Tipe upload tidak valid"
                 });
             }
 
-            return res.status(400).json({
-                success: false,
-                message: "Action tidak valid"
+            const file = getFile(
+                files,
+                "file"
+            );
+
+            if (!file) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "File gambar wajib dipilih"
+                });
+            }
+
+            const buffer = await fs.readFile(
+                file.filepath
+            );
+
+            const oldUrl = user[type] || "";
+
+            const result =
+                await uploadImage({
+                    buffer,
+                    contentType:
+                        file.mimetype,
+                    userId: user._id.toString(),
+                    type
+                });
+
+            user[type] = result.url;
+
+            await user.save();
+
+            if (
+                oldUrl &&
+                oldUrl !== result.url
+            ) {
+                try {
+                    await deleteImage(
+                        oldUrl
+                    );
+                } catch (deleteError) {
+                    console.error(
+                        "OLD IMAGE DELETE ERROR:",
+                        deleteError
+                    );
+                }
+            }
+
+            return res.status(200).json({
+                success: true,
+                message:
+                    type === "profilePhoto"
+                        ? "Foto profil berhasil diperbarui."
+                        : "Background profil berhasil diperbarui.",
+                type,
+                url: result.url,
+                user: getUserResponse(user)
             });
         }
 
-        /*
-         * UPDATE PROFILE
-         */
         if (req.method === "PATCH") {
             const {
                 name,
                 whatsapp
             } = req.body || {};
 
-            if (!name?.trim()) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Nama wajib diisi"
-                });
+            if (
+                typeof name === "string" &&
+                name.trim()
+            ) {
+                user.name = name.trim();
             }
 
-            user.name = name.trim();
-
             if (
-                typeof whatsapp ===
-                "string"
+                typeof whatsapp === "string"
             ) {
                 user.whatsapp =
                     whatsapp.trim();
@@ -147,17 +211,7 @@ export default async function handler(req, res) {
                 success: true,
                 message:
                     "Profile berhasil diperbarui.",
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    whatsapp:
-                        user.whatsapp,
-                    emailVerified:
-                        user.emailVerified,
-                    phoneVerified:
-                        user.phoneVerified
-                }
+                user: getUserResponse(user)
             });
         }
 
@@ -168,7 +222,7 @@ export default async function handler(req, res) {
         });
     } catch (error) {
         console.error(
-            "UPDATE / OTP ERROR:",
+            "UPDATE PROFILE ERROR:",
             error
         );
 
