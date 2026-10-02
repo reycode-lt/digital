@@ -200,11 +200,13 @@
             height:100%;
             display:none;
             object-fit:cover;
+            z-index:1;
         }
 
         .cover-overlay{
             position:absolute;
             inset:0;
+            z-index:2;
             background:
                 linear-gradient(
                     180deg,
@@ -1199,60 +1201,165 @@ function displayPhone(phone){
         .replace(/^\+62/,"62");
 }
 
+function getCreatedDate(user){
+    if(user?.createdAt){
+        const date =
+            new Date(user.createdAt);
+
+        if(!Number.isNaN(
+            date.getTime()
+        )){
+            return date;
+        }
+    }
+
+    if(user?.created_at){
+        const date =
+            new Date(user.created_at);
+
+        if(!Number.isNaN(
+            date.getTime()
+        )){
+            return date;
+        }
+    }
+
+    if(user?.joinedAt){
+        const date =
+            new Date(user.joinedAt);
+
+        if(!Number.isNaN(
+            date.getTime()
+        )){
+            return date;
+        }
+    }
+
+    const id =
+        String(
+            user?._id ||
+            user?.id ||
+            ""
+        );
+
+    if(
+        /^[a-fA-F0-9]{24}$/.test(id)
+    ){
+        const timestamp =
+            parseInt(
+                id.substring(0,8),
+                16
+            );
+
+        const date =
+            new Date(
+                timestamp * 1000
+            );
+
+        if(!Number.isNaN(
+            date.getTime()
+        )){
+            return date;
+        }
+    }
+
+    return null;
+}
+
+function formatCreatedDate(user){
+    const date =
+        getCreatedDate(user);
+
+    if(!date){
+        return "-";
+    }
+
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            day:"2-digit",
+            month:"long",
+            year:"numeric"
+        }
+    );
+}
+
 function showUploadStatus(
     message,
     type = "success"
 ){
-    uploadStatus.textContent = message;
+    uploadStatus.textContent =
+        message;
+
     uploadStatus.className =
         `upload-status show ${type}`;
 }
 
 function clearUploadStatus(){
-    uploadStatus.textContent = "";
+    uploadStatus.textContent =
+        "";
+
     uploadStatus.className =
         "upload-status";
 }
 
 function renderAvatar(user){
     const name =
-        user.name || "User";
+        user?.name || "User";
 
-    avatar.innerHTML = "";
+    avatar.innerHTML =
+        "";
 
-    if(user.profilePhoto){
+    if(user?.avatarUrl){
+
         const image =
             document.createElement("img");
 
         image.src =
-            user.profilePhoto;
+            user.avatarUrl;
 
-        image.alt = name;
+        image.alt =
+            name;
 
         image.onload = () => {
-            avatar.innerHTML = "";
-            avatar.appendChild(image);
+            avatar.innerHTML =
+                "";
+
+            avatar.appendChild(
+                image
+            );
         };
 
         image.onerror = () => {
             avatar.textContent =
-                name.charAt(0).toUpperCase();
+                name
+                    .charAt(0)
+                    .toUpperCase();
         };
-    }else{
-        avatar.textContent =
-            name.charAt(0).toUpperCase();
+
+        return;
     }
+
+    avatar.textContent =
+        name
+            .charAt(0)
+            .toUpperCase();
 }
 
 function renderCover(user){
-    if(!user.profileBackground){
+    if(!user?.coverUrl){
+        coverImage.removeAttribute(
+            "src"
+        );
+
         coverImage.style.display =
             "none";
+
         return;
     }
 
     coverImage.src =
-        user.profileBackground;
+        user.coverUrl;
 
     coverImage.style.display =
         "block";
@@ -1264,7 +1371,12 @@ function renderCover(user){
 }
 
 function renderUser(user){
-    currentUser = user;
+    currentUser = {
+        ...(currentUser || {}),
+        ...(user || {})
+    };
+
+    user = currentUser;
 
     const name =
         user.name || "User";
@@ -1280,19 +1392,23 @@ function renderUser(user){
 
     document.getElementById(
         "name"
-    ).textContent = name;
+    ).textContent =
+        name;
 
     document.getElementById(
         "email"
-    ).textContent = email;
+    ).textContent =
+        email;
 
     document.getElementById(
         "nameValue"
-    ).textContent = name;
+    ).textContent =
+        name;
 
     document.getElementById(
         "emailValue"
-    ).textContent = email;
+    ).textContent =
+        email;
 
     document.getElementById(
         "whatsappValue"
@@ -1306,18 +1422,7 @@ function renderUser(user){
     document.getElementById(
         "createdValue"
     ).textContent =
-        user.createdAt
-            ? new Date(
-                user.createdAt
-            ).toLocaleDateString(
-                "id-ID",
-                {
-                    day:"2-digit",
-                    month:"long",
-                    year:"numeric"
-                }
-            )
-            : "-";
+        formatCreatedDate(user);
 
     document.getElementById(
         "idValue"
@@ -1331,7 +1436,9 @@ function renderUser(user){
             "emailBadge"
         );
 
-    if(user.emailVerified === true){
+    if(
+        user.emailVerified === true
+    ){
 
         emailBadge.className =
             "badge blue";
@@ -1341,12 +1448,13 @@ function renderUser(user){
 
         document.getElementById(
             "statusValue"
-        ).innerHTML = `
-            <span class="status">
-                <span class="status-dot"></span>
-                Terverifikasi
-            </span>
-        `;
+        ).innerHTML =
+            `
+                <span class="status">
+                    <span class="status-dot"></span>
+                    Terverifikasi
+                </span>
+            `;
 
     }else{
 
@@ -1358,16 +1466,57 @@ function renderUser(user){
 
         document.getElementById(
             "statusValue"
-        ).innerHTML = `
-            <span style="color:#ffc27d;">
-                ⚠ Belum terverifikasi
-            </span>
-        `;
+        ).innerHTML =
+            `
+                <span style="color:#ffc27d;">
+                    ⚠ Belum terverifikasi
+                </span>
+            `;
+    }
+
+    const phoneBadge =
+        document.getElementById(
+            "phoneBadge"
+        );
+
+    const phoneEditStatus =
+        document.getElementById(
+            "phoneEditStatus"
+        );
+
+    if(user.phoneVerified === true){
+
+        phoneBadge.className =
+            "badge green";
+
+        phoneBadge.innerHTML =
+            '<span class="badge-dot"></span> WhatsApp terverifikasi';
+
+        phoneEditStatus.textContent =
+            "✓ Nomor dianggap terverifikasi";
+
+        phoneEditStatus.style.color =
+            "#65e59a";
+
+    }else{
+
+        phoneBadge.className =
+            "badge";
+
+        phoneBadge.innerHTML =
+            '<span class="badge-dot"></span> WhatsApp belum ditambahkan';
+
+        phoneEditStatus.textContent =
+            "Nomor belum ditambahkan";
+
+        phoneEditStatus.style.color =
+            "#8d98a9";
     }
 }
 
 async function loadProfile(){
     try{
+
         const response =
             await fetch(
                 `/api/user/me?_=${Date.now()}`,
@@ -1391,7 +1540,9 @@ async function loadProfile(){
             );
         }
 
-        renderUser(data.user);
+        renderUser(
+            data.user
+        );
 
         loading.style.display =
             "none";
@@ -1431,15 +1582,23 @@ async function uploadImage(
         return;
     }
 
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
+
     if(
-        !file.type.startsWith(
-            "image/"
+        !allowedTypes.includes(
+            file.type
         )
     ){
         showUploadStatus(
-            "File harus berupa gambar.",
+            "Format gambar harus JPG, PNG, WEBP, atau GIF.",
             "error"
         );
+
         return;
     }
 
@@ -1451,6 +1610,7 @@ async function uploadImage(
             "Ukuran gambar maksimal 8 MB.",
             "error"
         );
+
         return;
     }
 
@@ -1480,6 +1640,7 @@ async function uploadImage(
     );
 
     try{
+
         const response =
             await fetch(
                 "/api/user/update",
@@ -1503,40 +1664,41 @@ async function uploadImage(
             );
         }
 
-        if(
-            type === "profilePhoto"
-        ){
-            if(data.url){
-                avatar.innerHTML = "";
+        if(data.user){
+            renderUser(
+                data.user
+            );
+        }else if(data.url){
 
-                const image =
-                    document.createElement("img");
+            if(
+                type ===
+                "profilePhoto"
+            ){
+                currentUser = {
+                    ...(currentUser || {}),
+                    avatarUrl:
+                        data.url
+                };
 
-                image.src = data.url;
-                image.alt =
-                    currentUser?.name ||
-                    "User";
-
-                avatar.appendChild(
-                    image
+                renderAvatar(
+                    currentUser
                 );
             }
-        }
 
-        if(
-            type === "profileBackground"
-        ){
-            if(data.url){
-                coverImage.src =
-                    data.url;
+            if(
+                type ===
+                "profileBackground"
+            ){
+                currentUser = {
+                    ...(currentUser || {}),
+                    coverUrl:
+                        data.url
+                };
 
-                coverImage.style.display =
-                    "block";
+                renderCover(
+                    currentUser
+                );
             }
-        }
-
-        if(data.user){
-            renderUser(data.user);
         }
 
         showUploadStatus(
@@ -1560,19 +1722,22 @@ async function uploadImage(
 }
 
 async function saveWhatsapp(){
-    let phone =
+    const phone =
         normalizePhone(
             whatsappInput.value
         );
 
     if(
         phone &&
-        !/^\+?\d{8,15}$/.test(phone)
+        !/^\+?\d{8,15}$/.test(
+            phone
+        )
     ){
         showUploadStatus(
             "Format nomor WhatsApp tidak valid.",
             "error"
         );
+
         return;
     }
 
@@ -1582,6 +1747,7 @@ async function saveWhatsapp(){
     clearUploadStatus();
 
     try{
+
         const response =
             await fetch(
                 "/api/user/update",
@@ -1592,9 +1758,11 @@ async function saveWhatsapp(){
                         "Content-Type":
                             "application/json"
                     },
-                    body:JSON.stringify({
-                        whatsapp:phone
-                    })
+                    body:
+                        JSON.stringify({
+                            whatsapp:
+                                phone
+                        })
                 }
             );
 
@@ -1612,7 +1780,9 @@ async function saveWhatsapp(){
         }
 
         if(data.user){
-            renderUser(data.user);
+            renderUser(
+                data.user
+            );
         }
 
         showUploadStatus(
@@ -1634,6 +1804,7 @@ async function saveWhatsapp(){
         );
 
     }finally{
+
         saveWhatsappButton.disabled =
             false;
     }
@@ -1642,6 +1813,7 @@ async function saveWhatsapp(){
 avatarInput.addEventListener(
     "change",
     event => {
+
         const file =
             event.target.files?.[0];
 
@@ -1652,13 +1824,15 @@ avatarInput.addEventListener(
             );
         }
 
-        event.target.value = "";
+        event.target.value =
+            "";
     }
 );
 
 coverInput.addEventListener(
     "change",
     event => {
+
         const file =
             event.target.files?.[0];
 
@@ -1669,16 +1843,21 @@ coverInput.addEventListener(
             );
         }
 
-        event.target.value = "";
+        event.target.value =
+            "";
     }
 );
 
 whatsappInput.addEventListener(
     "input",
     () => {
+
         whatsappInput.value =
             whatsappInput.value
-                .replace(/[^\d+]/g,"")
+                .replace(
+                    /[^\d+]/g,
+                    ""
+                )
                 .slice(0,16);
     }
 );
@@ -1686,6 +1865,7 @@ whatsappInput.addEventListener(
 whatsappInput.addEventListener(
     "keydown",
     event => {
+
         if(event.key === "Enter"){
             saveWhatsapp();
         }
