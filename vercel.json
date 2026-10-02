@@ -39,6 +39,10 @@
     {
       "source": "/alightmotion",
       "destination": "/alightmotion.html"
+    },
+    {
+      "source": "/chat",
+      "destination": "/chatpublic.html"
     }
   ]
 }
