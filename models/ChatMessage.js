@@ -16,15 +16,30 @@ const ChatMessageSchema = new mongoose.Schema(
         },
         content: {
             type: String,
-            required: true,
             trim: true,
-            maxlength: 5000
+            maxlength: 5000,
+            default: ""
+        },
+        imageUrl: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        imageName: {
+            type: String,
+            trim: true,
+            default: ""
         }
     },
     {
         timestamps: true
     }
 );
+
+ChatMessageSchema.index({
+    group: 1,
+    createdAt: -1
+});
 
 export default mongoose.models.ChatMessage ||
     mongoose.model("ChatMessage", ChatMessageSchema);
