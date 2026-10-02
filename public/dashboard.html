@@ -51,6 +51,10 @@
             text-decoration: none;
         }
 
+        button {
+            border: 0;
+        }
+
         .topbar {
             position: sticky;
             top: 0;
@@ -96,12 +100,12 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 9px;
         }
 
         .nav-btn {
             height: 40px;
-            padding: 0 15px;
+            padding: 0 14px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -125,6 +129,12 @@
             border-color: transparent;
             color: #fff;
             box-shadow: 0 8px 25px rgba(22, 140, 255, .18);
+        }
+
+        .nav-btn.chat-btn {
+            background: rgba(22, 140, 255, .08);
+            border-color: rgba(22, 140, 255, .2);
+            color: #6db9ff;
         }
 
         .page {
@@ -156,11 +166,12 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: linear-gradient(
-                180deg,
-                rgba(5, 11, 24, .02),
-                rgba(5, 11, 24, .12)
-            );
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(5, 11, 24, .02),
+                    rgba(5, 11, 24, .15)
+                );
         }
 
         .welcome {
@@ -228,7 +239,7 @@
             word-break: break-word;
         }
 
-        .welcome-greeting span.name {
+        .welcome-greeting .name {
             color: #fff;
         }
 
@@ -379,7 +390,7 @@
 
         .quick-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 13px;
         }
 
@@ -420,57 +431,6 @@
             color: var(--muted);
             font-size: 12px;
             line-height: 1.45;
-        }
-
-        .workspace {
-            margin-top: 18px;
-            padding: 22px;
-            border-radius: 21px;
-            border: 1px solid var(--card-border);
-            background:
-                linear-gradient(135deg, rgba(18, 42, 74, .7), rgba(7, 17, 33, .72));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .workspace-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .github-icon {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, .07);
-            font-size: 22px;
-        }
-
-        .workspace h3 {
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-
-        .workspace p {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .workspace-link {
-            padding: 10px 15px;
-            border-radius: 11px;
-            background: rgba(22, 140, 255, .1);
-            border: 1px solid rgba(22, 140, 255, .2);
-            color: #65b5ff;
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
         }
 
         .status {
@@ -548,6 +508,12 @@
             border-color: rgba(239, 68, 68, .25);
         }
 
+        @media (max-width: 1000px) {
+            .quick-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
         @media (max-width: 850px) {
             .quick-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -568,9 +534,17 @@
                 font-size: 15px;
             }
 
+            .nav-actions {
+                gap: 6px;
+            }
+
             .nav-btn {
-                padding: 0 11px;
+                padding: 0 10px;
                 font-size: 12px;
+            }
+
+            .nav-btn.profile-btn {
+                display: none;
             }
 
             .page {
@@ -611,19 +585,18 @@
             .quick-grid {
                 grid-template-columns: 1fr 1fr;
             }
-
-            .workspace {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .workspace-link {
-                width: 100%;
-                text-align: center;
-            }
         }
 
         @media (max-width: 420px) {
+            .brand img {
+                width: 34px;
+                height: 34px;
+            }
+
+            .brand-name {
+                font-size: 14px;
+            }
+
             .quick-grid {
                 grid-template-columns: 1fr;
             }
@@ -651,14 +624,22 @@
     <header class="topbar">
         <nav class="nav">
             <a href="/dashboard" class="brand">
-                <img src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode">
+                <img
+                    src="https://i.top4top.io/p_3925af3h26.png"
+                    alt="ReyCode"
+                >
                 <span class="brand-name">ReyCode Digital</span>
             </a>
 
             <div class="nav-actions">
-                <a href="/profile" class="nav-btn">
+                <a href="/chat" class="nav-btn chat-btn">
+                    Chat
+                </a>
+
+                <a href="/profile" class="nav-btn profile-btn">
                     Profil
                 </a>
+
                 <button class="nav-btn primary" id="logoutTop">
                     Keluar
                 </button>
@@ -675,49 +656,116 @@
                 loop
                 playsinline
                 preload="metadata">
-                <source src="https://files.catbox.moe/9tcayz.mp4" type="video/mp4">
+                <source
+                    src="https://files.catbox.moe/9tcayz.mp4"
+                    type="video/mp4"
+                >
             </video>
         </section>
 
         <section class="welcome">
             <div class="welcome-left">
-                <div class="avatar" id="welcomeAvatar">U</div>
+                <div class="avatar" id="welcomeAvatar">
+                    U
+                </div>
 
                 <div class="welcome-content">
-                    <div class="welcome-label">Dashboard kamu</div>
-                    <div class="welcome-greeting" id="welcomeGreeting">
+                    <div class="welcome-label">
+                        Dashboard kamu
+                    </div>
+
+                    <div
+                        class="welcome-greeting"
+                        id="welcomeGreeting">
                         Memuat...
                     </div>
-                    <div class="welcome-email" id="welcomeEmail">
+
+                    <div
+                        class="welcome-email"
+                        id="welcomeEmail">
                         Memuat data akun...
                     </div>
                 </div>
             </div>
 
             <div class="time-box">
-                <div class="clock" id="clock">00:00:00</div>
-                <div class="date-info" id="dateInfo">Memuat tanggal...</div>
+                <div
+                    class="clock"
+                    id="clock">
+                    00:00:00
+                </div>
+
+                <div
+                    class="date-info"
+                    id="dateInfo">
+                    Memuat tanggal...
+                </div>
             </div>
         </section>
 
         <section class="main-grid">
 
-            <a href="/profile" class="action-card">
-                <div class="action-icon">◉</div>
-                <h3>Profil Saya</h3>
+            <a
+                href="/profile"
+                class="action-card">
+                <div class="action-icon">
+                    ◉
+                </div>
+
+                <h3>
+                    Profil Saya
+                </h3>
+
                 <p>
-                    Kelola informasi akun, foto profil, dan pengaturan akun kamu.
+                    Kelola informasi akun, foto profil,
+                    dan pengaturan akun kamu.
                 </p>
-                <div class="action-arrow">→</div>
+
+                <div class="action-arrow">
+                    →
+                </div>
             </a>
 
-            <div class="action-card logout-card" id="logoutCard">
-                <div class="action-icon">↪</div>
-                <h3>Keluar Akun</h3>
+            <a
+                href="/chat"
+                class="action-card">
+                <div class="action-icon">
+                    💬
+                </div>
+
+                <h3>
+                    MonikaLabs Comunity
+                </h3>
+
                 <p>
-                    Akhiri sesi akun ReyCode Digital dengan aman.
+                    Bergabung dan ngobrol bersama
+                    pengguna ReyCode lainnya.
                 </p>
-                <div class="action-arrow">→</div>
+
+                <div class="action-arrow">
+                    →
+                </div>
+            </a>
+
+            <div
+                class="action-card logout-card"
+                id="logoutCard">
+                <div class="action-icon">
+                    ↪
+                </div>
+
+                <h3>
+                    Keluar Akun
+                </h3>
+
+                <p>
+                    Akhiri sesi akun ReyCode Digital
+                    dengan aman.
+                </p>
+
+                <div class="action-arrow">
+                    →
+                </div>
             </div>
 
         </section>
@@ -726,7 +774,10 @@
 
             <div class="section-head">
                 <div>
-                    <div class="section-title">Akses Cepat</div>
+                    <div class="section-title">
+                        Akses Cepat
+                    </div>
+
                     <div class="section-subtitle">
                         Akses fitur utama ReyCode Digital
                     </div>
@@ -735,48 +786,87 @@
 
             <div class="quick-grid">
 
-                <a href="/profile" class="quick-card">
-                    <div class="quick-icon">👤</div>
-                    <h4>Profile</h4>
-                    <p>Kelola data akun dan profil.</p>
+                <a
+                    href="/profile"
+                    class="quick-card">
+                    <div class="quick-icon">
+                        👤
+                    </div>
+
+                    <h4>
+                        Profile
+                    </h4>
+
+                    <p>
+                        Kelola data akun dan profil.
+                    </p>
                 </a>
 
-                <a href="/github" class="quick-card">
-                    <div class="quick-icon">⌘</div>
-                    <h4>GitHub</h4>
-                    <p>Workspace dan integrasi GitHub.</p>
+                <a
+                    href="/chat"
+                    class="quick-card">
+                    <div class="quick-icon">
+                        💬
+                    </div>
+
+                    <h4>
+                        Chat
+                    </h4>
+
+                    <p>
+                        Chat bersama komunitas ReyCode.
+                    </p>
                 </a>
 
-                <a href="/deploy" class="quick-card">
-                    <div class="quick-icon">▲</div>
-                    <h4>Deploy</h4>
-                    <p>Kelola proses deployment project.</p>
+                <a
+                    href="/github"
+                    class="quick-card">
+                    <div class="quick-icon">
+                        ⌘
+                    </div>
+
+                    <h4>
+                        GitHub
+                    </h4>
+
+                    <p>
+                        Workspace dan integrasi GitHub.
+                    </p>
                 </a>
 
-                <a href="/alightmotion" class="quick-card">
-                    <div class="quick-icon">✦</div>
-                    <h4>Alight Motion</h4>
-                    <p>Akses fitur Alight Motion.</p>
+                <a
+                    href="/deploy"
+                    class="quick-card">
+                    <div class="quick-icon">
+                        ▲
+                    </div>
+
+                    <h4>
+                        Deploy
+                    </h4>
+
+                    <p>
+                        Kelola proses deployment project.
+                    </p>
+                </a>
+
+                <a
+                    href="/alightmotion"
+                    class="quick-card">
+                    <div class="quick-icon">
+                        ✦
+                    </div>
+
+                    <h4>
+                        Alight Motion
+                    </h4>
+
+                    <p>
+                        Akses fitur Alight Motion.
+                    </p>
                 </a>
 
             </div>
-
-        </section>
-
-        <section class="workspace">
-
-            <div class="workspace-left">
-                <div class="github-icon">⌘</div>
-
-                <div>
-                    <h3>GitHub Workspace</h3>
-                    <p>Kelola repository dan workflow GitHub kamu.</p>
-                </div>
-            </div>
-
-            <a href="/github" class="workspace-link">
-                Buka Workspace
-            </a>
 
         </section>
 
@@ -784,42 +874,65 @@
 
             <div class="status-item">
                 <div class="status-top">
-                    <span class="status-name">Website</span>
+                    <span class="status-name">
+                        Website
+                    </span>
+
                     <span class="status-dot"></span>
                 </div>
-                <p>Operational</p>
+
+                <p>
+                    Operational
+                </p>
             </div>
 
             <div class="status-item">
                 <div class="status-top">
-                    <span class="status-name">API</span>
+                    <span class="status-name">
+                        API
+                    </span>
+
                     <span class="status-dot"></span>
                 </div>
-                <p>Operational</p>
+
+                <p>
+                    Operational
+                </p>
             </div>
 
             <div class="status-item">
                 <div class="status-top">
-                    <span class="status-name">Dashboard</span>
+                    <span class="status-name">
+                        Dashboard
+                    </span>
+
                     <span class="status-dot"></span>
                 </div>
-                <p>Operational</p>
+
+                <p>
+                    Operational
+                </p>
             </div>
 
         </section>
 
         <footer>
-            © <span id="year"></span> ReyCode Digital. All rights reserved.
+            ©
+            <span id="year"></span>
+            ReyCode Digital. All rights reserved.
         </footer>
 
     </main>
 
-    <div class="toast" id="toast"></div>
+    <div
+        class="toast"
+        id="toast">
+    </div>
 
     <script>
-        const $ = id => document.getElementById(id);
+        const $ = id =>
+            document.getElementById(id);
 
-        let currentUserName = "User";
         let toastTimer = null;
 
         function escapeHtml(value) {
@@ -832,7 +945,8 @@
         }
 
         function getGreeting() {
-            const hour = new Date().getHours();
+            const hour =
+                new Date().getHours();
 
             if (hour >= 5 && hour < 11) {
                 return "Selamat pagi";
@@ -850,16 +964,20 @@
         }
 
         function formatDate(date) {
-            return new Intl.DateTimeFormat("id-ID", {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            }).format(date);
+            return new Intl.DateTimeFormat(
+                "id-ID",
+                {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            ).format(date);
         }
 
         function setAvatar(user) {
-            const avatar = $("welcomeAvatar");
+            const avatar =
+                $("welcomeAvatar");
 
             if (!avatar) {
                 return;
@@ -872,22 +990,31 @@
                 user?.fullName ||
                 "User";
 
-            const avatarUrl = user?.avatarUrl || "";
+            const avatarUrl =
+                user?.avatarUrl || "";
 
             if (avatarUrl) {
-                avatar.innerHTML = `
-                    <img
-                        src="${escapeHtml(avatarUrl)}"
-                        alt="${escapeHtml(name)}"
-                        onerror="this.parentElement.textContent='${escapeHtml(name.charAt(0).toUpperCase())}'"
-                    >
-                `;
+                const image =
+                    document.createElement("img");
+
+                image.src = avatarUrl;
+                image.alt = name;
+
+                image.onerror = () => {
+                    avatar.textContent =
+                        name
+                            .charAt(0)
+                            .toUpperCase();
+                };
+
+                avatar.replaceChildren(image);
                 return;
             }
 
-            avatar.textContent = name
-                .charAt(0)
-                .toUpperCase();
+            avatar.textContent =
+                name
+                    .charAt(0)
+                    .toUpperCase();
         }
 
         function updateGreeting(user) {
@@ -898,24 +1025,52 @@
                 user?.fullName ||
                 "User";
 
-            currentUserName = name;
-
             const verified =
-                user?.emailVerified === true
-                    ? `<span class="verified-badge" title="Akun terverifikasi">✓</span>`
-                    : "";
+                user?.emailVerified === true;
 
-            const greeting = $("welcomeGreeting");
+            const greeting =
+                $("welcomeGreeting");
 
             if (greeting) {
-                greeting.innerHTML = `
-                    ${getGreeting()},
-                    <span class="name">${escapeHtml(name)}</span>
-                    ${verified}
-                `;
+                greeting.replaceChildren(
+                    document.createTextNode(
+                        `${getGreeting()}, `
+                    )
+                );
+
+                const nameElement =
+                    document.createElement("span");
+
+                nameElement.className =
+                    "name";
+
+                nameElement.textContent =
+                    name;
+
+                greeting.appendChild(
+                    nameElement
+                );
+
+                if (verified) {
+                    const badge =
+                        document.createElement("span");
+
+                    badge.className =
+                        "verified-badge";
+
+                    badge.title =
+                        "Akun terverifikasi";
+
+                    badge.textContent = "✓";
+
+                    greeting.appendChild(
+                        badge
+                    );
+                }
             }
 
-            const email = $("welcomeEmail");
+            const email =
+                $("welcomeEmail");
 
             if (email) {
                 email.textContent =
@@ -927,27 +1082,37 @@
         function updateClock() {
             const now = new Date();
 
-            const clock = $("clock");
+            const clock =
+                $("clock");
 
             if (clock) {
                 clock.textContent =
-                    now.toLocaleTimeString("id-ID", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false
-                    });
+                    now.toLocaleTimeString(
+                        "id-ID",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false
+                        }
+                    );
             }
 
-            const dateInfo = $("dateInfo");
+            const dateInfo =
+                $("dateInfo");
 
             if (dateInfo) {
-                dateInfo.textContent = formatDate(now);
+                dateInfo.textContent =
+                    formatDate(now);
             }
         }
 
-        function showToast(message, error = false) {
-            const toast = $("toast");
+        function showToast(
+            message,
+            error = false
+        ) {
+            const toast =
+                $("toast");
 
             if (!toast) {
                 return;
@@ -955,34 +1120,54 @@
 
             clearTimeout(toastTimer);
 
-            toast.textContent = message;
-            toast.classList.toggle("error", error);
-            toast.classList.add("show");
+            toast.textContent =
+                message;
 
-            toastTimer = setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000);
+            toast.classList.toggle(
+                "error",
+                error
+            );
+
+            toast.classList.add(
+                "show"
+            );
+
+            toastTimer =
+                setTimeout(() => {
+                    toast.classList.remove(
+                        "show"
+                    );
+                }, 3000);
         }
 
         async function loadUser() {
             try {
-                const response = await fetch("/api/user/me", {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store",
-                    headers: {
-                        "Accept": "application/json"
-                    }
-                });
+                const response =
+                    await fetch(
+                        "/api/user/me",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store",
+                            headers: {
+                                Accept:
+                                    "application/json"
+                            }
+                        }
+                    );
 
-                const raw = await response.text();
+                const raw =
+                    await response.text();
 
                 let data;
 
                 try {
-                    data = JSON.parse(raw);
+                    data =
+                        JSON.parse(raw);
                 } catch {
-                    throw new Error("Response API bukan JSON");
+                    throw new Error(
+                        "Response API bukan JSON"
+                    );
                 }
 
                 if (!response.ok) {
@@ -992,28 +1177,54 @@
                     );
                 }
 
-                const user = data?.user || data;
+                const user =
+                    data?.user || data;
 
                 if (!user) {
-                    throw new Error("Data user tidak ditemukan");
+                    throw new Error(
+                        "Data user tidak ditemukan"
+                    );
                 }
 
                 updateGreeting(user);
                 setAvatar(user);
 
             } catch (error) {
-                console.error("LOAD USER ERROR:", error);
+                console.error(
+                    "LOAD USER ERROR:",
+                    error
+                );
 
-                const greeting = $("welcomeGreeting");
+                const greeting =
+                    $("welcomeGreeting");
 
                 if (greeting) {
-                    greeting.innerHTML = `
-                        ${getGreeting()},
-                        <span class="name">User</span>
-                    `;
+                    greeting.innerHTML = "";
+
+                    greeting.appendChild(
+                        document.createTextNode(
+                            `${getGreeting()}, `
+                        )
+                    );
+
+                    const name =
+                        document.createElement(
+                            "span"
+                        );
+
+                    name.className =
+                        "name";
+
+                    name.textContent =
+                        "User";
+
+                    greeting.appendChild(
+                        name
+                    );
                 }
 
-                const email = $("welcomeEmail");
+                const email =
+                    $("welcomeEmail");
 
                 if (email) {
                     email.textContent =
@@ -1030,25 +1241,34 @@
 
         async function logout() {
             try {
-                const response = await fetch(
-                    "/api/auth/logout",
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        headers: {
-                            "Accept": "application/json"
+                const response =
+                    await fetch(
+                        "/api/auth/logout",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            headers: {
+                                Accept:
+                                    "application/json"
+                            }
                         }
-                    }
-                );
+                    );
 
                 if (!response.ok) {
-                    throw new Error("Logout gagal");
+                    throw new Error(
+                        "Logout gagal"
+                    );
                 }
 
-                window.location.href = "/login";
+                window.location.href =
+                    "/login";
 
             } catch (error) {
-                console.error("LOGOUT ERROR:", error);
+                console.error(
+                    "LOGOUT ERROR:",
+                    error
+                );
+
                 showToast(
                     "Gagal keluar dari akun",
                     true
@@ -1070,7 +1290,11 @@
             new Date().getFullYear();
 
         updateClock();
-        setInterval(updateClock, 1000);
+
+        setInterval(
+            updateClock,
+            1000
+        );
 
         loadUser();
     </script>
