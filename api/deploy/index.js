@@ -20,16 +20,32 @@ const VERCEL_API = "https://api.vercel.com";
 const ALLOWED_DOMAINS = [
     "reycode.my.id",
     "reycode.web.id",
-    "web-api.my.id"
+    "web-api.my.id",
+    "monikalabs.web.id"
+];
+
+const ALLOWED_SOURCE_TYPES = [
+    "repo",
+    "zip",
+    "file",
+    "html"
 ];
 
 const MAX_UPLOAD_SIZE = 4 * 1024 * 1024;
 const MAX_TOTAL_ZIP_SIZE = 20 * 1024 * 1024;
 const MAX_FILES = 1000;
 
+/* =========================================================
+   RESPONSE
+========================================================= */
+
 function send(res, status, data) {
     return res.status(status).json(data);
 }
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function slugify(value) {
     return (
@@ -53,6 +69,10 @@ function headers(contentType = "application/json") {
         "Content-Type": contentType
     };
 }
+
+/* =========================================================
+   VERCEL API
+========================================================= */
 
 async function vercel(method, endpoint, data) {
     const config = {
@@ -86,6 +106,10 @@ async function vercel(method, endpoint, data) {
     return result.data;
 }
 
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
+
 async function authenticate(req, res) {
     const token = getAuthToken(req);
 
@@ -111,6 +135,10 @@ async function authenticate(req, res) {
 
     return payload;
 }
+
+/* =========================================================
+   FORM DATA
+========================================================= */
 
 function parseForm(req) {
     const form = formidable({
@@ -154,7 +182,9 @@ function getUploadedFile(files) {
     ];
 
     for (const item of possible) {
-        if (!item) continue;
+        if (!item) {
+            continue;
+        }
 
         if (Array.isArray(item)) {
             if (item[0]) {
@@ -167,6 +197,10 @@ function getUploadedFile(files) {
 
     return null;
 }
+
+/* =========================================================
+   REPOSITORY
+========================================================= */
 
 function normalizeRepo(url) {
     const value = String(url || "").trim();
@@ -226,10 +260,9 @@ function parseGitHubRepo(url) {
 async function getGitHubRepo(owner, repo) {
     const result = await axios({
         method: "GET",
-        url:
-            `https://api.github.com/repos/` +
-            `${encodeURIComponent(owner)}/` +
-            `${encodeURIComponent(repo)}`,
+        url: `https://api.github.com/repos/${encodeURIComponent(
+            owner
+        )}/${encodeURIComponent(repo)}`,
         headers: {
             Accept: "application/vnd.github+json",
             "User-Agent": "ReyCode-Deploy"
@@ -255,11 +288,11 @@ async function getGitHubFile(
 ) {
     const result = await axios({
         method: "GET",
-        url:
-            `https://api.github.com/repos/` +
-            `${encodeURIComponent(owner)}/` +
-            `${encodeURIComponent(repo)}/contents/` +
-            `${filename}?ref=${encodeURIComponent(branch)}`,
+        url: `https://api.github.com/repos/${encodeURIComponent(
+            owner
+        )}/${encodeURIComponent(
+            repo
+        )}/contents/${filename}?ref=${encodeURIComponent(branch)}`,
         headers: {
             Accept: "application/vnd.github+json",
             "User-Agent": "ReyCode-Deploy"
@@ -291,13 +324,19 @@ async function getGitHubFile(
     );
 }
 
+/* =========================================================
+   PROJECT DETECTION
+========================================================= */
+
 function parseJsonBuffer(buffer, filename) {
     if (!buffer) {
         return null;
     }
 
     try {
-        return JSON.parse(buffer.toString("utf8"));
+        return JSON.parse(
+            buffer.toString("utf8")
+        );
     } catch {
         throw new Error(`${filename} tidak valid`);
     }
@@ -335,11 +374,15 @@ function scriptsContain(scripts, names) {
     const values = Object.values(scripts || {});
 
     const combined = values
-        .map(value => String(value || "").toLowerCase())
+        .map(value =>
+            String(value || "").toLowerCase()
+        )
         .join(" ");
 
     return names.some(name =>
-        combined.includes(String(name).toLowerCase())
+        combined.includes(
+            String(name).toLowerCase()
+        )
     );
 }
 
@@ -629,8 +672,7 @@ function buildProjectSettings(
         );
 
     const settings = {
-        framework:
-            framework || null
+        framework: framework || null
     };
 
     if (
@@ -812,16 +854,22 @@ async function inspectGitHubProject(
     };
 }
 
+/* =========================================================
+   VERCEL PROJECT
+========================================================= */
+
 async function getProject(slug) {
     try {
         return await vercel(
             "GET",
-            `/v9/projects/${encodeURIComponent(
-                slug
-            )}`
+            `/v9/projects/${encodeURIComponent(slug)}`
         );
-    } catch {
-        return null;
+    } catch (error) {
+        if (error.status === 404) {
+            return null;
+        }
+
+        throw error;
     }
 }
 
@@ -878,6 +926,10 @@ function getVercelTeamId(project) {
     return "";
 }
 
+/* =========================================================
+   VERCEL FILE UPLOAD
+========================================================= */
+
 async function uploadVercelFile(
     buffer,
     project = null
@@ -911,16 +963,13 @@ async function uploadVercelFile(
 
     const query =
         teamId
-            ? `?teamId=${encodeURIComponent(
-                teamId
-            )}`
+            ? `?teamId=${encodeURIComponent(teamId)}`
             : "";
 
     const result =
         await axios({
             method: "POST",
-            url:
-                `${VERCEL_API}/v2/files${query}`,
+            url: `${VERCEL_API}/v2/files${query}`,
             headers: {
                 Authorization:
                     `Bearer ${process.env.API_VERCEL}`,
@@ -934,13 +983,10 @@ async function uploadVercelFile(
                     sha
             },
             data: buffer,
-            maxContentLength:
-                Infinity,
-            maxBodyLength:
-                Infinity,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
             timeout: 120000,
-            validateStatus:
-                () => true
+            validateStatus: () => true
         });
 
     if (
@@ -979,15 +1025,21 @@ async function uploadVercelFile(
     };
 }
 
+/* =========================================================
+   ZIP SECURITY
+========================================================= */
+
 function normalizeZipPath(filename) {
     const original =
         String(filename || "")
             .replace(/\\/g, "/");
 
     if (
+        !original ||
         original.startsWith("/") ||
         original.includes("../") ||
-        original.includes("/..")
+        original.includes("/..") ||
+        original.includes("\0")
     ) {
         return null;
     }
@@ -998,9 +1050,7 @@ function normalizeZipPath(filename) {
             .replace(/^(\.\/)+/g, "");
 
     value =
-        path.posix.normalize(
-            value
-        );
+        path.posix.normalize(value);
 
     if (
         !value ||
@@ -1082,8 +1132,7 @@ function stripCommonRoot(files) {
     }
 
     return rootFiles.filter(
-        item =>
-            item.file
+        item => item.file
     );
 }
 
@@ -1150,17 +1199,17 @@ function readZip(zipPath) {
         );
     }
 
-    return stripCommonRoot(
-        files
-    );
+    return stripCommonRoot(files);
 }
+
+/* =========================================================
+   UPLOAD PREPARATION
+========================================================= */
 
 async function prepareUploadedFiles(
     uploadedFile
 ) {
-    if (
-        !uploadedFile?.filepath
-    ) {
+    if (!uploadedFile?.filepath) {
         throw new Error(
             "File upload tidak ditemukan"
         );
@@ -1223,6 +1272,10 @@ async function prepareUploadedFiles(
     ];
 }
 
+/* =========================================================
+   UPLOAD PROJECT FILES
+========================================================= */
+
 async function uploadProjectFiles(
     files,
     project
@@ -1251,6 +1304,15 @@ async function uploadProjectFiles(
     const uploaded = [];
 
     for (const item of files) {
+        if (
+            !item?.file ||
+            !Buffer.isBuffer(item.buffer)
+        ) {
+            throw new Error(
+                "Data file project tidak valid"
+            );
+        }
+
         const result =
             await uploadVercelFile(
                 item.buffer,
@@ -1266,6 +1328,10 @@ async function uploadProjectFiles(
 
     return uploaded;
 }
+
+/* =========================================================
+   DEPLOYMENT
+========================================================= */
 
 async function deployFiles(
     project,
@@ -1356,6 +1422,10 @@ async function deployGitHub(
     );
 }
 
+/* =========================================================
+   DOMAIN
+========================================================= */
+
 async function addDomain(
     projectId,
     domain
@@ -1393,12 +1463,14 @@ async function addDomain(
     }
 }
 
+/* =========================================================
+   DEPLOYMENT STATUS
+========================================================= */
+
 async function getDeployment(id) {
     return await vercel(
         "GET",
-        `/v13/deployments/${encodeURIComponent(
-            id
-        )}`
+        `/v13/deployments/${encodeURIComponent(id)}`
     );
 }
 
@@ -1461,6 +1533,10 @@ async function syncDeploymentStatus(
     return deployment;
 }
 
+/* =========================================================
+   CLEANUP
+========================================================= */
+
 async function cleanupUpload(file) {
     if (!file?.filepath) {
         return;
@@ -1470,8 +1546,14 @@ async function cleanupUpload(file) {
         await fs.unlink(
             file.filepath
         );
-    } catch {}
+    } catch {
+        // File sudah tidak ada
+    }
 }
+
+/* =========================================================
+   CREATE DEPLOYMENT
+========================================================= */
 
 async function createDeployment(
     req,
@@ -1579,12 +1661,15 @@ async function createDeployment(
         name.trim();
 
     domain =
-        domain.trim();
+        domain.trim().toLowerCase();
 
     sourceType =
         sourceType
             .trim()
             .toLowerCase();
+
+    repositoryUrl =
+        repositoryUrl.trim();
 
     if (!name) {
         return send(res, 400, {
@@ -1607,12 +1692,9 @@ async function createDeployment(
     }
 
     if (
-        ![
-            "repo",
-            "zip",
-            "file",
-            "html"
-        ].includes(sourceType)
+        !ALLOWED_SOURCE_TYPES.includes(
+            sourceType
+        )
     ) {
         return send(res, 400, {
             success: false,
@@ -1796,13 +1878,14 @@ async function createDeployment(
             false;
 
         try {
-            await addDomain(
-                project.id,
-                customUrl
-            );
+            const domainResult =
+                await addDomain(
+                    project.id,
+                    customUrl
+                );
 
             domainConfigured =
-                true;
+                Boolean(domainResult);
         } catch (error) {
             console.error(
                 "DOMAIN ERROR:",
@@ -1863,6 +1946,10 @@ async function createDeployment(
         );
     }
 }
+
+/* =========================================================
+   UPDATE / REDEPLOY
+========================================================= */
 
 async function updateDeployment(
     req,
@@ -1949,6 +2036,9 @@ async function updateDeployment(
             .trim()
             .toLowerCase();
 
+    repositoryUrl =
+        repositoryUrl.trim();
+
     if (!id) {
         return send(res, 400, {
             success: false,
@@ -1958,12 +2048,9 @@ async function updateDeployment(
     }
 
     if (
-        ![
-            "repo",
-            "zip",
-            "file",
-            "html"
-        ].includes(sourceType)
+        !ALLOWED_SOURCE_TYPES.includes(
+            sourceType
+        )
     ) {
         return send(res, 400, {
             success: false,
@@ -2144,7 +2231,9 @@ async function updateDeployment(
                     (
                         sourceType === "html"
                             ? "index.html"
-                            : "project.zip"
+                            : sourceType === "file"
+                                ? "project"
+                                : "project.zip"
                     )
                 )
                 : "";
@@ -2188,6 +2277,10 @@ async function updateDeployment(
         );
     }
 }
+
+/* =========================================================
+   DELETE DEPLOYMENT
+========================================================= */
 
 async function deleteDeployment(
     req,
@@ -2266,6 +2359,10 @@ async function deleteDeployment(
     });
 }
 
+/* =========================================================
+   LIST DEPLOYMENTS
+========================================================= */
+
 async function listDeployments(
     res,
     userId
@@ -2303,6 +2400,10 @@ async function listDeployments(
             )
     });
 }
+
+/* =========================================================
+   MAIN HANDLER
+========================================================= */
 
 export default async function handler(
     req,
@@ -2374,6 +2475,7 @@ export default async function handler(
         if (
             error?.code ===
                 "LIMIT_FILE_SIZE" ||
+            error?.code === "ETOOBIG" ||
             error?.httpCode === 413
         ) {
             return send(res, 413, {
@@ -2417,4 +2519,4 @@ export default async function handler(
                 "Deployment gagal"
         });
     }
-        }
+}
