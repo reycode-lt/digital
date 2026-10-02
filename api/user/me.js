@@ -34,7 +34,9 @@ export default async function handler(req, res) {
 
         await connectDB();
 
-        const user = await User.findById(payload.userId).select(
+        const user = await User.findById(
+            payload.userId
+        ).select(
             "-password -verificationToken -resetToken -resetTokenExpires"
         );
 
@@ -47,14 +49,38 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
             success: true,
-            user
+            user: {
+                _id: user._id,
+                id: user._id,
+                name: user.name || "",
+                email: user.email || "",
+                whatsapp: user.whatsapp || "",
+                profilePhoto:
+                    user.profilePhoto || "",
+                profileBackground:
+                    user.profileBackground || "",
+                emailVerified:
+                    user.emailVerified === true,
+                phoneVerified:
+                    user.phoneVerified === true,
+                phoneVerifiedAt:
+                    user.phoneVerifiedAt || null,
+                createdAt:
+                    user.createdAt || null,
+                updatedAt:
+                    user.updatedAt || null
+            }
         });
     } catch (error) {
-        console.error("ME ERROR:", error);
+        console.error(
+            "ME ERROR:",
+            error
+        );
 
         return res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan pada server"
+            message:
+                "Terjadi kesalahan pada server"
         });
     }
 }
