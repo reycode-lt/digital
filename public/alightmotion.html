@@ -16,7 +16,6 @@
         :root {
             --bg: #07080c;
             --card: rgba(15, 17, 24, .78);
-            --card-solid: #10121a;
             --input: rgba(7, 9, 14, .86);
             --border: rgba(255, 255, 255, .08);
             --border-hover: rgba(255, 255, 255, .15);
@@ -24,9 +23,9 @@
             --muted: #858b9d;
             --muted-2: #606678;
             --accent: #8b7cff;
-            --accent-2: #b8a8ff;
             --success: #59e6a7;
             --danger: #ff7183;
+            --blue: #168cff;
             --shadow: 0 30px 90px rgba(0, 0, 0, .35);
         }
 
@@ -36,31 +35,12 @@
 
         body {
             min-height: 100vh;
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             color: var(--text);
             background:
-                radial-gradient(
-                    800px 500px at -10% -10%,
-                    rgba(111, 92, 255, .18),
-                    transparent 60%
-                ),
-                radial-gradient(
-                    700px 450px at 110% 15%,
-                    rgba(145, 86, 255, .11),
-                    transparent 60%
-                ),
-                radial-gradient(
-                    600px 400px at 50% 100%,
-                    rgba(63, 108, 255, .07),
-                    transparent 60%
-                ),
+                radial-gradient(800px 500px at -10% -10%, rgba(111, 92, 255, .18), transparent 60%),
+                radial-gradient(700px 450px at 110% 15%, rgba(145, 86, 255, .11), transparent 60%),
+                radial-gradient(600px 400px at 50% 100%, rgba(63, 108, 255, .07), transparent 60%),
                 var(--bg);
             overflow-x: hidden;
         }
@@ -71,21 +51,10 @@
             inset: 0;
             pointer-events: none;
             background:
-                linear-gradient(
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                );
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
             background-size: 42px 42px;
-            mask-image: linear-gradient(
-                to bottom,
-                black,
-                transparent 75%
-            );
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
         }
 
         button,
@@ -97,10 +66,142 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            background: rgba(7,8,12,.78);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .nav-inner {
+            width: min(100% - 32px, 1100px);
+            height: 70px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 11px;
+        }
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 850;
+            white-space: nowrap;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px 5px 5px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255,255,255,.035);
+        }
+
+        .nav-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #8b7cff, #6050df);
+            color: white;
+            font-size: 12px;
+            font-weight: 850;
+        }
+
+        .nav-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-name {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 17px;
+            height: 17px;
+            margin-left: 3px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            vertical-align: 2px;
+            box-shadow: 0 0 14px rgba(22,140,255,.42);
+        }
+
+        .nav-btn {
+            height: 38px;
+            padding: 0 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: rgba(255,255,255,.035);
+            color: #e7e8ef;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 750;
+            transition: .2s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(139,124,255,.35);
+            background: rgba(139,124,255,.08);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.logout {
+            color: #ff8d9b;
+        }
+
         .container {
             width: min(100% - 32px, 920px);
             margin: auto;
-            padding: 42px 0 70px;
+            padding: 38px 0 70px;
             position: relative;
             z-index: 1;
         }
@@ -108,6 +209,13 @@
         .top {
             margin-bottom: 25px;
             animation: fadeUp .5s ease both;
+        }
+
+        .top-layout {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 25px;
         }
 
         .eyebrow {
@@ -132,16 +240,15 @@
         }
 
         .hello {
-            font-size: clamp(28px, 5vw, 40px);
-            line-height: 1.05;
+            font-size: clamp(27px, 5vw, 40px);
+            line-height: 1.08;
             font-weight: 850;
             letter-spacing: -.045em;
-            background: linear-gradient(
-                135deg,
-                #fff 20%,
-                #cfcaff 70%,
-                #9d91ff
-            );
+            color: #fff;
+        }
+
+        .hello .name {
+            background: linear-gradient(135deg, #fff 20%, #cfcaff 70%, #9d91ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -154,15 +261,28 @@
             line-height: 1.6;
         }
 
+        .clock-box {
+            flex: 0 0 auto;
+            text-align: right;
+        }
+
+        .clock {
+            font-size: 25px;
+            font-weight: 850;
+            letter-spacing: -.04em;
+        }
+
+        .date {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
         .card {
             position: relative;
             border: 1px solid var(--border);
             background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,.045),
-                    rgba(255,255,255,.012)
-                ),
+                linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)),
                 var(--card);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -208,7 +328,7 @@
             padding: 5px;
             margin-bottom: 21px;
             border: 1px solid var(--border);
-            background: rgba(5, 7, 11, .62);
+            background: rgba(5,7,11,.62);
             border-radius: 15px;
         }
 
@@ -222,10 +342,7 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: 750;
-            transition:
-                color .2s ease,
-                background .2s ease,
-                transform .2s ease;
+            transition: color .2s ease, background .2s ease, transform .2s ease;
         }
 
         .tab:hover {
@@ -234,15 +351,8 @@
 
         .tab.active {
             color: #fff;
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(139,124,255,.22),
-                    rgba(139,124,255,.08)
-                );
-            box-shadow:
-                inset 0 0 0 1px rgba(139,124,255,.18),
-                0 8px 25px rgba(0,0,0,.15);
+            background: linear-gradient(135deg, rgba(139,124,255,.22), rgba(139,124,255,.08));
+            box-shadow: inset 0 0 0 1px rgba(139,124,255,.18), 0 8px 25px rgba(0,0,0,.15);
         }
 
         .panel {
@@ -277,10 +387,7 @@
             padding: 13px 14px;
             outline: none;
             font-size: 13px;
-            transition:
-                border-color .2s ease,
-                box-shadow .2s ease,
-                background .2s ease;
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
         }
 
         input::placeholder {
@@ -294,9 +401,7 @@
         input:focus {
             border-color: rgba(139,124,255,.7);
             background: rgba(8,10,16,.98);
-            box-shadow:
-                0 0 0 4px rgba(139,124,255,.08),
-                0 12px 35px rgba(0,0,0,.18);
+            box-shadow: 0 0 0 4px rgba(139,124,255,.08), 0 12px 35px rgba(0,0,0,.18);
         }
 
         .buttons {
@@ -313,11 +418,7 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: 800;
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease,
-                background .2s ease,
-                border-color .2s ease;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
         }
 
         .btn:hover:not(:disabled) {
@@ -330,21 +431,12 @@
 
         .btn.primary {
             color: #fff;
-            background:
-                linear-gradient(
-                    135deg,
-                    #9b8cff,
-                    #705fff
-                );
-            box-shadow:
-                0 10px 28px rgba(112,95,255,.22),
-                inset 0 1px 0 rgba(255,255,255,.2);
+            background: linear-gradient(135deg, #9b8cff, #705fff);
+            box-shadow: 0 10px 28px rgba(112,95,255,.22), inset 0 1px 0 rgba(255,255,255,.2);
         }
 
         .btn.primary:hover:not(:disabled) {
-            box-shadow:
-                0 14px 34px rgba(112,95,255,.3),
-                inset 0 1px 0 rgba(255,255,255,.2);
+            box-shadow: 0 14px 34px rgba(112,95,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
         }
 
         .btn.secondary {
@@ -466,10 +558,7 @@
             background: rgba(6,8,13,.58);
             border-radius: 16px;
             padding: 16px;
-            transition:
-                border-color .2s ease,
-                transform .2s ease,
-                background .2s ease;
+            transition: border-color .2s ease, transform .2s ease, background .2s ease;
         }
 
         .history-item:hover {
@@ -528,11 +617,6 @@
             background: rgba(255,255,255,.012);
         }
 
-        .loading {
-            opacity: .7;
-            pointer-events: none;
-        }
-
         @keyframes fadeUp {
             from {
                 opacity: 0;
@@ -567,15 +651,35 @@
             }
         }
 
+        @media (max-width: 700px) {
+            .nav-inner {
+                width: min(100% - 20px, 1100px);
+            }
+
+            .nav-name {
+                display: none;
+            }
+
+            .nav-user {
+                padding-right: 5px;
+            }
+
+            .top-layout {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .clock-box {
+                text-align: left;
+            }
+        }
+
         @media (max-width: 600px) {
             .container {
                 width: min(100% - 20px, 920px);
                 padding-top: 24px;
                 padding-bottom: 45px;
-            }
-
-            .top {
-                margin-bottom: 20px;
             }
 
             .card {
@@ -584,7 +688,7 @@
             }
 
             .hello {
-                font-size: 29px;
+                font-size: 28px;
             }
 
             .subtitle {
@@ -593,10 +697,6 @@
 
             .history-head {
                 align-items: center;
-            }
-
-            .history-head .btn {
-                padding: 10px 13px;
             }
 
             .result-row {
@@ -610,8 +710,20 @@
         }
 
         @media (max-width: 390px) {
+            .nav-inner {
+                width: calc(100% - 14px);
+            }
+
+            .brand-name {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 0 10px;
+            }
+
             .container {
-                width: min(100% - 16px, 920px);
+                width: calc(100% - 16px);
             }
 
             .card {
@@ -636,21 +748,96 @@
 
 <body>
 
+<header class="navbar">
+    <div class="nav-inner">
+
+        <a href="/dashboard" class="brand">
+            <img
+                src="https://i.top4top.io/p_3925af3h26.png"
+                alt="ReyCode"
+            >
+            <span class="brand-name">
+                ReyCode Digital
+            </span>
+        </a>
+
+        <div class="nav-right">
+
+            <div class="nav-user">
+                <div class="nav-avatar" id="navAvatar">
+                    U
+                </div>
+
+                <div
+                    class="nav-name"
+                    id="navName"
+                >
+                    User
+                </div>
+            </div>
+
+            <a
+                href="/profile"
+                class="nav-btn"
+            >
+                Profil
+            </a>
+
+            <button
+                class="nav-btn logout"
+                id="logoutBtn"
+                type="button"
+            >
+                Keluar
+            </button>
+
+        </div>
+
+    </div>
+</header>
+
 <div class="container">
 
     <div class="top">
-        <div class="eyebrow">ReyCode Digital</div>
 
-        <div
-            class="hello"
-            id="greeting"
-        >
-            Halo 👋
+        <div class="top-layout">
+
+            <div>
+                <div class="eyebrow">
+                    ReyCode Digital
+                </div>
+
+                <div
+                    class="hello"
+                    id="greeting"
+                >
+                    Memuat...
+                </div>
+
+                <div class="subtitle">
+                    Kelola Alight Motion dengan cepat,
+                    aman, dan praktis.
+                </div>
+            </div>
+
+            <div class="clock-box">
+                <div
+                    class="clock"
+                    id="clock"
+                >
+                    00:00:00
+                </div>
+
+                <div
+                    class="date"
+                    id="dateInfo"
+                >
+                    Memuat tanggal...
+                </div>
+            </div>
+
         </div>
 
-        <div class="subtitle">
-            Kelola Alight Motion dengan cepat, aman, dan praktis.
-        </div>
     </div>
 
     <div class="card">
@@ -789,6 +976,7 @@
                 class="result"
                 id="autoResult"
             >
+
                 <div class="result-title">
                     Aktivasi Berhasil
                 </div>
@@ -857,6 +1045,7 @@
                         -
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -903,53 +1092,341 @@
 <script>
 const $ = id => document.getElementById(id);
 
-function showStatus(element, message, type) {
-    element.textContent = message;
+let currentUserName = "User";
+
+let currentUserVerified = false;
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function getGreeting() {
+    const hour = new Date().getHours();
+
+    if (hour >= 5 && hour < 11) {
+        return "Selamat pagi";
+    }
+
+    if (hour >= 11 && hour < 15) {
+        return "Selamat siang";
+    }
+
+    if (hour >= 15 && hour < 18) {
+        return "Selamat sore";
+    }
+
+    return "Selamat malam";
+}
+
+function formatDate(date) {
+    return new Intl.DateTimeFormat(
+        "id-ID",
+        {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    ).format(date);
+}
+
+function setAvatar(element, user) {
+    if (!element) {
+        return;
+    }
+
+    const name =
+        user?.name ||
+        user?.username ||
+        user?.displayName ||
+        user?.fullName ||
+        "User";
+
+    const avatarUrl =
+        user?.avatarUrl || "";
+
+    if (avatarUrl) {
+        element.innerHTML = `
+            <img
+                src="${escapeHtml(avatarUrl)}"
+                alt="${escapeHtml(name)}"
+                onerror="this.parentElement.textContent='${escapeHtml(
+                    name.charAt(0).toUpperCase()
+                )}'"
+            >
+        `;
+    } else {
+        element.textContent =
+            name.charAt(0).toUpperCase();
+    }
+}
+
+function updateGreeting(user) {
+    const name =
+        user?.name ||
+        user?.username ||
+        user?.displayName ||
+        user?.fullName ||
+        "User";
+
+    currentUserName = name;
+
+    currentUserVerified =
+        user?.emailVerified === true;
+
+    const verified =
+        currentUserVerified
+            ? `<span
+                class="verified-badge"
+                title="Akun terverifikasi"
+            >✓</span>`
+            : "";
+
+    const greeting =
+        $("greeting");
+
+    if (greeting) {
+        greeting.innerHTML = `
+            ${getGreeting()},
+            <span class="name">
+                ${escapeHtml(name)}
+            </span>
+            ${verified}
+        `;
+    }
+
+    const navName =
+        $("navName");
+
+    if (navName) {
+        navName.innerHTML = `
+            ${escapeHtml(name)}
+            ${verified}
+        `;
+    }
+}
+
+function updateClock() {
+    const now = new Date();
+
+    const clock =
+        $("clock");
+
+    if (clock) {
+        clock.textContent =
+            now.toLocaleTimeString(
+                "id-ID",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                }
+            );
+    }
+
+    const dateInfo =
+        $("dateInfo");
+
+    if (dateInfo) {
+        dateInfo.textContent =
+            formatDate(now);
+    }
+
+    const greeting =
+        $("greeting");
+
+    if (greeting && currentUserName !== "User") {
+        const verified =
+            currentUserVerified
+                ? `<span
+                    class="verified-badge"
+                    title="Akun terverifikasi"
+                >✓</span>`
+                : "";
+
+        greeting.innerHTML = `
+            ${getGreeting()},
+            <span class="name">
+                ${escapeHtml(currentUserName)}
+            </span>
+            ${verified}
+        `;
+    }
+}
+
+async function loadUser() {
+    try {
+        const response =
+            await fetch(
+                "/api/user/me",
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store",
+                    headers: {
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+        if (response.status === 401) {
+            location.href = "/login";
+            return;
+        }
+
+        const raw =
+            await response.text();
+
+        let data;
+
+        try {
+            data =
+                JSON.parse(raw);
+        } catch {
+            throw new Error(
+                "Response API bukan JSON"
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data?.message ||
+                "Gagal mengambil data akun"
+            );
+        }
+
+        const user =
+            data?.user ||
+            data?.data ||
+            data;
+
+        if (!user) {
+            throw new Error(
+                "Data user tidak ditemukan"
+            );
+        }
+
+        updateGreeting(user);
+
+        setAvatar(
+            $("navAvatar"),
+            user
+        );
+
+    } catch (error) {
+        console.error(
+            "LOAD USER ERROR:",
+            error
+        );
+
+        const greeting =
+            $("greeting");
+
+        if (greeting) {
+            greeting.innerHTML = `
+                ${getGreeting()},
+                <span class="name">
+                    User
+                </span>
+            `;
+        }
+
+        const navName =
+            $("navName");
+
+        if (navName) {
+            navName.textContent =
+                "User";
+        }
+
+        setAvatar(
+            $("navAvatar"),
+            {}
+        );
+    }
+}
+
+async function logout() {
+    const button =
+        $("logoutBtn");
+
+    if (button) {
+        button.disabled = true;
+        button.textContent =
+            "Keluar...";
+    }
+
+    try {
+        const response =
+            await fetch(
+                "/api/auth/logout",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Logout gagal"
+            );
+        }
+
+        location.href = "/login";
+
+    } catch (error) {
+        console.error(
+            "LOGOUT ERROR:",
+            error
+        );
+
+        if (button) {
+            button.disabled = false;
+            button.textContent =
+                "Keluar";
+        }
+
+        alert(
+            error.message ||
+            "Gagal keluar akun."
+        );
+    }
+}
+
+function showStatus(
+    element,
+    message,
+    type
+) {
+    element.textContent =
+        message;
+
     element.className =
         "status show " + type;
 }
 
 function clearStatus(element) {
     element.textContent = "";
-    element.className = "status";
-}
-
-async function loadUser() {
-    try {
-        const response = await fetch(
-            "/api/user/me",
-            {
-                credentials: "include"
-            }
-        );
-
-        if (!response.ok) {
-            location.href = "/login.html";
-            return;
-        }
-
-        const data =
-            await response.json();
-
-        const user =
-            data.user || data.data || data;
-
-        const name =
-            user.name ||
-            user.username ||
-            "User";
-
-        $("greeting").textContent =
-            `Halo, ${name} 👋`;
-    } catch {
-        $("greeting").textContent =
-            "Halo 👋";
-    }
+    element.className =
+        "status";
 }
 
 async function sendLink() {
     const email =
-        $("manualEmail").value.trim();
+        $("manualEmail")
+            .value
+            .trim();
 
     if (!email) {
         showStatus(
@@ -983,7 +1460,8 @@ async function sendLink() {
                             "application/json"
                     },
                     body: JSON.stringify({
-                        action: "send-link",
+                        action:
+                            "send-link",
                         email
                     })
                 }
@@ -992,7 +1470,10 @@ async function sendLink() {
         const data =
             await response.json();
 
-        if (!response.ok || !data.status) {
+        if (
+            !response.ok ||
+            !data.status
+        ) {
             throw new Error(
                 data.error ||
                 data.message ||
@@ -1003,9 +1484,10 @@ async function sendLink() {
         showStatus(
             $("manualStatus"),
             data.message ||
-            "Tautan verifikasi berhasil dikirim.",
+                "Tautan verifikasi berhasil dikirim.",
             "success"
         );
+
     } catch (error) {
         showStatus(
             $("manualStatus"),
@@ -1021,10 +1503,14 @@ async function sendLink() {
 
 async function verifyLink() {
     const email =
-        $("manualEmail").value.trim();
+        $("manualEmail")
+            .value
+            .trim();
 
     const magicLink =
-        $("magicLink").value.trim();
+        $("magicLink")
+            .value
+            .trim();
 
     if (!email) {
         showStatus(
@@ -1067,7 +1553,8 @@ async function verifyLink() {
                             "application/json"
                     },
                     body: JSON.stringify({
-                        action: "verify-link",
+                        action:
+                            "verify-link",
                         email,
                         magicLink
                     })
@@ -1077,7 +1564,10 @@ async function verifyLink() {
         const data =
             await response.json();
 
-        if (!response.ok || !data.status) {
+        if (
+            !response.ok ||
+            !data.status
+        ) {
             throw new Error(
                 data.error ||
                 data.message ||
@@ -1097,6 +1587,7 @@ async function verifyLink() {
         );
 
         await loadHistory();
+
     } catch (error) {
         showStatus(
             $("manualStatus"),
@@ -1105,6 +1596,7 @@ async function verifyLink() {
         );
 
         await loadHistory();
+
     } finally {
         button.disabled = false;
         button.textContent =
@@ -1114,7 +1606,9 @@ async function verifyLink() {
 
 async function autoActivate() {
     const username =
-        $("autoUsername").value.trim();
+        $("autoUsername")
+            .value
+            .trim();
 
     const button =
         $("autoBtn");
@@ -1145,7 +1639,9 @@ async function autoActivate() {
                     body: JSON.stringify({
                         action: "auto",
                         ...(username
-                            ? { username }
+                            ? {
+                                username
+                            }
                             : {})
                     })
                 }
@@ -1166,23 +1662,28 @@ async function autoActivate() {
             );
         }
 
-        const card = data.card;
+        const card =
+            data.card;
 
-        $("resultEmail").textContent =
+        $("resultEmail")
+            .textContent =
             card.email || "-";
 
-        $("resultAnimal").textContent =
-            card
-                .selamat_kamu_mendapatkan_animal ||
+        $("resultAnimal")
+            .textContent =
+            card.selamat_kamu_mendapatkan_animal ||
             "-";
 
-        $("resultOrder").textContent =
+        $("resultOrder")
+            .textContent =
             card.orderId || "-";
 
-        $("resultValid").textContent =
+        $("resultValid")
+            .textContent =
             card.validUntil || "-";
 
-        $("resultWeb").textContent =
+        $("resultWeb")
+            .textContent =
             card.weblogin || "-";
 
         $("autoResult")
@@ -1196,6 +1697,7 @@ async function autoActivate() {
         );
 
         await loadHistory();
+
     } catch (error) {
         showStatus(
             $("autoStatus"),
@@ -1204,6 +1706,7 @@ async function autoActivate() {
         );
 
         await loadHistory();
+
     } finally {
         button.disabled = false;
         button.textContent =
@@ -1211,22 +1714,19 @@ async function autoActivate() {
     }
 }
 
-function escapeHtml(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function formatDate(value) {
-    if (!value) return "-";
+function formatHistoryDate(value) {
+    if (!value) {
+        return "-";
+    }
 
     const date =
         new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return value;
     }
 
@@ -1244,20 +1744,23 @@ async function loadHistory() {
         $("historyList");
 
     list.innerHTML =
-        `<div class="empty">Memuat history...</div>`;
+        `<div class="empty">
+            Memuat history...
+        </div>`;
 
     try {
         const response =
             await fetch(
                 "/api/alightmotion/history",
                 {
-                    credentials: "include"
+                    credentials: "include",
+                    cache: "no-store"
                 }
             );
 
         if (response.status === 401) {
             location.href =
-                "/login.html";
+                "/login";
             return;
         }
 
@@ -1275,7 +1778,9 @@ async function loadHistory() {
         }
 
         const history =
-            Array.isArray(data.history)
+            Array.isArray(
+                data.history
+            )
                 ? data.history
                 : [];
 
@@ -1288,79 +1793,90 @@ async function loadHistory() {
         }
 
         list.innerHTML =
-            history.map(item => {
-                const failed =
-                    item.status === "failed";
+            history
+                .map(item => {
+                    const failed =
+                        item.status ===
+                        "failed";
 
-                return `
-                    <div class="history-item">
-                        <div class="history-top">
-                            <div class="history-email">
-                                ${escapeHtml(
-                                    item.email ||
-                                    item.username ||
-                                    "-"
-                                )}
-                            </div>
+                    return `
+                        <div class="history-item">
 
-                            <div class="badge ${
-                                failed
-                                    ? "failed"
-                                    : ""
-                            }">
-                                ${
+                            <div class="history-top">
+
+                                <div class="history-email">
+                                    ${escapeHtml(
+                                        item.email ||
+                                        item.username ||
+                                        "-"
+                                    )}
+                                </div>
+
+                                <div class="badge ${
                                     failed
-                                        ? "FAILED"
-                                        : "SUCCESS"
-                                }
+                                        ? "failed"
+                                        : ""
+                                }">
+                                    ${
+                                        failed
+                                            ? "FAILED"
+                                            : "SUCCESS"
+                                    }
+                                </div>
+
                             </div>
+
+                            <div class="history-meta">
+
+                                Mode:
+                                ${escapeHtml(
+                                    item.action
+                                )}
+
+                                <br>
+
+                                ${
+                                    item.orderId
+                                        ? `Order:
+                                            ${escapeHtml(
+                                                item.orderId
+                                            )}<br>`
+                                        : ""
+                                }
+
+                                ${
+                                    item.validUntil
+                                        ? `Valid:
+                                            ${escapeHtml(
+                                                item.validUntil
+                                            )}<br>`
+                                        : ""
+                                }
+
+                                Dibuat:
+                                ${escapeHtml(
+                                    formatHistoryDate(
+                                        item.createdAt
+                                    )
+                                )}
+
+                                ${
+                                    failed &&
+                                    item.error
+                                        ? `<br>Error:
+                                            ${escapeHtml(
+                                                item.error
+                                            )}`
+                                        : ""
+                                }
+
+                            </div>
+
                         </div>
+                    `;
+                })
+                .join("");
 
-                        <div class="history-meta">
-                            Mode:
-                            ${escapeHtml(
-                                item.action
-                            )}
-                            <br>
-
-                            ${
-                                item.orderId
-                                    ? `Order:
-                                        ${escapeHtml(
-                                            item.orderId
-                                        )}<br>`
-                                    : ""
-                            }
-
-                            ${
-                                item.validUntil
-                                    ? `Valid:
-                                        ${escapeHtml(
-                                            item.validUntil
-                                        )}<br>`
-                                    : ""
-                            }
-
-                            Dibuat:
-                            ${escapeHtml(
-                                formatDate(
-                                    item.createdAt
-                                )
-                            )}
-
-                            ${
-                                failed &&
-                                item.error
-                                    ? `<br>Error:
-                                        ${escapeHtml(
-                                            item.error
-                                        )}`
-                                    : ""
-                            }
-                        </div>
-                    </div>
-                `;
-            }).join("");
     } catch (error) {
         list.innerHTML =
             `<div class="empty">
@@ -1377,15 +1893,20 @@ document
         tab.addEventListener(
             "click",
             () => {
+
                 document
-                    .querySelectorAll(".tab")
+                    .querySelectorAll(
+                        ".tab"
+                    )
                     .forEach(item =>
                         item.classList
                             .remove("active")
                     );
 
                 document
-                    .querySelectorAll(".panel")
+                    .querySelectorAll(
+                        ".panel"
+                    )
                     .forEach(item =>
                         item.classList
                             .remove("active")
@@ -1429,9 +1950,23 @@ $("refreshHistory")
         loadHistory
     );
 
+$("logoutBtn")
+    .addEventListener(
+        "click",
+        logout
+    );
+
+updateClock();
+
+setInterval(
+    updateClock,
+    1000
+);
+
 loadUser();
+
 loadHistory();
 </script>
 
 </body>
-</html>
+    </html>
