@@ -3,755 +3,774 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
+    <meta name="theme-color" content="#070a0f">
     <title>Profile • ReyCode Digital</title>
 
     <style>
-        * {
-            box-sizing: border-box;
+        *{
+            box-sizing:border-box;
         }
 
-        :root {
-            --blue: #3185ff;
-            --blue-dark: #1762d0;
-            --text: #f4f7fb;
-            --muted: #778295;
-            --border: rgba(255,255,255,.075);
-            --panel: rgba(10,14,20,.78);
+        :root{
+            --blue:#3185ff;
+            --blue-light:#72aaff;
+            --text:#f4f7fb;
+            --muted:#778295;
+            --border:rgba(255,255,255,.075);
+            --panel:rgba(10,14,20,.82);
         }
 
-        html {
-            scroll-behavior: smooth;
+        html{
+            scroll-behavior:smooth;
         }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Inter, Arial, sans-serif;
-            color: var(--text);
+        body{
+            margin:0;
+            min-height:100vh;
+            font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+            color:var(--text);
             background:
-                radial-gradient(
-                    circle at 12% 8%,
-                    rgba(49,133,255,.15),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 90% 85%,
-                    rgba(49,133,255,.09),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    180deg,
-                    #05070a 0%,
-                    #070a0f 100%
-                );
+                radial-gradient(circle at 10% 5%,rgba(49,133,255,.15),transparent 28%),
+                radial-gradient(circle at 90% 85%,rgba(49,133,255,.10),transparent 30%),
+                linear-gradient(180deg,#05070a,#070a0f);
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            opacity: .28;
+        body::before{
+            content:"";
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            opacity:.22;
             background-image:
-                linear-gradient(
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.018) 1px,
-                    transparent 1px
-                );
-            background-size: 42px 42px;
-            mask-image: linear-gradient(
-                to bottom,
-                black,
-                transparent 80%
-            );
+                linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+            background-size:44px 44px;
+            mask-image:linear-gradient(to bottom,black,transparent 82%);
         }
 
         button,
-        input {
-            font-family: inherit;
+        input{
+            font-family:inherit;
         }
 
-        button {
-            -webkit-tap-highlight-color: transparent;
+        .container{
+            position:relative;
+            z-index:1;
+            width:100%;
+            max-width:920px;
+            margin:auto;
+            padding:25px 18px 50px;
         }
 
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 920px;
-            margin: auto;
-            padding: 28px 20px 55px;
+        .topbar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            margin-bottom:20px;
         }
 
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 22px;
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:11px;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .brand-logo{
+            width:44px;
+            height:44px;
+            padding:6px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+            border:1px solid var(--border);
+            background:rgba(255,255,255,.045);
+            box-shadow:0 12px 35px rgba(0,0,0,.22);
         }
 
-        .brand-logo {
-            width: 45px;
-            height: 45px;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,.045);
-            box-shadow:
-                inset 0 1px rgba(255,255,255,.04),
-                0 10px 35px rgba(0,0,0,.22);
+        .brand-logo img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
         }
 
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        .brand-name{
+            font-size:15px;
+            font-weight:750;
         }
 
-        .brand-text {
-            font-size: 16px;
-            font-weight: 750;
-            letter-spacing: -.2px;
+        .brand-sub{
+            margin-top:3px;
+            color:#626d7e;
+            font-size:9px;
+            letter-spacing:1.6px;
         }
 
-        .brand-sub {
-            margin-top: 3px;
-            color: #626d7e;
-            font-size: 9px;
-            letter-spacing: 1.7px;
+        .back{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-height:40px;
+            padding:0 15px;
+            border:1px solid var(--border);
+            border-radius:12px;
+            background:rgba(255,255,255,.035);
+            color:#aeb7c5;
+            text-decoration:none;
+            font-size:11px;
+            transition:.2s ease;
         }
 
-        .back {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 40px;
-            padding: 0 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,.035);
-            color: #aeb7c5;
-            text-decoration: none;
-            font-size: 11px;
-            transition: .2s ease;
+        .back:hover{
+            color:#fff;
+            background:rgba(255,255,255,.07);
+            transform:translateY(-1px);
         }
 
-        .back:hover {
-            color: #fff;
-            background: rgba(255,255,255,.07);
-            border-color: rgba(255,255,255,.12);
-            transform: translateY(-1px);
+        .verification-alert{
+            display:none;
+            margin-bottom:18px;
+            padding:16px 18px;
+            border:1px solid rgba(255,177,92,.15);
+            border-radius:17px;
+            background:rgba(255,177,92,.055);
         }
 
-        .verification-alert {
-            display: none;
-            margin-bottom: 18px;
-            padding: 17px 18px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,177,92,.16);
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255,177,92,.075),
-                    rgba(255,255,255,.015)
-                );
+        .alert-title{
+            margin-bottom:6px;
+            color:#ffc27d;
+            font-size:12px;
+            font-weight:750;
         }
 
-        .alert-title {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-bottom: 7px;
-            color: #ffc27d;
-            font-size: 12px;
-            font-weight: 750;
+        .alert-text{
+            color:#9da6b5;
+            font-size:10px;
+            line-height:1.7;
         }
 
-        .alert-text {
-            color: #9da6b5;
-            font-size: 11px;
-            line-height: 1.7;
-        }
-
-        .alert-text strong {
-            color: #e8edf5;
-        }
-
-        .profile-card {
-            overflow: hidden;
-            border-radius: 27px;
-            border: 1px solid var(--border);
-            background: var(--panel);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
+        .profile-card{
+            overflow:hidden;
+            border:1px solid var(--border);
+            border-radius:27px;
+            background:var(--panel);
+            backdrop-filter:blur(28px);
+            -webkit-backdrop-filter:blur(28px);
             box-shadow:
                 0 35px 100px rgba(0,0,0,.48),
                 inset 0 1px rgba(255,255,255,.025);
         }
 
-        .profile-head {
-            position: relative;
-            overflow: hidden;
-            padding: 34px;
-            border-bottom: 1px solid rgba(255,255,255,.065);
+        .profile-cover{
+            position:relative;
+            height:245px;
+            overflow:hidden;
             background:
-                radial-gradient(
-                    circle at 85% 20%,
-                    rgba(49,133,255,.15),
-                    transparent 30%
-                ),
+                radial-gradient(circle at 30% 20%,rgba(49,133,255,.35),transparent 30%),
+                radial-gradient(circle at 80% 70%,rgba(73,151,255,.18),transparent 35%),
+                linear-gradient(135deg,#0d1c32,#07101c 55%,#0a111d);
+        }
+
+        .profile-cover::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:
                 linear-gradient(
-                    135deg,
-                    rgba(49,133,255,.095),
-                    transparent 58%
+                    120deg,
+                    rgba(255,255,255,.04),
+                    transparent 35%,
+                    rgba(49,133,255,.06)
                 );
         }
 
-        .profile-head::after {
-            content: "";
-            position: absolute;
-            right: -90px;
-            top: -110px;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            border: 1px solid rgba(49,133,255,.07);
+        .profile-cover::after{
+            content:"";
+            position:absolute;
+            width:330px;
+            height:330px;
+            right:-100px;
+            top:-150px;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:50%;
             box-shadow:
-                0 0 0 35px rgba(49,133,255,.018),
-                0 0 0 70px rgba(49,133,255,.012);
-            pointer-events: none;
+                0 0 0 45px rgba(255,255,255,.015),
+                0 0 0 90px rgba(255,255,255,.01);
         }
 
-        .avatar {
-            position: relative;
-            z-index: 1;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 18px;
-            border-radius: 25px;
+        .cover-image{
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:none;
+        }
+
+        .cover-overlay{
+            position:absolute;
+            inset:0;
             background:
                 linear-gradient(
-                    135deg,
-                    #3c91ff,
-                    #1658c7
+                    180deg,
+                    rgba(0,0,0,.04),
+                    rgba(0,0,0,.12) 50%,
+                    rgba(7,10,15,.92)
                 );
-            color: #fff;
-            font-size: 30px;
-            font-weight: 850;
+        }
+
+        .cover-label{
+            position:absolute;
+            left:25px;
+            top:22px;
+            z-index:2;
+            display:flex;
+            align-items:center;
+            gap:7px;
+            padding:7px 10px;
+            border:1px solid rgba(255,255,255,.1);
+            border-radius:999px;
+            background:rgba(0,0,0,.25);
+            backdrop-filter:blur(12px);
+            color:rgba(255,255,255,.75);
+            font-size:9px;
+            font-weight:700;
+            letter-spacing:.8px;
+        }
+
+        .cover-dot{
+            width:6px;
+            height:6px;
+            border-radius:50%;
+            background:var(--blue);
+            box-shadow:0 0 10px rgba(49,133,255,.8);
+        }
+
+        .profile-info{
+            position:relative;
+            padding:0 32px 30px;
+        }
+
+        .avatar-wrap{
+            position:relative;
+            width:104px;
+            height:104px;
+            margin-top:-52px;
+            margin-bottom:17px;
+            z-index:4;
+        }
+
+        .avatar{
+            width:104px;
+            height:104px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            border:5px solid #0b1017;
+            border-radius:31px;
+            background:
+                linear-gradient(135deg,#3d92ff,#1659c8);
+            color:#fff;
+            font-size:37px;
+            font-weight:850;
             box-shadow:
-                0 18px 45px rgba(49,133,255,.24),
-                inset 0 1px rgba(255,255,255,.2);
+                0 18px 45px rgba(0,0,0,.4),
+                0 0 0 1px rgba(255,255,255,.07);
         }
 
-        .profile-head h1 {
-            position: relative;
-            z-index: 1;
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: -.9px;
+        .avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
         }
 
-        .profile-head p {
-            position: relative;
-            z-index: 1;
-            margin: 8px 0 0;
-            color: #778295;
-            font-size: 12px;
-            word-break: break-word;
+        .online{
+            position:absolute;
+            right:3px;
+            bottom:3px;
+            width:19px;
+            height:19px;
+            border:4px solid #0b1017;
+            border-radius:50%;
+            background:#36d978;
+            box-shadow:0 0 14px rgba(54,217,120,.35);
         }
 
-        .verified {
-            position: relative;
-            z-index: 1;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: 16px;
-            padding: 7px 11px;
-            border-radius: 999px;
-            background: rgba(49,133,255,.075);
-            border: 1px solid rgba(49,133,255,.15);
-            color: #72aaff;
-            font-size: 10px;
-            font-weight: 700;
+        .profile-name{
+            margin:0;
+            font-size:27px;
+            font-weight:800;
+            letter-spacing:-.9px;
         }
 
-        .content {
-            padding: 30px 34px 34px;
+        .profile-email{
+            margin:7px 0 0;
+            color:var(--muted);
+            font-size:12px;
+            word-break:break-word;
         }
 
-        .section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 18px;
+        .profile-badges{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:14px;
         }
 
-        .section-title {
-            margin: 0;
-            font-size: 14px;
-            font-weight: 750;
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:7px 10px;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:999px;
+            background:rgba(255,255,255,.035);
+            color:#8f9aaa;
+            font-size:9px;
+            font-weight:700;
         }
 
-        .section-line {
-            flex: 1;
-            height: 1px;
+        .badge.blue{
+            border-color:rgba(49,133,255,.15);
+            background:rgba(49,133,255,.07);
+            color:#72aaff;
+        }
+
+        .badge-dot{
+            width:6px;
+            height:6px;
+            border-radius:50%;
+            background:currentColor;
+        }
+
+        .content{
+            padding:0 32px 34px;
+        }
+
+        .section-head{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:17px;
+        }
+
+        .section-title{
+            margin:0;
+            font-size:14px;
+            font-weight:750;
+        }
+
+        .section-line{
+            flex:1;
+            height:1px;
+            background:linear-gradient(90deg,rgba(255,255,255,.08),transparent);
+        }
+
+        .fields{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:12px;
+        }
+
+        .field{
+            padding:16px;
+            border:1px solid rgba(255,255,255,.055);
+            border-radius:16px;
+            background:rgba(255,255,255,.022);
+            transition:.2s ease;
+        }
+
+        .field:hover{
+            border-color:rgba(255,255,255,.09);
+            background:rgba(255,255,255,.032);
+            transform:translateY(-1px);
+        }
+
+        .label{
+            margin-bottom:8px;
+            color:#626d7e;
+            font-size:9px;
+            font-weight:700;
+            letter-spacing:1.2px;
+            text-transform:uppercase;
+        }
+
+        .value{
+            color:#e9edf4;
+            font-size:12px;
+            line-height:1.5;
+            word-break:break-word;
+        }
+
+        .status{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            color:#70aaff;
+        }
+
+        .status-dot{
+            width:7px;
+            height:7px;
+            border-radius:50%;
+            background:var(--blue);
+            box-shadow:0 0 12px rgba(49,133,255,.75);
+        }
+
+        .phone-box{
+            position:relative;
+            overflow:hidden;
+            margin-top:21px;
+            padding:20px;
+            border:1px solid rgba(49,133,255,.13);
+            border-radius:20px;
             background:
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.08),
-                    transparent
-                );
+                radial-gradient(circle at 100% 0%,rgba(49,133,255,.09),transparent 35%),
+                linear-gradient(135deg,rgba(49,133,255,.065),rgba(255,255,255,.018));
         }
 
-        .fields {
-            display: grid;
-            grid-template-columns: repeat(2,1fr);
-            gap: 13px;
+        .phone-box::before{
+            content:"";
+            position:absolute;
+            left:0;
+            top:20px;
+            bottom:20px;
+            width:2px;
+            border-radius:10px;
+            background:var(--blue);
+            box-shadow:0 0 18px rgba(49,133,255,.5);
         }
 
-        .field {
-            position: relative;
-            min-width: 0;
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,.055);
-            background: rgba(255,255,255,.022);
-            transition: .2s ease;
+        .phone-head{
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:15px;
         }
 
-        .field:hover {
-            border-color: rgba(255,255,255,.09);
-            background: rgba(255,255,255,.032);
-            transform: translateY(-1px);
+        .phone-title{
+            color:#fff;
+            font-size:13px;
+            font-weight:750;
         }
 
-        .label {
-            margin-bottom: 8px;
-            color: #626d7e;
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.25px;
+        .phone-description{
+            max-width:620px;
+            margin-top:6px;
+            color:#727d8e;
+            font-size:10px;
+            line-height:1.7;
         }
 
-        .value {
-            color: #e9edf4;
-            font-size: 12px;
-            line-height: 1.5;
-            word-break: break-word;
+        .phone-status{
+            flex-shrink:0;
+            padding:6px 9px;
+            border-radius:999px;
+            font-size:9px;
+            font-weight:700;
         }
 
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            color: #70aaff;
+        .phone-status.pending{
+            color:#ffc27d;
+            background:rgba(255,177,92,.065);
+            border:1px solid rgba(255,177,92,.13);
         }
 
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 12px rgba(49,133,255,.75);
+        .phone-status.success{
+            color:#72aaff;
+            background:rgba(49,133,255,.075);
+            border:1px solid rgba(49,133,255,.14);
         }
 
-        .phone-box {
-            position: relative;
-            overflow: hidden;
-            margin-top: 22px;
-            padding: 21px;
-            border-radius: 20px;
-            border: 1px solid rgba(49,133,255,.13);
-            background:
-                radial-gradient(
-                    circle at 100% 0%,
-                    rgba(49,133,255,.09),
-                    transparent 35%
-                ),
-                linear-gradient(
-                    135deg,
-                    rgba(49,133,255,.065),
-                    rgba(255,255,255,.018)
-                );
-        }
-
-        .phone-box::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 20px;
-            bottom: 20px;
-            width: 2px;
-            border-radius: 10px;
-            background: var(--blue);
-            box-shadow: 0 0 18px rgba(49,133,255,.5);
-        }
-
-        .phone-box-head {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 15px;
-            padding-left: 5px;
-        }
-
-        .phone-title {
-            color: #fff;
-            font-size: 13px;
-            font-weight: 750;
-        }
-
-        .phone-description {
-            max-width: 620px;
-            margin-top: 6px;
-            color: #727d8e;
-            font-size: 10px;
-            line-height: 1.7;
-        }
-
-        .phone-status {
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 9px;
-            border-radius: 999px;
-            font-size: 9px;
-            font-weight: 700;
-        }
-
-        .phone-status.pending {
-            color: #ffc27d;
-            background: rgba(255,177,92,.065);
-            border: 1px solid rgba(255,177,92,.13);
-        }
-
-        .phone-status.success {
-            color: #72aaff;
-            background: rgba(49,133,255,.075);
-            border: 1px solid rgba(49,133,255,.14);
-        }
-
-        .phone-row {
-            display: flex;
-            gap: 9px;
-            margin-top: 17px;
+        .phone-row,
+        .otp-row{
+            display:flex;
+            gap:9px;
+            margin-top:16px;
         }
 
         .phone-input,
-        .otp-input {
-            min-width: 0;
-            height: 46px;
-            outline: none;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,.075);
-            background: rgba(0,0,0,.2);
-            color: #fff;
-            transition: .2s ease;
+        .otp-input{
+            min-width:0;
+            height:46px;
+            outline:none;
+            border:1px solid rgba(255,255,255,.075);
+            border-radius:12px;
+            background:rgba(0,0,0,.2);
+            color:#fff;
+            transition:.2s ease;
         }
 
-        .phone-input {
-            flex: 1;
-            padding: 0 14px;
-            font-size: 12px;
+        .phone-input{
+            flex:1;
+            padding:0 14px;
+            font-size:12px;
         }
 
         .phone-input::placeholder,
-        .otp-input::placeholder {
-            color: #515c6d;
+        .otp-input::placeholder{
+            color:#515c6d;
         }
 
         .phone-input:focus,
-        .otp-input:focus {
-            border-color: rgba(49,133,255,.42);
-            box-shadow: 0 0 0 3px rgba(49,133,255,.075);
+        .otp-input:focus{
+            border-color:rgba(49,133,255,.42);
+            box-shadow:0 0 0 3px rgba(49,133,255,.075);
         }
 
-        .phone-input:disabled {
-            opacity: .65;
-            cursor: not-allowed;
+        .verify-phone-button{
+            min-width:148px;
+            height:46px;
+            border:1px solid var(--blue);
+            border-radius:12px;
+            background:var(--blue);
+            color:#fff;
+            font-size:10px;
+            font-weight:750;
+            cursor:pointer;
+            transition:.2s ease;
         }
 
-        .verify-phone-button {
-            min-width: 148px;
-            height: 46px;
-            padding: 0 16px;
-            border: 1px solid var(--blue);
-            border-radius: 12px;
-            background: var(--blue);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 750;
-            cursor: pointer;
-            transition: .2s ease;
-            box-shadow: 0 8px 24px rgba(49,133,255,.12);
+        .verify-phone-button:hover:not(:disabled){
+            background:#2877ea;
+            transform:translateY(-1px);
         }
 
-        .verify-phone-button:hover:not(:disabled) {
-            background: #2877ea;
-            transform: translateY(-1px);
+        .verify-phone-button:disabled{
+            opacity:.45;
+            cursor:not-allowed;
         }
 
-        .verify-phone-button:disabled {
-            opacity: .45;
-            cursor: not-allowed;
+        .phone-message{
+            display:none;
+            margin-top:10px;
+            padding:10px 12px;
+            border-radius:11px;
+            font-size:10px;
+            line-height:1.5;
         }
 
-        .phone-message {
-            display: none;
-            margin-top: 11px;
-            padding: 10px 12px;
-            border-radius: 11px;
-            font-size: 10px;
-            line-height: 1.55;
+        .phone-message.error{
+            display:block;
+            color:#ff9d9d;
+            background:rgba(255,70,70,.055);
+            border:1px solid rgba(255,70,70,.11);
         }
 
-        .phone-message.error {
-            display: block;
-            color: #ff9d9d;
-            background: rgba(255,70,70,.055);
-            border: 1px solid rgba(255,70,70,.11);
+        .phone-message.success{
+            display:block;
+            color:#79b0ff;
+            background:rgba(49,133,255,.055);
+            border:1px solid rgba(49,133,255,.11);
         }
 
-        .phone-message.success {
-            display: block;
-            color: #79b0ff;
-            background: rgba(49,133,255,.055);
-            border: 1px solid rgba(49,133,255,.11);
+        .otp-section{
+            display:none;
+            margin-top:15px;
+            padding-top:15px;
+            border-top:1px solid rgba(255,255,255,.055);
         }
 
-        .otp-section {
-            display: none;
-            margin-top: 15px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,.055);
+        .otp-section.show{
+            display:block;
         }
 
-        .otp-section.show {
-            display: block;
-            animation: fadeUp .25s ease;
+        .otp-label{
+            margin-bottom:8px;
+            color:#626d7e;
+            font-size:9px;
+            font-weight:700;
+            letter-spacing:1.2px;
+            text-transform:uppercase;
         }
 
-        .otp-label {
-            margin-bottom: 8px;
-            color: #626d7e;
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
+        .otp-input{
+            flex:1;
+            padding:0 14px;
+            font-size:17px;
+            font-weight:700;
+            letter-spacing:7px;
+            text-align:center;
         }
 
-        .otp-row {
-            display: flex;
-            gap: 9px;
+        .otp-button{
+            min-width:130px;
+            height:46px;
+            border:1px solid rgba(255,255,255,.085);
+            border-radius:12px;
+            background:rgba(255,255,255,.045);
+            color:#cbd3df;
+            font-size:10px;
+            font-weight:750;
+            cursor:pointer;
         }
 
-        .otp-input {
-            flex: 1;
-            padding: 0 14px;
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: 7px;
-            text-align: center;
+        .otp-button:disabled{
+            opacity:.45;
+            cursor:not-allowed;
         }
 
-        .otp-button {
-            min-width: 130px;
-            height: 46px;
-            border: 1px solid rgba(255,255,255,.085);
-            border-radius: 12px;
-            background: rgba(255,255,255,.045);
-            color: #cbd3df;
-            font-size: 10px;
-            font-weight: 750;
-            cursor: pointer;
-            transition: .2s ease;
+        .cooldown{
+            min-height:15px;
+            margin-top:9px;
+            color:#687386;
+            font-size:9px;
         }
 
-        .otp-button:hover:not(:disabled) {
-            color: #fff;
-            background: rgba(255,255,255,.08);
+        .actions{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-top:22px;
         }
 
-        .otp-button:disabled {
-            opacity: .45;
-            cursor: not-allowed;
+        .button{
+            min-height:46px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid rgba(255,255,255,.075);
+            border-radius:13px;
+            background:rgba(255,255,255,.035);
+            color:#c6ceda;
+            text-decoration:none;
+            font-size:11px;
+            font-weight:650;
+            transition:.2s ease;
         }
 
-        .cooldown {
-            min-height: 15px;
-            margin-top: 9px;
-            color: #687386;
-            font-size: 9px;
+        .button:hover{
+            color:#fff;
+            background:rgba(255,255,255,.07);
+            transform:translateY(-1px);
         }
 
-        .actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 23px;
+        .button.primary{
+            border-color:var(--blue);
+            background:var(--blue);
+            color:#fff;
+            box-shadow:0 10px 30px rgba(49,133,255,.15);
         }
 
-        .button {
-            min-height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 13px;
-            text-decoration: none;
-            border: 1px solid rgba(255,255,255,.075);
-            background: rgba(255,255,255,.035);
-            color: #c6ceda;
-            font-size: 11px;
-            font-weight: 650;
-            transition: .2s ease;
+        .button.primary:hover{
+            background:#2877ea;
         }
 
-        .button:hover {
-            color: #fff;
-            background: rgba(255,255,255,.07);
-            transform: translateY(-1px);
+        .loading{
+            padding:90px 20px;
+            text-align:center;
+            color:#697486;
+            font-size:12px;
         }
 
-        .button.primary {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(49,133,255,.15);
+        .spinner{
+            width:30px;
+            height:30px;
+            margin:0 auto 16px;
+            border:3px solid rgba(255,255,255,.08);
+            border-top-color:var(--blue);
+            border-radius:50%;
+            animation:spin .7s linear infinite;
         }
 
-        .button.primary:hover {
-            background: #2877ea;
+        .error{
+            padding:60px 20px;
+            text-align:center;
+            color:#ff8b8b;
+            font-size:12px;
         }
 
-        .loading {
-            padding: 85px 20px;
-            text-align: center;
-            color: #697486;
-            font-size: 12px;
+        footer{
+            margin-top:20px;
+            color:#3e4756;
+            font-size:9px;
+            letter-spacing:.7px;
+            text-align:center;
         }
 
-        .spinner {
-            width: 30px;
-            height: 30px;
-            margin: 0 auto 16px;
-            border: 3px solid rgba(255,255,255,.08);
-            border-top-color: var(--blue);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-
-        .error {
-            padding: 60px 20px;
-            text-align: center;
-            color: #ff8b8b;
-            font-size: 12px;
-        }
-
-        footer {
-            margin-top: 22px;
-            text-align: center;
-            color: #3e4756;
-            font-size: 9px;
-            letter-spacing: .7px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
             }
         }
 
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
+        @media(max-width:650px){
+            .container{
+                padding:17px 12px 40px;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media(max-width:650px) {
-            .container {
-                padding: 18px 13px 40px;
+            .brand-name{
+                font-size:14px;
             }
 
-            .topbar {
-                margin-bottom: 17px;
+            .back{
+                min-height:38px;
+                padding:0 12px;
+                font-size:10px;
             }
 
-            .brand-logo {
-                width: 42px;
-                height: 42px;
+            .profile-cover{
+                height:205px;
             }
 
-            .brand-text {
-                font-size: 14px;
+            .cover-label{
+                left:18px;
+                top:17px;
             }
 
-            .back {
-                min-height: 38px;
-                padding: 0 12px;
-                font-size: 10px;
+            .profile-info{
+                padding:0 20px 25px;
             }
 
-            .profile-head {
-                padding: 27px 22px;
+            .content{
+                padding:0 20px 25px;
             }
 
-            .content {
-                padding: 24px 20px 25px;
+            .avatar-wrap{
+                width:90px;
+                height:90px;
+                margin-top:-45px;
             }
 
-            .profile-head h1 {
-                font-size: 24px;
+            .avatar{
+                width:90px;
+                height:90px;
+                border-radius:27px;
+                font-size:32px;
             }
 
-            .fields {
-                grid-template-columns: 1fr;
+            .online{
+                width:17px;
+                height:17px;
+                border-width:3px;
             }
 
-            .phone-box-head {
-                flex-direction: column;
+            .profile-name{
+                font-size:24px;
+            }
+
+            .fields{
+                grid-template-columns:1fr;
+            }
+
+            .phone-head{
+                flex-direction:column;
             }
 
             .phone-row,
-            .otp-row {
-                flex-direction: column;
+            .otp-row{
+                flex-direction:column;
             }
 
             .verify-phone-button,
-            .otp-button {
-                width: 100%;
+            .otp-button{
+                width:100%;
             }
 
-            .actions {
-                grid-template-columns: 1fr;
+            .actions{
+                grid-template-columns:1fr;
             }
         }
     </style>
@@ -773,12 +792,12 @@
             </div>
 
             <div>
-                <div class="brand-text">
+                <div class="brand-name">
                     ReyCode Digital
                 </div>
 
                 <div class="brand-sub">
-                    MONIKALABS SECURITY
+                    DIGITAL SERVICES
                 </div>
             </div>
 
@@ -824,28 +843,70 @@
             style="display:none;"
         >
 
-            <div class="profile-head">
+            <div class="profile-cover">
 
-                <div
-                    id="avatar"
-                    class="avatar"
+                <img
+                    id="coverImage"
+                    class="cover-image"
+                    alt="Cover"
                 >
-                    R
+
+                <div class="cover-overlay"></div>
+
+                <div class="cover-label">
+                    <span class="cover-dot"></span>
+                    PROFILE
                 </div>
 
-                <h1 id="name">
+            </div>
+
+            <div class="profile-info">
+
+                <div class="avatar-wrap">
+
+                    <div
+                        id="avatar"
+                        class="avatar"
+                    >
+                        R
+                    </div>
+
+                    <div class="online"></div>
+
+                </div>
+
+                <h1
+                    id="name"
+                    class="profile-name"
+                >
                     ReyCode
                 </h1>
 
-                <p id="email">
+                <p
+                    id="email"
+                    class="profile-email"
+                >
                     -
                 </p>
 
-                <div
-                    id="verified"
-                    class="verified"
-                >
-                    ✓ Email terverifikasi
+                <div class="profile-badges">
+
+                    <div
+                        id="emailBadge"
+                        class="badge"
+                    >
+                        <span class="badge-dot"></span>
+                        Email belum terverifikasi
+                    </div>
+
+                    <div
+                        id="phoneBadge"
+                        class="badge"
+                    >
+                        <span class="badge-dot"></span>
+                        WhatsApp belum terverifikasi
+                    </div>
+
                 </div>
 
             </div>
@@ -865,91 +926,60 @@
                 <div class="fields">
 
                     <div class="field">
-                        <div class="label">
-                            Nama
-                        </div>
-
+                        <div class="label">Nama</div>
                         <div
                             id="nameValue"
                             class="value"
-                        >
-                            -
-                        </div>
+                        >-</div>
                     </div>
 
                     <div class="field">
-                        <div class="label">
-                            Email
-                        </div>
-
+                        <div class="label">Email</div>
                         <div
                             id="emailValue"
                             class="value"
-                        >
-                            -
-                        </div>
+                        >-</div>
                     </div>
 
                     <div class="field">
-                        <div class="label">
-                            WhatsApp
-                        </div>
-
+                        <div class="label">WhatsApp</div>
                         <div
                             id="whatsappValue"
                             class="value"
-                        >
-                            Belum ditambahkan
-                        </div>
+                        >Belum ditambahkan</div>
                     </div>
 
                     <div class="field">
-                        <div class="label">
-                            Status Email
-                        </div>
-
+                        <div class="label">Status Email</div>
                         <div
                             id="statusValue"
                             class="value"
-                        >
-                            -
-                        </div>
+                        >-</div>
                     </div>
 
                     <div class="field">
-                        <div class="label">
-                            Bergabung
-                        </div>
-
+                        <div class="label">Bergabung</div>
                         <div
                             id="createdValue"
                             class="value"
-                        >
-                            -
-                        </div>
+                        >-</div>
                     </div>
 
                     <div class="field">
-                        <div class="label">
-                            User ID
-                        </div>
-
+                        <div class="label">User ID</div>
                         <div
                             id="idValue"
                             class="value"
-                        >
-                            -
-                        </div>
+                        >-</div>
                     </div>
 
                 </div>
 
                 <div class="phone-box">
 
-                    <div class="phone-box-head">
+                    <div class="phone-head">
 
                         <div>
-
                             <div class="phone-title">
                                 Verifikasi WhatsApp
                             </div>
@@ -959,7 +989,6 @@
                                 keamanan akun dan menerima
                                 notifikasi penting dari ReyCode.
                             </div>
-
                         </div>
 
                         <div
@@ -1070,7 +1099,7 @@
     </div>
 
     <footer>
-        © ReyCode Digital • MonikaLabs
+        © ReyCode Digital
     </footer>
 
 </div>
@@ -1086,179 +1115,114 @@ const errorBox =
     document.getElementById("error");
 
 const verificationAlert =
-    document.getElementById(
-        "verificationAlert"
-    );
+    document.getElementById("verificationAlert");
 
 const phoneInput =
-    document.getElementById(
-        "phoneInput"
-    );
+    document.getElementById("phoneInput");
 
 const requestOtpButton =
-    document.getElementById(
-        "requestOtpButton"
-    );
+    document.getElementById("requestOtpButton");
 
 const verifyOtpButton =
-    document.getElementById(
-        "verifyOtpButton"
-    );
+    document.getElementById("verifyOtpButton");
 
 const otpInput =
-    document.getElementById(
-        "otpInput"
-    );
+    document.getElementById("otpInput");
 
 const otpSection =
-    document.getElementById(
-        "otpSection"
-    );
+    document.getElementById("otpSection");
 
 const phoneStatus =
-    document.getElementById(
-        "phoneStatus"
-    );
+    document.getElementById("phoneStatus");
 
 const phoneMessage =
-    document.getElementById(
-        "phoneMessage"
-    );
+    document.getElementById("phoneMessage");
 
 const cooldownText =
-    document.getElementById(
-        "cooldownText"
-    );
+    document.getElementById("cooldownText");
 
 let currentPhone = "";
-
 let cooldownTimer = null;
 
-
-/* =========================
-   PHONE
-========================= */
-
-function normalizePhone(phone) {
+function normalizePhone(phone){
     let value = String(phone || "")
-        .replace(/[^\d+]/g, "")
+        .replace(/[^\d+]/g,"")
         .trim();
 
-    if (value.startsWith("00")) {
+    if(value.startsWith("00")){
         value = "+" + value.slice(2);
     }
 
-    if (value.startsWith("0")) {
+    if(value.startsWith("0")){
         value = "+62" + value.slice(1);
     }
 
-    if (/^62\d+$/.test(value)) {
+    if(/^62\d+$/.test(value)){
         value = "+" + value;
     }
 
     return value;
 }
 
-
-/* =========================
-   MESSAGE
-========================= */
-
-function showPhoneMessage(
-    message,
-    type = "error"
-) {
-    phoneMessage.textContent =
-        message;
-
+function showPhoneMessage(message,type="error"){
+    phoneMessage.textContent = message;
     phoneMessage.className =
         `phone-message ${type}`;
 }
 
-
-function clearPhoneMessage() {
+function clearPhoneMessage(){
     phoneMessage.textContent = "";
-
-    phoneMessage.className =
-        "phone-message";
+    phoneMessage.className = "phone-message";
 }
 
-
-/* =========================
-   COOLDOWN
-========================= */
-
-function clearCooldown() {
-    if (cooldownTimer) {
-        clearInterval(
-            cooldownTimer
-        );
-
+function clearCooldown(){
+    if(cooldownTimer){
+        clearInterval(cooldownTimer);
         cooldownTimer = null;
     }
 
     cooldownText.textContent = "";
 }
 
-
-function startCooldown(seconds = 300) {
+function startCooldown(seconds=300){
     clearCooldown();
 
-    let remaining =
-        Number(seconds);
+    let remaining = Number(seconds);
 
-    function update() {
-        if (remaining <= 0) {
+    function update(){
+        if(remaining <= 0){
             clearCooldown();
 
-            if (
-                !phoneStatus.classList.contains(
-                    "success"
-                )
-            ) {
-                requestOtpButton.disabled =
-                    false;
+            if(
+                !phoneStatus.classList.contains("success")
+            ){
+                requestOtpButton.disabled = false;
             }
 
             return;
         }
 
         const minutes =
-            Math.floor(
-                remaining / 60
-            );
+            Math.floor(remaining / 60);
 
         const secondsLeft =
             remaining % 60;
 
         cooldownText.textContent =
-            `OTP berikutnya dapat diminta dalam ${minutes}:${String(
-                secondsLeft
-            ).padStart(2, "0")}`;
+            `OTP berikutnya dapat diminta dalam ${minutes}:${String(secondsLeft).padStart(2,"0")}`;
 
-        requestOtpButton.disabled =
-            true;
-
+        requestOtpButton.disabled = true;
         remaining--;
     }
 
     update();
 
     cooldownTimer =
-        setInterval(
-            update,
-            1000
-        );
+        setInterval(update,1000);
 }
 
-
-/* =========================
-   PHONE STATE
-========================= */
-
-function setPhoneVerified(phone) {
-    currentPhone =
-        phone || currentPhone;
+function setPhoneVerified(phone){
+    currentPhone = phone || currentPhone;
 
     phoneStatus.textContent =
         "✓ Terverifikasi";
@@ -1266,26 +1230,25 @@ function setPhoneVerified(phone) {
     phoneStatus.className =
         "phone-status success";
 
-    phoneInput.value =
-        currentPhone;
+    phoneInput.value = currentPhone;
+    phoneInput.disabled = true;
 
-    phoneInput.disabled =
-        true;
+    requestOtpButton.style.display = "none";
 
-    requestOtpButton.style.display =
-        "none";
-
-    otpSection.classList.remove(
-        "show"
-    );
+    otpSection.classList.remove("show");
 
     clearCooldown();
+
+    const badge =
+        document.getElementById("phoneBadge");
+
+    badge.className = "badge blue";
+    badge.innerHTML =
+        '<span class="badge-dot"></span> WhatsApp terverifikasi';
 }
 
-
-function setPhonePending(phone) {
-    currentPhone =
-        phone || currentPhone;
+function setPhonePending(phone){
+    currentPhone = phone || currentPhone;
 
     phoneStatus.textContent =
         "⚠ Belum terverifikasi";
@@ -1293,74 +1256,46 @@ function setPhonePending(phone) {
     phoneStatus.className =
         "phone-status pending";
 
-    phoneInput.disabled =
-        false;
-
-    requestOtpButton.style.display =
-        "";
-
-    requestOtpButton.disabled =
-        false;
-
-    if (currentPhone) {
-        phoneInput.value =
-            currentPhone;
-    }
+    phoneInput.disabled = false;
+    requestOtpButton.style.display = "";
+    requestOtpButton.disabled = false;
 }
 
-
-/* =========================
-   REQUEST OTP
-========================= */
-
-async function requestOtp() {
+async function requestOtp(){
     const phone =
-        normalizePhone(
-            phoneInput.value
-        );
+        normalizePhone(phoneInput.value);
 
-    if (!phone) {
+    if(!phone){
         showPhoneMessage(
             "Nomor WhatsApp wajib diisi."
         );
-
         return;
     }
 
-    if (
-        !/^\+?\d{8,15}$/.test(
-            phone
-        )
-    ) {
+    if(!/^\+?\d{8,15}$/.test(phone)){
         showPhoneMessage(
             "Format nomor WhatsApp tidak valid."
         );
-
         return;
     }
 
-    currentPhone =
-        phone;
-
-    requestOtpButton.disabled =
-        true;
-
+    currentPhone = phone;
+    requestOtpButton.disabled = true;
     clearPhoneMessage();
 
-    try {
+    try{
         const response =
             await fetch(
                 "/api/user/update",
                 {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
+                    method:"POST",
+                    credentials:"include",
+                    headers:{
                         "Content-Type":
                             "application/json"
                     },
-                    body: JSON.stringify({
-                        action:
-                            "request_otp",
+                    body:JSON.stringify({
+                        action:"request_otp",
                         phone
                     })
                 }
@@ -1369,19 +1304,17 @@ async function requestOtp() {
         const data =
             await response.json();
 
-        if (
+        if(
             !response.ok ||
             !data.success
-        ) {
+        ){
             throw new Error(
                 data.message ||
                 "Gagal meminta OTP."
             );
         }
 
-        otpSection.classList.add(
-            "show"
-        );
+        otpSection.classList.add("show");
 
         showPhoneMessage(
             "OTP berhasil dikirim. Silakan cek WhatsApp kamu.",
@@ -1389,18 +1322,14 @@ async function requestOtp() {
         );
 
         startCooldown(
-            data.cooldownSeconds ||
-            300
+            data.cooldownSeconds || 300
         );
 
-        otpInput.value =
-            "";
-
+        otpInput.value = "";
         otpInput.focus();
 
-    } catch (error) {
-        requestOtpButton.disabled =
-            false;
+    }catch(error){
+        requestOtpButton.disabled = false;
 
         showPhoneMessage(
             error.message ||
@@ -1409,12 +1338,7 @@ async function requestOtp() {
     }
 }
 
-
-/* =========================
-   VERIFY OTP
-========================= */
-
-async function verifyOtp() {
+async function verifyOtp(){
     const phone =
         normalizePhone(
             currentPhone ||
@@ -1426,47 +1350,38 @@ async function verifyOtp() {
             otpInput.value || ""
         ).trim();
 
-    if (!phone) {
+    if(!phone){
         showPhoneMessage(
             "Nomor WhatsApp belum diisi."
         );
-
         return;
     }
 
-    if (
-        !/^\d{6}$/.test(
-            otp
-        )
-    ) {
+    if(!/^\d{6}$/.test(otp)){
         showPhoneMessage(
             "OTP harus terdiri dari 6 angka."
         );
 
         otpInput.focus();
-
         return;
     }
 
-    verifyOtpButton.disabled =
-        true;
-
+    verifyOtpButton.disabled = true;
     clearPhoneMessage();
 
-    try {
+    try{
         const response =
             await fetch(
                 "/api/user/update",
                 {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
+                    method:"POST",
+                    credentials:"include",
+                    headers:{
                         "Content-Type":
                             "application/json"
                     },
-                    body: JSON.stringify({
-                        action:
-                            "verify_otp",
+                    body:JSON.stringify({
+                        action:"verify_otp",
                         phone,
                         otp
                     })
@@ -1476,10 +1391,10 @@ async function verifyOtp() {
         const data =
             await response.json();
 
-        if (
+        if(
             !response.ok ||
             !data.success
-        ) {
+        ){
             throw new Error(
                 data.message ||
                 "OTP tidak valid."
@@ -1487,8 +1402,7 @@ async function verifyOtp() {
         }
 
         const verifiedPhone =
-            data.user?.whatsapp ||
-            phone;
+            data.user?.whatsapp || phone;
 
         setPhoneVerified(
             verifiedPhone
@@ -1506,9 +1420,8 @@ async function verifyOtp() {
 
         otpInput.value = "";
 
-    } catch (error) {
-        verifyOtpButton.disabled =
-            false;
+    }catch(error){
+        verifyOtpButton.disabled = false;
 
         showPhoneMessage(
             error.message ||
@@ -1517,50 +1430,86 @@ async function verifyOtp() {
     }
 }
 
+function renderAvatar(user){
+    const avatar =
+        document.getElementById("avatar");
 
-/* =========================
-   LOAD PROFILE
-========================= */
+    const name =
+        user.name || "User";
 
-async function loadProfile() {
-    try {
+    if(user.avatarUrl){
+        avatar.innerHTML = "";
+
+        const image =
+            document.createElement("img");
+
+        image.src = user.avatarUrl;
+        image.alt = name;
+
+        image.onerror = () => {
+            avatar.innerHTML =
+                name.charAt(0).toUpperCase();
+        };
+
+        avatar.appendChild(image);
+    }else{
+        avatar.textContent =
+            name.charAt(0).toUpperCase();
+    }
+}
+
+function renderCover(user){
+    const cover =
+        document.getElementById("coverImage");
+
+    if(!user.coverUrl){
+        cover.style.display = "none";
+        return;
+    }
+
+    cover.src = user.coverUrl;
+    cover.style.display = "block";
+
+    cover.onerror = () => {
+        cover.style.display = "none";
+    };
+}
+
+async function loadProfile(){
+    try{
         const response =
             await fetch(
                 `/api/user/me?_=${Date.now()}`,
                 {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store"
+                    method:"GET",
+                    credentials:"include",
+                    cache:"no-store"
                 }
             );
 
         const data =
             await response.json();
 
-        if (
+        if(
             !response.ok ||
             !data.success
-        ) {
+        ){
             throw new Error(
                 data.message ||
                 "Gagal memuat profile."
             );
         }
 
-        const user =
-            data.user;
+        const user = data.user;
 
         const name =
-            user.name ||
-            "User";
+            user.name || "User";
 
         const email =
-            user.email ||
-            "-";
+            user.email || "-";
 
         const whatsapp =
-            user.whatsapp ||
-            "";
+            user.whatsapp || "";
 
         const emailVerified =
             user.emailVerified === true;
@@ -1575,52 +1524,40 @@ async function loadProfile() {
                 ).toLocaleDateString(
                     "id-ID",
                     {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric"
+                        day:"2-digit",
+                        month:"long",
+                        year:"numeric"
                     }
                 )
                 : "-";
 
-
-        document.getElementById(
-            "avatar"
-        ).textContent =
-            name
-                .charAt(0)
-                .toUpperCase();
+        renderAvatar(user);
+        renderCover(user);
 
         document.getElementById(
             "name"
-        ).textContent =
-            name;
+        ).textContent = name;
 
         document.getElementById(
             "email"
-        ).textContent =
-            email;
-
+        ).textContent = email;
 
         document.getElementById(
             "nameValue"
-        ).textContent =
-            name;
+        ).textContent = name;
 
         document.getElementById(
             "emailValue"
-        ).textContent =
-            email;
+        ).textContent = email;
 
         document.getElementById(
             "whatsappValue"
         ).textContent =
-            whatsapp ||
-            "Belum ditambahkan";
+            whatsapp || "Belum ditambahkan";
 
         document.getElementById(
             "createdValue"
-        ).textContent =
-            created;
+        ).textContent = created;
 
         document.getElementById(
             "idValue"
@@ -1629,188 +1566,129 @@ async function loadProfile() {
             user.id ||
             "-";
 
-
-        const statusValue =
+        const emailBadge =
             document.getElementById(
-                "statusValue"
+                "emailBadge"
             );
 
-        const verifiedBadge =
-            document.getElementById(
-                "verified"
-            );
-
-        if (emailVerified) {
+        if(emailVerified){
             verificationAlert.style.display =
                 "none";
 
-            statusValue.innerHTML = `
+            document.getElementById(
+                "statusValue"
+            ).innerHTML = `
                 <span class="status">
-                    <span class="dot"></span>
+                    <span class="status-dot"></span>
                     Terverifikasi
                 </span>
             `;
 
-            verifiedBadge.textContent =
-                "✓ Email terverifikasi";
+            emailBadge.className =
+                "badge blue";
 
-            verifiedBadge.style.color =
-                "#72aaff";
+            emailBadge.innerHTML =
+                '<span class="badge-dot"></span> Email terverifikasi';
 
-            verifiedBadge.style.background =
-                "rgba(49,133,255,.075)";
-
-            verifiedBadge.style.borderColor =
-                "rgba(49,133,255,.15)";
-
-        } else {
+        }else{
             verificationAlert.style.display =
                 "block";
 
-            statusValue.innerHTML = `
+            document.getElementById(
+                "statusValue"
+            ).innerHTML = `
                 <span style="color:#ffc27d;">
                     ⚠ Belum terverifikasi
                 </span>
             `;
 
-            verifiedBadge.textContent =
-                "⚠ Email belum terverifikasi";
+            emailBadge.className =
+                "badge";
 
-            verifiedBadge.style.color =
-                "#ffc27d";
-
-            verifiedBadge.style.background =
-                "rgba(255,177,92,.075)";
-
-            verifiedBadge.style.borderColor =
-                "rgba(255,177,92,.15)";
+            emailBadge.innerHTML =
+                '<span class="badge-dot"></span> Email belum terverifikasi';
         }
 
-
-        if (whatsapp) {
+        if(whatsapp){
             currentPhone =
-                normalizePhone(
-                    whatsapp
-                );
+                normalizePhone(whatsapp);
 
             phoneInput.value =
                 whatsapp;
         }
 
-        if (
+        if(
             phoneVerified &&
             whatsapp
-        ) {
+        ){
             setPhoneVerified(
                 currentPhone
             );
-        } else {
+        }else{
             setPhonePending(
                 currentPhone
             );
         }
 
+        loading.style.display = "none";
+        content.style.display = "block";
 
-        loading.style.display =
-            "none";
-
-        content.style.display =
-            "block";
-
-    } catch (error) {
+    }catch(error){
         console.error(
             "PROFILE ERROR:",
             error
         );
 
-        loading.style.display =
-            "none";
-
-        errorBox.style.display =
-            "block";
+        loading.style.display = "none";
+        errorBox.style.display = "block";
 
         errorBox.textContent =
             error.message ||
             "Gagal memuat profile.";
 
-        setTimeout(
-            () => {
-                window.location.href =
-                    "/login";
-            },
-            1800
-        );
+        setTimeout(() => {
+            window.location.href = "/login";
+        },1800);
     }
 }
-
-
-/* =========================
-   INPUT EVENTS
-========================= */
 
 phoneInput.addEventListener(
     "input",
     () => {
         phoneInput.value =
             phoneInput.value
-                .replace(
-                    /[^\d+]/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    16
-                );
+                .replace(/[^\d+]/g,"")
+                .slice(0,16);
     }
 );
-
 
 otpInput.addEventListener(
     "input",
     () => {
         otpInput.value =
             otpInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    6
-                );
+                .replace(/\D/g,"")
+                .slice(0,6);
     }
 );
-
 
 otpInput.addEventListener(
     "keydown",
     event => {
-        if (
-            event.key ===
-            "Enter"
-        ) {
+        if(event.key === "Enter"){
             verifyOtp();
         }
     }
 );
 
-
 phoneInput.addEventListener(
     "keydown",
     event => {
-        if (
-            event.key ===
-            "Enter"
-        ) {
+        if(event.key === "Enter"){
             requestOtp();
         }
     }
 );
-
-
-/* =========================
-   BUTTONS
-========================= */
 
 requestOtpButton.addEventListener(
     "click",
@@ -1821,11 +1699,6 @@ verifyOtpButton.addEventListener(
     "click",
     verifyOtp
 );
-
-
-/* =========================
-   START
-========================= */
 
 loadProfile();
 </script>
