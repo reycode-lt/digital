@@ -2,42 +2,40 @@ import mongoose from "mongoose";
 
 const ChatMessageSchema = new mongoose.Schema(
     {
-        group: {
+        groupId: {
             type: String,
             required: true,
-            default: "monikalabs-comunity",
             index: true
         },
+
         senderId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
             index: true
         },
-        content: {
+
+        message: {
             type: String,
+            required: true,
             trim: true,
-            maxlength: 5000,
-            default: ""
+            maxlength: 2000
         },
-        imageUrl: {
+
+        type: {
             type: String,
-            trim: true,
-            default: ""
-        },
-        imageName: {
-            type: String,
-            trim: true,
-            default: ""
+            enum: ["text"],
+            default: "text"
         }
     },
     {
-        timestamps: true
+        timestamps: true,
+        versionKey: false
     }
 );
 
 ChatMessageSchema.index({
-    group: 1,
+    groupId: 1,
     createdAt: -1
 });
 
