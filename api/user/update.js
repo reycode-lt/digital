@@ -44,8 +44,7 @@ async function parseForm(req) {
         maxFileSize: 8 * 1024 * 1024
     });
 
-    const [fields, files] =
-        await form.parse(req);
+    const [fields, files] = await form.parse(req);
 
     return {
         fields,
@@ -53,7 +52,7 @@ async function parseForm(req) {
     };
 }
 
-async function parseJsonBody(req) {
+async function parseJson(req) {
     const chunks = [];
 
     for await (const chunk of req) {
@@ -64,18 +63,18 @@ async function parseJsonBody(req) {
         );
     }
 
-    const body = Buffer
-        .concat(chunks)
-        .toString("utf8");
+    const raw = Buffer.concat(chunks).toString("utf8");
 
-    if (!body) {
+    if (!raw) {
         return {};
     }
 
     try {
-        return JSON.parse(body);
+        return JSON.parse(raw);
     } catch {
-        return {};
+        throw new Error(
+            "Format JSON tidak valid"
+        );
     }
 }
 
@@ -86,10 +85,8 @@ function getUserResponse(user) {
         name: user.name || "",
         email: user.email || "",
         whatsapp: user.whatsapp || "",
-        profilePhoto:
-            user.profilePhoto || "",
-        profileBackground:
-            user.profileBackground || "",
+        avatarUrl: user.avatarUrl || "",
+        coverUrl: user.coverUrl || "",
         emailVerified:
             user.emailVerified === true,
         phoneVerified:
@@ -103,6 +100,11 @@ function getUserResponse(user) {
     };
 }
 
+const fieldMap = {
+    profilePhoto: "avatarUrl",
+    profileBackground: "coverUrl"
+};
+
 export default async function handler(req, res) {
     try {
         const token = getAuthToken(req);
@@ -114,29 +116,25 @@ export default async function handler(req, res) {
             });
         }
 
-        const payload =
-            await verifyToken(token);
+        const payload = await verifyToken(token);
 
         if (!payload?.userId) {
             return res.status(401).json({
                 success: false,
-                message:
-                    "Session tidak valid"
+                message: "Session tidak valid"
             });
         }
 
         await connectDB();
 
-        const user =
-            await User.findById(
-                payload.userId
-            );
+        const user = await User.findById(
+            payload.userId
+        );
 
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "User tidak ditemukan"
+                message: "User tidak ditemukan"
             });
         }
 
@@ -146,16 +144,12 @@ export default async function handler(req, res) {
                 files
             } = await parseForm(req);
 
-            const type =
-                getField(
-                    fields,
-                    "type"
-                );
+            const type = getField(
+                fields,
+                "type"
+            );
 
-            if (
-                type !== "profilePhoto" &&
-                type !== "profileBackground"
-            ) {
+            if (!fieldMap[type]) {
                 return res.status(400).json({
                     success: false,
                     message:
@@ -163,11 +157,10 @@ export default async function handler(req, res) {
                 });
             }
 
-            const file =
-                getFile(
-                    files,
-                    "file"
-                );
+            const file = getFile(
+                files,
+                "file"
+            );
 
             if (!file) {
                 return res.status(400).json({
@@ -177,26 +170,14 @@ export default async function handler(req, res) {
                 });
             }
 
-            if (
-                !file.mimetype ||
-                !file.mimetype.startsWith(
-                    "image/"
-                )
-            ) {
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "File harus berupa gambar"
-                });
-            }
+            const buffer = await fs.readFile(
+                file.filepath
+            );
 
-            const buffer =
-                await fs.readFile(
-                    file.filepath
-                );
+            const dbField = fieldMap[type];
 
             const oldUrl =
-                user[type] || "";
+                user[dbField] || "";
 
             const result =
                 await uploadImage({
@@ -208,8 +189,7 @@ export default async function handler(req, res) {
                     type
                 });
 
-            user[type] =
-                result.url;
+            user[dbField] = result.url;
 
             await user.save();
 
@@ -244,12 +224,12 @@ export default async function handler(req, res) {
 
         if (req.method === "PATCH") {
             const body =
-                await parseJsonBody(req);
+                await parseJson(req);
 
             const {
                 name,
                 whatsapp
-            } = body || {};
+            } = body;
 
             if (
                 typeof name === "string" &&
@@ -265,15 +245,11 @@ export default async function handler(req, res) {
                 user.whatsapp =
                     whatsapp.trim();
 
-                if (
-                    whatsapp.trim()
-                ) {
-                    user.phoneVerified =
-                        true;
+                user.phoneVerified =
+                    true;
 
-                    user.phoneVerifiedAt =
-                        new Date();
-                }
+                user.phoneVerifiedAt =
+                    new Date();
             }
 
             await user.save();
