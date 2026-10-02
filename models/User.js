@@ -27,6 +27,18 @@ const UserSchema = new mongoose.Schema(
             trim: true
         },
 
+        avatarUrl: {
+            type: String,
+            default: "",
+            trim: true
+        },
+
+        coverUrl: {
+            type: String,
+            default: "",
+            trim: true
+        },
+
         phoneVerified: {
             type: Boolean,
             default: false
