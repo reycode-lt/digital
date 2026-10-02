@@ -3,10 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="theme-color" content="#05070c">
     <title>Register • ReyCode Digital</title>
 
     <style>
-        *{box-sizing:border-box}
+        *{
+            box-sizing:border-box;
+        }
+
+        :root{
+            --bg:#04060a;
+            --panel:rgba(11,15,23,.78);
+            --panel-strong:rgba(15,20,30,.92);
+            --border:rgba(255,255,255,.08);
+            --border-hover:rgba(73,145,255,.42);
+            --text:#f7f9fc;
+            --muted:#7d8897;
+            --muted-2:#596575;
+            --blue:#3185ff;
+            --blue-light:#7bb7ff;
+            --danger:#ff7e88;
+            --success:#68dba8;
+        }
+
+        html{
+            min-height:100%;
+        }
 
         body{
             margin:0;
@@ -14,183 +36,488 @@
             display:flex;
             align-items:center;
             justify-content:center;
-            padding:24px;
-            font-family:Inter,Arial,sans-serif;
-            color:#fff;
+            padding:30px 18px;
+            overflow-x:hidden;
+            font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+            color:var(--text);
             background:
-                radial-gradient(circle at 20% 20%,rgba(49,133,255,.16),transparent 30%),
-                radial-gradient(circle at 80% 80%,rgba(49,133,255,.10),transparent 32%),
-                #05070a;
+                radial-gradient(circle at 10% 0%,rgba(49,133,255,.17),transparent 28%),
+                radial-gradient(circle at 92% 12%,rgba(65,143,255,.10),transparent 25%),
+                radial-gradient(circle at 50% 110%,rgba(49,133,255,.08),transparent 35%),
+                linear-gradient(145deg,#04060a,#070a10 50%,#04060a);
+        }
+
+        body::before{
+            content:"";
+            position:fixed;
+            inset:0;
+            z-index:-2;
+            pointer-events:none;
+            background:
+                linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);
+            background-size:44px 44px;
+            mask-image:linear-gradient(to bottom,black,transparent 90%);
+        }
+
+        body::after{
+            content:"";
+            position:fixed;
+            width:420px;
+            height:420px;
+            left:50%;
+            top:42%;
+            z-index:-1;
+            transform:translate(-50%,-50%);
+            border-radius:50%;
+            background:rgba(49,133,255,.045);
+            filter:blur(100px);
+            pointer-events:none;
+        }
+
+        button,
+        input,
+        a{
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        .page{
+            width:100%;
+            max-width:465px;
         }
 
         .card{
+            position:relative;
+            overflow:hidden;
             width:100%;
-            max-width:430px;
             padding:34px;
-            border:1px solid rgba(255,255,255,.09);
-            border-radius:24px;
-            background:rgba(12,16,22,.72);
-            backdrop-filter:blur(24px);
-            -webkit-backdrop-filter:blur(24px);
-            box-shadow:0 30px 80px rgba(0,0,0,.45);
+            border:1px solid var(--border);
+            border-radius:27px;
+            background:
+                linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 50%),
+                var(--panel);
+            box-shadow:
+                0 40px 100px rgba(0,0,0,.48),
+                0 0 0 1px rgba(255,255,255,.012),
+                inset 0 1px 0 rgba(255,255,255,.035);
+            backdrop-filter:blur(30px) saturate(140%);
+            -webkit-backdrop-filter:blur(30px) saturate(140%);
+        }
+
+        .card::before{
+            content:"";
+            position:absolute;
+            width:250px;
+            height:250px;
+            top:-170px;
+            right:-100px;
+            border-radius:50%;
+            background:rgba(49,133,255,.12);
+            filter:blur(60px);
+            pointer-events:none;
+        }
+
+        .card::after{
+            content:"";
+            position:absolute;
+            width:180px;
+            height:180px;
+            bottom:-130px;
+            left:-90px;
+            border-radius:50%;
+            background:rgba(49,133,255,.055);
+            filter:blur(55px);
+            pointer-events:none;
+        }
+
+        .header{
+            position:relative;
+            z-index:1;
+            text-align:center;
+        }
+
+        .logo-wrap{
+            position:relative;
+            width:65px;
+            height:65px;
+            margin:0 auto 20px;
+            padding:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid rgba(255,255,255,.10);
+            border-radius:19px;
+            background:
+                linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
+            box-shadow:
+                0 18px 42px rgba(0,0,0,.28),
+                0 0 35px rgba(49,133,255,.07),
+                inset 0 1px 0 rgba(255,255,255,.06);
+        }
+
+        .logo-wrap::before{
+            content:"";
+            position:absolute;
+            inset:-1px;
+            border-radius:19px;
+            border:1px solid rgba(49,133,255,.10);
+            pointer-events:none;
         }
 
         .logo{
-            width:52px;
-            height:52px;
-            margin:0 auto 22px;
-            padding:7px;
-            border-radius:16px;
-            background:rgba(255,255,255,.05);
-            border:1px solid rgba(255,255,255,.08);
-        }
-
-        .logo img{
             width:100%;
             height:100%;
             object-fit:contain;
         }
 
+        .eyebrow{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            margin-bottom:11px;
+            padding:6px 9px;
+            border:1px solid rgba(49,133,255,.16);
+            border-radius:8px;
+            color:#76b1ff;
+            background:rgba(49,133,255,.055);
+            font-size:8px;
+            font-weight:750;
+            text-transform:uppercase;
+            letter-spacing:1.2px;
+        }
+
+        .eyebrow-dot{
+            width:5px;
+            height:5px;
+            border-radius:50%;
+            background:var(--blue);
+            box-shadow:0 0 11px rgba(49,133,255,.9);
+        }
+
         h1{
             margin:0;
-            text-align:center;
-            font-size:28px;
-            letter-spacing:-.8px;
+            font-size:29px;
+            line-height:1.1;
+            letter-spacing:-1.2px;
+            font-weight:780;
         }
 
         .subtitle{
-            margin:9px 0 30px;
-            text-align:center;
-            color:#7f8996;
-            font-size:13px;
+            max-width:320px;
+            margin:9px auto 28px;
+            color:var(--muted);
+            font-size:12px;
+            line-height:1.65;
+        }
+
+        .message{
+            position:relative;
+            z-index:2;
+            display:none;
+            align-items:flex-start;
+            gap:10px;
+            margin-bottom:18px;
+            padding:13px 14px;
+            border-radius:13px;
+            font-size:11px;
+            line-height:1.55;
+        }
+
+        .message::before{
+            content:"";
+            width:6px;
+            height:6px;
+            flex-shrink:0;
+            margin-top:5px;
+            border-radius:50%;
+            background:currentColor;
+            box-shadow:0 0 10px currentColor;
+        }
+
+        .message.error{
+            display:flex;
+            color:var(--danger);
+            border:1px solid rgba(255,82,94,.15);
+            background:rgba(255,70,80,.065);
+        }
+
+        .message.success{
+            display:flex;
+            color:var(--success);
+            border:1px solid rgba(77,220,157,.15);
+            background:rgba(77,220,157,.055);
         }
 
         .field{
-            margin-bottom:17px;
+            position:relative;
+            z-index:1;
+            margin-bottom:16px;
         }
 
         label{
-            display:block;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
             margin-bottom:8px;
-            color:#aeb7c3;
-            font-size:12px;
+            color:#aeb8c5;
+            font-size:11px;
+            font-weight:650;
+        }
+
+        .optional{
+            color:#586473;
+            font-size:9px;
+            font-weight:500;
+        }
+
+        .input-wrap{
+            position:relative;
+        }
+
+        .input-icon{
+            position:absolute;
+            left:14px;
+            top:50%;
+            width:16px;
+            height:16px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transform:translateY(-50%);
+            color:#5e6a79;
+            font-size:11px;
+            pointer-events:none;
+            transition:.2s ease;
         }
 
         input{
             width:100%;
-            height:50px;
-            padding:0 15px;
+            height:51px;
+            padding:0 15px 0 42px;
+            border:1px solid rgba(255,255,255,.075);
             border-radius:13px;
-            border:1px solid rgba(255,255,255,.09);
             outline:none;
-            background:rgba(255,255,255,.035);
             color:#fff;
-            font-size:14px;
-            transition:.2s;
+            background:rgba(255,255,255,.032);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.018);
+            font:inherit;
+            font-size:13px;
+            transition:
+                border-color .2s ease,
+                background .2s ease,
+                box-shadow .2s ease,
+                transform .2s ease;
         }
 
         input::placeholder{
-            color:#4f5965;
+            color:#4d5867;
+        }
+
+        input:hover{
+            border-color:rgba(255,255,255,.12);
+            background:rgba(255,255,255,.038);
         }
 
         input:focus{
-            border-color:rgba(49,133,255,.7);
-            box-shadow:0 0 0 4px rgba(49,133,255,.08);
+            border-color:var(--border-hover);
+            background:rgba(49,133,255,.035);
+            box-shadow:
+                0 0 0 4px rgba(49,133,255,.075),
+                inset 0 1px 0 rgba(255,255,255,.02);
         }
 
-        .optional{
-            color:#596472;
-            font-size:10px;
-            margin-left:5px;
+        input:focus + .input-icon{
+            color:var(--blue-light);
+        }
+
+        .submit-wrap{
+            position:relative;
+            z-index:1;
+            margin-top:5px;
         }
 
         button{
+            position:relative;
             width:100%;
-            height:50px;
-            margin-top:4px;
-            border:0;
+            height:52px;
+            overflow:hidden;
+            border:1px solid rgba(117,181,255,.18);
             border-radius:13px;
-            background:#3185ff;
             color:#fff;
-            font-size:13px;
-            font-weight:700;
+            background:
+                linear-gradient(135deg,#3c91ff,#2678ed);
+            box-shadow:
+                0 14px 32px rgba(49,133,255,.18),
+                inset 0 1px 0 rgba(255,255,255,.16);
+            font:inherit;
+            font-size:11px;
+            font-weight:780;
+            letter-spacing:.65px;
             cursor:pointer;
-            transition:.2s;
+            transition:.22s ease;
+        }
+
+        button::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.13) 50%,transparent 80%);
+            transform:translateX(-110%);
+            transition:.55s ease;
         }
 
         button:hover{
-            transform:translateY(-1px);
-            box-shadow:0 10px 30px rgba(49,133,255,.22);
+            transform:translateY(-2px);
+            border-color:rgba(150,205,255,.28);
+            box-shadow:
+                0 18px 38px rgba(49,133,255,.25),
+                0 0 25px rgba(49,133,255,.07),
+                inset 0 1px 0 rgba(255,255,255,.17);
+        }
+
+        button:hover::before{
+            transform:translateX(110%);
+        }
+
+        button:active{
+            transform:translateY(0);
         }
 
         button:disabled{
-            opacity:.7;
+            opacity:.72;
             cursor:wait;
             transform:none;
-        }
-
-        .message{
-            display:none;
-            margin-bottom:18px;
-            padding:12px 14px;
-            border-radius:12px;
-            font-size:12px;
-            line-height:1.5;
-        }
-
-        .message.error{
-            display:block;
-            background:rgba(255,70,70,.08);
-            border:1px solid rgba(255,70,70,.16);
-            color:#ff8d8d;
-        }
-
-        .message.success{
-            display:block;
-            background:rgba(49,133,255,.08);
-            border:1px solid rgba(49,133,255,.16);
-            color:#75adff;
-        }
-
-        .login{
-            margin-top:24px;
-            text-align:center;
-            color:#707b88;
-            font-size:12px;
-        }
-
-        a{
-            color:#3185ff;
-            text-decoration:none;
         }
 
         .loading{
             display:inline-flex;
             align-items:center;
-            gap:8px;
+            justify-content:center;
+            gap:9px;
         }
 
         .spinner{
             width:15px;
             height:15px;
-            border:2px solid rgba(255,255,255,.25);
+            border:2px solid rgba(255,255,255,.24);
             border-top-color:#fff;
             border-radius:50%;
             animation:spin .7s linear infinite;
         }
 
-        @keyframes spin{
-            to{transform:rotate(360deg)}
+        .divider{
+            position:relative;
+            z-index:1;
+            display:flex;
+            align-items:center;
+            gap:11px;
+            margin:23px 0 17px;
+            color:#4f5a68;
+            font-size:8px;
+            text-transform:uppercase;
+            letter-spacing:1px;
         }
 
-        @media(max-width:480px){
+        .divider::before,
+        .divider::after{
+            content:"";
+            flex:1;
+            height:1px;
+            background:rgba(255,255,255,.055);
+        }
+
+        .login{
+            position:relative;
+            z-index:1;
+            text-align:center;
+            color:#6d7886;
+            font-size:11px;
+        }
+
+        .login a{
+            color:#66a9ff;
+            text-decoration:none;
+            font-weight:700;
+            transition:.2s ease;
+        }
+
+        .login a:hover{
+            color:#8bc2ff;
+        }
+
+        .security{
+            position:relative;
+            z-index:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+            margin-top:17px;
+            color:#4e5967;
+            font-size:8px;
+        }
+
+        .security-dot{
+            width:5px;
+            height:5px;
+            border-radius:50%;
+            background:#536070;
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        @media(max-width:520px){
+            body{
+                padding:20px 14px;
+            }
+
             .card{
-                padding:27px 22px;
-                border-radius:21px;
+                padding:29px 21px;
+                border-radius:23px;
+            }
+
+            .logo-wrap{
+                width:59px;
+                height:59px;
+                border-radius:17px;
             }
 
             h1{
-                font-size:25px;
+                font-size:26px;
+            }
+
+            .subtitle{
+                margin-bottom:25px;
+                font-size:11px;
+            }
+
+            input,
+            button{
+                height:50px;
+            }
+        }
+
+        @media(max-width:370px){
+            body{
+                padding:14px 10px;
+            }
+
+            .card{
+                padding:25px 17px;
+            }
+
+            h1{
+                font-size:24px;
+            }
+
+            .field{
+                margin-bottom:14px;
             }
         }
     </style>
@@ -198,99 +525,177 @@
 
 <body>
 
-<div class="card">
+<div class="page">
 
-    <div class="logo">
-        <img
-            src="https://i.top4top.io/p_3925af3h26.png"
-            alt="ReyCode"
-        >
-    </div>
+    <div class="card">
 
-    <h1>Create account</h1>
+        <div class="header">
 
-    <div class="subtitle">
-        Buat akun ReyCode Digital
-    </div>
+            <div class="logo-wrap">
+                <img
+                    class="logo"
+                    src="https://i.top4top.io/p_3925af3h26.png"
+                    alt="ReyCode"
+                >
+            </div>
 
-    <div id="message" class="message"></div>
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                ReyCode Digital
+            </div>
 
-    <form id="registerForm">
+            <h1>Create your account</h1>
 
-        <div class="field">
-            <label>Nama</label>
+            <div class="subtitle">
+                Daftar sekarang dan mulai gunakan seluruh layanan ReyCode Digital.
+            </div>
 
-            <input
-                id="name"
-                type="text"
-                placeholder="Nama lengkap"
-                autocomplete="name"
-                maxlength="100"
-                required
-            >
         </div>
 
-        <div class="field">
-            <label>Email</label>
+        <div id="message" class="message"></div>
 
-            <input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                autocomplete="email"
-                required
-            >
+        <form id="registerForm">
+
+            <div class="field">
+
+                <label for="name">
+                    Nama
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        id="name"
+                        type="text"
+                        placeholder="Nama lengkap"
+                        autocomplete="name"
+                        maxlength="100"
+                        required
+                    >
+
+                    <span class="input-icon">✦</span>
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="nama@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <span class="input-icon">@</span>
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Minimal 8 karakter"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <span class="input-icon">●</span>
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label for="confirmPassword">
+                    Konfirmasi Password
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Ulangi password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <span class="input-icon">✓</span>
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label for="whatsapp">
+                    WhatsApp
+                    <span class="optional">Opsional</span>
+                </label>
+
+                <div class="input-wrap">
+
+                    <input
+                        id="whatsapp"
+                        type="tel"
+                        placeholder="08xxxxxxxxxx"
+                        autocomplete="tel"
+                    >
+
+                    <span class="input-icon">◌</span>
+
+                </div>
+
+            </div>
+
+            <div class="submit-wrap">
+
+                <button
+                    id="submitButton"
+                    type="submit"
+                >
+                    BUAT AKUN
+                </button>
+
+            </div>
+
+        </form>
+
+        <div class="divider">
+            <span>Already registered?</span>
         </div>
 
-        <div class="field">
-            <label>Password</label>
-
-            <input
-                id="password"
-                type="password"
-                placeholder="Minimal 8 karakter"
-                autocomplete="new-password"
-                minlength="8"
-                required
-            >
+        <div class="login">
+            Sudah punya akun?
+            <a href="/login">Login sekarang</a>
         </div>
 
-        <div class="field">
-            <label>Konfirmasi Password</label>
-
-            <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Ulangi password"
-                autocomplete="new-password"
-                minlength="8"
-                required
-            >
+        <div class="security">
+            <span class="security-dot"></span>
+            Data akun diproses secara aman
         </div>
 
-        <div class="field">
-            <label>
-                WhatsApp
-                <span class="optional">Opsional</span>
-            </label>
-
-            <input
-                id="whatsapp"
-                type="tel"
-                placeholder="08xxxxxxxxxx"
-                autocomplete="tel"
-            >
-        </div>
-
-        <button id="submitButton" type="submit">
-            BUAT AKUN
-        </button>
-
-    </form>
-
-    <div class="login">
-        Sudah punya akun?
-        <a href="/login">Login</a>
     </div>
 
 </div>
