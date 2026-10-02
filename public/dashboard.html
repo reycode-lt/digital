@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg: #050b14;
@@ -24,6 +25,7 @@
       --cyan: #22d3ee;
       --green: #34d399;
       --red: #fb7185;
+      --yellow: #fbbf24;
       --shadow: 0 24px 70px rgba(0, 0, 0, .34);
       --radius: 24px;
     }
@@ -149,6 +151,7 @@
       font-size: 12px;
       font-weight: 700;
       transition: .2s ease;
+      cursor: pointer;
     }
 
     .nav-btn:hover {
@@ -364,7 +367,7 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1.25fr .75fr;
+      grid-template-columns: 1fr;
       gap: 16px;
       margin-top: 16px;
     }
@@ -376,64 +379,6 @@
       box-shadow: 0 18px 50px rgba(0,0,0,.2);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-    }
-
-    .balance-card {
-      position: relative;
-      min-height: 210px;
-      padding: 23px;
-      overflow: hidden;
-    }
-
-    .balance-card::after {
-      content: "";
-      position: absolute;
-      width: 240px;
-      height: 240px;
-      right: -90px;
-      bottom: -130px;
-      border-radius: 50%;
-      background: rgba(37,99,235,.13);
-      filter: blur(2px);
-    }
-
-    .card-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .card-icon {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(96,165,250,.16);
-      border-radius: 11px;
-      background: rgba(59,130,246,.09);
-      color: #93c5fd;
-      font-size: 16px;
-    }
-
-    .balance {
-      position: relative;
-      z-index: 1;
-      margin-top: 25px;
-      font-size: clamp(30px, 5vw, 42px);
-      font-weight: 800;
-      letter-spacing: -.05em;
-    }
-
-    .balance-note {
-      position: relative;
-      z-index: 1;
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 11px;
     }
 
     .account-card {
@@ -459,6 +404,11 @@
       color: white;
       font-size: 17px;
       font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .mini-avatar.has-image {
+      background: #0f172a;
     }
 
     .mini-avatar img {
@@ -754,11 +704,12 @@
       opacity: 1;
     }
 
-    @media (max-width: 900px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
+    .toast.error {
+      border-color: rgba(251,113,133,.25);
+      color: #fecdd3;
+    }
 
+    @media (max-width: 900px) {
       .quick-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -849,16 +800,10 @@
         display: none;
       }
 
-      .balance-card,
       .account-card {
         min-height: auto;
         padding: 17px;
         border-radius: 20px;
-      }
-
-      .balance {
-        margin-top: 19px;
-        font-size: 32px;
       }
 
       .account-head {
@@ -908,11 +853,13 @@
     }
   </style>
 </head>
+
 <body>
   <nav class="navbar">
     <div class="nav-inner">
       <a href="/" class="brand">
         <img class="brand-logo" src="https://i.top4top.io/p_3925af3h26.png" alt="ReyCode Digital">
+
         <div class="brand-text">
           <div class="brand-name">ReyCode Digital</div>
           <div class="brand-sub">Digital Workspace</div>
@@ -924,6 +871,7 @@
           <span>Profil</span>
           <span>↗</span>
         </a>
+
         <button id="logoutBtn" class="nav-btn logout-btn" type="button">
           <span>Keluar</span>
           <span>↪</span>
@@ -962,16 +910,6 @@
       </section>
 
       <div class="main-grid">
-        <div class="card balance-card">
-          <div class="card-label">
-            <span>Saldo Akun</span>
-            <div class="card-icon">Rp</div>
-          </div>
-
-          <div id="balance" class="balance">Rp 0</div>
-          <div class="balance-note">Saldo tersedia pada akun kamu</div>
-        </div>
-
         <div class="card account-card">
           <div class="account-head">
             <div id="miniAvatar" class="mini-avatar">U</div>
@@ -987,7 +925,7 @@
           <div class="account-info">
             <div class="info-box">
               <div class="info-title">Status</div>
-              <div id="accountStatus" class="info-value">Aktif</div>
+              <div id="accountStatus" class="info-value">Memuat...</div>
             </div>
 
             <div class="info-box">
@@ -1049,12 +987,14 @@
             <div class="section-title">GitHub Workspace</div>
             <div class="section-desc">Hubungkan dan kelola project GitHub kamu.</div>
           </div>
+
           <a href="/github" class="section-link">Buka Workspace →</a>
         </div>
 
         <div class="workspace-card">
           <div class="workspace-left">
             <div class="github-icon">⌘</div>
+
             <div>
               <div class="workspace-name">GitHub Integration</div>
               <div class="workspace-desc">Repository dan project dalam satu workspace.</div>
@@ -1136,17 +1076,6 @@
       return "Selamat malam";
     }
 
-    function formatRupiah(value) {
-      const number = Number(value || 0);
-
-      return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(number);
-    }
-
     function formatDate(value) {
       if (!value) {
         return "-";
@@ -1166,13 +1095,18 @@
     }
 
     function setAvatar(element, name, avatarUrl) {
-      const initial = String(name || "User").trim().charAt(0).toUpperCase() || "U";
+      const initial =
+        String(name || "User")
+          .trim()
+          .charAt(0)
+          .toUpperCase() || "U";
 
       element.classList.remove("has-image");
       element.innerHTML = "";
 
       if (avatarUrl) {
         const image = document.createElement("img");
+
         image.src = avatarUrl;
         image.alt = name || "User";
         image.loading = "eager";
@@ -1190,85 +1124,151 @@
       }
     }
 
-    function showToast(message) {
+    function showToast(message, type = "") {
       const toast = $("toast");
 
       toast.textContent = message;
-      toast.classList.add("show");
+      toast.className = "toast";
+
+      if (type) {
+        toast.classList.add(type);
+      }
+
+      requestAnimationFrame(() => {
+        toast.classList.add("show");
+      });
 
       clearTimeout(window.toastTimer);
 
       window.toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-      }, 2600);
+      }, 3500);
     }
 
     function updateGreeting(user) {
       const name = user.name || "User";
-      const greeting = getGreeting();
 
-      $("welcomeGreeting").innerHTML = `${greeting}, <span>${escapeHtml(name)}</span> 👋`;
+      $("welcomeGreeting").innerHTML =
+        `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
+
       $("welcomeName").textContent = name;
-      $("welcomeEmail").textContent = user.email || "Selamat datang kembali di ReyCode Digital";
 
-      setAvatar($("welcomeAvatar"), name, user.avatarUrl);
-      setAvatar($("miniAvatar"), name, user.avatarUrl);
+      $("welcomeEmail").textContent =
+        user.email || "Selamat datang kembali di ReyCode Digital";
+
+      setAvatar(
+        $("welcomeAvatar"),
+        name,
+        user.avatarUrl
+      );
+
+      setAvatar(
+        $("miniAvatar"),
+        name,
+        user.avatarUrl
+      );
 
       $("profileName").textContent = name;
       $("profileEmail").textContent = user.email || "-";
 
-      if (user.emailVerified) {
+      if (user.emailVerified === true) {
         $("verified").textContent = "✓ Terverifikasi";
         $("verified").style.color = "#6ee7b7";
+        $("verified").style.borderColor = "rgba(52,211,153,.16)";
+        $("verified").style.background = "rgba(52,211,153,.07)";
+        $("accountStatus").textContent = "Aktif & Terverifikasi";
       } else {
         $("verified").textContent = "Belum Verifikasi";
         $("verified").style.color = "#fbbf24";
         $("verified").style.borderColor = "rgba(251,191,36,.16)";
         $("verified").style.background = "rgba(251,191,36,.07)";
+        $("accountStatus").textContent = "Aktif";
       }
 
-      $("accountStatus").textContent = user.emailVerified ? "Aktif & Terverifikasi" : "Aktif";
-      $("memberSince").textContent = formatDate(user.createdAt);
-
-      const balance = user.balance ?? 0;
-      $("balance").textContent = formatRupiah(balance);
+      $("memberSince").textContent =
+        formatDate(user.createdAt);
     }
 
     async function loadUser() {
       try {
-        const response = await fetch(`/api/user/me?_=${Date.now()}`, {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store",
-          headers: {
-            "Accept": "application/json"
+        const response = await fetch(
+          `/api/user/me?_=${Date.now()}`,
+          {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+            headers: {
+              "Accept": "application/json"
+            }
           }
-        });
+        );
 
-        if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
-            window.location.href = "/login";
-            return;
-          }
+        const rawText = await response.text();
 
-          throw new Error("Gagal mengambil data pengguna");
+        let data;
+
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          throw new Error(
+            `API /api/user/me mengembalikan response tidak valid (${response.status})`
+          );
         }
 
-        const data = await response.json();
+        console.log(
+          "ME API STATUS:",
+          response.status
+        );
+
+        console.log(
+          "ME API RESPONSE:",
+          data
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+            `Gagal mengambil data akun (${response.status})`
+          );
+        }
+
         const user = data.user || data;
 
         if (!user || !user.name) {
-          throw new Error("Data pengguna tidak valid");
+          throw new Error(
+            "Data user dari API tidak lengkap"
+          );
         }
 
         updateGreeting(user);
-      } catch (error) {
-        console.error(error);
-        showToast("Gagal memuat data akun");
 
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 1200);
+      } catch (error) {
+        console.error(
+          "LOAD USER ERROR:",
+          error
+        );
+
+        showToast(
+          error.message ||
+          "Gagal memuat data akun",
+          "error"
+        );
+
+        $("welcomeEmail").textContent =
+          error.message ||
+          "Gagal mengambil informasi akun";
+
+        $("profileName").textContent =
+          "Data akun gagal dimuat";
+
+        $("profileEmail").textContent =
+          "Periksa koneksi session akun";
+
+        $("accountStatus").textContent =
+          "Gagal memuat";
+
+        $("memberSince").textContent =
+          "-";
       }
     }
 
@@ -1279,28 +1279,49 @@
       button.style.opacity = ".6";
 
       try {
-        await fetch("/api/auth/logout", {
-          method: "POST",
-          credentials: "include",
-          cache: "no-store"
-        });
+        const response = await fetch(
+          "/api/auth/logout",
+          {
+            method: "POST",
+            credentials: "include",
+            cache: "no-store"
+          }
+        );
+
+        if (!response.ok) {
+          console.error(
+            "LOGOUT STATUS:",
+            response.status
+          );
+        }
       } catch (error) {
-        console.error(error);
+        console.error(
+          "LOGOUT ERROR:",
+          error
+        );
       }
 
       window.location.href = "/login";
     }
 
-    $("logoutBtn").addEventListener("click", logout);
+    $("logoutBtn").addEventListener(
+      "click",
+      logout
+    );
 
-    $("year").textContent = new Date().getFullYear();
+    $("year").textContent =
+      new Date().getFullYear();
 
     loadUser();
 
     setInterval(() => {
-      const name = $("welcomeName").textContent || "User";
-      $("welcomeGreeting").innerHTML = `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
+      const name =
+        $("welcomeName").textContent ||
+        "User";
+
+      $("welcomeGreeting").innerHTML =
+        `${getGreeting()}, <span>${escapeHtml(name)}</span> 👋`;
     }, 60000);
   </script>
 </body>
-</html>
+  </html>
