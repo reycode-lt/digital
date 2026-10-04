@@ -6,11 +6,24 @@ import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 import ProductComment from "../models/ProductComment.js";
+import Story from "../models/Story.js";
+import StoryView from "../models/StoryView.js";
+import StoryComment from "../models/StoryComment.js";
 import User from "../models/User.js";
 
 import { connectDB } from "./_lib/mongodb.js";
 import { getAuthToken, verifyToken } from "./_lib/auth.js";
 import { uploadImage, deleteImage } from "../lib/upload.js";
+
+import {
+    createStory,
+    viewStory,
+    getStoryViewers,
+    deleteStory,
+    getComments as getStoryComments,
+    addComment as addStoryComment,
+    deleteComment as deleteStoryComment
+} from "../lib/stories/index.js";
 
 export const config = {
     api: {
@@ -20,6 +33,7 @@ export const config = {
 
 const MAX_PRODUCT_IMAGES = 6;
 const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
 function response(res, status, data) {
     return res.status(status).json(data);
@@ -95,6 +109,35 @@ function normalizeProduct(product) {
     return item;
 }
 
+function normalizeStory(story, userId = null) {
+    if (!story) {
+        return null;
+    }
+
+    const item = {
+        ...story
+    };
+
+    if (
+        item.ownerId &&
+        typeof item.ownerId === "object"
+    ) {
+        item.owner = normalizeUser(item.ownerId);
+        item.ownerId = item.owner?._id || item.ownerId;
+    }
+
+    item.isOwner =
+        Boolean(userId) &&
+        String(
+            story.ownerId?._id ||
+            story.ownerId
+        ) === String(userId);
+
+    delete item.__v;
+
+    return item;
+}
+
 async function parseJsonBody(req) {
     if (
         req.body &&
@@ -138,7 +181,7 @@ async function parseMultipart(req) {
     const form = formidable({
         multiples: true,
         maxFiles: MAX_PRODUCT_IMAGES,
-        maxFileSize: MAX_IMAGE_SIZE,
+        maxFileSize: MAX_VIDEO_SIZE,
         keepExtensions: true,
         allowEmptyFiles: false
     });
@@ -1801,6 +1844,479 @@ async function deleteComment(
     });
 }
 
+async function getStories(
+    req,
+    res,
+    userId
+) {
+    const now = new Date();
+
+    const stories =
+        await Story.find({
+            expiresAt: {
+                $gt: now
+            }
+        })
+            .populate({
+                path: "ownerId",
+                model: User,
+                select:
+                    "name avatarUrl emailVerified phoneVerified"
+            })
+            .sort({
+                createdAt: -1
+            })
+            .lean();
+
+    if (!stories.length) {
+        return response(res, 200, {
+            success: true,
+            stories: []
+        });
+    }
+
+    const storyIds =
+        stories.map(
+            story => story._id
+        );
+
+    const [
+        viewCounts,
+        commentCounts,
+        viewed
+    ] = await Promise.all([
+        StoryView.aggregate([
+            {
+                $match: {
+                    storyId: {
+                        $in: storyIds
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$storyId",
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ]),
+
+        StoryComment.aggregate([
+            {
+                $match: {
+                    storyId: {
+                        $in: storyIds
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$storyId",
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ]),
+
+        StoryView.find({
+            storyId: {
+                $in: storyIds
+            },
+            userId
+        })
+            .select("storyId")
+            .lean()
+    ]);
+
+    const viewMap = new Map(
+        viewCounts.map(item => [
+            item._id.toString(),
+            item.count
+        ])
+    );
+
+    const commentMap = new Map(
+        commentCounts.map(item => [
+            item._id.toString(),
+            item.count
+        ])
+    );
+
+    const viewedSet = new Set(
+        viewed.map(item =>
+            item.storyId.toString()
+        )
+    );
+
+    const result =
+        stories.map(story => {
+            const normalized =
+                normalizeStory(
+                    story,
+                    userId
+                );
+
+            normalized.viewerCount =
+                viewMap.get(
+                    story._id.toString()
+                ) || 0;
+
+            normalized.commentCount =
+                commentMap.get(
+                    story._id.toString()
+                ) || 0;
+
+            normalized.viewed =
+                viewedSet.has(
+                    story._id.toString()
+                );
+
+            return normalized;
+        });
+
+    return response(res, 200, {
+        success: true,
+        stories: result
+    });
+}
+
+async function getStory(
+    req,
+    res,
+    userId
+) {
+    const storyId =
+        getField(
+            req.query.id ||
+            req.query.storyId
+        );
+
+    if (!validId(storyId)) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "ID story tidak valid"
+        });
+    }
+
+    const story =
+        await Story.findOne({
+            _id: storyId,
+            expiresAt: {
+                $gt: new Date()
+            }
+        })
+            .populate({
+                path: "ownerId",
+                model: User,
+                select:
+                    "name avatarUrl emailVerified phoneVerified"
+            })
+            .lean();
+
+    if (!story) {
+        return response(res, 404, {
+            success: false,
+            message:
+                "Story tidak ditemukan atau sudah expired"
+        });
+    }
+
+    const [
+        viewerCount,
+        commentCount,
+        viewed
+    ] = await Promise.all([
+        StoryView.countDocuments({
+            storyId
+        }),
+
+        StoryComment.countDocuments({
+            storyId
+        }),
+
+        StoryView.exists({
+            storyId,
+            userId
+        })
+    ]);
+
+    const result =
+        normalizeStory(
+            story,
+            userId
+        );
+
+    result.viewerCount =
+        viewerCount;
+
+    result.commentCount =
+        commentCount;
+
+    result.viewed =
+        Boolean(viewed);
+
+    return response(res, 200, {
+        success: true,
+        story: result
+    });
+}
+
+async function getStoryViewersRoute(
+    req,
+    res,
+    userId
+) {
+    const storyId =
+        getField(
+            req.query.id ||
+            req.query.storyId
+        );
+
+    if (!validId(storyId)) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "ID story tidak valid"
+        });
+    }
+
+    const story =
+        await Story.findOne({
+            _id: storyId,
+            ownerId: userId
+        }).select("_id");
+
+    if (!story) {
+        return response(res, 403, {
+            success: false,
+            message:
+                "Kamu bukan pemilik story ini"
+        });
+    }
+
+    const viewers =
+        await getStoryViewers({
+            storyId,
+            ownerId: userId
+        });
+
+    const result =
+        viewers.map(viewer => ({
+            _id: viewer._id,
+            storyId: viewer.storyId,
+            viewedAt: viewer.viewedAt,
+            user:
+                normalizeUser(
+                    viewer.userId
+                ),
+            userId:
+                viewer.userId?._id ||
+                viewer.userId
+        }));
+
+    return response(res, 200, {
+        success: true,
+        viewers: result,
+        count: result.length
+    });
+}
+
+async function getStoryCommentsRoute(
+    req,
+    res
+) {
+    const storyId =
+        getField(
+            req.query.storyId ||
+            req.query.id
+        );
+
+    if (!validId(storyId)) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "ID story tidak valid"
+        });
+    }
+
+    const comments =
+        await getStoryComments({
+            storyId
+        });
+
+    const result =
+        comments.map(comment => ({
+            ...comment,
+            user:
+                normalizeUser(
+                    comment.userId
+                ),
+            userId:
+                comment.userId?._id ||
+                comment.userId
+        }));
+
+    return response(res, 200, {
+        success: true,
+        comments: result
+    });
+}
+
+async function createStoryRoute(
+    res,
+    userId,
+    parsed
+) {
+    const files =
+        getFiles(parsed.files);
+
+    if (files.length !== 1) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "Story harus memiliki tepat satu file"
+        });
+    }
+
+    const file =
+        files[0];
+
+    if (!file?.filepath) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "File story wajib dipilih"
+        });
+    }
+
+    if (file.size > MAX_VIDEO_SIZE) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "Ukuran file story maksimal 50 MB"
+        });
+    }
+
+    const caption =
+        getField(
+            parsed.fields.caption
+        );
+
+    const story =
+        await createStory({
+            file,
+            userId,
+            caption
+        });
+
+    await story.populate({
+        path: "ownerId",
+        model: User,
+        select:
+            "name avatarUrl emailVerified phoneVerified"
+    });
+
+    const result =
+        normalizeStory(
+            story.toObject(),
+            userId
+        );
+
+    result.viewerCount = 0;
+    result.commentCount = 0;
+    result.viewed = false;
+
+    return response(res, 201, {
+        success: true,
+        message:
+            "Story berhasil dibuat",
+        story: result
+    });
+}
+
+async function addStoryCommentRoute(
+    req,
+    res,
+    userId
+) {
+    const body =
+        await parseJsonBody(req);
+
+    if (!validId(body.storyId)) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "ID story tidak valid"
+        });
+    }
+
+    try {
+        const comment =
+            await addStoryComment({
+                storyId:
+                    body.storyId,
+                userId,
+                text:
+                    body.text,
+                parentId:
+                    body.parentId ||
+                    null
+            });
+
+        return response(res, 201, {
+            success: true,
+            message:
+                "Komentar story berhasil ditambahkan",
+            comment: {
+                ...comment.toObject?.() ||
+                    comment,
+                user:
+                    normalizeUser(
+                        comment.userId
+                    ),
+                userId:
+                    comment.userId?._id ||
+                    comment.userId
+            }
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function deleteStoryCommentRoute(
+    req,
+    res,
+    userId
+) {
+    const body =
+        await parseJsonBody(req);
+
+    if (!validId(body.commentId)) {
+        return response(res, 400, {
+            success: false,
+            message:
+                "ID komentar story tidak valid"
+        });
+    }
+
+    await deleteStoryComment({
+        commentId:
+            body.commentId,
+        userId
+    });
+
+    return response(res, 200, {
+        success: true,
+        message:
+            "Komentar story berhasil dihapus"
+    });
+}
+
 async function route(
     req,
     res
@@ -1897,6 +2413,35 @@ async function route(
                     res
                 );
 
+            case "stories":
+                return getStories(
+                    req,
+                    res,
+                    userId
+                );
+
+            case "story":
+                return getStory(
+                    req,
+                    res,
+                    userId
+                );
+
+            case "storyviewers":
+            case "story-viewers":
+                return getStoryViewersRoute(
+                    req,
+                    res,
+                    userId
+                );
+
+            case "storycomments":
+            case "story-comments":
+                return getStoryCommentsRoute(
+                    req,
+                    res
+                );
+
             default:
                 return response(res, 400, {
                     success: false,
@@ -1945,6 +2490,14 @@ async function route(
             case "updateproduct":
                 return updateProduct(
                     req,
+                    res,
+                    userId,
+                    parsed
+                );
+
+            case "createstory":
+            case "create-story":
+                return createStoryRoute(
                     res,
                     userId,
                     parsed
@@ -2046,6 +2599,68 @@ async function route(
                 userId
             );
 
+        case "viewstory":
+        case "view-story": {
+            if (!validId(body.storyId)) {
+                return response(res, 400, {
+                    success: false,
+                    message:
+                        "ID story tidak valid"
+                });
+            }
+
+            await viewStory({
+                storyId:
+                    body.storyId,
+                userId
+            });
+
+            return response(res, 200, {
+                success: true,
+                message:
+                    "Story ditandai sudah dilihat"
+            });
+        }
+
+        case "deletestory":
+        case "delete-story": {
+            if (!validId(body.storyId)) {
+                return response(res, 400, {
+                    success: false,
+                    message:
+                        "ID story tidak valid"
+                });
+            }
+
+            await deleteStory({
+                storyId:
+                    body.storyId,
+                userId
+            });
+
+            return response(res, 200, {
+                success: true,
+                message:
+                    "Story berhasil dihapus"
+            });
+        }
+
+        case "addstorycomment":
+        case "add-story-comment":
+            return addStoryCommentRoute(
+                req,
+                res,
+                userId
+            );
+
+        case "deletestorycomment":
+        case "delete-story-comment":
+            return deleteStoryCommentRoute(
+                req,
+                res,
+                userId
+            );
+
         default:
             return response(res, 400, {
                 success: false,
@@ -2083,6 +2698,8 @@ export default async function handler(
         if (
             message.includes("File") ||
             message.includes("gambar") ||
+            message.includes("video") ||
+            message.includes("story") ||
             message.includes("JSON") ||
             message.includes("maxFileSize")
         ) {
