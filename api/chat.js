@@ -1,5 +1,6 @@
 import formidable from "formidable";
 import fs from "fs/promises";
+import mongoose from "mongoose";
 
 import { connectDB } from "./_lib/mongodb.js";
 import {
@@ -10,6 +11,7 @@ import {
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
+import ProductComment from "../models/ProductComment.js";
 import { uploadImage, deleteImage } from "../lib/upload.js";
 
 export const config = {
@@ -31,45 +33,85 @@ function parseNumber(value, fallback = 0) {
 function parsePositiveInt(value) {
     const number = Number(value);
 
-    if (
-        !Number.isInteger(number) ||
-        number < 1
-    ) {
+    if (!Number.isInteger(number) || number < 1) {
         return null;
     }
 
     return number;
 }
 
-function normalizeProduct(product) {
+function isValidId(value) {
+    return mongoose.Types.ObjectId.isValid(value);
+}
+
+async function parseJsonBody(req) {
+    if (req.body && typeof req.body === "object") {
+        return req.body;
+    }
+
+    return new Promise((resolve, reject) => {
+        let data = "";
+
+        req.on("data", chunk => {
+            data += chunk.toString();
+        });
+
+        req.on("end", () => {
+            if (!data.trim()) {
+                return resolve({});
+            }
+
+            try {
+                resolve(JSON.parse(data));
+            } catch {
+                reject(new Error("Format JSON tidak valid"));
+            }
+        });
+
+        req.on("error", reject);
+    });
+}
+
+function normalizeProduct(product, commentCount = 0) {
     if (!product) {
         return null;
     }
 
-    return {
-        id: product._id.toString(),
-        sellerId: product.sellerId?._id
-            ? product.sellerId._id.toString()
-            : product.sellerId?.toString(),
-        seller: product.sellerId?.name
+    const seller =
+        product.sellerId &&
+        typeof product.sellerId === "object" &&
+        product.sellerId._id
             ? {
                 id: product.sellerId._id.toString(),
-                name: product.sellerId.name,
+                name: product.sellerId.name || "Seller",
                 avatarUrl:
                     product.sellerId.avatarUrl || "",
                 emailVerified:
                     Boolean(
                         product.sellerId.emailVerified
+                    ),
+                phoneVerified:
+                    Boolean(
+                        product.sellerId.phoneVerified
                     )
             }
-            : null,
+            : null;
+
+    return {
+        id: product._id.toString(),
+        sellerId:
+            seller?.id ||
+            product.sellerId?.toString() ||
+            "",
+        seller,
         name: product.name,
-        description: product.description,
+        description: product.description || "",
         price: product.price,
         stock: product.stock,
         category: product.category,
         images: product.images || [],
         status: product.status,
+        commentCount,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt
     };
@@ -84,8 +126,7 @@ async function parseMultipart(req) {
         allowEmptyFiles: false
     });
 
-    const [fields, files] =
-        await form.parse(req);
+    const [fields, files] = await form.parse(req);
 
     const normalizedFields = {};
 
@@ -96,7 +137,7 @@ async function parseMultipart(req) {
                 : value;
     }
 
-    let uploadedFiles = [];
+    const uploadedFiles = [];
 
     for (const value of Object.values(files)) {
         const list = Array.isArray(value)
@@ -104,11 +145,9 @@ async function parseMultipart(req) {
             : [value];
 
         for (const file of list) {
-            if (!file) {
-                continue;
+            if (file) {
+                uploadedFiles.push(file);
             }
-
-            uploadedFiles.push(file);
         }
     }
 
@@ -118,54 +157,83 @@ async function parseMultipart(req) {
     };
 }
 
+async function getCommentCounts(productIds) {
+    if (!productIds.length) {
+        return new Map();
+    }
+
+    const rows = await ProductComment.aggregate([
+        {
+            $match: {
+                productId: {
+                    $in: productIds
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$productId",
+                count: {
+                    $sum: 1
+                }
+            }
+        }
+    ]);
+
+    return new Map(
+        rows.map(row => [
+            row._id.toString(),
+            row.count
+        ])
+    );
+}
+
 async function getProductById(id) {
-    if (!id) {
+    if (!id || !isValidId(id)) {
         return null;
     }
 
-    return Product.findById(id)
-        .populate(
-            "sellerId",
-            "_id name avatarUrl emailVerified"
-        );
+    return Product.findById(id).populate(
+        "sellerId",
+        "_id name avatarUrl emailVerified phoneVerified"
+    );
 }
 
 async function getProducts(req) {
-    const search =
-        String(
-            req.query?.search || ""
-        ).trim();
+    const search = String(
+        req.query?.search || ""
+    ).trim();
 
-    const category =
-        String(
-            req.query?.category || ""
-        ).trim();
+    const category = String(
+        req.query?.category || ""
+    ).trim();
 
-    const sellerId =
-        String(
-            req.query?.sellerId || ""
-        ).trim();
+    const sellerId = String(
+        req.query?.sellerId || ""
+    ).trim();
 
-    const page =
-        Math.max(
-            1,
+    const page = Math.max(
+        1,
+        Math.floor(
             parseNumber(
                 req.query?.page,
                 1
             )
-        );
+        )
+    );
 
-    const limit =
-        Math.min(
-            50,
-            Math.max(
-                1,
+    const limit = Math.min(
+        50,
+        Math.max(
+            1,
+            Math.floor(
                 parseNumber(
                     req.query?.limit,
                     20
                 )
             )
-        );
+        )
+    );
 
     const filter = {
         status: "active"
@@ -176,41 +244,54 @@ async function getProducts(req) {
     }
 
     if (sellerId) {
+        if (!isValidId(sellerId)) {
+            return {
+                products: [],
+                pagination: {
+                    page,
+                    limit,
+                    total: 0,
+                    pages: 0
+                }
+            };
+        }
+
         filter.sellerId = sellerId;
     }
 
     if (search) {
+        const safeSearch = search.slice(0, 100);
+
         filter.$or = [
             {
                 name: {
-                    $regex: search,
+                    $regex: safeSearch,
                     $options: "i"
                 }
             },
             {
                 description: {
-                    $regex: search,
+                    $regex: safeSearch,
                     $options: "i"
                 }
             },
             {
                 category: {
-                    $regex: search,
+                    $regex: safeSearch,
                     $options: "i"
                 }
             }
         ];
     }
 
-    const skip =
-        (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
     const [products, total] =
         await Promise.all([
             Product.find(filter)
                 .populate(
                     "sellerId",
-                    "_id name avatarUrl emailVerified"
+                    "_id name avatarUrl emailVerified phoneVerified"
                 )
                 .sort({
                     createdAt: -1
@@ -222,19 +303,33 @@ async function getProducts(req) {
             Product.countDocuments(filter)
         ]);
 
+    const productIds =
+        products.map(
+            product => product._id
+        );
+
+    const commentCounts =
+        await getCommentCounts(
+            productIds
+        );
+
     return {
-        products:
-            products.map(
-                normalizeProduct
-            ),
+        products: products.map(
+            product =>
+                normalizeProduct(
+                    product,
+                    commentCounts.get(
+                        product._id.toString()
+                    ) || 0
+                )
+        ),
         pagination: {
             page,
             limit,
             total,
-            pages:
-                Math.ceil(
-                    total / limit
-                )
+            pages: Math.ceil(
+                total / limit
+            )
         }
     };
 }
@@ -244,32 +339,27 @@ async function createProduct(
     fields,
     files
 ) {
-    const name =
-        String(
-            fields.name || ""
-        ).trim();
+    const name = String(
+        fields.name || ""
+    ).trim();
 
-    const description =
-        String(
-            fields.description || ""
-        ).trim();
+    const description = String(
+        fields.description || ""
+    ).trim();
 
-    const category =
-        String(
-            fields.category || ""
-        ).trim();
+    const category = String(
+        fields.category || ""
+    ).trim();
 
-    const price =
-        parseNumber(
-            fields.price,
-            -1
-        );
+    const price = parseNumber(
+        fields.price,
+        -1
+    );
 
-    const stock =
-        parseNumber(
-            fields.stock,
-            -1
-        );
+    const stock = parseNumber(
+        fields.stock,
+        -1
+    );
 
     if (!name) {
         throw new Error(
@@ -277,17 +367,13 @@ async function createProduct(
         );
     }
 
-    if (
-        name.length > 100
-    ) {
+    if (name.length > 100) {
         throw new Error(
             "Nama produk maksimal 100 karakter"
         );
     }
 
-    if (
-        description.length > 2000
-    ) {
+    if (description.length > 2000) {
         throw new Error(
             "Deskripsi maksimal 2000 karakter"
         );
@@ -299,17 +385,13 @@ async function createProduct(
         );
     }
 
-    if (
-        category.length > 40
-    ) {
+    if (category.length > 40) {
         throw new Error(
             "Kategori maksimal 40 karakter"
         );
     }
 
-    if (
-        price < 0
-    ) {
+    if (price < 0) {
         throw new Error(
             "Harga tidak valid"
         );
@@ -324,9 +406,7 @@ async function createProduct(
         );
     }
 
-    if (
-        files.length > 6
-    ) {
+    if (files.length > 6) {
         throw new Error(
             "Maksimal 6 gambar produk"
         );
@@ -409,9 +489,12 @@ async function updateProduct(
             fields.productId || ""
         ).trim();
 
-    if (!productId) {
+    if (
+        !productId ||
+        !isValidId(productId)
+    ) {
         throw new Error(
-            "Product ID wajib diisi"
+            "Product ID tidak valid"
         );
     }
 
@@ -441,26 +524,36 @@ async function updateProduct(
             );
         }
 
-        product.name =
-            name.slice(
-                0,
-                100
+        if (name.length > 100) {
+            throw new Error(
+                "Nama produk maksimal 100 karakter"
             );
+        }
+
+        product.name =
+            name;
     }
 
     if (
         fields.description !==
         undefined
     ) {
-        product.description =
+        const description =
             String(
                 fields.description
-            )
-                .trim()
-                .slice(
-                    0,
-                    2000
-                );
+            ).trim();
+
+        if (
+            description.length >
+            2000
+        ) {
+            throw new Error(
+                "Deskripsi maksimal 2000 karakter"
+            );
+        }
+
+        product.description =
+            description;
     }
 
     if (
@@ -478,11 +571,17 @@ async function updateProduct(
             );
         }
 
-        product.category =
-            category.slice(
-                0,
-                40
+        if (
+            category.length >
+            40
+        ) {
+            throw new Error(
+                "Kategori maksimal 40 karakter"
             );
+        }
+
+        product.category =
+            category;
     }
 
     if (
@@ -564,30 +663,19 @@ async function updateProduct(
             ? [...product.images]
             : [];
 
-    if (
-        replaceImages
-    ) {
-        product.images =
-            [];
+    if (replaceImages) {
+        product.images = [];
     }
 
-    if (
-        files.length
-    ) {
-        if (
-            files.length >
-            6
-        ) {
+    if (files.length) {
+        if (files.length > 6) {
             throw new Error(
                 "Maksimal 6 gambar produk"
             );
         }
 
-        const currentImages =
-            product.images.length;
-
         if (
-            currentImages +
+            product.images.length +
             files.length >
             6
         ) {
@@ -596,35 +684,51 @@ async function updateProduct(
             );
         }
 
-        for (const file of files) {
-            const buffer =
-                await fs.readFile(
-                    file.filepath
-                );
+        const uploaded = [];
 
-            const result =
-                await uploadImage({
-                    buffer,
-                    contentType:
-                        file.mimetype,
-                    userId,
-                    type:
-                        "productImage",
-                    productId
-                        : product._id.toString()
-                });
+        try {
+            for (const file of files) {
+                const buffer =
+                    await fs.readFile(
+                        file.filepath
+                    );
+
+                const result =
+                    await uploadImage({
+                        buffer,
+                        contentType:
+                            file.mimetype,
+                        userId,
+                        type:
+                            "productImage",
+                        productId:
+                            product._id.toString()
+                    });
+
+                uploaded.push(
+                    result.url
+                );
+            }
 
             product.images.push(
-                result.url
+                ...uploaded
             );
+        } catch (error) {
+            for (const url of uploaded) {
+                await deleteImage(
+                    url
+                ).catch(
+                    () => {}
+                );
+            }
+
+            throw error;
         }
     }
 
     await product.save();
 
-    if (
-        replaceImages
-    ) {
+    if (replaceImages) {
         for (const url of oldImages) {
             await deleteImage(
                 url
@@ -639,8 +743,15 @@ async function updateProduct(
             product._id
         );
 
+    const commentCount =
+        await ProductComment.countDocuments({
+            productId:
+                product._id
+        });
+
     return normalizeProduct(
-        populated
+        populated,
+        commentCount
     );
 }
 
@@ -648,6 +759,12 @@ async function deleteProduct(
     userId,
     productId
 ) {
+    if (!isValidId(productId)) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
     const product =
         await Product.findOne({
             _id: productId,
@@ -684,7 +801,47 @@ async function deleteProduct(
         }
     );
 
+    await ProductComment.deleteMany({
+        productId:
+            product._id
+    });
+
     return true;
+}
+
+async function getMyProducts(
+    userId
+) {
+    const products =
+        await Product.find({
+            sellerId: userId
+        })
+            .populate(
+                "sellerId",
+                "_id name avatarUrl emailVerified phoneVerified"
+            )
+            .sort({
+                createdAt: -1
+            })
+            .lean();
+
+    const commentCounts =
+        await getCommentCounts(
+            products.map(
+                product =>
+                    product._id
+            )
+        );
+
+    return products.map(
+        product =>
+            normalizeProduct(
+                product,
+                commentCounts.get(
+                    product._id.toString()
+                ) || 0
+            )
+    );
 }
 
 async function getCart(
@@ -699,7 +856,7 @@ async function getCart(
                 populate: {
                     path: "sellerId",
                     select:
-                        "_id name avatarUrl emailVerified"
+                        "_id name avatarUrl emailVerified phoneVerified"
                 }
             })
             .lean();
@@ -723,15 +880,20 @@ async function getCart(
                     const product =
                         item.productId;
 
+                    const quantity =
+                        Math.max(
+                            1,
+                            item.quantity
+                        );
+
                     const subtotal =
                         product.price *
-                        item.quantity;
+                        quantity;
 
                     return {
                         productId:
                             product._id.toString(),
-                        quantity:
-                            item.quantity,
+                        quantity,
                         name:
                             product.name,
                         price:
@@ -741,8 +903,13 @@ async function getCart(
                         image:
                             product.images?.[0] ||
                             "",
+                        images:
+                            product.images ||
+                            [],
                         category:
                             product.category,
+                        status:
+                            product.status,
                         seller:
                             product.sellerId
                                 ? {
@@ -752,7 +919,11 @@ async function getCart(
                                         product.sellerId.name,
                                     avatarUrl:
                                         product.sellerId.avatarUrl ||
-                                        ""
+                                        "",
+                                    emailVerified:
+                                        Boolean(
+                                            product.sellerId.emailVerified
+                                        )
                                 }
                                 : null,
                         subtotal
@@ -779,6 +950,12 @@ async function addCartItem(
     productId,
     quantity
 ) {
+    if (!isValidId(productId)) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
     const product =
         await Product.findOne({
             _id: productId,
@@ -800,63 +977,160 @@ async function addCartItem(
         );
     }
 
-    if (
-        product.stock < quantity
-    ) {
-        throw new Error(
-            "Stok produk tidak mencukupi"
-        );
-    }
-
     let cart =
         await Cart.findOne({
             userId
         });
 
     if (!cart) {
-        cart =
-            await Cart.create({
-                userId,
-                items: [
-                    {
-                        productId,
-                        quantity
-                    }
-                ]
-            });
-    } else {
-        const item =
-            cart.items.find(
-                item =>
-                    item.productId.toString() ===
-                    productId.toString()
+        if (
+            quantity >
+            product.stock
+        ) {
+            throw new Error(
+                "Stok produk tidak mencukupi"
             );
-
-        if (item) {
-            const next =
-                item.quantity +
-                quantity;
-
-            if (
-                next >
-                product.stock
-            ) {
-                throw new Error(
-                    "Jumlah melebihi stok"
-                );
-            }
-
-            item.quantity =
-                next;
-        } else {
-            cart.items.push({
-                productId,
-                quantity
-            });
         }
 
-        await cart.save();
+        await Cart.create({
+            userId,
+            items: [
+                {
+                    productId,
+                    quantity
+                }
+            ]
+        });
+
+        return getCart(
+            userId
+        );
     }
+
+    const item =
+        cart.items.find(
+            item =>
+                item.productId.toString() ===
+                productId.toString()
+        );
+
+    if (item) {
+        const next =
+            item.quantity +
+            quantity;
+
+        if (
+            next >
+            product.stock
+        ) {
+            throw new Error(
+                "Jumlah melebihi stok"
+            );
+        }
+
+        item.quantity =
+            next;
+    } else {
+        if (
+            quantity >
+            product.stock
+        ) {
+            throw new Error(
+                "Stok produk tidak mencukupi"
+            );
+        }
+
+        cart.items.push({
+            productId,
+            quantity
+        });
+    }
+
+    await cart.save();
+
+    return getCart(
+        userId
+    );
+}
+
+async function updateCartItem(
+    userId,
+    productId,
+    quantity
+) {
+    if (!isValidId(productId)) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
+    if (
+        !Number.isInteger(quantity) ||
+        quantity < 1
+    ) {
+        throw new Error(
+            "Jumlah cart tidak valid"
+        );
+    }
+
+    const product =
+        await Product.findOne({
+            _id: productId,
+            status: "active"
+        });
+
+    if (!product) {
+        throw new Error(
+            "Produk tidak ditemukan"
+        );
+    }
+
+    if (
+        product.sellerId.toString() ===
+        userId.toString()
+    ) {
+        throw new Error(
+            "Produk sendiri tidak dapat dibeli"
+        );
+    }
+
+    if (
+        quantity >
+        product.stock
+    ) {
+        throw new Error(
+            "Jumlah melebihi stok"
+        );
+    }
+
+    const cart =
+        await Cart.findOne({
+            userId
+        });
+
+    if (!cart) {
+        throw new Error(
+            "Keranjang tidak ditemukan"
+        );
+    }
+
+    const item =
+        cart.items.find(
+            item =>
+                item.productId.toString() ===
+                productId.toString()
+        );
+
+    if (!item) {
+        throw new Error(
+            "Produk tidak ada di keranjang"
+        );
+    }
+
+    item.quantity =
+        quantity;
+
+    await cart.save();
 
     return getCart(
         userId
@@ -866,8 +1140,14 @@ async function addCartItem(
 async function removeCartItem(
     userId,
     productId,
-    quantity
+    quantity = null
 ) {
+    if (!isValidId(productId)) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
     const cart =
         await Cart.findOne({
             userId
@@ -886,28 +1166,33 @@ async function removeCartItem(
                 productId.toString()
         );
 
-    if (
-        index === -1
-    ) {
+    if (index === -1) {
         return getCart(
             userId
         );
     }
 
-    if (
-        quantity === null
-    ) {
+    if (quantity === null) {
         cart.items.splice(
             index,
             1
         );
     } else {
+        if (
+            !Number.isInteger(quantity) ||
+            quantity < 1
+        ) {
+            throw new Error(
+                "Jumlah tidak valid"
+            );
+        }
+
         cart.items[index].quantity -=
             quantity;
 
         if (
-            cart.items[index]
-                .quantity <= 0
+            cart.items[index].quantity <=
+            0
         ) {
             cart.items.splice(
                 index,
@@ -967,6 +1252,15 @@ async function checkout(
         }
 
         if (
+            product.sellerId.toString() ===
+            userId.toString()
+        ) {
+            throw new Error(
+                `Produk ${product.name} adalah produk kamu sendiri`
+            );
+        }
+
+        if (
             product.stock <
             cartItem.quantity
         ) {
@@ -1000,62 +1294,94 @@ async function checkout(
             subtotal;
     }
 
-    for (
-        const item of orderItems
-    ) {
-        const updated =
+    const updatedProducts = [];
+
+    try {
+        for (
+            const item of orderItems
+        ) {
+            const updated =
+                await Product.findOneAndUpdate(
+                    {
+                        _id:
+                            item.productId,
+                        stock: {
+                            $gte:
+                                item.quantity
+                        },
+                        status:
+                            "active"
+                    },
+                    {
+                        $inc: {
+                            stock:
+                                -item.quantity
+                        }
+                    },
+                    {
+                        new: true
+                    }
+                );
+
+            if (!updated) {
+                throw new Error(
+                    `Stok ${item.name} berubah, silakan coba lagi`
+                );
+            }
+
+            updatedProducts.push({
+                productId:
+                    item.productId,
+                quantity:
+                    item.quantity
+            });
+        }
+
+        const order =
+            await Order.create({
+                buyerId:
+                    userId,
+                items:
+                    orderItems,
+                total,
+                status:
+                    "pending"
+            });
+
+        await Cart.findOneAndUpdate(
+            {
+                userId
+            },
+            {
+                $set: {
+                    items: []
+                }
+            }
+        );
+
+        return order;
+    } catch (error) {
+        for (
+            const item of updatedProducts
+        ) {
             await Product.findOneAndUpdate(
                 {
                     _id:
-                        item.productId,
-                    stock: {
-                        $gte:
-                            item.quantity
-                    },
-                    status:
-                        "active"
+                        item.productId
                 },
                 {
                     $inc: {
                         stock:
-                            -item.quantity
+                            item.quantity
                     }
-                },
-                {
-                    new: true
                 }
-            );
-
-        if (!updated) {
-            throw new Error(
-                `Stok ${item.name} berubah, silakan coba lagi`
+            ).catch(
+                () => {}
             );
         }
+
+        throw error;
     }
-
-    const order =
-        await Order.create({
-            buyerId:
-                userId,
-            items:
-                orderItems,
-            total,
-            status:
-                "pending"
-        });
-
-    await Cart.findOneAndUpdate(
-        {
-            userId
-        },
-        {
-            $set: {
-                items: []
-            }
-        }
-    );
-
-    return order;
 }
 
 async function getOrders(
@@ -1067,7 +1393,7 @@ async function getOrders(
         })
             .populate(
                 "items.sellerId",
-                "_id name avatarUrl"
+                "_id name avatarUrl emailVerified phoneVerified"
             )
             .sort({
                 createdAt: -1
@@ -1090,9 +1416,12 @@ async function getOrders(
                         sellerId:
                             item.sellerId?._id
                                 ? item.sellerId._id.toString()
-                                : item.sellerId.toString(),
+                                : item.sellerId?.toString() || "",
                         seller:
                             item.sellerId?.name ||
+                            "",
+                        sellerAvatar:
+                            item.sellerId?.avatarUrl ||
                             "",
                         name:
                             item.name,
@@ -1122,7 +1451,7 @@ async function getSellerOrders(
         })
             .populate(
                 "buyerId",
-                "_id name avatarUrl"
+                "_id name avatarUrl emailVerified phoneVerified"
             )
             .sort({
                 createdAt: -1
@@ -1130,31 +1459,37 @@ async function getSellerOrders(
             .lean();
 
     return orders.map(
-        order => ({
-            id:
-                order._id.toString(),
-            buyer:
-                order.buyerId
-                    ? {
-                        id:
-                            order.buyerId._id.toString(),
-                        name:
-                            order.buyerId.name,
-                        avatarUrl:
-                            order.buyerId.avatarUrl ||
-                            ""
-                    }
-                    : null,
-            status:
-                order.status,
-            items:
-                order.items
-                    .filter(
-                        item =>
-                            item.sellerId.toString() ===
-                            userId.toString()
-                    )
-                    .map(
+        order => {
+            const sellerItems =
+                order.items.filter(
+                    item =>
+                        item.sellerId.toString() ===
+                        userId.toString()
+                );
+
+            return {
+                id:
+                    order._id.toString(),
+                buyer:
+                    order.buyerId
+                        ? {
+                            id:
+                                order.buyerId._id.toString(),
+                            name:
+                                order.buyerId.name,
+                            avatarUrl:
+                                order.buyerId.avatarUrl ||
+                                "",
+                            emailVerified:
+                                Boolean(
+                                    order.buyerId.emailVerified
+                                )
+                        }
+                        : null,
+                status:
+                    order.status,
+                items:
+                    sellerItems.map(
                         item => ({
                             productId:
                                 item.productId.toString(),
@@ -1170,14 +1505,8 @@ async function getSellerOrders(
                                 item.subtotal
                         })
                     ),
-            total:
-                order.items
-                    .filter(
-                        item =>
-                            item.sellerId.toString() ===
-                            userId.toString()
-                    )
-                    .reduce(
+                total:
+                    sellerItems.reduce(
                         (
                             sum,
                             item
@@ -1186,10 +1515,251 @@ async function getSellerOrders(
                             item.subtotal,
                         0
                     ),
+                createdAt:
+                    order.createdAt
+            };
+        }
+    );
+}
+
+async function getComments(
+    productId
+) {
+    if (
+        !productId ||
+        !isValidId(productId)
+    ) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
+    const comments =
+        await ProductComment.find({
+            productId
+        })
+            .populate(
+                "userId",
+                "_id name avatarUrl emailVerified phoneVerified"
+            )
+            .sort({
+                createdAt: -1
+            })
+            .lean();
+
+    return comments.map(
+        comment => ({
+            id:
+                comment._id.toString(),
+            productId:
+                comment.productId.toString(),
+            parentId:
+                comment.parentId
+                    ? comment.parentId.toString()
+                    : null,
+            text:
+                comment.text,
+            user:
+                comment.userId
+                    ? {
+                        id:
+                            comment.userId._id.toString(),
+                        name:
+                            comment.userId.name,
+                        avatarUrl:
+                            comment.userId.avatarUrl ||
+                            "",
+                        emailVerified:
+                            Boolean(
+                                comment.userId.emailVerified
+                            ),
+                        phoneVerified:
+                            Boolean(
+                                comment.userId.phoneVerified
+                            )
+                    }
+                    : null,
             createdAt:
-                order.createdAt
+                comment.createdAt,
+            updatedAt:
+                comment.updatedAt
         })
     );
+}
+
+async function addComment(
+    userId,
+    productId,
+    text,
+    parentId = null
+) {
+    if (
+        !productId ||
+        !isValidId(productId)
+    ) {
+        throw new Error(
+            "Product ID tidak valid"
+        );
+    }
+
+    const product =
+        await Product.findOne({
+            _id: productId,
+            status: "active"
+        });
+
+    if (!product) {
+        throw new Error(
+            "Produk tidak ditemukan"
+        );
+    }
+
+    const cleanText =
+        String(
+            text || ""
+        ).trim();
+
+    if (!cleanText) {
+        throw new Error(
+            "Komentar tidak boleh kosong"
+        );
+    }
+
+    if (
+        cleanText.length >
+        1000
+    ) {
+        throw new Error(
+            "Komentar maksimal 1000 karakter"
+        );
+    }
+
+    let normalizedParentId =
+        null;
+
+    if (parentId) {
+        if (
+            !isValidId(
+                parentId
+            )
+        ) {
+            throw new Error(
+                "Parent comment tidak valid"
+            );
+        }
+
+        const parent =
+            await ProductComment.findOne({
+                _id:
+                    parentId,
+                productId
+            });
+
+        if (!parent) {
+            throw new Error(
+                "Komentar induk tidak ditemukan"
+            );
+        }
+
+        normalizedParentId =
+            parent._id;
+    }
+
+    const comment =
+        await ProductComment.create({
+            productId,
+            userId,
+            parentId:
+                normalizedParentId,
+            text:
+                cleanText
+        });
+
+    const populated =
+        await ProductComment.findById(
+            comment._id
+        ).populate(
+            "userId",
+            "_id name avatarUrl emailVerified phoneVerified"
+        ).lean();
+
+    return {
+        id:
+            populated._id.toString(),
+        productId:
+            populated.productId.toString(),
+        parentId:
+            populated.parentId
+                ? populated.parentId.toString()
+                : null,
+        text:
+            populated.text,
+        user:
+            populated.userId
+                ? {
+                    id:
+                        populated.userId._id.toString(),
+                    name:
+                        populated.userId.name,
+                    avatarUrl:
+                        populated.userId.avatarUrl ||
+                        "",
+                    emailVerified:
+                        Boolean(
+                            populated.userId.emailVerified
+                        ),
+                    phoneVerified:
+                        Boolean(
+                            populated.userId.phoneVerified
+                        )
+                }
+                : null,
+        createdAt:
+            populated.createdAt,
+        updatedAt:
+            populated.updatedAt
+    };
+}
+
+async function deleteComment(
+    userId,
+    commentId
+) {
+    if (
+        !commentId ||
+        !isValidId(commentId)
+    ) {
+        throw new Error(
+            "Comment ID tidak valid"
+        );
+    }
+
+    const comment =
+        await ProductComment.findOne({
+            _id: commentId,
+            userId
+        });
+
+    if (!comment) {
+        throw new Error(
+            "Komentar tidak ditemukan"
+        );
+    }
+
+    await ProductComment.deleteMany({
+        $or: [
+            {
+                _id:
+                    comment._id
+            },
+            {
+                parentId:
+                    comment._id
+            }
+        ]
+    });
+
+    return true;
 }
 
 export default async function handler(
@@ -1313,11 +1883,9 @@ export default async function handler(
             "POST"
         ) {
             body =
-                typeof req.body ===
-                "object" &&
-                req.body
-                    ? req.body
-                    : {};
+                await parseJsonBody(
+                    req
+                );
         }
 
         const action =
@@ -1350,10 +1918,13 @@ export default async function handler(
             action ===
             "product"
         ) {
+            const id =
+                req.query?.id ||
+                body.id;
+
             const product =
                 await getProductById(
-                    req.query?.id ||
-                        body.id
+                    id
                 );
 
             if (!product) {
@@ -1364,11 +1935,18 @@ export default async function handler(
                 });
             }
 
+            const commentCount =
+                await ProductComment.countDocuments({
+                    productId:
+                        product._id
+                });
+
             return res.status(200).json({
                 success: true,
                 product:
                     normalizeProduct(
-                        product
+                        product,
+                        commentCount
                     )
             });
         }
@@ -1378,22 +1956,13 @@ export default async function handler(
             "myproducts"
         ) {
             const products =
-                await Product.find({
-                    sellerId:
-                        userId
-                })
-                    .sort({
-                        createdAt:
-                            -1
-                    })
-                    .lean();
+                await getMyProducts(
+                    userId
+                );
 
             return res.status(200).json({
                 success: true,
-                products:
-                    products.map(
-                        normalizeProduct
-                    )
+                products
             });
         }
 
@@ -1471,22 +2040,70 @@ export default async function handler(
 
         if (
             action ===
-            "removecart"
+            "updatecart"
         ) {
             const productId =
                 body.productId;
 
             const quantity =
+                parsePositiveInt(
+                    body.quantity
+                );
+
+            if (
+                !productId ||
+                !quantity
+            ) {
+                throw new Error(
+                    "Produk dan jumlah wajib diisi"
+                );
+            }
+
+            const cart =
+                await updateCartItem(
+                    userId,
+                    productId,
+                    quantity
+                );
+
+            return res.status(200).json({
+                success: true,
+                cart
+            });
+        }
+
+        if (
+            action ===
+            "removecart"
+        ) {
+            const productId =
+                body.productId;
+
+            if (!productId) {
+                throw new Error(
+                    "Product ID wajib diisi"
+                );
+            }
+
+            const quantity =
                 body.quantity ===
-                undefined
+                undefined ||
+                body.quantity ===
+                null
                     ? null
                     : parsePositiveInt(
                         body.quantity
                     );
 
-            if (!productId) {
+            if (
+                body.quantity !==
+                    undefined &&
+                body.quantity !==
+                    null &&
+                !quantity
+            ) {
                 throw new Error(
-                    "Product ID wajib diisi"
+                    "Jumlah tidak valid"
                 );
             }
 
@@ -1559,6 +2176,70 @@ export default async function handler(
             });
         }
 
+        if (
+            action ===
+            "comments"
+        ) {
+            const productId =
+                req.query?.productId ||
+                body.productId;
+
+            const comments =
+                await getComments(
+                    productId
+                );
+
+            return res.status(200).json({
+                success: true,
+                comments
+            });
+        }
+
+        if (
+            action ===
+            "addcomment"
+        ) {
+            const productId =
+                body.productId;
+
+            const comment =
+                await addComment(
+                    userId,
+                    productId,
+                    body.text,
+                    body.parentId ||
+                        null
+                );
+
+            return res.status(201).json({
+                success: true,
+                comment
+            });
+        }
+
+        if (
+            action ===
+            "deletecomment"
+        ) {
+            const commentId =
+                body.commentId;
+
+            if (!commentId) {
+                throw new Error(
+                    "Comment ID wajib diisi"
+                );
+            }
+
+            await deleteComment(
+                userId,
+                commentId
+            );
+
+            return res.status(200).json({
+                success: true
+            });
+        }
+
         return res.status(400).json({
             success: false,
             message:
@@ -1570,11 +2251,24 @@ export default async function handler(
             error
         );
 
-        return res.status(500).json({
+        const message =
+            error?.message ||
+            "Terjadi kesalahan pada marketplace";
+
+        const status =
+            message.includes(
+                "tidak ditemukan"
+            )
+                ? 404
+                : message.includes(
+                    "Belum login"
+                )
+                    ? 401
+                    : 400;
+
+        return res.status(status).json({
             success: false,
-            message:
-                error?.message ||
-                "Terjadi kesalahan pada marketplace"
+            message
         });
     }
 }
