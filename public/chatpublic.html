@@ -207,19 +207,15 @@ display:inline-flex;
 align-items:center;
 justify-content:center;
 flex:0 0 18px;
-border-radius:50%;
-overflow:hidden;
-color:#fff;
-background:var(--blue);
+color:var(--blue);
 vertical-align:middle
 }
 .verified svg{
 width:18px;
 height:18px;
 display:block;
-flex:none
+overflow:visible
 }
-.main{padding:22px}
 .hero{
 display:flex;
 align-items:center;
@@ -350,9 +346,7 @@ object-fit:contain;
 background:#0d1727;
 transition:transform .3s ease
 }
-.product:hover .product-image{
-transform:scale(1.015)
-}
+.product:hover .product-image{transform:scale(1.015)}
 .product-menu-btn{
 position:absolute;
 right:9px;
@@ -371,9 +365,7 @@ line-height:1;
 display:grid;
 place-items:center
 }
-.product-menu-btn:hover{
-background:rgba(22,140,255,.88)
-}
+.product-menu-btn:hover{background:rgba(22,140,255,.88)}
 .product-body{padding:13px}
 .product-name{
 font-size:13px;
@@ -640,12 +632,6 @@ gap:8px;
 margin-top:17px
 }
 .detail-actions>*{flex:1}
-.owner-actions{
-display:flex;
-gap:8px;
-margin-top:9px
-}
-.owner-actions>*{flex:1}
 .comment-section{
 border-top:1px solid var(--border);
 padding:18px 20px 22px
@@ -1296,8 +1282,8 @@ grid-template-columns:1fr 1fr
 Marketplace MonikaLabs
 <span class="verified">
 <svg viewBox="0 0 24 24" fill="none">
-<circle cx="12" cy="12" r="12" fill="currentColor"/>
-<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20.3692 8.5334C21.4021 9.3883 22 10.6592 22 12C22 13.3408 21.4021 14.6117 20.3692 15.4666C20.3825 15.6071 20.3891 15.748 20.3891 15.8891C20.3891 18.3744 18.3744 20.3891 15.8891 20.3891C15.748 20.3891 15.6071 20.3824 15.4666 20.3692C14.6117 21.4021 13.3408 22 12 22C10.6592 22 9.3883 21.4021 8.5334 20.3692C8.3929 20.3824 8.252 20.3891 8.1109 20.3891C5.6256 20.3891 3.6109 18.3744 3.6109 15.8891C3.6109 15.748 3.6176 15.6071 3.6308 15.4666C2.5979 14.6117 2 13.3408 2 12C2 10.6592 2.5979 9.3883 3.6308 8.5334C3.6176 8.3929 3.6109 8.252 3.6109 8.1109C3.6109 5.6256 5.6256 3.6109 8.1109 3.6109C8.252 3.6109 8.3929 3.6176 8.5334 3.6308C9.3883 2.5979 10.6592 2 12 2C13.3408 2 14.6117 2.5979 15.4666 3.6308C15.6071 3.6176 15.748 3.6109 15.8891 3.6109C18.3744 3.6109 20.3891 5.6256 20.3891 8.1109C20.3891 8.252 20.3824 8.3929 20.3692 8.5334Z" fill="currentColor"/>
+<path d="M7.4 12L10.25 14.85L16.7 8.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>
 </strong>
@@ -1348,8 +1334,8 @@ Marketplace MonikaLabs
 Marketplace MonikaLabs
 <span class="verified">
 <svg viewBox="0 0 24 24" fill="none">
-<circle cx="12" cy="12" r="12" fill="currentColor"/>
-<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20.3692 8.5334C21.4021 9.3883 22 10.6592 22 12C22 13.3408 21.4021 14.6117 20.3692 15.4666C20.3824 15.6071 20.3891 15.748 20.3891 15.8891C20.3891 18.3744 18.3744 20.3891 15.8891 20.3891C15.748 20.3891 15.6071 20.3824 15.4666 20.3692C14.6117 21.4021 13.3408 22 12 22C10.6592 22 9.3883 21.4021 8.5334 20.3692C8.3929 20.3824 8.252 20.3891 8.1109 20.3891C5.6256 20.3891 3.6109 18.3744 3.6109 15.8891C3.6109 15.748 3.6176 15.6071 3.6308 15.4666C2.5979 14.6117 2 13.3408 2 12C2 10.6592 2.5979 9.3883 3.6308 8.5334C3.6176 8.3929 3.6109 8.252 3.6109 8.1109C3.6109 5.6256 5.6256 3.6109 8.1109 3.6109C8.252 3.6109 8.3929 3.6176 8.5334 3.6308C9.3883 2.5979 10.6592 2 12 2C13.3408 2 14.6117 2.5979 15.4666 3.6308C15.6071 3.6176 15.748 3.6109 15.8891 3.6109C18.3744 3.6109 20.3891 5.6256 20.3891 8.1109C20.3891 8.252 20.3824 8.3929 20.3692 8.5334Z" fill="currentColor"/>
+<path d="M7.4 12L10.25 14.85L16.7 8.4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>
 </h1>
@@ -1382,38 +1368,28 @@ Marketplace MonikaLabs
 </div>
 
 <div class="modal" id="detailModal">
-
 <div class="modal-card">
-
 <div class="modal-head">
 <h3>Detail Produk</h3>
-
 <button class="close" type="button" data-close="detailModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
-
 <div id="detailContent"></div>
-
 </div>
 </div>
 
 <div class="modal" id="sellModal">
-
 <div class="modal-card">
-
 <div class="modal-head">
 <h3 id="sellModalTitle">Jual Produk</h3>
-
 <button class="close" type="button" data-close="sellModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
 
 <form class="form" id="productForm">
@@ -1439,7 +1415,6 @@ Marketplace MonikaLabs
 
 <div class="field">
 <label for="productCategory">Kategori</label>
-
 <select id="productCategory" name="category" required>
 <option value="">Pilih kategori</option>
 <option value="Akun">Akun</option>
@@ -1450,7 +1425,6 @@ Marketplace MonikaLabs
 <option value="Digital">Digital</option>
 <option value="Lainnya">Lainnya</option>
 </select>
-
 </div>
 
 <div class="field">
@@ -1459,96 +1433,66 @@ Marketplace MonikaLabs
 </div>
 
 <div class="field">
-
 <label id="imageLabel" for="productImages">Foto Produk</label>
-
-<input
-class="file-input"
-id="productImages"
-name="images"
-type="file"
-accept="image/jpeg,image/png,image/webp,image/gif"
-multiple
-required>
-
+<input class="file-input" id="productImages" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required>
 </div>
 
 <div id="currentImagesWrap" style="display:none">
-
 <div class="field">
-
 <label>Foto Saat Ini</label>
-
 <div class="edit-current" id="currentImages"></div>
-
 </div>
-
 </div>
 
 <div class="preview-grid" id="imagePreview"></div>
 
-<button class="primary" id="publishBtn" type="submit">
-Terbitkan Produk
-</button>
+<button class="primary" id="publishBtn" type="submit">Terbitkan Produk</button>
 
-<button
-class="secondary"
-id="cancelEditBtn"
-type="button"
-style="display:none">
+<button class="secondary" id="cancelEditBtn" type="button" style="display:none">
 Batal Edit
 </button>
 
 </form>
-
 </div>
 </div>
 
 <div class="drawer" id="cartDrawer">
-
 <div class="drawer-card">
 
 <div class="drawer-head">
 <h3>Keranjang</h3>
-
 <button class="close" type="button" data-close="cartDrawer">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
 
 <div class="drawer-body" id="cartBody"></div>
 
 <div class="cart-footer">
-
 <div class="total">
 <span>Total</span>
 <strong id="cartTotal">Rp0</strong>
 </div>
-
 <button class="primary" id="checkoutBtn" type="button" style="width:100%">
 Checkout
 </button>
-
 </div>
+
 </div>
 </div>
 
 <div class="modal" id="profileModal">
-
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Profil</h3>
-
 <button class="close" type="button" data-close="profileModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
 
 <div class="profile" id="profileContent"></div>
@@ -1557,18 +1501,15 @@ Checkout
 </div>
 
 <div class="modal" id="sellerModal">
-
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Profil Seller</h3>
-
 <button class="close" type="button" data-close="sellerModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
 
 <div class="seller-profile">
@@ -1580,12 +1521,10 @@ Checkout
 <img class="seller-profile-avatar" id="sellerAvatar" src="" alt="">
 
 <div class="seller-profile-info">
-
 <div class="seller-profile-name" id="sellerName"></div>
-
 <div class="seller-profile-email" id="sellerEmail"></div>
-
 </div>
+
 </div>
 
 <div class="seller-stats">
@@ -1619,18 +1558,15 @@ Checkout
 </div>
 
 <div class="modal" id="ordersModal">
-
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Pesanan Saya</h3>
-
 <button class="close" type="button" data-close="ordersModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
-
 </div>
 
 <div class="form" id="ordersContent"></div>
@@ -1639,7 +1575,6 @@ Checkout
 </div>
 
 <div class="modal" id="confirmModal">
-
 <div class="modal-card">
 
 <div class="confirm-box">
@@ -1648,9 +1583,7 @@ Checkout
 
 <h3>Hapus Produk?</h3>
 
-<p>
-Produk akan dihapus dari marketplace dan tidak bisa dikembalikan.
-</p>
+<p>Produk akan dihapus dari marketplace dan tidak bisa dikembalikan.</p>
 
 <div class="confirm-actions">
 
@@ -1663,6 +1596,7 @@ Hapus Produk
 </button>
 
 </div>
+
 </div>
 </div>
 </div>
@@ -1748,38 +1682,24 @@ function verified(){
 return `
 <span class="verified">
 <svg viewBox="0 0 24 24" fill="none">
-<circle cx="12" cy="12" r="12" fill="currentColor"/>
-<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M20.3692 8.5334C21.4021 9.3883 22 10.6592 22 12C22 13.3408 21.4021 14.6117 20.3692 15.4666C20.3824 15.6071 20.3891 15.748 20.3891 15.8891C20.3891 18.3744 18.3744 20.3891 15.8891 20.3891C15.748 20.3891 15.6071 20.3824 15.4666 20.3692C14.6117 21.4021 13.3408 22 12 22C10.6592 22 9.3883 21.4021 8.5334 20.3692C8.3929 20.3824 8.252 20.3891 8.1109 20.3891C5.6256 20.3891 3.6109 18.3744 3.6109 15.8891C3.6109 15.748 3.6176 15.6071 3.6308 15.4666C2.5979 14.6117 2 13.3408 2 12C2 10.6592 2.5979 9.3883 3.6308 8.5334C3.6176 8.3929 3.6109 8.252 3.6109 8.1109C3.6109 5.6256 5.6256 3.6109 8.1109 3.6109C8.252 3.6109 8.3929 3.6176 8.5334 3.6308C9.3883 2.5979 10.6592 2 12 2C13.3408 2 14.6117 2.5979 15.4666 3.6308C15.6071 3.6176 15.748 3.6109 15.8891 3.6109C18.3744 3.6109 20.3891 5.6256 20.3891 8.1109C20.3891 8.252 20.3824 8.3929 20.3692 8.5334Z" fill="currentColor"/>
+<path d="M7.4 12L10.25 14.85L16.7 8.4" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>`;
 }
 
 function timeAgo(date){
 if(!date)return "";
-
 const time=new Date(date).getTime();
-
 if(!Number.isFinite(time))return "";
-
 const diff=Math.max(0,Date.now()-time);
 const minute=60000;
 const hour=60*minute;
 const day=24*hour;
-
 if(diff<minute)return "baru saja";
-
-if(diff<hour){
-return `${Math.floor(diff/minute)} menit lalu`;
-}
-
-if(diff<day){
-return `${Math.floor(diff/hour)} jam lalu`;
-}
-
-if(diff<7*day){
-return `${Math.floor(diff/day)} hari lalu`;
-}
-
+if(diff<hour)return `${Math.floor(diff/minute)} menit lalu`;
+if(diff<day)return `${Math.floor(diff/hour)} jam lalu`;
+if(diff<7*day)return `${Math.floor(diff/day)} hari lalu`;
 return new Date(date).toLocaleDateString("id-ID",{
 day:"numeric",
 month:"short",
@@ -1789,15 +1709,9 @@ year:"numeric"
 
 function toast(message){
 const element=$("toast");
-
-element.textContent=String(
-message||"Terjadi kesalahan"
-);
-
+element.textContent=String(message||"Terjadi kesalahan");
 element.classList.add("show");
-
 clearTimeout(window.__toastTimer);
-
 window.__toastTimer=setTimeout(()=>{
 element.classList.remove("show");
 },2600);
@@ -1805,25 +1719,16 @@ element.classList.remove("show");
 
 function openModal(id){
 const element=$(id);
-
 if(!element)return;
-
 element.classList.add("open");
-
 document.body.style.overflow="hidden";
 }
 
 function closeModal(id){
 const element=$(id);
-
 if(!element)return;
-
 element.classList.remove("open");
-
-if(
-!document.querySelector(".modal.open")&&
-!document.querySelector(".drawer.open")
-){
+if(!document.querySelector(".modal.open")&&!document.querySelector(".drawer.open")){
 document.body.style.overflow="";
 }
 }
@@ -1849,27 +1754,19 @@ data=await response.json();
 }catch{}
 
 if(!response.ok){
-throw new Error(
-data.message||
-`Request gagal (${response.status})`
-);
+throw new Error(data.message||`Request gagal (${response.status})`);
 }
 
 return data;
 }
 
 function renderCategories(){
-
 $("categories").innerHTML=categories.map(
 ([value,label])=>`
-<button
-type="button"
-class="category ${state.category===value?"active":""}"
-data-category="${escapeHtml(value)}">
+<button type="button" class="category ${state.category===value?"active":""}" data-category="${escapeHtml(value)}">
 ${escapeHtml(label)}
 </button>`
 ).join("");
-
 }
 
 function renderProducts(){
@@ -1887,7 +1784,6 @@ $("products").innerHTML=`
 </div>`;
 
 $("productSummary").textContent="0 produk";
-
 $("loadMoreWrap").hidden=true;
 
 return;
@@ -1896,30 +1792,18 @@ return;
 $("products").innerHTML=products.map(product=>{
 
 const id=product._id||product.id;
-
 const seller=product.seller||{};
-
 const image=product.images?.[0]||"";
 
 return`
-<article
-class="product"
-data-product="${escapeHtml(id)}">
+<article class="product" data-product="${escapeHtml(id)}">
 
 <div class="product-image-wrap">
 
-<img
-class="product-image"
-src="${escapeHtml(image)}"
-alt="${escapeHtml(product.name||"Produk")}"
-onerror="this.style.display='none'">
+<img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(product.name||"Produk")}" onerror="this.style.display='none'">
 
 ${product.isOwner?`
-<button
-type="button"
-class="product-menu-btn"
-data-product-menu="${escapeHtml(id)}"
-aria-label="Menu produk">
+<button type="button" class="product-menu-btn" data-product-menu="${escapeHtml(id)}" aria-label="Menu produk">
 ⋮
 </button>`:""}
 
@@ -1944,24 +1828,15 @@ ${product.isOwner?`
 ✓ Produk kamu
 </div>`:""}
 
-<div
-class="seller"
-data-seller="${escapeHtml(seller._id||product.sellerId||"")}">
+<div class="seller" data-seller="${escapeHtml(seller._id||product.sellerId||"")}">
 
-<img
-src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}"
-alt="">
+<img src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}" alt="">
 
 <div class="seller-info">
 
 <div class="seller-name">
-
-<span>
-${escapeHtml(seller.name||"Seller")}
-</span>
-
+<span>${escapeHtml(seller.name||"Seller")}</span>
 ${isVerified(seller)?verified():""}
-
 </div>
 
 <div class="seller-meta">
@@ -1983,11 +1858,8 @@ ${Number(product.commentCount)||0} komentar
 }).join("");
 
 const total=state.total??products.length;
-
 $("productSummary").textContent=`${total} produk`;
-
-$("loadMoreWrap").hidden=
-!state.hasMore||state.loading;
+$("loadMoreWrap").hidden=!state.hasMore||state.loading;
 }
 
 async function loadProducts(reset=true){
@@ -2002,12 +1874,10 @@ state.products=[];
 state.loading=true;
 
 if(reset){
-
 $("products").innerHTML=`
 <div class="loading">
 Memuat produk...
 </div>`;
-
 }
 
 try{
@@ -2018,36 +1888,20 @@ params.set("action","products");
 params.set("page",String(state.page));
 params.set("limit",String(state.limit));
 
-if(state.search){
-params.set("search",state.search);
-}
+if(state.search)params.set("search",state.search);
 
-if(
-state.category&&
-state.category!=="all"
-){
+if(state.category&&state.category!=="all"){
 params.set("category",state.category);
 }
 
-const data=await api(
-`/api/chat?${params.toString()}`
-);
+const data=await api(`/api/chat?${params.toString()}`);
 
-const incoming=
-Array.isArray(data.products)
-?data.products
-:[];
+const incoming=Array.isArray(data.products)?data.products:[];
 
-state.products=reset
-?incoming
-:[...state.products,...incoming];
+state.products=reset?incoming:[...state.products,...incoming];
 
-state.total=
-Number(data.pagination?.total)||
-state.products.length;
-
-state.hasMore=
-Boolean(data.pagination?.hasMore);
+state.total=Number(data.pagination?.total)||state.products.length;
+state.hasMore=Boolean(data.pagination?.hasMore);
 
 renderProducts();
 
@@ -2086,14 +1940,8 @@ function openDetail(product){
 state.selectedProduct=product;
 
 const id=product._id||product.id;
-
 const seller=product.seller||{};
-
-const images=
-Array.isArray(product.images)&&
-product.images.length
-?product.images
-:[""];
+const images=Array.isArray(product.images)&&product.images.length?product.images:[""];
 
 $("detailContent").innerHTML=`
 
@@ -2101,24 +1949,12 @@ $("detailContent").innerHTML=`
 
 <div>
 
-<img
-class="gallery-main"
-id="galleryMain"
-src="${escapeHtml(images[0])}"
-alt="${escapeHtml(product.name||"Produk")}"
-onerror="this.style.display='none'">
+<img class="gallery-main" id="galleryMain" src="${escapeHtml(images[0])}" alt="${escapeHtml(product.name||"Produk")}" onerror="this.style.display='none'">
 
 <div class="thumbs">
 
 ${images.map((image,index)=>`
-
-<img
-class="thumb"
-src="${escapeHtml(image)}"
-alt=""
-data-gallery="${index}"
-onerror="this.style.display='none'">
-
+<img class="thumb" src="${escapeHtml(image)}" alt="" data-gallery="${index}" onerror="this.style.display='none'>
 `).join("")}
 
 </div>
@@ -2147,24 +1983,15 @@ Stock ${Number(product.stock)||0}
 ${escapeHtml(product.description||"Tidak ada deskripsi.")}
 </div>
 
-<div
-class="detail-seller"
-id="detailSeller">
+<div class="detail-seller" id="detailSeller">
 
-<img
-src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}"
-alt="">
+<img src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}" alt="">
 
 <div class="detail-seller-info">
 
 <div class="detail-seller-name">
-
-<span>
-${escapeHtml(seller.name||"Seller")}
-</span>
-
+<span>${escapeHtml(seller.name||"Seller")}</span>
 ${isVerified(seller)?verified():""}
-
 </div>
 
 <div class="detail-seller-sub">
@@ -2185,27 +2012,12 @@ ${
 product.isOwner
 ?
 `
-<button
-class="secondary"
-id="detailEditBtn"
-type="button">
-Edit
-</button>
-
-<button
-class="danger-btn"
-id="detailDeleteBtn"
-type="button">
-Hapus
-</button>
+<button class="secondary" id="detailEditBtn" type="button">Edit</button>
+<button class="danger-btn" id="detailDeleteBtn" type="button">Hapus</button>
 `
 :
 `
-<button
-class="primary"
-id="detailCartBtn"
-type="button"
-${Number(product.stock)<=0?"disabled":""}>
+<button class="primary" id="detailCartBtn" type="button" ${Number(product.stock)<=0?"disabled":""}>
 ${Number(product.stock)<=0?"Stock Habis":"+ Keranjang"}
 </button>
 `
@@ -2225,24 +2037,16 @@ ${Number(product.stock)<=0?"Stock Habis":"+ Keranjang"}
 </div>
 
 <div class="comments-list" id="commentsList">
-
 <div class="loading" style="min-height:90px">
 Memuat komentar...
 </div>
-
 </div>
 
 <div class="comment-form">
 
-<input
-id="commentInput"
-maxlength="1000"
-placeholder="Tulis komentar...">
+<input id="commentInput" maxlength="1000" placeholder="Tulis komentar...">
 
-<button
-class="primary"
-id="commentSend"
-type="button">
+<button class="primary" id="commentSend" type="button">
 Kirim
 </button>
 
@@ -2254,77 +2058,44 @@ Kirim
 openModal("detailModal");
 
 document.querySelectorAll("[data-gallery]").forEach(item=>{
-
 item.addEventListener("click",()=>{
-
 const index=Number(item.dataset.gallery);
-
 $("galleryMain").src=images[index]||"";
-
 });
-
 });
 
 $("detailSeller").addEventListener("click",()=>{
-
-openSellerProfile(
-seller._id||product.sellerId||"",
-seller
-);
-
+openSellerProfile(seller._id||product.sellerId||"",seller);
 });
 
 if(product.isOwner){
 
 $("detailEditBtn").addEventListener("click",()=>{
-
 closeModal("detailModal");
-
 openEditProduct(product);
-
 });
 
 $("detailDeleteBtn").addEventListener("click",()=>{
-
 closeModal("detailModal");
-
 openDeleteConfirm(id);
-
 });
 
 }else{
 
-$("detailCartBtn")?.addEventListener(
-"click",
-async()=>{
+$("detailCartBtn")?.addEventListener("click",async()=>{
 await addCart(id);
-}
-);
+});
 
 }
 
-$("commentSend").addEventListener(
-"click",
-sendComment
-);
+$("commentSend").addEventListener("click",sendComment);
 
-$("commentInput").addEventListener(
-"keydown",
-event=>{
-
-if(
-event.key==="Enter"&&
-!event.shiftKey
-){
-
+$("commentInput").addEventListener("keydown",event=>{
+if(event.key==="Enter"&&!event.shiftKey){
 event.preventDefault();
-
 sendComment();
-
 }
-
-}
-);
+});
 
 loadComments(id);
 
@@ -2339,17 +2110,11 @@ ${escapeHtml(seller?.name||"Seller")}
 ${isVerified(seller)?verified():""}
 `;
 
-$("sellerEmail").textContent=
-seller?.email||"Seller Marketplace";
+$("sellerEmail").textContent=seller?.email||"Seller Marketplace";
 
-$("sellerAvatar").src=
-avatar(
-seller?.avatarUrl,
-seller?.name
-);
+$("sellerAvatar").src=avatar(seller?.avatarUrl,seller?.name);
 
-$("sellerCover").innerHTML=
-seller?.coverUrl
+$("sellerCover").innerHTML=seller?.coverUrl
 ?`<img src="${escapeHtml(seller.coverUrl)}" alt="">`
 :"";
 
@@ -2360,50 +2125,27 @@ Memuat produk seller...
 
 try{
 
-if(!sellerId){
-throw new Error("Seller tidak ditemukan");
-}
+if(!sellerId)throw new Error("Seller tidak ditemukan");
 
-const data=await api(
-`/api/chat?action=products&sellerId=${encodeURIComponent(sellerId)}&page=1&limit=50`
-);
+const data=await api(`/api/chat?action=products&sellerId=${encodeURIComponent(sellerId)}&page=1&limit=50`);
 
-const products=
-Array.isArray(data.products)
-?data.products
-:[];
+const products=Array.isArray(data.products)?data.products:[];
 
 state.sellerProducts=products;
 
-const active=
-products.filter(
-product=>product.status!=="inactive"
-);
+const active=products.filter(product=>product.status!=="inactive");
 
-const stock=
-products.reduce(
-(sum,product)=>sum+(Number(product.stock)||0),
-0
-);
+const stock=products.reduce((sum,product)=>sum+(Number(product.stock)||0),0);
 
-$("sellerProductCount").textContent=
-String(products.length);
-
-$("sellerActiveCount").textContent=
-String(active.length);
-
-$("sellerStockCount").textContent=
-String(stock);
-
-$("sellerProductsSummary").textContent=
-`${products.length} produk`;
+$("sellerProductCount").textContent=String(products.length);
+$("sellerActiveCount").textContent=String(active.length);
+$("sellerStockCount").textContent=String(stock);
+$("sellerProductsSummary").textContent=`${products.length} produk`;
 
 if(!products.length){
 
 $("sellerProducts").innerHTML=`
-<div
-class="empty"
-style="grid-column:1/-1;min-height:150px">
+<div class="empty" style="grid-column:1/-1;min-height:150px">
 <div>
 <strong>Belum ada produk</strong>
 <span>Seller ini belum memiliki produk.</span>
@@ -2413,17 +2155,11 @@ style="grid-column:1/-1;min-height:150px">
 return;
 }
 
-$("sellerProducts").innerHTML=
-products.map(product=>`
+$("sellerProducts").innerHTML=products.map(product=>`
 
-<article
-class="seller-product"
-data-seller-product="${escapeHtml(product._id||product.id)}">
+<article class="seller-product" data-seller-product="${escapeHtml(product._id||product.id)}">
 
-<img
-src="${escapeHtml(product.images?.[0]||"")}"
-alt="${escapeHtml(product.name||"Produk")}"
-onerror="this.style.display='none'">
+<img src="${escapeHtml(product.images?.[0]||"")}" alt="${escapeHtml(product.name||"Produk")}" onerror="this.style.display='none'">
 
 <div class="seller-product-body">
 
@@ -2445,23 +2181,17 @@ ${Number(product.stock)||0} stock
 
 `).join("");
 
-document.querySelectorAll(
-"[data-seller-product]"
-).forEach(card=>{
+document.querySelectorAll("[data-seller-product]").forEach(card=>{
 
 card.addEventListener("click",()=>{
 
 const product=products.find(item=>
-String(item._id||item.id)===
-String(card.dataset.sellerProduct)
+String(item._id||item.id)===String(card.dataset.sellerProduct)
 );
 
 if(product){
-
 closeModal("sellerModal");
-
 openDetail(product);
-
 }
 
 });
@@ -2471,9 +2201,7 @@ openDetail(product);
 }catch(error){
 
 $("sellerProducts").innerHTML=`
-<div
-class="empty"
-style="grid-column:1/-1;min-height:150px">
+<div class="empty" style="grid-column:1/-1;min-height:150px">
 <div>
 <strong>Gagal memuat produk</strong>
 <span>${escapeHtml(error.message)}</span>
@@ -2490,24 +2218,16 @@ async function loadComments(productId){
 
 try{
 
-const data=await api(
-`/api/chat?action=comments&productId=${encodeURIComponent(productId)}`
-);
+const data=await api(`/api/chat?action=comments&productId=${encodeURIComponent(productId)}`);
 
-const comments=
-Array.isArray(data.comments)
-?data.comments
-:[];
+const comments=Array.isArray(data.comments)?data.comments:[];
 
-$("commentCount").textContent=
-`${comments.length} komentar`;
+$("commentCount").textContent=`${comments.length} komentar`;
 
 if(!comments.length){
 
 $("commentsList").innerHTML=`
-<div
-class="empty"
-style="min-height:90px">
+<div class="empty" style="min-height:90px">
 <div>
 <span>Belum ada komentar.</span>
 </div>
@@ -2516,8 +2236,7 @@ style="min-height:90px">
 return;
 }
 
-$("commentsList").innerHTML=
-comments.map(comment=>{
+$("commentsList").innerHTML=comments.map(comment=>{
 
 const user=comment.user||{};
 
@@ -2525,18 +2244,13 @@ return`
 
 <div class="comment">
 
-<img
-class="comment-avatar"
-src="${escapeHtml(avatar(user.avatarUrl,user.name))}"
-alt="">
+<img class="comment-avatar" src="${escapeHtml(avatar(user.avatarUrl,user.name))}" alt="">
 
 <div class="comment-content">
 
 <div class="comment-user">
 
-<span>
-${escapeHtml(user.name||"User")}
-</span>
+<span>${escapeHtml(user.name||"User")}</span>
 
 ${isVerified(user)?verified():""}
 
@@ -2559,9 +2273,7 @@ ${timeAgo(comment.createdAt)}
 }catch{
 
 $("commentsList").innerHTML=`
-<div
-class="empty"
-style="min-height:90px">
+<div class="empty" style="min-height:90px">
 <div>
 <span>Gagal memuat komentar.</span>
 </div>
@@ -2591,19 +2303,14 @@ await api("/api/chat",{
 method:"POST",
 body:JSON.stringify({
 action:"addComment",
-productId:
-state.selectedProduct._id||
-state.selectedProduct.id,
+productId:state.selectedProduct._id||state.selectedProduct.id,
 text
 })
 });
 
 input.value="";
 
-await loadComments(
-state.selectedProduct._id||
-state.selectedProduct.id
-);
+await loadComments(state.selectedProduct._id||state.selectedProduct.id);
 
 }catch(error){
 
@@ -2646,21 +2353,15 @@ async function loadCart(){
 
 try{
 
-const data=await api(
-"/api/chat?action=cart"
-);
+const data=await api("/api/chat?action=cart");
 
-state.cart=data.cart||{
-items:[]
-};
+state.cart=data.cart||{items:[]};
 
 renderCart();
 
 }catch{
 
-state.cart={
-items:[]
-};
+state.cart={items:[]};
 
 renderCart();
 
@@ -2670,14 +2371,9 @@ renderCart();
 
 function renderCart(){
 
-const cart=state.cart||{
-items:[]
-};
+const cart=state.cart||{items:[]};
 
-const items=
-Array.isArray(cart.items)
-?cart.items
-:[];
+const items=Array.isArray(cart.items)?cart.items:[];
 
 let total=0;
 let count=0;
@@ -2685,9 +2381,7 @@ let count=0;
 if(!items.length){
 
 $("cartBody").innerHTML=`
-<div
-class="empty"
-style="min-height:260px">
+<div class="empty" style="min-height:260px">
 <div>
 <strong>Keranjang kosong</strong>
 <span>Tambahkan produk yang kamu suka.</span>
@@ -2695,42 +2389,29 @@ style="min-height:260px">
 </div>`;
 
 $("cartTotal").textContent=money(0);
-
 $("cartCount").textContent="0";
 
 return;
 }
 
-$("cartBody").innerHTML=
-items.map(item=>{
+$("cartBody").innerHTML=items.map(item=>{
 
 const product=item.product||{};
 
-const productId=
-product._id||
-product.id||
-item.productId;
+const productId=product._id||product.id||item.productId;
 
-const price=
-Number(product.price??item.price)||0;
+const price=Number(product.price??item.price)||0;
 
-const quantity=
-Math.max(
-1,
-Number(item.quantity)||1
-);
+const quantity=Math.max(1,Number(item.quantity)||1);
 
 total+=price*quantity;
-
 count+=quantity;
 
 return`
 
 <div class="cart-item">
 
-<img
-src="${escapeHtml(product.images?.[0]||item.image||"")}"
-alt="">
+<img src="${escapeHtml(product.images?.[0]||item.image||"")}" alt="">
 
 <div class="cart-info">
 
@@ -2744,27 +2425,13 @@ ${money(price)}
 
 <div class="qty">
 
-<button
-type="button"
-data-cart-action="minus"
-data-product="${escapeHtml(productId)}">
-−
-</button>
+<button type="button" data-cart-action="minus" data-product="${escapeHtml(productId)}">−</button>
 
 <span>${quantity}</span>
 
-<button
-type="button"
-data-cart-action="plus"
-data-product="${escapeHtml(productId)}">
-+
-</button>
+<button type="button" data-cart-action="plus" data-product="${escapeHtml(productId)}">+</button>
 
-<button
-type="button"
-class="remove"
-data-cart-action="remove"
-data-product="${escapeHtml(productId)}">
+<button type="button" class="remove" data-cart-action="remove" data-product="${escapeHtml(productId)}">
 Hapus
 </button>
 
@@ -2777,25 +2444,12 @@ Hapus
 }).join("");
 
 $("cartTotal").textContent=money(total);
-
 $("cartCount").textContent=String(count);
 
-document.querySelectorAll(
-"[data-cart-action]"
-).forEach(button=>{
-
-button.addEventListener(
-"click",
-()=>{
-
-updateCart(
-button.dataset.product,
-button.dataset.cartAction
-);
-
-}
-);
-
+document.querySelectorAll("[data-cart-action]").forEach(button=>{
+button.addEventListener("click",()=>{
+updateCart(button.dataset.product,button.dataset.cartAction);
+});
 });
 
 }
@@ -2827,21 +2481,11 @@ quantity:1
 
 }else if(action==="minus"){
 
-const current=
-(state.cart?.items||[]).find(
-item=>
-String(
-item.product?._id||
-item.product?.id||
-item.productId
-)===String(productId)
+const current=(state.cart?.items||[]).find(
+item=>String(item.product?._id||item.product?.id||item.productId)===String(productId)
 );
 
-const quantity=
-Math.max(
-0,
-Number(current?.quantity)||0
-);
+const quantity=Math.max(0,Number(current?.quantity)||0);
 
 if(quantity<=1){
 
@@ -2904,7 +2548,7 @@ toast("Checkout berhasil");
 
 await loadCart();
 
-closeModal("cartDrawer");
+closeDrawer("cartDrawer");
 
 }catch(error){
 
@@ -2926,18 +2570,11 @@ $("profileContent").innerHTML=`
 
 <div class="profile-cover">
 
-${user.coverUrl?
-`<img
-src="${escapeHtml(user.coverUrl)}"
-alt="">`
-:""}
+${user.coverUrl?`<img src="${escapeHtml(user.coverUrl)}" alt="">`:""}
 
 </div>
 
-<img
-class="profile-avatar"
-src="${escapeHtml(avatar(user.avatarUrl,user.name))}"
-alt="">
+<img class="profile-avatar" src="${escapeHtml(avatar(user.avatarUrl,user.name))}" alt="">
 
 <div class="profile-name">
 
@@ -2972,17 +2609,11 @@ ${escapeHtml(user.email||"")}
 
 <div class="profile-actions">
 
-<button
-class="secondary"
-id="myProductsBtn"
-type="button">
+<button class="secondary" id="myProductsBtn" type="button">
 Produk Saya
 </button>
 
-<button
-class="secondary"
-id="logoutBtn"
-type="button">
+<button class="secondary" id="logoutBtn" type="button">
 Keluar
 </button>
 
@@ -2992,15 +2623,8 @@ openModal("profileModal");
 
 loadMyProductStats();
 
-$("myProductsBtn").addEventListener(
-"click",
-loadMyProducts
-);
-
-$("logoutBtn").addEventListener(
-"click",
-logout
-);
+$("myProductsBtn").addEventListener("click",loadMyProducts);
+$("logoutBtn").addEventListener("click",logout);
 
 }
 
@@ -3008,40 +2632,17 @@ async function loadMyProductStats(){
 
 try{
 
-const data=await api(
-"/api/chat?action=myproducts"
-);
+const data=await api("/api/chat?action=myproducts");
 
-const products=
-Array.isArray(data.products)
-?data.products
-:[];
+const products=Array.isArray(data.products)?data.products:[];
 
-const active=
-products.filter(
-product=>product.status==="active"
-);
+const active=products.filter(product=>product.status==="active");
 
-const stock=
-products.reduce(
-(sum,product)=>sum+(Number(product.stock)||0),
-0
-);
+const stock=products.reduce((sum,product)=>sum+(Number(product.stock)||0),0);
 
-if($("myPostCount")){
-$("myPostCount").textContent=
-String(products.length);
-}
-
-if($("myActiveCount")){
-$("myActiveCount").textContent=
-String(active.length);
-}
-
-if($("myStockCount")){
-$("myStockCount").textContent=
-String(stock);
-}
+if($("myPostCount"))$("myPostCount").textContent=String(products.length);
+if($("myActiveCount"))$("myActiveCount").textContent=String(active.length);
+if($("myStockCount"))$("myStockCount").textContent=String(stock);
 
 }catch{}
 
@@ -3051,50 +2652,31 @@ async function loadMyProducts(){
 
 try{
 
-const data=await api(
-"/api/chat?action=myproducts"
-);
+const data=await api("/api/chat?action=myproducts");
 
-const products=
-Array.isArray(data.products)
-?data.products
-:[];
+const products=Array.isArray(data.products)?data.products:[];
 
 $("profileContent").innerHTML=`
 
 <div class="section-head">
-
 <h2>Produk Saya</h2>
-
 <span>${products.length} produk</span>
-
 </div>
 
-<div
-class="products"
-style="grid-template-columns:repeat(2,minmax(0,1fr))">
+<div class="products" style="grid-template-columns:repeat(2,minmax(0,1fr))">
 
 ${
 products.length
 ?
 products.map(product=>`
 
-<article
-class="product"
-data-my-product="${escapeHtml(product._id||product.id)}">
+<article class="product" data-my-product="${escapeHtml(product._id||product.id)}">
 
 <div class="product-image-wrap">
 
-<img
-class="product-image"
-src="${escapeHtml(product.images?.[0]||"")}"
-alt="${escapeHtml(product.name)}"
-onerror="this.style.display='none'">
+<img class="product-image" src="${escapeHtml(product.images?.[0]||"")}" alt="${escapeHtml(product.name)}" onerror="this.style.display='none'">
 
-<button
-type="button"
-class="product-menu-btn"
-data-my-menu="${escapeHtml(product._id||product.id)}">
+<button type="button" class="product-menu-btn" data-my-menu="${escapeHtml(product._id||product.id)}">
 ⋮
 </button>
 
@@ -3125,9 +2707,7 @@ ${product.status==="active"?"✓ Aktif":"○ Nonaktif"}
 `).join("")
 :
 `
-<div
-class="empty"
-style="grid-column:1/-1;min-height:180px">
+<div class="empty" style="grid-column:1/-1;min-height:180px">
 <div>
 <strong>Belum ada produk</strong>
 <span>Mulai jual produkmu.</span>
@@ -3140,83 +2720,46 @@ style="grid-column:1/-1;min-height:180px">
 
 <div style="margin-top:14px">
 
-<button
-class="secondary"
-id="backProfile"
-type="button"
-style="width:100%">
+<button class="secondary" id="backProfile" type="button" style="width:100%">
 Kembali
 </button>
 
 </div>`;
 
-$("backProfile").addEventListener(
-"click",
-openProfile
-);
+$("backProfile").addEventListener("click",openProfile);
 
-document.querySelectorAll(
-"#profileContent [data-my-product]"
-).forEach(card=>{
+document.querySelectorAll("#profileContent [data-my-product]").forEach(card=>{
 
-card.addEventListener(
-"click",
-event=>{
+card.addEventListener("click",event=>{
 
-if(
-event.target.closest("[data-my-menu]")
-){
-return;
-}
+if(event.target.closest("[data-my-menu]"))return;
 
-const product=
-products.find(
-item=>
-String(item._id||item.id)===
-String(card.dataset.myProduct)
+const product=products.find(
+item=>String(item._id||item.id)===String(card.dataset.myProduct)
 );
 
 if(product){
-
 closeModal("profileModal");
-
 openDetail(product);
-
 }
-
-}
-);
 
 });
 
-document.querySelectorAll(
-"#profileContent [data-my-menu]"
-).forEach(button=>{
+});
 
-button.addEventListener(
-"click",
-event=>{
+document.querySelectorAll("#profileContent [data-my-menu]").forEach(button=>{
+
+button.addEventListener("click",event=>{
 
 event.stopPropagation();
 
-const product=
-products.find(
-item=>
-String(item._id||item.id)===
-String(button.dataset.myMenu)
+const product=products.find(
+item=>String(item._id||item.id)===String(button.dataset.myMenu)
 );
 
-if(product){
+if(product)showActionMenu(button,product);
 
-showActionMenu(
-button,
-product
-);
-
-}
-
-}
-);
+});
 
 });
 
@@ -3232,15 +2775,12 @@ function showActionMenu(button,product){
 
 const menu=$("productActionMenu");
 
-menu.dataset.productId=
-String(product._id||product.id);
+menu.dataset.productId=String(product._id||product.id);
 
 const rect=button.getBoundingClientRect();
-
 const width=170;
 
-let left=
-Math.min(
+let left=Math.min(
 window.innerWidth-width-10,
 Math.max(10,rect.right-width)
 );
@@ -3252,7 +2792,6 @@ top=rect.top-107;
 }
 
 menu.style.left=`${left}px`;
-
 menu.style.top=`${top}px`;
 
 menu.classList.add("open");
@@ -3260,9 +2799,7 @@ menu.classList.add("open");
 }
 
 function hideActionMenu(){
-
 $("productActionMenu").classList.remove("open");
-
 }
 
 function openEditProduct(product){
@@ -3274,52 +2811,33 @@ state.editingProduct=product;
 const form=$("productForm");
 
 $("sellModalTitle").textContent="Edit Produk";
-
 $("publishBtn").textContent="Simpan Perubahan";
-
 $("cancelEditBtn").style.display="block";
-
 $("imageLabel").textContent="Foto Baru Opsional";
 
 form.name.value=product.name||"";
-
 form.price.value=product.price??"";
-
 form.stock.value=product.stock??"";
-
 form.category.value=product.category||"";
-
 form.description.value=product.description||"";
 
 $("productImages").required=false;
-
 $("productImages").value="";
-
 $("imagePreview").innerHTML="";
 
-const images=
-Array.isArray(product.images)
-?product.images
-:[];
+const images=Array.isArray(product.images)?product.images:[];
 
 if(images.length){
 
 $("currentImagesWrap").style.display="block";
 
-$("currentImages").innerHTML=
-images.map(image=>`
-
-<img
-src="${escapeHtml(image)}"
-alt=""
-onerror="this.style.display='none'">
-
+$("currentImages").innerHTML=images.map(image=>`
+<img src="${escapeHtml(image)}" alt="" onerror="this.style.display='none'">
 `).join("");
 
 }else{
 
 $("currentImagesWrap").style.display="none";
-
 $("currentImages").innerHTML="";
 
 }
@@ -3337,21 +2855,13 @@ const form=$("productForm");
 form.reset();
 
 $("sellModalTitle").textContent="Jual Produk";
-
 $("publishBtn").textContent="Terbitkan Produk";
-
 $("cancelEditBtn").style.display="none";
-
 $("imageLabel").textContent="Foto Produk";
-
 $("productImages").required=true;
-
 $("productImages").value="";
-
 $("currentImagesWrap").style.display="none";
-
 $("currentImages").innerHTML="";
-
 $("imagePreview").innerHTML="";
 
 }
@@ -3373,7 +2883,6 @@ if(!productId)return;
 const button=$("confirmDeleteBtn");
 
 button.disabled=true;
-
 button.textContent="Menghapus...";
 
 try{
@@ -3391,11 +2900,9 @@ toast("Produk berhasil dihapus");
 closeModal("confirmModal");
 
 state.deleteProductId=null;
-
 state.selectedProduct=null;
 
 await loadProducts(true);
-
 await loadCart();
 
 }catch(error){
@@ -3405,7 +2912,6 @@ toast(error.message);
 }finally{
 
 button.disabled=false;
-
 button.textContent="Hapus Produk";
 
 }
@@ -3423,21 +2929,14 @@ Memuat pesanan...
 
 try{
 
-const data=await api(
-"/api/chat?action=orders"
-);
+const data=await api("/api/chat?action=orders");
 
-const orders=
-Array.isArray(data.orders)
-?data.orders
-:[];
+const orders=Array.isArray(data.orders)?data.orders:[];
 
 if(!orders.length){
 
 $("ordersContent").innerHTML=`
-<div
-class="empty"
-style="min-height:220px">
+<div class="empty" style="min-height:220px">
 <div>
 <strong>Belum ada pesanan</strong>
 <span>Pesanan kamu akan muncul di sini.</span>
@@ -3447,80 +2946,38 @@ style="min-height:220px">
 return;
 }
 
-$("ordersContent").innerHTML=
-orders.map(order=>`
+$("ordersContent").innerHTML=orders.map(order=>`
 
-<div
-style="
-border:1px solid var(--border);
-border-radius:15px;
-padding:13px;
-background:rgba(255,255,255,.03)">
+<div style="border:1px solid var(--border);border-radius:15px;padding:13px;background:rgba(255,255,255,.03)">
 
-<div
-style="
-display:flex;
-justify-content:space-between;
-gap:10px">
+<div style="display:flex;justify-content:space-between;gap:10px">
 
 <strong style="font-size:11px">
-Pesanan #
-${escapeHtml(
-String(order._id||"").slice(-8)
-)}
+Pesanan #${escapeHtml(String(order._id||"").slice(-8))}
 </strong>
 
-<span
-style="
-font-size:9px;
-color:#65b8ff">
-
+<span style="font-size:9px;color:#65b8ff">
 ${escapeHtml(order.status||"pending")}
-
 </span>
 
 </div>
 
-<div
-style="
-font-size:10px;
-color:var(--muted);
-margin-top:5px">
-
-${order.createdAt?
-new Date(order.createdAt).toLocaleString("id-ID"):
-"-"}
-
+<div style="font-size:10px;color:var(--muted);margin-top:5px">
+${order.createdAt?new Date(order.createdAt).toLocaleString("id-ID"):"-"}
 </div>
 
-<div
-style="
-font-size:15px;
-font-weight:900;
-margin-top:9px">
-
+<div style="font-size:15px;font-weight:900;margin-top:9px">
 ${money(order.total)}
-
 </div>
 
-<div
-style="
-margin-top:10px;
-display:grid;
-gap:5px">
+<div style="margin-top:10px;display:grid;gap:5px">
 
 ${
 Array.isArray(order.items)
 ?
 order.items.map(item=>`
 
-<div
-style="
-display:flex;
-justify-content:space-between;
-gap:8px;
-font-size:9px;
-color:#9aa8ba">
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#9aa8ba">
 
 <span>
 ${escapeHtml(item.name||"Produk")} × ${Number(item.quantity)||1}
@@ -3546,9 +3003,7 @@ ${money(item.subtotal)}
 }catch(error){
 
 $("ordersContent").innerHTML=`
-<div
-class="empty"
-style="min-height:220px">
+<div class="empty" style="min-height:220px">
 <div>
 <strong>Gagal memuat pesanan</strong>
 <span>${escapeHtml(error.message)}</span>
@@ -3563,14 +3018,11 @@ async function logout(){
 
 try{
 
-await fetch(
-"/api/auth/logout",
-{
+await fetch("/api/auth/logout",{
 method:"POST",
 credentials:"include",
 cache:"no-store"
-}
-);
+});
 
 }catch{}
 
@@ -3586,10 +3038,7 @@ return(...args)=>{
 
 clearTimeout(timer);
 
-timer=setTimeout(
-()=>fn(...args),
-delay
-);
+timer=setTimeout(()=>fn(...args),delay);
 
 };
 
@@ -3610,14 +3059,11 @@ $("categories").addEventListener(
 "click",
 event=>{
 
-const button=event.target.closest(
-"[data-category]"
-);
+const button=event.target.closest("[data-category]");
 
 if(!button)return;
 
-state.category=
-button.dataset.category;
+state.category=button.dataset.category;
 
 renderCategories();
 
@@ -3630,88 +3076,54 @@ $("products").addEventListener(
 "click",
 event=>{
 
-const menuButton=
-event.target.closest(
-"[data-product-menu]"
-);
+const menuButton=event.target.closest("[data-product-menu]");
 
 if(menuButton){
 
 event.stopPropagation();
 
-const product=
-state.products.find(
-item=>
-String(item._id||item.id)===
-String(menuButton.dataset.productMenu)
+const product=state.products.find(
+item=>String(item._id||item.id)===String(menuButton.dataset.productMenu)
 );
 
-if(product){
-
-showActionMenu(
-menuButton,
-product
-);
-
-}
+if(product)showActionMenu(menuButton,product);
 
 return;
 
 }
 
-const sellerButton=
-event.target.closest(
-"[data-seller]"
-);
+const sellerButton=event.target.closest("[data-seller]");
 
 if(sellerButton){
 
 event.stopPropagation();
 
-const card=
-sellerButton.closest(
-"[data-product]"
-);
+const card=sellerButton.closest("[data-product]");
 
-const product=
-state.products.find(
-item=>
-String(item._id||item.id)===
-String(card?.dataset.product)
+const product=state.products.find(
+item=>String(item._id||item.id)===String(card?.dataset.product)
 );
 
 if(product){
-
 openSellerProfile(
 sellerButton.dataset.seller,
 product.seller||{}
 );
-
 }
 
 return;
 
 }
 
-const card=
-event.target.closest(
-"[data-product]"
-);
+const card=event.target.closest("[data-product]");
 
 if(!card)return;
 
-const product=
-state.products.find(
-item=>
-String(item._id||item.id)===
-String(card.dataset.product)
+const product=state.products.find(
+item=>String(item._id||item.id)===String(card.dataset.product)
 );
 
-if(product){
-
-openDetail(product);
-
-}
+if(product)openDetail(product);
 
 }
 );
@@ -3720,40 +3132,27 @@ $("productActionMenu").addEventListener(
 "click",
 event=>{
 
-const button=
-event.target.closest(
-"[data-product-action]"
-);
+const button=event.target.closest("[data-product-action]");
 
 if(!button)return;
 
-const productId=
-$("productActionMenu").dataset.productId;
+const productId=$("productActionMenu").dataset.productId;
 
-const product=
-state.products.find(
-item=>
-String(item._id||item.id)===
-String(productId)
+const product=state.products.find(
+item=>String(item._id||item.id)===String(productId)
 );
 
-if(
-button.dataset.productAction==="edit"
-){
+if(button.dataset.productAction==="edit"){
 
 hideActionMenu();
 
-if(product){
-openEditProduct(product);
-}
+if(product)openEditProduct(product);
 
 return;
 
 }
 
-if(
-button.dataset.productAction==="delete"
-){
+if(button.dataset.productAction==="delete"){
 
 hideActionMenu();
 
@@ -3860,20 +3259,13 @@ $("confirmDeleteBtn").addEventListener(
 deleteProduct
 );
 
-document.querySelectorAll(
-"[data-close]"
-).forEach(button=>{
+document.querySelectorAll("[data-close]").forEach(button=>{
 
-button.addEventListener(
-"click",
-()=>{
+button.addEventListener("click",()=>{
 
-const id=
-button.dataset.close;
+const id=button.dataset.close;
 
-if(id==="sellModal"){
-resetProductForm();
-}
+if(id==="sellModal")resetProductForm();
 
 if(id==="cartDrawer"){
 closeDrawer(id);
@@ -3882,31 +3274,23 @@ return;
 
 closeModal(id);
 
-}
-);
+});
 
 });
 
-document.querySelectorAll(
-".modal"
-).forEach(modal=>{
+document.querySelectorAll(".modal").forEach(modal=>{
 
-modal.addEventListener(
-"click",
-event=>{
+modal.addEventListener("click",event=>{
 
 if(event.target===modal){
 
-if(modal.id==="sellModal"){
-resetProductForm();
-}
+if(modal.id==="sellModal")resetProductForm();
 
 closeModal(modal.id);
 
 }
 
-}
-);
+});
 
 });
 
@@ -3914,36 +3298,29 @@ $("productImages").addEventListener(
 "change",
 event=>{
 
-const files=
-[...event.target.files]
-.filter(file=>
-[
+const files=[...event.target.files]
+.filter(file=>[
 "image/jpeg",
 "image/png",
 "image/webp",
 "image/gif"
-].includes(file.type)
-)
+].includes(file.type))
 .slice(0,6);
 
 $("imagePreview").innerHTML="";
 
 files.forEach(file=>{
 
-const reader=
-new FileReader();
+const reader=new FileReader();
 
 reader.onload=event=>{
 
-const img=
-document.createElement("img");
+const img=document.createElement("img");
 
 img.className="preview";
-
 img.src=event.target.result;
 
-$("imagePreview")
-.appendChild(img);
+$("imagePreview").appendChild(img);
 
 };
 
@@ -3952,9 +3329,7 @@ reader.readAsDataURL(file);
 });
 
 if(event.target.files.length>6){
-
 toast("Maksimal 6 foto produk");
-
 }
 
 }
@@ -3967,25 +3342,17 @@ async event=>{
 event.preventDefault();
 
 const button=$("publishBtn");
-
 const form=event.currentTarget;
+const editing=state.editingProduct;
+const wasEditing=Boolean(editing);
 
-const editing=
-state.editingProduct;
-
-const wasEditing=
-Boolean(editing);
-
-const files=
-[...$("productImages").files]
-.filter(file=>
-[
+const files=[...$("productImages").files]
+.filter(file=>[
 "image/jpeg",
 "image/png",
 "image/webp",
 "image/gif"
-].includes(file.type)
-)
+].includes(file.type))
 .slice(0,6);
 
 if(!editing&&!files.length){
@@ -3998,66 +3365,35 @@ return;
 
 button.disabled=true;
 
-button.textContent=
-wasEditing
-?"Menyimpan..."
-:"Menerbitkan...";
+button.textContent=wasEditing?"Menyimpan...":"Menerbitkan...";
 
 try{
 
-const data=
-new FormData();
+const data=new FormData();
 
 data.append(
 "action",
-wasEditing
-?"updateProduct"
-:"createProduct"
+wasEditing?"updateProduct":"createProduct"
 );
 
 if(wasEditing){
-
 data.append(
 "productId",
-String(
-editing._id||
-editing.id
-)
+String(editing._id||editing.id)
 );
-
 }
 
-data.append(
-"name",
-form.name.value.trim()
-);
-
-data.append(
-"price",
-form.price.value
-);
-
-data.append(
-"stock",
-form.stock.value
-);
-
-data.append(
-"category",
-form.category.value
-);
-
-data.append(
-"description",
-form.description.value.trim()
-);
+data.append("name",form.name.value.trim());
+data.append("price",form.price.value);
+data.append("stock",form.stock.value);
+data.append("category",form.category.value);
+data.append("description",form.description.value.trim());
 
 files.forEach(file=>{
 data.append("images",file);
 });
 
-const response=
-await fetch(
+const response=await fetch(
 "/api/chat",
 {
 method:"POST",
@@ -4077,11 +3413,7 @@ if(!response.ok){
 
 throw new Error(
 result.message||
-(
-wasEditing
-?"Gagal memperbarui produk"
-:"Gagal membuat produk"
-)
+(wasEditing?"Gagal memperbarui produk":"Gagal membuat produk")
 );
 
 }
@@ -4093,14 +3425,11 @@ wasEditing
 );
 
 resetProductForm();
-
 closeModal("sellModal");
 
 await loadProducts(true);
 
-if(wasEditing){
-await loadCart();
-}
+if(wasEditing)await loadCart();
 
 }catch(error){
 
@@ -4139,40 +3468,27 @@ document.body.style.overflow="";
 
 }
 
-document.querySelectorAll(".drawer").forEach(
-drawer=>{
+document.querySelectorAll(".drawer").forEach(drawer=>{
 
-drawer.addEventListener(
-"click",
-event=>{
+drawer.addEventListener("click",event=>{
 
 if(event.target===drawer){
-
 closeDrawer(drawer.id);
-
 }
 
-}
-);
+});
 
-}
-);
+});
 
 async function init(){
 
 try{
 
-const me=
-await api(
-"/api/user/me"
-);
+const me=await api("/api/user/me");
 
-state.user=
-me.user;
+state.user=me.user;
 
-$("headerName").textContent=
-state.user.name||
-"User";
+$("headerName").textContent=state.user.name||"User";
 
 $("headerAvatar").src=
 avatar(
@@ -4191,9 +3507,7 @@ loadCart()
 
 toast(error.message);
 
-const message=
-String(error.message||"")
-.toLowerCase();
+const message=String(error.message||"").toLowerCase();
 
 if(
 message.includes("login")||
