@@ -25,6 +25,12 @@ const StorySchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        caption: {
+            type: String,
+            default: "",
+            trim: true,
+            maxlength: 1000
+        },
         expiresAt: {
             type: Date,
             required: true,
