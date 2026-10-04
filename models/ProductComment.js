@@ -28,7 +28,8 @@ const ProductCommentSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: true
+        timestamps: true,
+        versionKey: false
     }
 );
 
