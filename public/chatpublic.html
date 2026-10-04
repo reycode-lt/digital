@@ -200,16 +200,24 @@ text-overflow:ellipsis;
 white-space:nowrap
 }
 .verified{
-width:16px;
-height:16px;
-display:inline-grid;
-place-items:center;
-color:var(--blue);
-flex:none
+width:18px;
+height:18px;
+min-width:18px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+flex:0 0 18px;
+border-radius:50%;
+overflow:hidden;
+color:#fff;
+background:var(--blue);
+vertical-align:middle
 }
 .verified svg{
-width:100%;
-height:100%
+width:18px;
+height:18px;
+display:block;
+flex:none
 }
 .main{padding:22px}
 .hero{
@@ -410,7 +418,7 @@ flex:1
 .seller-name{
 display:flex;
 align-items:center;
-gap:4px;
+gap:5px;
 font-size:10px;
 font-weight:750
 }
@@ -1275,6 +1283,7 @@ grid-template-columns:1fr 1fr
 </style>
 </head>
 <body>
+
 <div class="app">
 <div class="shell">
 
@@ -1286,8 +1295,9 @@ grid-template-columns:1fr 1fr
 <strong>
 Marketplace MonikaLabs
 <span class="verified">
-<svg viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 2l2.1 2.05 2.9-.15 1.05 2.7 2.55 1.4-.65 2.85L21 13l-1.95 2.15.65 2.85-2.55 1.4-1.05 2.7-2.9-.15L12 22l-2.1-2.05-2.9.15-1.05-2.7-2.55-1.4.65-2.85L3 11l1.95-2.15-.65-2.85 2.55-1.4 1.05-2.7 2.9.15L12 2zm-1.2 13.4l6-6-1.4-1.4-4.6 4.6-2.2-2.2-1.4 1.4 3.6 3.6z"/>
+<svg viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="12" fill="currentColor"/>
+<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>
 </strong>
@@ -1331,18 +1341,25 @@ Marketplace MonikaLabs
 <main class="main">
 
 <section class="hero">
+
 <div>
+
 <h1>
 Marketplace MonikaLabs
 <span class="verified">
-<svg viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 2l2.1 2.05 2.9-.15 1.05 2.7 2.55 1.4-.65 2.85L21 13l-1.95 2.15.65 2.85-2.55 1.4-1.05 2.7-2.9-.15L12 22l-2.1-2.05-2.9.15-1.05-2.7-2.55-1.4.65-2.85L3 11l1.95-2.15-.65-2.85 2.55-1.4 1.05-2.7 2.9.15L12 2zm-1.2 13.4l6-6-1.4-1.4-4.6 4.6-2.2-2.2-1.4 1.4 3.6 3.6z"/>
+<svg viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="12" fill="currentColor"/>
+<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>
 </h1>
+
 <p>Temukan, jual, dan beli produk digital dari seller terpercaya.</p>
+
 </div>
+
 <button class="primary" id="sellBtn" type="button">+ Jual Produk</button>
+
 </section>
 
 <div class="categories" id="categories"></div>
@@ -1365,15 +1382,18 @@ Marketplace MonikaLabs
 </div>
 
 <div class="modal" id="detailModal">
+
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Detail Produk</h3>
+
 <button class="close" type="button" data-close="detailModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <div id="detailContent"></div>
@@ -1382,15 +1402,18 @@ Marketplace MonikaLabs
 </div>
 
 <div class="modal" id="sellModal">
+
 <div class="modal-card">
 
 <div class="modal-head">
 <h3 id="sellModalTitle">Jual Produk</h3>
+
 <button class="close" type="button" data-close="sellModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <form class="form" id="productForm">
@@ -1416,6 +1439,7 @@ Marketplace MonikaLabs
 
 <div class="field">
 <label for="productCategory">Kategori</label>
+
 <select id="productCategory" name="category" required>
 <option value="">Pilih kategori</option>
 <option value="Akun">Akun</option>
@@ -1426,6 +1450,7 @@ Marketplace MonikaLabs
 <option value="Digital">Digital</option>
 <option value="Lainnya">Lainnya</option>
 </select>
+
 </div>
 
 <div class="field">
@@ -1434,7 +1459,9 @@ Marketplace MonikaLabs
 </div>
 
 <div class="field">
+
 <label id="imageLabel" for="productImages">Foto Produk</label>
+
 <input
 class="file-input"
 id="productImages"
@@ -1443,13 +1470,19 @@ type="file"
 accept="image/jpeg,image/png,image/webp,image/gif"
 multiple
 required>
+
 </div>
 
 <div id="currentImagesWrap" style="display:none">
+
 <div class="field">
+
 <label>Foto Saat Ini</label>
+
 <div class="edit-current" id="currentImages"></div>
+
 </div>
+
 </div>
 
 <div class="preview-grid" id="imagePreview"></div>
@@ -1467,46 +1500,55 @@ Batal Edit
 </button>
 
 </form>
+
 </div>
 </div>
 
 <div class="drawer" id="cartDrawer">
+
 <div class="drawer-card">
 
 <div class="drawer-head">
 <h3>Keranjang</h3>
+
 <button class="close" type="button" data-close="cartDrawer">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <div class="drawer-body" id="cartBody"></div>
 
 <div class="cart-footer">
+
 <div class="total">
 <span>Total</span>
 <strong id="cartTotal">Rp0</strong>
 </div>
+
 <button class="primary" id="checkoutBtn" type="button" style="width:100%">
 Checkout
 </button>
-</div>
 
+</div>
 </div>
 </div>
 
 <div class="modal" id="profileModal">
+
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Profil</h3>
+
 <button class="close" type="button" data-close="profileModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <div class="profile" id="profileContent"></div>
@@ -1515,15 +1557,18 @@ Checkout
 </div>
 
 <div class="modal" id="sellerModal">
+
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Profil Seller</h3>
+
 <button class="close" type="button" data-close="sellerModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <div class="seller-profile">
@@ -1531,26 +1576,35 @@ Checkout
 <div class="seller-cover" id="sellerCover"></div>
 
 <div class="seller-profile-main">
+
 <img class="seller-profile-avatar" id="sellerAvatar" src="" alt="">
+
 <div class="seller-profile-info">
+
 <div class="seller-profile-name" id="sellerName"></div>
+
 <div class="seller-profile-email" id="sellerEmail"></div>
+
 </div>
 </div>
 
 <div class="seller-stats">
+
 <div class="seller-stat">
 <strong id="sellerProductCount">0</strong>
 <span>Postingan</span>
 </div>
+
 <div class="seller-stat">
 <strong id="sellerActiveCount">0</strong>
 <span>Aktif</span>
 </div>
+
 <div class="seller-stat">
 <strong id="sellerStockCount">0</strong>
 <span>Total Stock</span>
 </div>
+
 </div>
 
 <div class="seller-products-head">
@@ -1565,15 +1619,18 @@ Checkout
 </div>
 
 <div class="modal" id="ordersModal">
+
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Pesanan Saya</h3>
+
 <button class="close" type="button" data-close="ordersModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"/>
 </svg>
 </button>
+
 </div>
 
 <div class="form" id="ordersContent"></div>
@@ -1582,6 +1639,7 @@ Checkout
 </div>
 
 <div class="modal" id="confirmModal">
+
 <div class="modal-card">
 
 <div class="confirm-box">
@@ -1595,28 +1653,32 @@ Produk akan dihapus dari marketplace dan tidak bisa dikembalikan.
 </p>
 
 <div class="confirm-actions">
+
 <button class="secondary" id="cancelDeleteBtn" type="button">
 Batal
 </button>
+
 <button class="danger-btn" id="confirmDeleteBtn" type="button">
 Hapus Produk
 </button>
-</div>
 
 </div>
-
+</div>
 </div>
 </div>
 
 <div class="action-menu" id="productActionMenu">
+
 <button type="button" data-product-action="edit">
 <span>✎</span>
 <span>Edit Produk</span>
 </button>
+
 <button class="delete-action" type="button" data-product-action="delete">
 <span>⌫</span>
 <span>Hapus Produk</span>
 </button>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1685,24 +1747,39 @@ user?.phoneVerified
 function verified(){
 return `
 <span class="verified">
-<svg viewBox="0 0 24 24" fill="currentColor">
-<path d="M12 2l2.1 2.05 2.9-.15 1.05 2.7 2.55 1.4-.65 2.85L21 13l-1.95 2.15.65 2.85-2.55 1.4-2.9-.15-1.05-2.7-2.55-1.4.65-2.85L3 11l1.95-2.15-.65-2.85 2.55-1.4 1.05-2.7 2.9.15L12 2zm-1.2 13.4l6-6-1.4-1.4-4.6 4.6-2.2-2.2-1.4 1.4 3.6 3.6z"/>
+<svg viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="12" fill="currentColor"/>
+<path d="m7.5 12.2 2.8 2.8 6.2-6.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </span>`;
 }
 
 function timeAgo(date){
 if(!date)return "";
+
 const time=new Date(date).getTime();
+
 if(!Number.isFinite(time))return "";
+
 const diff=Math.max(0,Date.now()-time);
 const minute=60000;
 const hour=60*minute;
 const day=24*hour;
+
 if(diff<minute)return "baru saja";
-if(diff<hour)return `${Math.floor(diff/minute)} menit lalu`;
-if(diff<day)return `${Math.floor(diff/hour)} jam lalu`;
-if(diff<7*day)return `${Math.floor(diff/day)} hari lalu`;
+
+if(diff<hour){
+return `${Math.floor(diff/minute)} menit lalu`;
+}
+
+if(diff<day){
+return `${Math.floor(diff/hour)} jam lalu`;
+}
+
+if(diff<7*day){
+return `${Math.floor(diff/day)} hari lalu`;
+}
+
 return new Date(date).toLocaleDateString("id-ID",{
 day:"numeric",
 month:"short",
@@ -1712,9 +1789,15 @@ year:"numeric"
 
 function toast(message){
 const element=$("toast");
-element.textContent=String(message||"Terjadi kesalahan");
+
+element.textContent=String(
+message||"Terjadi kesalahan"
+);
+
 element.classList.add("show");
+
 clearTimeout(window.__toastTimer);
+
 window.__toastTimer=setTimeout(()=>{
 element.classList.remove("show");
 },2600);
@@ -1722,16 +1805,25 @@ element.classList.remove("show");
 
 function openModal(id){
 const element=$(id);
+
 if(!element)return;
+
 element.classList.add("open");
+
 document.body.style.overflow="hidden";
 }
 
 function closeModal(id){
 const element=$(id);
+
 if(!element)return;
+
 element.classList.remove("open");
-if(!document.querySelector(".modal.open")&&!document.querySelector(".drawer.open")){
+
+if(
+!document.querySelector(".modal.open")&&
+!document.querySelector(".drawer.open")
+){
 document.body.style.overflow="";
 }
 }
@@ -1767,20 +1859,25 @@ return data;
 }
 
 function renderCategories(){
-$("categories").innerHTML=categories.map(([value,label])=>`
+
+$("categories").innerHTML=categories.map(
+([value,label])=>`
 <button
 type="button"
 class="category ${state.category===value?"active":""}"
 data-category="${escapeHtml(value)}">
 ${escapeHtml(label)}
-</button>
-`).join("");
+</button>`
+).join("");
+
 }
 
 function renderProducts(){
+
 const products=state.products||[];
 
 if(!products.length){
+
 $("products").innerHTML=`
 <div class="empty" style="grid-column:1/-1">
 <div>
@@ -1788,14 +1885,20 @@ $("products").innerHTML=`
 <span>Coba kata kunci atau kategori lain.</span>
 </div>
 </div>`;
+
 $("productSummary").textContent="0 produk";
+
 $("loadMoreWrap").hidden=true;
+
 return;
 }
 
 $("products").innerHTML=products.map(product=>{
+
 const id=product._id||product.id;
+
 const seller=product.seller||{};
+
 const image=product.images?.[0]||"";
 
 return`
@@ -1876,9 +1979,11 @@ ${Number(product.commentCount)||0} komentar
 </div>
 
 </article>`;
+
 }).join("");
 
 const total=state.total??products.length;
+
 $("productSummary").textContent=`${total} produk`;
 
 $("loadMoreWrap").hidden=
@@ -1886,6 +1991,7 @@ $("loadMoreWrap").hidden=
 }
 
 async function loadProducts(reset=true){
+
 if(state.loading)return;
 
 if(reset){
@@ -1896,13 +2002,16 @@ state.products=[];
 state.loading=true;
 
 if(reset){
+
 $("products").innerHTML=`
 <div class="loading">
 Memuat produk...
 </div>`;
+
 }
 
 try{
+
 const params=new URLSearchParams();
 
 params.set("action","products");
@@ -1913,11 +2022,16 @@ if(state.search){
 params.set("search",state.search);
 }
 
-if(state.category&&state.category!=="all"){
+if(
+state.category&&
+state.category!=="all"
+){
 params.set("category",state.category);
 }
 
-const data=await api(`/api/chat?${params.toString()}`);
+const data=await api(
+`/api/chat?${params.toString()}`
+);
 
 const incoming=
 Array.isArray(data.products)
@@ -1940,6 +2054,7 @@ renderProducts();
 }catch(error){
 
 if(reset){
+
 $("products").innerHTML=`
 <div class="empty" style="grid-column:1/-1">
 <div>
@@ -1947,6 +2062,7 @@ $("products").innerHTML=`
 <span>${escapeHtml(error.message)}</span>
 </div>
 </div>`;
+
 }
 
 toast(error.message);
@@ -1960,20 +2076,27 @@ $("loadMoreWrap").hidden=false;
 }else{
 $("loadMoreWrap").hidden=true;
 }
+
 }
+
 }
 
 function openDetail(product){
+
 state.selectedProduct=product;
 
 const id=product._id||product.id;
+
 const seller=product.seller||{};
+
 const images=
-Array.isArray(product.images)&&product.images.length
+Array.isArray(product.images)&&
+product.images.length
 ?product.images
 :[""];
 
 $("detailContent").innerHTML=`
+
 <div class="detail-grid">
 
 <div>
@@ -1986,14 +2109,18 @@ alt="${escapeHtml(product.name||"Produk")}"
 onerror="this.style.display='none'">
 
 <div class="thumbs">
+
 ${images.map((image,index)=>`
+
 <img
 class="thumb"
 src="${escapeHtml(image)}"
 alt=""
 data-gallery="${index}"
 onerror="this.style.display='none'">
+
 `).join("")}
+
 </div>
 
 </div>
@@ -2056,13 +2183,15 @@ Lihat profil seller
 
 ${
 product.isOwner
-?`
+?
+`
 <button
 class="secondary"
 id="detailEditBtn"
 type="button">
 Edit
 </button>
+
 <button
 class="danger-btn"
 id="detailDeleteBtn"
@@ -2070,7 +2199,8 @@ type="button">
 Hapus
 </button>
 `
-:`
+:
+`
 <button
 class="primary"
 id="detailCartBtn"
@@ -2095,9 +2225,11 @@ ${Number(product.stock)<=0?"Stock Habis":"+ Keranjang"}
 </div>
 
 <div class="comments-list" id="commentsList">
+
 <div class="loading" style="min-height:90px">
 Memuat komentar...
 </div>
+
 </div>
 
 <div class="comment-form">
@@ -2122,48 +2254,84 @@ Kirim
 openModal("detailModal");
 
 document.querySelectorAll("[data-gallery]").forEach(item=>{
+
 item.addEventListener("click",()=>{
+
 const index=Number(item.dataset.gallery);
+
 $("galleryMain").src=images[index]||"";
+
 });
+
 });
 
 $("detailSeller").addEventListener("click",()=>{
+
 openSellerProfile(
 seller._id||product.sellerId||"",
 seller
 );
+
 });
 
 if(product.isOwner){
+
 $("detailEditBtn").addEventListener("click",()=>{
+
 closeModal("detailModal");
+
 openEditProduct(product);
+
 });
 
 $("detailDeleteBtn").addEventListener("click",()=>{
+
 closeModal("detailModal");
+
 openDeleteConfirm(id);
+
 });
+
 }else{
-$("detailCartBtn")?.addEventListener("click",async()=>{
+
+$("detailCartBtn")?.addEventListener(
+"click",
+async()=>{
 await addCart(id);
-});
+}
+);
+
 }
 
-$("commentSend").addEventListener("click",sendComment);
+$("commentSend").addEventListener(
+"click",
+sendComment
+);
 
-$("commentInput").addEventListener("keydown",event=>{
-if(event.key==="Enter"&&!event.shiftKey){
+$("commentInput").addEventListener(
+"keydown",
+event=>{
+
+if(
+event.key==="Enter"&&
+!event.shiftKey
+){
+
 event.preventDefault();
+
 sendComment();
+
 }
-});
+
+}
+);
 
 loadComments(id);
+
 }
 
 async function openSellerProfile(sellerId,seller){
+
 openModal("sellerModal");
 
 $("sellerName").innerHTML=`
@@ -2175,7 +2343,10 @@ $("sellerEmail").textContent=
 seller?.email||"Seller Marketplace";
 
 $("sellerAvatar").src=
-avatar(seller?.avatarUrl,seller?.name);
+avatar(
+seller?.avatarUrl,
+seller?.name
+);
 
 $("sellerCover").innerHTML=
 seller?.coverUrl
@@ -2244,6 +2415,7 @@ return;
 
 $("sellerProducts").innerHTML=
 products.map(product=>`
+
 <article
 class="seller-product"
 data-seller-product="${escapeHtml(product._id||product.id)}">
@@ -2270,20 +2442,30 @@ ${Number(product.stock)||0} stock
 </div>
 
 </article>
+
 `).join("");
 
-document.querySelectorAll("[data-seller-product]").forEach(card=>{
+document.querySelectorAll(
+"[data-seller-product]"
+).forEach(card=>{
+
 card.addEventListener("click",()=>{
+
 const product=products.find(item=>
 String(item._id||item.id)===
 String(card.dataset.sellerProduct)
 );
 
 if(product){
+
 closeModal("sellerModal");
+
 openDetail(product);
+
 }
+
 });
+
 });
 
 }catch(error){
@@ -2299,10 +2481,13 @@ style="grid-column:1/-1;min-height:150px">
 </div>`;
 
 toast(error.message);
+
 }
+
 }
 
 async function loadComments(productId){
+
 try{
 
 const data=await api(
@@ -2333,9 +2518,11 @@ return;
 
 $("commentsList").innerHTML=
 comments.map(comment=>{
+
 const user=comment.user||{};
 
 return`
+
 <div class="comment">
 
 <img
@@ -2366,6 +2553,7 @@ ${timeAgo(comment.createdAt)}
 </div>
 
 </div>`;
+
 }).join("");
 
 }catch{
@@ -2378,10 +2566,13 @@ style="min-height:90px">
 <span>Gagal memuat komentar.</span>
 </div>
 </div>`;
+
 }
+
 }
 
 async function sendComment(){
+
 const input=$("commentInput");
 
 if(!input||!state.selectedProduct)return;
@@ -2423,9 +2614,11 @@ toast(error.message);
 button.disabled=false;
 
 }
+
 }
 
 async function addCart(productId){
+
 try{
 
 await api("/api/chat",{
@@ -2446,9 +2639,11 @@ await loadCart();
 toast(error.message);
 
 }
+
 }
 
 async function loadCart(){
+
 try{
 
 const data=await api(
@@ -2468,11 +2663,17 @@ items:[]
 };
 
 renderCart();
+
 }
+
 }
 
 function renderCart(){
-const cart=state.cart||{items:[]};
+
+const cart=state.cart||{
+items:[]
+};
+
 const items=
 Array.isArray(cart.items)
 ?cart.items
@@ -2494,7 +2695,9 @@ style="min-height:260px">
 </div>`;
 
 $("cartTotal").textContent=money(0);
+
 $("cartCount").textContent="0";
+
 return;
 }
 
@@ -2518,9 +2721,11 @@ Number(item.quantity)||1
 );
 
 total+=price*quantity;
+
 count+=quantity;
 
 return`
+
 <div class="cart-item">
 
 <img
@@ -2568,22 +2773,35 @@ Hapus
 </div>
 
 </div>`;
+
 }).join("");
 
 $("cartTotal").textContent=money(total);
+
 $("cartCount").textContent=String(count);
 
-document.querySelectorAll("[data-cart-action]").forEach(button=>{
-button.addEventListener("click",()=>{
+document.querySelectorAll(
+"[data-cart-action]"
+).forEach(button=>{
+
+button.addEventListener(
+"click",
+()=>{
+
 updateCart(
 button.dataset.product,
 button.dataset.cartAction
 );
+
+}
+);
+
 });
-});
+
 }
 
 async function updateCart(productId,action){
+
 try{
 
 if(action==="remove"){
@@ -2647,6 +2865,7 @@ quantity:quantity-1
 });
 
 }
+
 }
 
 await loadCart();
@@ -2656,15 +2875,20 @@ await loadCart();
 toast(error.message);
 
 }
+
 }
 
 async function checkout(){
+
 if(!state.cart?.items?.length){
+
 toast("Keranjang masih kosong");
+
 return;
 }
 
 const button=$("checkoutBtn");
+
 button.disabled=true;
 
 try{
@@ -2691,9 +2915,11 @@ toast(error.message);
 button.disabled=false;
 
 }
+
 }
 
 function openProfile(){
+
 const user=state.user||{};
 
 $("profileContent").innerHTML=`
@@ -2775,9 +3001,11 @@ $("logoutBtn").addEventListener(
 "click",
 logout
 );
+
 }
 
 async function loadMyProductStats(){
+
 try{
 
 const data=await api(
@@ -2816,9 +3044,11 @@ String(stock);
 }
 
 }catch{}
+
 }
 
 async function loadMyProducts(){
+
 try{
 
 const data=await api(
@@ -2933,7 +3163,9 @@ card.addEventListener(
 "click",
 event=>{
 
-if(event.target.closest("[data-my-menu]")){
+if(
+event.target.closest("[data-my-menu]")
+){
 return;
 }
 
@@ -2947,6 +3179,7 @@ String(card.dataset.myProduct)
 if(product){
 
 closeModal("profileModal");
+
 openDetail(product);
 
 }
@@ -2974,7 +3207,12 @@ String(button.dataset.myMenu)
 );
 
 if(product){
-showActionMenu(button,product);
+
+showActionMenu(
+button,
+product
+);
+
 }
 
 }
@@ -2987,15 +3225,18 @@ showActionMenu(button,product);
 toast(error.message);
 
 }
+
 }
 
 function showActionMenu(button,product){
+
 const menu=$("productActionMenu");
 
 menu.dataset.productId=
 String(product._id||product.id);
 
 const rect=button.getBoundingClientRect();
+
 const width=170;
 
 let left=
@@ -3011,16 +3252,21 @@ top=rect.top-107;
 }
 
 menu.style.left=`${left}px`;
+
 menu.style.top=`${top}px`;
 
 menu.classList.add("open");
+
 }
 
 function hideActionMenu(){
+
 $("productActionMenu").classList.remove("open");
+
 }
 
 function openEditProduct(product){
+
 hideActionMenu();
 
 state.editingProduct=product;
@@ -3028,18 +3274,27 @@ state.editingProduct=product;
 const form=$("productForm");
 
 $("sellModalTitle").textContent="Edit Produk";
+
 $("publishBtn").textContent="Simpan Perubahan";
+
 $("cancelEditBtn").style.display="block";
+
 $("imageLabel").textContent="Foto Baru Opsional";
 
 form.name.value=product.name||"";
+
 form.price.value=product.price??"";
+
 form.stock.value=product.stock??"";
+
 form.category.value=product.category||"";
+
 form.description.value=product.description||"";
 
 $("productImages").required=false;
+
 $("productImages").value="";
+
 $("imagePreview").innerHTML="";
 
 const images=
@@ -3053,23 +3308,28 @@ $("currentImagesWrap").style.display="block";
 
 $("currentImages").innerHTML=
 images.map(image=>`
+
 <img
 src="${escapeHtml(image)}"
 alt=""
 onerror="this.style.display='none'">
+
 `).join("");
 
 }else{
 
 $("currentImagesWrap").style.display="none";
+
 $("currentImages").innerHTML="";
 
 }
 
 openModal("sellModal");
+
 }
 
 function resetProductForm(){
+
 state.editingProduct=null;
 
 const form=$("productForm");
@@ -3077,22 +3337,35 @@ const form=$("productForm");
 form.reset();
 
 $("sellModalTitle").textContent="Jual Produk";
+
 $("publishBtn").textContent="Terbitkan Produk";
+
 $("cancelEditBtn").style.display="none";
+
 $("imageLabel").textContent="Foto Produk";
+
 $("productImages").required=true;
+
 $("productImages").value="";
+
 $("currentImagesWrap").style.display="none";
+
 $("currentImages").innerHTML="";
+
 $("imagePreview").innerHTML="";
+
 }
 
 function openDeleteConfirm(productId){
+
 state.deleteProductId=productId;
+
 openModal("confirmModal");
+
 }
 
 async function deleteProduct(){
+
 const productId=state.deleteProductId;
 
 if(!productId)return;
@@ -3100,6 +3373,7 @@ if(!productId)return;
 const button=$("confirmDeleteBtn");
 
 button.disabled=true;
+
 button.textContent="Menghapus...";
 
 try{
@@ -3117,9 +3391,11 @@ toast("Produk berhasil dihapus");
 closeModal("confirmModal");
 
 state.deleteProductId=null;
+
 state.selectedProduct=null;
 
 await loadProducts(true);
+
 await loadCart();
 
 }catch(error){
@@ -3129,12 +3405,15 @@ toast(error.message);
 }finally{
 
 button.disabled=false;
+
 button.textContent="Hapus Produk";
 
 }
+
 }
 
 async function loadOrders(){
+
 openModal("ordersModal");
 
 $("ordersContent").innerHTML=`
@@ -3195,7 +3474,9 @@ String(order._id||"").slice(-8)
 style="
 font-size:9px;
 color:#65b8ff">
+
 ${escapeHtml(order.status||"pending")}
+
 </span>
 
 </div>
@@ -3230,7 +3511,9 @@ gap:5px">
 
 ${
 Array.isArray(order.items)
-?order.items.map(item=>`
+?
+order.items.map(item=>`
+
 <div
 style="
 display:flex;
@@ -3248,8 +3531,10 @@ ${money(item.subtotal)}
 </strong>
 
 </div>
+
 `).join("")
-:""
+:
+""
 }
 
 </div>
@@ -3271,9 +3556,11 @@ style="min-height:220px">
 </div>`;
 
 }
+
 }
 
 async function logout(){
+
 try{
 
 await fetch(
@@ -3288,25 +3575,34 @@ cache:"no-store"
 }catch{}
 
 window.location.href="/login";
+
 }
 
 function debounce(fn,delay){
+
 let timer;
 
 return(...args)=>{
+
 clearTimeout(timer);
+
 timer=setTimeout(
 ()=>fn(...args),
 delay
 );
+
 };
+
 }
 
 $("searchInput").addEventListener(
 "input",
 debounce(event=>{
+
 state.search=event.target.value.trim();
+
 loadProducts(true);
+
 },350)
 );
 
@@ -3351,13 +3647,16 @@ String(menuButton.dataset.productMenu)
 );
 
 if(product){
+
 showActionMenu(
 menuButton,
 product
 );
+
 }
 
 return;
+
 }
 
 const sellerButton=
@@ -3391,6 +3690,7 @@ product.seller||{}
 }
 
 return;
+
 }
 
 const card=
@@ -3408,7 +3708,9 @@ String(card.dataset.product)
 );
 
 if(product){
+
 openDetail(product);
+
 }
 
 }
@@ -3435,7 +3737,9 @@ String(item._id||item.id)===
 String(productId)
 );
 
-if(button.dataset.productAction==="edit"){
+if(
+button.dataset.productAction==="edit"
+){
 
 hideActionMenu();
 
@@ -3444,11 +3748,15 @@ openEditProduct(product);
 }
 
 return;
+
 }
 
-if(button.dataset.productAction==="delete"){
+if(
+button.dataset.productAction==="delete"
+){
 
 hideActionMenu();
+
 openDeleteConfirm(productId);
 
 }
@@ -3491,6 +3799,7 @@ $("sellBtn").addEventListener(
 ()=>{
 
 resetProductForm();
+
 openModal("sellModal");
 
 }
@@ -3501,6 +3810,7 @@ $("cancelEditBtn").addEventListener(
 ()=>{
 
 resetProductForm();
+
 closeModal("sellModal");
 
 }
@@ -3513,6 +3823,7 @@ async()=>{
 await loadCart();
 
 $("cartDrawer").classList.add("open");
+
 document.body.style.overflow="hidden";
 
 }
@@ -3538,6 +3849,7 @@ $("cancelDeleteBtn").addEventListener(
 ()=>{
 
 state.deleteProductId=null;
+
 closeModal("confirmModal");
 
 }
@@ -3561,6 +3873,11 @@ button.dataset.close;
 
 if(id==="sellModal"){
 resetProductForm();
+}
+
+if(id==="cartDrawer"){
+closeDrawer(id);
+return;
 }
 
 closeModal(id);
@@ -3622,6 +3939,7 @@ const img=
 document.createElement("img");
 
 img.className="preview";
+
 img.src=event.target.result;
 
 $("imagePreview")
@@ -3634,7 +3952,9 @@ reader.readAsDataURL(file);
 });
 
 if(event.target.files.length>6){
+
 toast("Maksimal 6 foto produk");
+
 }
 
 }
@@ -3647,6 +3967,7 @@ async event=>{
 event.preventDefault();
 
 const button=$("publishBtn");
+
 const form=event.currentTarget;
 
 const editing=
@@ -3670,6 +3991,7 @@ const files=
 if(!editing&&!files.length){
 
 toast("Pilih minimal satu foto");
+
 return;
 
 }
@@ -3795,10 +4117,13 @@ wasEditing
 
 }
 
-});
+}
+);
 
 function closeDrawer(id){
+
 const drawer=$(id);
+
 if(!drawer)return;
 
 drawer.classList.remove("open");
@@ -3807,17 +4132,31 @@ if(
 !document.querySelector(".modal.open")&&
 !document.querySelector(".drawer.open")
 ){
+
 document.body.style.overflow="";
-}
+
 }
 
-document.querySelectorAll(".drawer").forEach(drawer=>{
-drawer.addEventListener("click",event=>{
-if(event.target===drawer){
-closeDrawer(drawer.id);
 }
-});
-});
+
+document.querySelectorAll(".drawer").forEach(
+drawer=>{
+
+drawer.addEventListener(
+"click",
+event=>{
+
+if(event.target===drawer){
+
+closeDrawer(drawer.id);
+
+}
+
+}
+);
+
+}
+);
 
 async function init(){
 
@@ -3868,9 +4207,10 @@ window.location.href="/login";
 }
 
 }
+
 }
 
 init();
 </script>
 </body>
-</html>
+  </html>
