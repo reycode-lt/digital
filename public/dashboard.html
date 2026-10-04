@@ -304,7 +304,7 @@
         }
 
         .hero-description {
-            max-width: 620px;
+            max-width: 650px;
             margin-top: 12px;
             color: var(--muted);
             font-size: 13px;
@@ -505,18 +505,19 @@
             color: #fff;
         }
 
-        .community-panel {
+        .marketplace-panel {
+            min-height: 100%;
             padding: 22px;
         }
 
-        .community-head {
+        .marketplace-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
         }
 
-        .community-info {
+        .marketplace-info {
             min-width: 0;
         }
 
@@ -528,7 +529,7 @@
             text-transform: uppercase;
         }
 
-        .community-name-row {
+        .marketplace-title-row {
             display: inline-flex;
             align-items: center;
             flex-wrap: wrap;
@@ -539,7 +540,7 @@
             margin-top: 5px;
         }
 
-        .community-title {
+        .marketplace-title {
             min-width: 0;
             overflow-wrap: anywhere;
             word-break: break-word;
@@ -548,25 +549,36 @@
             letter-spacing: -.5px;
         }
 
-        .community-icon {
-            width: 48px;
-            height: 48px;
+        .marketplace-description {
+            max-width: 370px;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        .marketplace-icon {
+            width: 52px;
+            height: 52px;
             flex: 0 0 auto;
-            padding: 3px;
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, .035);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(54, 157, 255, .15);
+            border-radius: 17px;
+            color: #63b4ff;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(72, 170, 255, .16), transparent 55%),
+                rgba(22, 140, 255, .06);
+            box-shadow: 0 12px 35px rgba(22, 140, 255, .08);
         }
 
-        .community-icon img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            border-radius: 13px;
-            object-fit: cover;
+        .marketplace-icon svg {
+            width: 25px;
+            height: 25px;
         }
 
-        .community-stats {
+        .marketplace-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 9px;
@@ -590,6 +602,22 @@
             margin-top: 3px;
             color: var(--muted);
             font-size: 10px;
+        }
+
+        .marketplace-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 17px;
+            color: #75bbff;
+            font-size: 11px;
+            font-weight: 750;
+            transition: .2s ease;
+        }
+
+        .marketplace-link:hover {
+            color: #fff;
+            transform: translateX(2px);
         }
 
         .access-grid {
@@ -792,8 +820,12 @@
             }
 
             .profile-panel,
-            .community-panel {
+            .marketplace-panel {
                 padding: 18px;
+            }
+
+            .marketplace-description {
+                max-width: 250px;
             }
 
             .access-grid {
@@ -834,6 +866,15 @@
 
             .hero-user {
                 gap: 6px;
+            }
+
+            .marketplace-head {
+                align-items: flex-start;
+            }
+
+            .marketplace-icon {
+                width: 46px;
+                height: 46px;
             }
         }
     </style>
@@ -937,7 +978,7 @@
                                 >
                                     <path
                                         fill="currentColor"
-                                        d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
+                                        d="M12 2.5l2.1 1.4 2.5-.1 1.1 2.2 2.2 1.1-.1 2.5 1.4 2.1-1.4 2.1.1 2.5-2.2 1.1-1.1 2.2-2.5-.1-2.1 1.4-2.1 1.4-2.1-1.4-2.5.1-1.1-2.2-2.2-1.1.1-2.5L2.5 12l1.4-2.1-.1-2.5 2.2-1.1 1.1-2.2 2.5.1L12 2.5z"
                                     ></path>
 
                                     <path
@@ -950,9 +991,9 @@
                     </h1>
 
                     <p class="hero-description">
-                        Kelola akun, akses layanan digital,
-                        lihat komunitas, dan gunakan seluruh
-                        fitur ReyCode dari satu tempat.
+                        Kelola akun, temukan produk digital,
+                        jual produk kamu, dan akses seluruh
+                        layanan ReyCode dari satu tempat.
                     </p>
                 </div>
 
@@ -961,7 +1002,7 @@
                         href="/chat"
                         class="hero-btn primary"
                     >
-                        Buka Komunitas
+                        Buka Marketplace
                     </a>
 
                     <a
@@ -982,7 +1023,7 @@
                     </div>
 
                     <h2 class="section-title">
-                        Account & Community
+                        Account & Marketplace
                     </h2>
                 </div>
 
@@ -1064,24 +1105,20 @@
                     </div>
                 </article>
 
-                <article class="panel community-panel">
-                    <div class="community-head">
-                        <div class="community-info">
+                <article class="panel marketplace-panel">
+                    <div class="marketplace-head">
+                        <div class="marketplace-info">
                             <div class="eyebrow">
-                                Community
+                                Marketplace
                             </div>
 
-                            <div class="community-name-row">
-                                <h2
-                                    class="community-title"
-                                    id="communityName"
-                                >
-                                    Memuat komunitas...
+                            <div class="marketplace-title-row">
+                                <h2 class="marketplace-title">
+                                    Marketplace MonikaLabs
                                 </h2>
 
                                 <span
                                     class="verified-badge"
-                                    id="communityVerifiedBadge"
                                     title="Verified"
                                 >
                                     <svg
@@ -1100,44 +1137,58 @@
                                     </svg>
                                 </span>
                             </div>
+
+                            <p class="marketplace-description">
+                                Tempat jual beli produk digital,
+                                akun, tools, resource, dan berbagai
+                                produk dari seller.
+                            </p>
                         </div>
 
-                        <div class="community-icon">
-                            <img
-                                id="communityAvatar"
-                                src="https://k.top4top.io/p_392741enr1.png"
-                                alt="Community"
+                        <div class="marketplace-icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
                             >
+                                <path d="M4 7h16"></path>
+                                <path d="M6 7l1.2-3h9.6L18 7"></path>
+                                <path d="M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"></path>
+                                <path d="M9 11h6"></path>
+                            </svg>
                         </div>
                     </div>
 
-                    <div class="community-stats">
+                    <div class="marketplace-stats">
                         <div class="stat">
-                            <div
-                                class="stat-value"
-                                id="totalUsers"
-                            >
-                                —
+                            <div class="stat-value">
+                                Digital
                             </div>
 
                             <div class="stat-label">
-                                Total members
+                                Produk marketplace
                             </div>
                         </div>
 
                         <div class="stat">
-                            <div
-                                class="stat-value"
-                                id="onlineUsers"
-                            >
-                                —
+                            <div class="stat-value">
+                                24/7
                             </div>
 
                             <div class="stat-label">
-                                Currently online
+                                Akses marketplace
                             </div>
                         </div>
                     </div>
+
+                    <a
+                        href="/chat"
+                        class="marketplace-link"
+                    >
+                        Jelajahi Marketplace
+                        <span>→</span>
+                    </a>
                 </article>
             </div>
         </section>
@@ -1156,6 +1207,39 @@
             </div>
 
             <div class="access-grid">
+                <a
+                    href="/chat"
+                    class="access-card"
+                >
+                    <div>
+                        <span class="access-icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                            >
+                                <path d="M4 7h16"></path>
+                                <path d="M6 7l1.2-3h9.6L18 7"></path>
+                                <path d="M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"></path>
+                                <path d="M9 11h6"></path>
+                            </svg>
+                        </span>
+
+                        <div class="access-name">
+                            Marketplace
+                        </div>
+
+                        <div class="access-desc">
+                            Jual & beli produk digital
+                        </div>
+                    </div>
+
+                    <span class="access-arrow">
+                        →
+                    </span>
+                </a>
+
                 <a
                     href="/profile"
                     class="access-card"
@@ -1246,36 +1330,6 @@
 
                         <div class="access-desc">
                             Deploy project kamu
-                        </div>
-                    </div>
-
-                    <span class="access-arrow">
-                        →
-                    </span>
-                </a>
-
-                <a
-                    href="/chat"
-                    class="access-card"
-                >
-                    <div>
-                        <span class="access-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                            >
-                                <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.2-.6L4 20l1.5-3.8A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"></path>
-                            </svg>
-                        </span>
-
-                        <div class="access-name">
-                            Community
-                        </div>
-
-                        <div class="access-desc">
-                            Chat bersama member
                         </div>
                     </div>
 
@@ -1451,7 +1505,7 @@
             </span>
 
             <span>
-                Built for digital workspace
+                Marketplace MonikaLabs
             </span>
         </footer>
     </main>
@@ -1489,29 +1543,14 @@
         const date =
             document.getElementById("date");
 
-        const totalUsers =
-            document.getElementById("totalUsers");
-
-        const onlineUsers =
-            document.getElementById("onlineUsers");
-
         const logoutBtn =
             document.getElementById("logoutBtn");
 
         const toast =
             document.getElementById("toast");
 
-        const communityName =
-            document.getElementById("communityName");
-
-        const communityAvatar =
-            document.getElementById("communityAvatar");
-
         const USER_CACHE_KEY =
-            "reycode_dashboard_user_v3";
-
-        const GROUP_CACHE_KEY =
-            "reycode_dashboard_group_v3";
+            "reycode_dashboard_user_v4";
 
         let toastTimer = null;
 
@@ -1600,44 +1639,12 @@
 
             userAvatar.onerror = null;
 
-            if (cleanUrl) {
-                userAvatar.src = cleanUrl;
-            } else {
-                userAvatar.src =
-                    createAvatar(cleanName);
-            }
+            userAvatar.src =
+                cleanUrl ||
+                createAvatar(cleanName);
 
             userAvatar.alt =
                 `Avatar ${cleanName}`;
-        }
-
-        function setCommunityAvatar(
-            url,
-            name
-        ) {
-            const cleanUrl =
-                typeof url === "string"
-                    ? url.trim()
-                    : "";
-
-            const cleanName =
-                typeof name === "string" &&
-                name.trim()
-                    ? name.trim()
-                    : "Community";
-
-            communityAvatar.onerror = null;
-
-            if (cleanUrl) {
-                communityAvatar.src =
-                    cleanUrl;
-            } else {
-                communityAvatar.src =
-                    createAvatar(cleanName);
-            }
-
-            communityAvatar.alt =
-                cleanName;
         }
 
         function saveUserCache(user) {
@@ -1666,73 +1673,6 @@
                 const raw =
                     localStorage.getItem(
                         USER_CACHE_KEY
-                    );
-
-                if (!raw) {
-                    return null;
-                }
-
-                const parsed =
-                    JSON.parse(raw);
-
-                if (
-                    !parsed ||
-                    typeof parsed !== "object"
-                ) {
-                    return null;
-                }
-
-                return parsed;
-            } catch {
-                return null;
-            }
-        }
-
-        function saveGroupCache(group) {
-            try {
-                localStorage.setItem(
-                    GROUP_CACHE_KEY,
-                    JSON.stringify({
-                        id:
-                            group.id || "",
-
-                        name:
-                            group.name || "",
-
-                        avatarUrl:
-                            group.avatarUrl || "",
-
-                        totalUsers:
-                            Number.isFinite(
-                                Number(
-                                    group.totalUsers
-                                )
-                            )
-                                ? Number(
-                                      group.totalUsers
-                                  )
-                                : null,
-
-                        onlineUsers:
-                            Number.isFinite(
-                                Number(
-                                    group.onlineUsers
-                                )
-                            )
-                                ? Number(
-                                      group.onlineUsers
-                                  )
-                                : null
-                    })
-                );
-            } catch {}
-        }
-
-        function getGroupCache() {
-            try {
-                const raw =
-                    localStorage.getItem(
-                        GROUP_CACHE_KEY
                     );
 
                 if (!raw) {
@@ -1801,84 +1741,6 @@
             });
         }
 
-        function applyGroup(group) {
-            const name =
-                typeof group.name === "string" &&
-                group.name.trim()
-                    ? group.name.trim()
-                    : "MonikaLabs Comunity";
-
-            communityName.textContent =
-                name;
-
-            setCommunityAvatar(
-                group.avatarUrl || "",
-                name
-            );
-
-            const total =
-                Number(
-                    group.totalUsers
-                );
-
-            const online =
-                Number(
-                    group.onlineUsers
-                );
-
-            totalUsers.textContent =
-                Number.isFinite(total)
-                    ? total
-                    : "—";
-
-            onlineUsers.textContent =
-                Number.isFinite(online)
-                    ? online
-                    : "—";
-
-            saveGroupCache({
-                id:
-                    group.id || "",
-
-                name,
-
-                avatarUrl:
-                    group.avatarUrl || "",
-
-                totalUsers:
-                    Number.isFinite(total)
-                        ? total
-                        : null,
-
-                onlineUsers:
-                    Number.isFinite(online)
-                        ? online
-                        : null
-            });
-        }
-
-        function restoreCachedUser() {
-            const cached =
-                getUserCache();
-
-            if (!cached) {
-                return;
-            }
-
-            applyUser(cached);
-        }
-
-        function restoreCachedGroup() {
-            const cached =
-                getGroupCache();
-
-            if (!cached) {
-                return;
-            }
-
-            applyGroup(cached);
-        }
-
         async function loadUser() {
             try {
                 const response =
@@ -1942,62 +1804,6 @@
             }
         }
 
-        async function loadGroup() {
-            try {
-                const response =
-                    await fetch(
-                        "/api/chat?action=group",
-                        {
-                            method: "GET",
-                            credentials: "include",
-                            cache: "no-store",
-                            headers: {
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
-
-                if (
-                    response.status === 401 ||
-                    response.status === 403
-                ) {
-                    return;
-                }
-
-                const data =
-                    await response.json();
-
-                if (
-                    !response.ok ||
-                    !data.success ||
-                    !data.group
-                ) {
-                    return;
-                }
-
-                applyGroup(
-                    data.group
-                );
-            } catch {
-                const cached =
-                    getGroupCache();
-
-                if (cached) {
-                    applyGroup(
-                        cached
-                    );
-                }
-            }
-        }
-
-        async function refreshDashboard() {
-            await Promise.allSettled([
-                loadUser(),
-                loadGroup()
-            ]);
-        }
-
         async function logout() {
             logoutBtn.disabled =
                 true;
@@ -2017,10 +1823,6 @@
                     try {
                         localStorage.removeItem(
                             USER_CACHE_KEY
-                        );
-
-                        localStorage.removeItem(
-                            GROUP_CACHE_KEY
                         );
                     } catch {}
 
@@ -2059,21 +1861,6 @@
             }
         );
 
-        communityAvatar.addEventListener(
-            "error",
-            () => {
-                const name =
-                    communityName.textContent.trim() ||
-                    "Community";
-
-                communityAvatar.onerror =
-                    null;
-
-                communityAvatar.src =
-                    createAvatar(name);
-            }
-        );
-
         logoutBtn.addEventListener(
             "click",
             logout
@@ -2087,7 +1874,6 @@
                     "visible"
                 ) {
                     loadUser();
-                    loadGroup();
                 }
             }
         );
@@ -2096,7 +1882,6 @@
             "pageshow",
             () => {
                 loadUser();
-                loadGroup();
             }
         );
 
@@ -2107,15 +1892,16 @@
             1000
         );
 
-        restoreCachedUser();
-        restoreCachedGroup();
+        const cachedUser =
+            getUserCache();
 
-        refreshDashboard();
+        if (cachedUser) {
+            applyUser(
+                cachedUser
+            );
+        }
 
-        setInterval(
-            loadGroup,
-            10000
-        );
+        loadUser();
     </script>
 </body>
-</html>
+    </html>
