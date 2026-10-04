@@ -1,2606 +1,896 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#07111f">
-    <title>MonikaLabs Comunity</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #050a12;
-            --panel: rgba(10, 18, 31, .88);
-            --panel-2: rgba(14, 25, 42, .82);
-            --border: rgba(255, 255, 255, .08);
-            --text: #f4f7fb;
-            --muted: #8d9aae;
-            --blue: #168cff;
-            --blue-2: #0b6ee4;
-            --bubble: #101c2e;
-            --bubble-own: #0969d8;
-            --danger: #ff5263;
-            --shadow: 0 20px 60px rgba(0, 0, 0, .38);
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
-
-        body {
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            width: 420px;
-            height: 420px;
-            left: -180px;
-            top: -160px;
-            background: rgba(0, 119, 255, .12);
-            filter: blur(90px);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            width: 380px;
-            height: 380px;
-            right: -180px;
-            bottom: -160px;
-            background: rgba(0, 140, 255, .09);
-            filter: blur(90px);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        button,
-        input,
-        textarea {
-            font: inherit;
-        }
-
-        button {
-            border: 0;
-            cursor: pointer;
-        }
-
-        .app {
-            width: 100%;
-            height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-        }
-
-        .chat-shell {
-            width: min(1500px, 100%);
-            height: min(900px, 100%);
-            display: grid;
-            grid-template-columns: 330px minmax(0, 1fr);
-            overflow: hidden;
-            background: rgba(5, 11, 20, .78);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-        }
-
-        .sidebar {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            background: rgba(7, 14, 25, .88);
-            border-right: 1px solid var(--border);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 13px;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, .1);
-            box-shadow: 0 8px 25px rgba(0, 132, 255, .18);
-        }
-
-        .brand-title {
-            min-width: 0;
-        }
-
-        .brand-title strong {
-            display: block;
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: -.2px;
-        }
-
-        .brand-title span {
-            display: block;
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .search-wrap {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .search-box {
-            height: 42px;
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 0 13px;
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            background: rgba(255, 255, 255, .035);
-        }
-
-        .search-box svg {
-            width: 17px;
-            height: 17px;
-            color: var(--muted);
-            flex-shrink: 0;
-        }
-
-        .search-box input {
-            width: 100%;
-            border: 0;
-            outline: 0;
-            background: transparent;
-            color: var(--text);
-            font-size: 13px;
-        }
-
-        .search-box input::placeholder {
-            color: #647287;
-        }
-
-        .members-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 18px 10px;
-        }
-
-        .members-head strong {
-            font-size: 12px;
-            letter-spacing: .3px;
-        }
-
-        .members-head span {
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .member-list {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
-            padding: 5px 10px 15px;
-        }
-
-        .member-list::-webkit-scrollbar,
-        .messages::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .member-list::-webkit-scrollbar-thumb,
-        .messages::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, .08);
-            border-radius: 20px;
-        }
-
-        .member {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 10px 9px;
-            border-radius: 13px;
-            background: transparent;
-            text-align: left;
-            color: var(--text);
-            transition: .2s ease;
-        }
-
-        .member:hover {
-            background: rgba(255, 255, 255, .04);
-        }
-
-        .avatar-wrap {
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #111d2e;
-            border: 1px solid rgba(255, 255, 255, .08);
-        }
-
-        .member .avatar {
-            width: 40px;
-            height: 40px;
-        }
-
-        .online-dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            right: 0;
-            bottom: 1px;
-            border-radius: 50%;
-            background: #657286;
-            border: 2px solid #091321;
-        }
-
-        .online-dot.active {
-            background: #20d47a;
-            box-shadow: 0 0 10px rgba(32, 212, 122, .5);
-        }
-
-        .member-info {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .member-name {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            min-width: 0;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .member-name span:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .member-email {
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 11px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .verified {
-            width: 16px;
-            height: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: var(--blue);
-        }
-
-        .verified svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .me-card {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 14px;
-            border-top: 1px solid var(--border);
-            background: rgba(255, 255, 255, .025);
-        }
-
-        .me-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .me-name {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-            font-weight: 750;
-        }
-
-        .me-email {
-            color: var(--muted);
-            font-size: 11px;
-            margin-top: 3px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .logout-btn {
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 11px;
-            color: #a9b5c7;
-            background: rgba(255, 255, 255, .045);
-            transition: .2s ease;
-        }
-
-        .logout-btn:hover {
-            color: #fff;
-            background: rgba(255, 82, 99, .12);
-        }
-
-        .logout-btn svg {
-            width: 17px;
-            height: 17px;
-        }
-
-        .chat-main {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .chat-header {
-            height: 76px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 18px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(8, 16, 28, .72);
-            cursor: pointer;
-            transition: .2s ease;
-        }
-
-        .chat-header:hover {
-            background: rgba(255, 255, 255, .035);
-        }
-
-        .group-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, .1);
-            box-shadow: 0 8px 22px rgba(0, 120, 255, .14);
-            flex-shrink: 0;
-        }
-
-        .group-info {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .group-name {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-width: 0;
-            font-size: 15px;
-            font-weight: 800;
-        }
-
-        .group-name span:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .group-status {
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .icon-btn {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            color: #a9b6c9;
-            background: rgba(255, 255, 255, .04);
-            transition: .2s ease;
-        }
-
-        .icon-btn:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, .075);
-        }
-
-        .icon-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .messages {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
-            padding: 25px 24px 18px;
-            scroll-behavior: smooth;
-        }
-
-        .welcome {
-            max-width: 540px;
-            margin: 35px auto 30px;
-            text-align: center;
-        }
-
-        .welcome-avatar {
-            width: 76px;
-            height: 76px;
-            margin: 0 auto 14px;
-            border-radius: 24px;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, .1);
-            box-shadow: 0 15px 40px rgba(0, 122, 255, .17);
-        }
-
-        .welcome h1 {
-            font-size: 20px;
-            font-weight: 850;
-        }
-
-        .welcome p {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .date-separator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 18px 0;
-        }
-
-        .date-separator span {
-            padding: 6px 11px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            background: rgba(255, 255, 255, .035);
-            color: #8390a3;
-            font-size: 10px;
-        }
-
-        .message-row {
-            display: flex;
-            gap: 9px;
-            width: 100%;
-            margin: 6px 0;
-            align-items: flex-end;
-        }
-
-        .message-row.own {
-            justify-content: flex-end;
-        }
-
-        .message-row:not(.own) {
-            justify-content: flex-start;
-        }
-
-        .message-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex: 0 0 30px;
-            border: 1px solid rgba(255, 255, 255, .08);
-        }
-
-        .message-content {
-            width: fit-content;
-            max-width: min(72%, 680px);
-            min-width: 0;
-        }
-
-        .message-row.own .message-content {
-            align-items: flex-end;
-        }
-
-        .message-row:not(.own) .message-content {
-            align-items: flex-start;
-        }
-
-        .message-sender {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: fit-content;
-            max-width: 100%;
-            margin: 0 0 4px 5px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #91a0b4;
-        }
-
-        .message-sender > span:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .message-bubble {
-            display: block;
-            width: fit-content;
-            max-width: 100%;
-            min-width: 0;
-            padding: 9px 12px;
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: 15px 15px 15px 4px;
-            background: var(--bubble);
-            color: #edf3fa;
-            font-size: 13px;
-            line-height: 1.5;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            white-space: pre-wrap;
-        }
-
-        .message-row.own .message-bubble {
-            border-radius: 15px 15px 4px 15px;
-            background: linear-gradient(135deg, #0878ed, #0964c6);
-            border-color: rgba(255, 255, 255, .07);
-        }
-
-        .message-meta {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 5px;
-            width: 100%;
-            margin-top: 4px;
-            padding: 0 4px;
-            color: #748196;
-            font-size: 9px;
-        }
-
-        .message-row.own .message-meta {
-            color: #b8dcff;
-        }
-
-        .typing {
-            min-height: 24px;
-            padding: 0 25px 3px;
-            color: #728096;
-            font-size: 10px;
-        }
-
-        .composer {
-            flex-shrink: 0;
-            padding: 12px 18px 16px;
-            border-top: 1px solid var(--border);
-            background: rgba(7, 14, 25, .8);
-        }
-
-        .composer-box {
-            min-height: 50px;
-            display: flex;
-            align-items: flex-end;
-            gap: 9px;
-            padding: 7px;
-            border: 1px solid var(--border);
-            border-radius: 17px;
-            background: rgba(255, 255, 255, .035);
-            transition: .2s ease;
-        }
-
-        .composer-box:focus-within {
-            border-color: rgba(22, 140, 255, .35);
-            box-shadow: 0 0 0 3px rgba(22, 140, 255, .06);
-        }
-
-        .attach-btn,
-        .send-btn {
-            width: 36px;
-            height: 36px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 11px;
-        }
-
-        .attach-btn {
-            color: #8d9bad;
-            background: transparent;
-        }
-
-        .send-btn {
-            color: #fff;
-            background: var(--blue);
-            box-shadow: 0 7px 20px rgba(22, 140, 255, .22);
-        }
-
-        .send-btn:disabled {
-            opacity: .55;
-            cursor: not-allowed;
-        }
-
-        .attach-btn svg,
-        .send-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .composer textarea {
-            flex: 1;
-            width: 100%;
-            min-height: 35px;
-            max-height: 130px;
-            resize: none;
-            border: 0;
-            outline: 0;
-            padding: 8px 3px;
-            background: transparent;
-            color: var(--text);
-            font-size: 13px;
-            line-height: 1.45;
-        }
-
-        .composer textarea::placeholder {
-            color: #647287;
-        }
-
-        .empty-state,
-        .loading-state {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .profile-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, .58);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: .25s ease;
-        }
-
-        .profile-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        .profile-card {
-            width: min(410px, 100%);
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 25px;
-            background: #091321;
-            box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
-            transform: translateY(20px) scale(.97);
-            transition: .25s ease;
-        }
-
-        .profile-overlay.active .profile-card {
-            transform: translateY(0) scale(1);
-        }
-
-        .profile-cover {
-            height: 145px;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #0b5cb9, #081321);
-        }
-
-        .profile-cover::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, transparent, rgba(5, 11, 20, .65));
-        }
-
-        .profile-close {
-            position: absolute;
-            z-index: 3;
-            top: 13px;
-            right: 13px;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 11px;
-            color: #fff;
-            background: rgba(0, 0, 0, .28);
-            backdrop-filter: blur(8px);
-        }
-
-        .profile-close svg {
-            width: 17px;
-            height: 17px;
-        }
-
-        .profile-avatar-large {
-            position: absolute;
-            z-index: 4;
-            left: 50%;
-            bottom: -42px;
-            width: 84px;
-            height: 84px;
-            transform: translateX(-50%);
-            border-radius: 24px;
-            object-fit: cover;
-            border: 4px solid #091321;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
-        }
-
-        .profile-body {
-            padding: 57px 22px 23px;
-            text-align: center;
-        }
-
-        .profile-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 18px;
-            font-weight: 850;
-        }
-
-        .profile-subtitle {
-            margin-top: 5px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 22px;
-        }
-
-        .stat {
-            padding: 16px 10px;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, .035);
-        }
-
-        .stat strong {
-            display: block;
-            font-size: 21px;
-            font-weight: 850;
-        }
-
-        .stat span {
-            display: block;
-            margin-top: 4px;
-            color: var(--muted);
-            font-size: 10px;
-        }
-
-        .profile-description {
-            margin-top: 13px;
-            padding: 13px;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            color: #8e9bae;
-            background: rgba(255, 255, 255, .025);
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .toast-container {
-            position: fixed;
-            z-index: 100;
-            right: 18px;
-            bottom: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
-            max-width: 300px;
-            padding: 11px 14px;
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            background: rgba(12, 23, 39, .94);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
-            color: #eaf1f9;
-            font-size: 11px;
-            animation: toastIn .25s ease;
-        }
-
-        @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .mobile-back {
-            display: none;
-        }
-
-        @media (max-width: 850px) {
-            .app {
-                padding: 0;
-            }
-
-            .chat-shell {
-                width: 100%;
-                height: 100dvh;
-                border: 0;
-                border-radius: 0;
-                display: block;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .chat-main {
-                width: 100%;
-                height: 100%;
-            }
-
-            .mobile-back {
-                display: flex;
-            }
-
-            .chat-header {
-                height: 68px;
-                padding: 9px 12px;
-            }
-
-            .group-avatar {
-                width: 44px;
-                height: 44px;
-                border-radius: 14px;
-            }
-
-            .header-actions .refresh-btn {
-                display: none;
-            }
-
-            .messages {
-                padding: 18px 13px 14px;
-            }
-
-            .message-content {
-                max-width: 80%;
-            }
-
-            .composer {
-                padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
-            }
-
-            .typing {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-        }
-
-        @media (max-width: 430px) {
-            .group-name {
-                font-size: 14px;
-            }
-
-            .group-status {
-                font-size: 10px;
-            }
-
-            .message-content {
-                max-width: 84%;
-            }
-
-            .message-bubble {
-                font-size: 12px;
-                padding: 8px 11px;
-            }
-
-            .welcome {
-                margin-top: 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#050914">
+<title>Marketplace</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#050914;
+--bg2:#08101d;
+--panel:rgba(10,18,32,.78);
+--panel2:rgba(15,26,45,.82);
+--card:rgba(255,255,255,.045);
+--card2:rgba(255,255,255,.065);
+--border:rgba(255,255,255,.08);
+--text:#f4f8ff;
+--muted:#8997aa;
+--blue:#168cff;
+--blue2:#0872dc;
+--cyan:#23c9ff;
+--danger:#ff5268;
+--success:#20d47a;
+--shadow:0 25px 80px rgba(0,0,0,.42)
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(100px);pointer-events:none}
+body:before{width:430px;height:430px;left:-220px;top:-190px;background:rgba(0,120,255,.14)}
+body:after{width:390px;height:390px;right:-190px;bottom:-180px;background:rgba(0,200,255,.08)}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+img{max-width:100%;display:block}
+.app{width:min(1500px,100%);margin:auto;padding:18px}
+.shell{min-height:calc(100vh - 36px);border:1px solid var(--border);border-radius:28px;background:rgba(5,10,20,.7);backdrop-filter:blur(28px);box-shadow:var(--shadow);overflow:hidden}
+.header{height:76px;display:flex;align-items:center;gap:15px;padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(7,14,26,.78);position:sticky;top:0;z-index:20}
+.logo{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#168cff,#22c7ff);font-size:18px;font-weight:900;box-shadow:0 8px 25px rgba(22,140,255,.22)}
+.brand{min-width:130px}
+.brand strong{font-size:15px;font-weight:850;display:block}
+.brand span{font-size:10px;color:var(--muted);display:block;margin-top:2px}
+.search{height:43px;max-width:560px;flex:1;display:flex;align-items:center;gap:9px;padding:0 14px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.04)}
+.search svg{width:17px;color:var(--muted);flex:none}
+.search input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font-size:13px}
+.search input::placeholder{color:#637188}
+.header-actions{display:flex;align-items:center;gap:7px;margin-left:auto}
+.icon-btn{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.045);color:#aab7c9;position:relative}
+.icon-btn:hover{background:rgba(255,255,255,.075);color:#fff}
+.icon-btn svg{width:19px;height:19px}
+.cart-count{position:absolute;right:-2px;top:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:20px;background:var(--blue);color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center;border:2px solid #07101d}
+.user-mini{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.035);cursor:pointer}
+.user-mini img{width:34px;height:34px;border-radius:11px;object-fit:cover;background:#111d2e}
+.user-mini-name{font-size:11px;font-weight:750;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.verified{width:16px;height:16px;display:inline-grid;place-items:center;color:var(--blue);flex:none}
+.verified svg{width:100%;height:100%}
+.main{padding:22px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(135deg,rgba(16,88,170,.16),rgba(0,205,255,.04));margin-bottom:18px}
+.hero h1{font-size:26px;letter-spacing:-.7px}
+.hero p{color:var(--muted);font-size:12px;margin-top:7px}
+.primary{height:43px;padding:0 16px;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:12px;font-weight:800;box-shadow:0 10px 25px rgba(22,140,255,.2)}
+.secondary{height:42px;padding:0 14px;border-radius:12px;background:rgba(255,255,255,.055);border:1px solid var(--border);color:#dce7f5;font-size:12px;font-weight:700}
+.categories{display:flex;gap:8px;overflow-x:auto;padding:1px 1px 15px;scrollbar-width:none}
+.categories::-webkit-scrollbar{display:none}
+.category{height:37px;flex:none;padding:0 14px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.035);color:#9aa8ba;font-size:11px;font-weight:700}
+.category.active{color:#fff;background:rgba(22,140,255,.14);border-color:rgba(22,140,255,.4)}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:7px 0 14px}
+.section-head h2{font-size:16px;font-weight:850}
+.section-head span{font-size:10px;color:var(--muted)}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.product{min-width:0;border:1px solid var(--border);border-radius:19px;background:var(--panel);overflow:hidden;cursor:pointer;transition:.2s ease}
+.product:hover{transform:translateY(-2px);border-color:rgba(22,140,255,.27);background:var(--panel2)}
+.product-image{width:100%;aspect-ratio:1/1;object-fit:cover;background:#0d1727}
+.product-body{padding:13px}
+.product-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-price{font-size:16px;font-weight:900;color:#fff;margin-top:6px}
+.product-stock{font-size:10px;color:var(--muted);margin-top:3px}
+.seller{display:flex;align-items:center;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.055)}
+.seller img{width:27px;height:27px;border-radius:9px;object-fit:cover;background:#101c2e}
+.seller-info{min-width:0;flex:1}
+.seller-name{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:750}
+.seller-name span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seller-meta{font-size:9px;color:var(--muted);margin-top:2px}
+.comments-count{font-size:9px;color:#8190a4}
+.empty{min-height:300px;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:18px}
+.empty strong{display:block;color:#d9e3f0;font-size:13px;margin-bottom:5px}
+.empty span{font-size:11px}
+.loading{grid-column:1/-1;min-height:180px;display:grid;place-items:center;color:var(--muted);font-size:12px}
+.load-more{display:flex;justify-content:center;padding:22px 0 5px}
+.modal,.drawer{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.62);backdrop-filter:blur(12px);opacity:0;visibility:hidden;pointer-events:none;transition:.22s}
+.modal.open,.drawer.open{opacity:1;visibility:visible;pointer-events:auto}
+.modal-card{width:min(850px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid var(--border);border-radius:24px;background:#08111f;box-shadow:0 30px 100px rgba(0,0,0,.58)}
+.modal-head{height:64px;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,17,31,.94);backdrop-filter:blur(15px);z-index:2}
+.modal-head h3{font-size:15px;flex:1}
+.close{width:35px;height:35px;border-radius:11px;background:rgba(255,255,255,.055);color:#aeb9c8;display:grid;place-items:center}
+.close svg{width:17px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:20px}
+.gallery-main{width:100%;aspect-ratio:1/1;border-radius:18px;object-fit:cover;background:#0d1727}
+.thumbs{display:flex;gap:7px;overflow-x:auto;margin-top:8px}
+.thumb{width:58px;height:58px;flex:none;border-radius:10px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+.detail-title{font-size:22px;font-weight:900;line-height:1.2}
+.detail-price{font-size:24px;font-weight:900;margin-top:9px}
+.detail-category{display:inline-flex;margin-top:9px;padding:6px 9px;border-radius:9px;background:rgba(22,140,255,.1);color:#68b8ff;font-size:9px;font-weight:800}
+.detail-desc{margin-top:17px;color:#a8b4c5;font-size:12px;line-height:1.7;white-space:pre-wrap}
+.detail-seller{display:flex;align-items:center;gap:9px;padding:12px;margin-top:17px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.025)}
+.detail-seller img{width:40px;height:40px;border-radius:12px;object-fit:cover}
+.detail-seller-name{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800}
+.detail-seller-sub{font-size:9px;color:var(--muted);margin-top:3px}
+.detail-actions{display:flex;gap:8px;margin-top:17px}
+.detail-actions>*{flex:1}
+.comment-section{border-top:1px solid var(--border);padding:18px 20px 22px}
+.comment-title{display:flex;align-items:center;justify-content:space-between}
+.comment-title strong{font-size:14px}
+.comment-title span{font-size:10px;color:var(--muted)}
+.comments-list{margin-top:13px;display:flex;flex-direction:column;gap:10px}
+.comment{display:flex;gap:9px}
+.comment-avatar{width:31px;height:31px;border-radius:10px;object-fit:cover;background:#101c2e;flex:none}
+.comment-content{flex:1;min-width:0;padding:9px 11px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.055)}
+.comment-user{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:800}
+.comment-text{font-size:11px;color:#c2ccda;line-height:1.5;margin-top:4px;white-space:pre-wrap;word-break:break-word}
+.comment-meta{font-size:8px;color:#69788e;margin-top:5px}
+.comment-form{display:flex;gap:7px;margin-top:13px}
+.comment-form input{height:42px;min-width:0;flex:1;border:1px solid var(--border);border-radius:12px;outline:0;background:rgba(255,255,255,.035);color:#fff;padding:0 12px;font-size:11px}
+.comment-form button{width:80px}
+.form{padding:20px;display:grid;gap:13px}
+.field{display:grid;gap:6px}
+.field label{font-size:10px;color:#98a6b8;font-weight:700}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.035);color:#fff;outline:0;padding:11px 12px;font-size:12px}
+.field textarea{min-height:110px;resize:vertical;line-height:1.5}
+.field select option{background:#0b1524;color:#fff}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.file-input{padding:12px!important}
+.preview-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.preview{aspect-ratio:1;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:#101a2a}
+.drawer{justify-content:flex-end;padding:0}
+.drawer-card{height:100%;width:min(450px,100%);background:#08111f;border-left:1px solid var(--border);transform:translateX(30px);transition:.22s;display:flex;flex-direction:column}
+.drawer.open .drawer-card{transform:translateX(0)}
+.drawer-head{height:68px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--border)}
+.drawer-head h3{font-size:15px;flex:1}
+.drawer-body{flex:1;overflow:auto;padding:14px}
+.cart-item{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.055)}
+.cart-item img{width:65px;height:65px;border-radius:12px;object-fit:cover;background:#101a2a}
+.cart-info{flex:1;min-width:0}
+.cart-name{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-price{font-size:12px;font-weight:850;margin-top:5px}
+.qty{display:flex;align-items:center;gap:7px;margin-top:7px}
+.qty button{width:25px;height:25px;border-radius:8px;background:rgba(255,255,255,.06);color:#fff}
+.qty span{font-size:10px;min-width:15px;text-align:center}
+.remove{font-size:9px;color:var(--danger);background:none;margin-left:3px}
+.cart-footer{padding:14px 16px;border-top:1px solid var(--border);background:rgba(255,255,255,.025)}
+.total{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.total span{font-size:10px;color:var(--muted)}
+.total strong{font-size:17px}
+.profile{padding:18px}
+.profile-cover{height:120px;border-radius:18px;background:linear-gradient(135deg,#0d5caf,#07111e);overflow:hidden;position:relative}
+.profile-cover img{width:100%;height:100%;object-fit:cover}
+.profile-avatar{width:76px;height:76px;border-radius:22px;object-fit:cover;border:4px solid #08111f;position:relative;margin:-38px auto 0;background:#101c2e}
+.profile-name{display:flex;align-items:center;justify-content:center;gap:5px;font-size:18px;font-weight:900;margin-top:8px}
+.profile-email{text-align:center;color:var(--muted);font-size:10px;margin-top:4px}
+.profile-actions{display:grid;gap:8px;margin-top:18px}
+.toast{position:fixed;z-index:300;left:50%;bottom:22px;transform:translate(-50%,20px);padding:11px 15px;border:1px solid var(--border);border-radius:12px;background:#0b1626;color:#fff;font-size:11px;box-shadow:0 15px 40px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){
+.app{padding:0}.shell{min-height:100vh;border-radius:0;border:0}
+.header{height:68px;padding:10px 12px}.brand{display:none}.logo{width:39px;height:39px}
+.user-mini-name{display:none}.user-mini{padding:3px}.search{max-width:none}
+.main{padding:14px}.hero{padding:17px}.hero h1{font-size:21px}.hero p{font-size:10px}.hero .primary{white-space:nowrap}
+.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product-body{padding:10px}.product-name{font-size:11px}.product-price{font-size:14px}.seller{margin-top:9px;padding-top:8px}
+.detail-grid{grid-template-columns:1fr;padding:14px;gap:15px}.detail-title{font-size:19px}.detail-price{font-size:21px}
+.modal{padding:0}.modal-card{max-height:100vh;height:100%;border-radius:0;border:0}
+.form-row{grid-template-columns:1fr}.preview-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:420px){
+.header-actions{gap:4px}.icon-btn{width:37px;height:37px}.hero{align-items:flex-start;flex-direction:column}.hero .primary{width:100%}
+.products{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
 </head>
-
 <body>
-    <div class="app">
-        <div class="chat-shell">
-            <aside class="sidebar">
-                <div class="brand">
-                    <img
-                        class="brand-logo"
-                        src="https://k.top4top.io/p_392741enr1.png"
-                        alt="MonikaLabs"
-                    >
-
-                    <div class="brand-title">
-                        <strong>MonikaLabs Comunity</strong>
-                        <span>Public Community</span>
-                    </div>
-                </div>
-
-                <div class="search-wrap">
-                    <div class="search-box">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
-                            <path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-                        </svg>
-
-                        <input
-                            id="searchInput"
-                            type="text"
-                            placeholder="Cari anggota..."
-                            autocomplete="off"
-                        >
-                    </div>
-                </div>
-
-                <div class="members-head">
-                    <strong>Anggota</strong>
-                    <span id="memberCount">0 user</span>
-                </div>
-
-                <div class="member-list" id="memberList">
-                    <div class="loading-state">
-                        Memuat anggota...
-                    </div>
-                </div>
-
-                <div class="me-card">
-                    <div class="avatar-wrap">
-                        <img
-                            id="myAvatar"
-                            class="avatar"
-                            src=""
-                            alt="Avatar"
-                        >
-                        <span class="online-dot active"></span>
-                    </div>
-
-                    <div class="me-info">
-                        <div class="me-name">
-                            <span id="myName">Memuat...</span>
-                            <span id="myVerified"></span>
-                        </div>
-
-                        <div class="me-email" id="myEmail">
-                            Memuat...
-                        </div>
-                    </div>
-
-                    <button
-                        class="logout-btn"
-                        id="logoutBtn"
-                        title="Keluar"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M10 17l5-5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-                            <path d="M21 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-                        </svg>
-                    </button>
-                </div>
-            </aside>
-
-            <main class="chat-main">
-                <header
-                    class="chat-header"
-                    id="groupHeader"
-                >
-                    <button
-                        class="icon-btn mobile-back"
-                        id="mobileBackBtn"
-                        type="button"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </button>
-
-                    <img
-                        id="groupAvatar"
-                        class="group-avatar"
-                        src="https://k.top4top.io/p_392741enr1.png"
-                        alt="MonikaLabs Comunity"
-                    >
-
-                    <div class="group-info">
-                        <div class="group-name">
-                            <span id="groupName">
-                                MonikaLabs Comunity
-                            </span>
-
-                            <span
-                                class="verified"
-                                aria-label="Terverifikasi"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M8.2 12.1l2.35 2.35 5.25-5.25"
-                                        stroke="#fff"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />
-                                </svg>
-                            </span>
-                        </div>
-
-                        <div
-                            class="group-status"
-                            id="groupStatus"
-                        >
-                            Memuat informasi grup...
-                        </div>
-                    </div>
-
-                    <div class="header-actions">
-                        <button
-                            class="icon-btn refresh-btn"
-                            id="refreshBtn"
-                            type="button"
-                            title="Refresh"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M20 11a8.1 8.1 0 0 0-14.9-4L3 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                <path d="M3 4v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                <path d="M4 13a8.1 8.1 0 0 0 14.9 4L21 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                <path d="M21 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </header>
-
-                <section
-                    class="messages"
-                    id="messages"
-                >
-                    <div class="welcome">
-                        <img
-                            class="welcome-avatar"
-                            src="https://k.top4top.io/p_392741enr1.png"
-                            alt="MonikaLabs Comunity"
-                        >
-
-                        <h1>MonikaLabs Comunity</h1>
-
-                        <p>
-                            Selamat datang di komunitas.
-                            Semua anggota dapat bergabung dan berkomunikasi di sini.
-                        </p>
-                    </div>
-
-                    <div
-                        class="loading-state"
-                        id="messageLoading"
-                    >
-                        Memuat pesan...
-                    </div>
-
-                    <div id="messageList"></div>
-                </section>
-
-                <div
-                    class="typing"
-                    id="typingIndicator"
-                ></div>
-
-                <div class="composer">
-                    <div class="composer-box">
-                        <button
-                            class="attach-btn"
-                            id="attachBtn"
-                            type="button"
-                            title="Lampiran"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M21.4 11.6l-8.9 8.9a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 1 1-2.8-2.8l8.5-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </button>
-
-                        <textarea
-                            id="messageInput"
-                            rows="1"
-                            maxlength="2000"
-                            placeholder="Tulis pesan..."
-                        ></textarea>
-
-                        <button
-                            class="send-btn"
-                            id="sendBtn"
-                            type="button"
-                            title="Kirim"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                <path d="M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <div
-        class="profile-overlay"
-        id="profileOverlay"
-    >
-        <div class="profile-card">
-            <div class="profile-cover">
-                <button
-                    class="profile-close"
-                    id="profileClose"
-                    type="button"
-                >
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-                    </svg>
-                </button>
-
-                <img
-                    class="profile-avatar-large"
-                    id="profileAvatar"
-                    src="https://k.top4top.io/p_392741enr1.png"
-                    alt="Group"
-                >
-            </div>
-
-            <div class="profile-body">
-                <div class="profile-title">
-                    <span id="profileName">
-                        MonikaLabs Comunity
-                    </span>
-
-                    <span class="verified">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 1.25-2.36 2.67.05L12 2.5z"
-                                fill="currentColor"
-                            />
-                            <path
-                                d="M8.2 12.1l2.35 2.35 5.25-5.25"
-                                stroke="#fff"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </span>
-                </div>
-
-                <div
-                    class="profile-subtitle"
-                    id="profileSubtitle"
-                >
-                    Komunitas MonikaLabs
-                </div>
-
-                <div class="stats">
-                    <div class="stat">
-                        <strong id="profileTotalUsers">
-                            0
-                        </strong>
-
-                        <span>
-                            Total User
-                        </span>
-                    </div>
-
-                    <div class="stat">
-                        <strong id="profileOnlineUsers">
-                            0
-                        </strong>
-
-                        <span>
-                            Online
-                        </span>
-                    </div>
-                </div>
-
-                <div class="profile-description">
-                    Ruang komunitas untuk seluruh pengguna MonikaLabs.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div
-        class="toast-container"
-        id="toastContainer"
-    ></div>
-
-    <script>
-        const state = {
-            user: null,
-            group: null,
-            users: [],
-            messages: [],
-            loadingMessages: false,
-            sending: false,
-            profileOpen: false,
-            initializedMessages: false,
-            pollingStarted: false,
-            heartbeatStarted: false
-        };
-
-        const FALLBACK_AVATAR =
-            "https://i.top4top.io/p_3925af3h26.png";
-
-        const GROUP_AVATAR =
-            "https://k.top4top.io/p_392741enr1.png";
-
-        const CHAT_CACHE_KEY =
-            "monikalabs_comunity_messages_v2";
-
-        const elements = {
-            groupHeader: document.getElementById("groupHeader"),
-            groupAvatar: document.getElementById("groupAvatar"),
-            groupName: document.getElementById("groupName"),
-            groupStatus: document.getElementById("groupStatus"),
-            messages: document.getElementById("messages"),
-            messageList: document.getElementById("messageList"),
-            messageLoading: document.getElementById("messageLoading"),
-            messageInput: document.getElementById("messageInput"),
-            sendBtn: document.getElementById("sendBtn"),
-            refreshBtn: document.getElementById("refreshBtn"),
-            memberList: document.getElementById("memberList"),
-            memberCount: document.getElementById("memberCount"),
-            searchInput: document.getElementById("searchInput"),
-            myAvatar: document.getElementById("myAvatar"),
-            myName: document.getElementById("myName"),
-            myEmail: document.getElementById("myEmail"),
-            myVerified: document.getElementById("myVerified"),
-            logoutBtn: document.getElementById("logoutBtn"),
-            profileOverlay: document.getElementById("profileOverlay"),
-            profileClose: document.getElementById("profileClose"),
-            profileAvatar: document.getElementById("profileAvatar"),
-            profileName: document.getElementById("profileName"),
-            profileSubtitle: document.getElementById("profileSubtitle"),
-            profileTotalUsers: document.getElementById("profileTotalUsers"),
-            profileOnlineUsers: document.getElementById("profileOnlineUsers"),
-            toastContainer: document.getElementById("toastContainer"),
-            typingIndicator: document.getElementById("typingIndicator"),
-            mobileBackBtn: document.getElementById("mobileBackBtn")
-        };
-
-        function verifiedBadge() {
-            return `
-                <span class="verified" aria-label="Terverifikasi">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M12 2.5l2.25 1.45 2.67-.05 1.25 2.36 2.36 1.25-.05 2.67L22 12l-1.52 2.25.05 2.67-2.36 1.25-1.25 2.36-2.67-.05L12 21.5l-2.25-1.52-2.67.05-1.25-2.36-2.36-1.25.05-2.67L2 12l1.52-2.25-.05-2.67 2.36-1.25 1.25-2.36 2.67.05L12 2.5z"
-                            fill="currentColor"
-                        />
-                        <path
-                            d="M8.2 12.1l2.35 2.35 5.25-5.25"
-                            stroke="#fff"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-                </span>
-            `;
-        }
-
-        function escapeHtml(value) {
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function getId(value) {
-            if (!value) {
-                return "";
-            }
-
-            if (
-                typeof value === "string" ||
-                typeof value === "number"
-            ) {
-                return String(value);
-            }
-
-            if (
-                typeof value === "object"
-            ) {
-                return String(
-                    value.id ||
-                    value._id ||
-                    value.userId ||
-                    ""
-                );
-            }
-
-            return "";
-        }
-
-        function getUserId(user) {
-            if (!user) {
-                return "";
-            }
-
-            return getId(
-                user.id ||
-                user._id ||
-                user.userId
-            );
-        }
-
-        function getMessageId(message) {
-            if (!message) {
-                return "";
-            }
-
-            return getId(
-                message.id ||
-                message._id
-            );
-        }
-
-        function isOwnMessage(message) {
-            const currentId =
-                getUserId(state.user);
-
-            const senderId =
-                getUserId(message?.user);
-
-            return Boolean(
-                currentId &&
-                senderId &&
-                currentId === senderId
-            );
-        }
-
-        function normalizeMessage(message) {
-            if (!message) {
-                return null;
-            }
-
-            const id =
-                getMessageId(message);
-
-            if (!id) {
-                return null;
-            }
-
-            return {
-                ...message,
-                id,
-                _id:
-                    message._id ||
-                    id,
-                user: message.user
-                    ? {
-                        ...message.user,
-                        id: getUserId(
-                            message.user
-                        )
-                    }
-                    : null
-            };
-        }
-
-        function sortMessages() {
-            state.messages.sort(
-                (a, b) => {
-                    const first =
-                        new Date(
-                            a.createdAt || 0
-                        ).getTime();
-
-                    const second =
-                        new Date(
-                            b.createdAt || 0
-                        ).getTime();
-
-                    if (
-                        first !== second
-                    ) {
-                        return first - second;
-                    }
-
-                    return String(
-                        getMessageId(a)
-                    ).localeCompare(
-                        String(
-                            getMessageId(b)
-                        )
-                    );
-                }
-            );
-        }
-
-        function mergeMessages(
-            incoming,
-            replace = false
-        ) {
-            if (
-                !Array.isArray(incoming)
-            ) {
-                return;
-            }
-
-            const map =
-                new Map();
-
-            if (!replace) {
-                for (
-                    const message
-                    of state.messages
-                ) {
-                    const normalized =
-                        normalizeMessage(
-                            message
-                        );
-
-                    if (
-                        normalized
-                    ) {
-                        map.set(
-                            normalized.id,
-                            normalized
-                        );
-                    }
-                }
-            }
-
-            for (
-                const message
-                of incoming
-            ) {
-                const normalized =
-                    normalizeMessage(
-                        message
-                    );
-
-                if (
-                    normalized
-                ) {
-                    map.set(
-                        normalized.id,
-                        normalized
-                    );
-                }
-            }
-
-            state.messages =
-                Array.from(
-                    map.values()
-                );
-
-            sortMessages();
-
-            if (
-                state.messages.length >
-                100
-            ) {
-                state.messages =
-                    state.messages.slice(
-                        -100
-                    );
-            }
-        }
-
-        function saveMessagesCache() {
-            try {
-                localStorage.setItem(
-                    CHAT_CACHE_KEY,
-                    JSON.stringify(
-                        state.messages
-                    )
-                );
-            } catch {}
-        }
-
-        function loadMessagesCache() {
-            try {
-                const raw =
-                    localStorage.getItem(
-                        CHAT_CACHE_KEY
-                    );
-
-                if (!raw) {
-                    return false;
-                }
-
-                const parsed =
-                    JSON.parse(raw);
-
-                if (
-                    !Array.isArray(parsed) ||
-                    !parsed.length
-                ) {
-                    return false;
-                }
-
-                mergeMessages(
-                    parsed,
-                    true
-                );
-
-                renderMessages();
-
-                return true;
-            } catch {
-                return false;
-            }
-        }
-
-        function formatTime(value) {
-            const date =
-                new Date(value);
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return "";
-            }
-
-            return date.toLocaleTimeString(
-                "id-ID",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }
-            );
-        }
-
-        function formatDate(value) {
-            const date =
-                new Date(value);
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return "";
-            }
-
-            return date.toLocaleDateString(
-                "id-ID",
-                {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }
-            );
-        }
-
-        function avatarUrl(url) {
-            return url ||
-                FALLBACK_AVATAR;
-        }
-
-        function showToast(message) {
-            const toast =
-                document.createElement(
-                    "div"
-                );
-
-            toast.className =
-                "toast";
-
-            toast.textContent =
-                message;
-
-            elements.toastContainer.appendChild(
-                toast
-            );
-
-            setTimeout(
-                () => {
-                    toast.remove();
-                },
-                3000
-            );
-        }
-
-        async function api(
-            url,
-            options = {}
-        ) {
-            const response =
-                await fetch(
-                    url,
-                    {
-                        credentials:
-                            "include",
-                        cache:
-                            "no-store",
-                        ...options,
-                        headers: {
-                            ...(options.body
-                                ? {
-                                    "Content-Type":
-                                        "application/json"
-                                }
-                                : {}),
-                            ...(options.headers ||
-                                {})
-                        }
-                    }
-                );
-
-            let data = null;
-
-            try {
-                data =
-                    await response.json();
-            } catch {
-                data = null;
-            }
-
-            if (
-                response.status === 401
-            ) {
-                window.location.href =
-                    "/login";
-
-                throw new Error(
-                    "Session berakhir"
-                );
-            }
-
-            if (
-                !response.ok
-            ) {
-                throw new Error(
-                    data?.message ||
-                    "Terjadi kesalahan"
-                );
-            }
-
-            return data;
-        }
-
-        async function loadMe() {
-            const data =
-                await api(
-                    "/api/user/me"
-                );
-
-            state.user =
-                data.user;
-
-            elements.myName.textContent =
-                state.user.name ||
-                "User";
-
-            elements.myEmail.textContent =
-                state.user.email ||
-                "";
-
-            elements.myAvatar.src =
-                avatarUrl(
-                    state.user.avatarUrl
-                );
-
-            elements.myVerified.innerHTML =
-                state.user.emailVerified
-                    ? verifiedBadge()
-                    : "";
-
-            if (
-                state.messages.length
-            ) {
-                renderMessages();
-            }
-        }
-
-        async function loadGroup() {
-            const data =
-                await api(
-                    "/api/chat?action=group"
-                );
-
-            state.group =
-                data.group;
-
-            elements.groupName.textContent =
-                state.group.name;
-
-            elements.groupAvatar.src =
-                avatarUrl(
-                    state.group.avatarUrl ||
-                    GROUP_AVATAR
-                );
-
-            elements.groupStatus.textContent =
-                `${state.group.onlineUsers} online dari ${state.group.totalUsers} user`;
-
-            elements.profileAvatar.src =
-                avatarUrl(
-                    state.group.avatarUrl ||
-                    GROUP_AVATAR
-                );
-
-            elements.profileName.textContent =
-                state.group.name;
-
-            elements.profileTotalUsers.textContent =
-                state.group.totalUsers;
-
-            elements.profileOnlineUsers.textContent =
-                state.group.onlineUsers;
-
-            elements.memberCount.textContent =
-                `${state.group.totalUsers} user`;
-        }
-
-        async function loadUsers() {
-            const data =
-                await api(
-                    "/api/chat?action=users"
-                );
-
-            if (
-                Array.isArray(
-                    data.users
-                )
-            ) {
-                state.users =
-                    data.users;
-            }
-
-            renderUsers(
-                elements.searchInput.value
-            );
-        }
-
-        function renderUsers(
-            search = ""
-        ) {
-            const keyword =
-                search
-                    .trim()
-                    .toLowerCase();
-
-            const filtered =
-                state.users.filter(
-                    user => {
-                        const name =
-                            String(
-                                user.name ||
-                                ""
-                            ).toLowerCase();
-
-                        const email =
-                            String(
-                                user.email ||
-                                ""
-                            ).toLowerCase();
-
-                        return (
-                            !keyword ||
-                            name.includes(
-                                keyword
-                            ) ||
-                            email.includes(
-                                keyword
-                            )
-                        );
-                    }
-                );
-
-            elements.memberCount.textContent =
-                `${state.users.length} user`;
-
-            if (
-                !filtered.length
-            ) {
-                elements.memberList.innerHTML = `
-                    <div class="empty-state">
-                        User tidak ditemukan
-                    </div>
-                `;
-
-                return;
-            }
-
-            elements.memberList.innerHTML =
-                filtered
-                    .map(
-                        user => {
-                            const verified =
-                                user.emailVerified
-                                    ? verifiedBadge()
-                                    : "";
-
-                            return `
-                                <div class="member">
-                                    <div class="avatar-wrap">
-                                        <img
-                                            class="avatar"
-                                            src="${escapeHtml(
-                                                avatarUrl(
-                                                    user.avatarUrl
-                                                )
-                                            )}"
-                                            alt="${escapeHtml(
-                                                user.name
-                                            )}"
-                                        >
-
-                                        <span
-                                            class="online-dot ${
-                                                user.online
-                                                    ? "active"
-                                                    : ""
-                                            }"
-                                        ></span>
-                                    </div>
-
-                                    <div class="member-info">
-                                        <div class="member-name">
-                                            <span>
-                                                ${escapeHtml(
-                                                    user.name ||
-                                                    "User"
-                                                )}
-                                            </span>
-                                            ${verified}
-                                        </div>
-
-                                        <div class="member-email">
-                                            ${escapeHtml(
-                                                user.email ||
-                                                ""
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    )
-                    .join("");
-        }
-
-        async function loadMessages(
-            options = {}
-        ) {
-            const {
-                forceScroll = false,
-                silent = false
-            } = options;
-
-            if (
-                state.loadingMessages
-            ) {
-                return false;
-            }
-
-            state.loadingMessages =
-                true;
-
-            const container =
-                elements.messages;
-
-            const wasNearBottom =
-                container.scrollHeight -
-                container.scrollTop -
-                container.clientHeight <
-                180;
-
-            if (!silent) {
-                elements.messageLoading.style.display =
-                    "flex";
-            }
-
-            try {
-                const data =
-                    await api(
-                        "/api/chat?action=messages&limit=100"
-                    );
-
-                const incoming =
-                    Array.isArray(
-                        data.messages
-                    )
-                        ? data.messages
-                        : [];
-
-                if (
-                    incoming.length
-                ) {
-                    mergeMessages(
-                        incoming,
-                        true
-                    );
-
-                    saveMessagesCache();
-
-                    renderMessages();
-
-                    if (
-                        forceScroll ||
-                        !state.initializedMessages ||
-                        wasNearBottom
-                    ) {
-                        scrollToBottom();
-                    }
-                } else if (
-                    !state.messages.length
-                ) {
-                    renderMessages();
-                }
-
-                state.initializedMessages =
-                    true;
-
-                return true;
-            } catch (error) {
-                if (
-                    !state.messages.length
-                ) {
-                    loadMessagesCache();
-                }
-
-                if (
-                    !silent
-                ) {
-                    showToast(
-                        error.message
-                    );
-                }
-
-                return false;
-            } finally {
-                state.loadingMessages =
-                    false;
-
-                elements.messageLoading.style.display =
-                    "none";
-            }
-        }
-
-        function renderMessages() {
-            if (
-                !state.messages.length
-            ) {
-                elements.messageList.innerHTML = `
-                    <div class="empty-state">
-                        Belum ada pesan. Jadilah yang pertama menyapa 👋
-                    </div>
-                `;
-
-                return;
-            }
-
-            let lastDate = "";
-
-            const html =
-                state.messages
-                    .map(
-                        message => {
-                            const dateLabel =
-                                formatDate(
-                                    message.createdAt
-                                );
-
-                            let separator =
-                                "";
-
-                            if (
-                                dateLabel &&
-                                dateLabel !==
-                                lastDate
-                            ) {
-                                lastDate =
-                                    dateLabel;
-
-                                separator = `
-                                    <div class="date-separator">
-                                        <span>
-                                            ${escapeHtml(
-                                                dateLabel
-                                            )}
-                                        </span>
-                                    </div>
-                                `;
-                            }
-
-                            const own =
-                                isOwnMessage(
-                                    message
-                                );
-
-                            const name =
-                                message.user?.name ||
-                                "User";
-
-                            const verified =
-                                message.user?.emailVerified
-                                    ? verifiedBadge()
-                                    : "";
-
-                            const avatar =
-                                avatarUrl(
-                                    message.user?.avatarUrl ||
-                                    (
-                                        own
-                                            ? state.user?.avatarUrl
-                                            : ""
-                                    )
-                                );
-
-                            return `
-                                ${separator}
-
-                                <div class="message-row ${
-                                    own
-                                        ? "own"
-                                        : ""
-                                }">
-
-                                    ${
-                                        own
-                                            ? ""
-                                            : `
-                                                <img
-                                                    class="message-avatar"
-                                                    src="${escapeHtml(
-                                                        avatar
-                                                    )}"
-                                                    alt="${escapeHtml(
-                                                        name
-                                                    )}"
-                                                >
-                                            `
-                                    }
-
-                                    <div class="message-content">
-                                        ${
-                                            own
-                                                ? ""
-                                                : `
-                                                    <div class="message-sender">
-                                                        <span>
-                                                            ${escapeHtml(
-                                                                name
-                                                            )}
-                                                        </span>
-                                                        ${verified}
-                                                    </div>
-                                                `
-                                        }
-
-                                        <div class="message-bubble">
-                                            ${escapeHtml(
-                                                message.message ||
-                                                ""
-                                            )}
-                                        </div>
-
-                                        <div class="message-meta">
-                                            <span>
-                                                ${formatTime(
-                                                    message.createdAt
-                                                )}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    ${
-                                        own
-                                            ? `
-                                                <img
-                                                    class="message-avatar"
-                                                    src="${escapeHtml(
-                                                        avatar
-                                                    )}"
-                                                    alt="${escapeHtml(
-                                                        name
-                                                    )}"
-                                                >
-                                            `
-                                            : ""
-                                    }
-                                </div>
-                            `;
-                        }
-                    )
-                    .join("");
-
-            elements.messageList.innerHTML =
-                html;
-        }
-
-        function scrollToBottom() {
-            requestAnimationFrame(
-                () => {
-                    elements.messages.scrollTop =
-                        elements.messages.scrollHeight;
-                }
-            );
-        }
-
-        async function sendMessage() {
-            if (
-                state.sending
-            ) {
-                return;
-            }
-
-            const message =
-                elements.messageInput.value.trim();
-
-            if (
-                !message
-            ) {
-                return;
-            }
-
-            state.sending =
-                true;
-
-            elements.sendBtn.disabled =
-                true;
-
-            try {
-                const data =
-                    await api(
-                        "/api/chat",
-                        {
-                            method:
-                                "POST",
-                            body:
-                                JSON.stringify({
-                                    action:
-                                        "send",
-                                    message
-                                })
-                        }
-                    );
-
-                if (
-                    data?.message
-                ) {
-                    mergeMessages(
-                        [
-                            data.message
-                        ],
-                        false
-                    );
-
-                    saveMessagesCache();
-                    renderMessages();
-                    scrollToBottom();
-                }
-
-                elements.messageInput.value =
-                    "";
-
-                autoResizeTextarea();
-
-                elements.typingIndicator.textContent =
-                    "";
-            } catch (error) {
-                showToast(
-                    error.message
-                );
-            } finally {
-                state.sending =
-                    false;
-
-                elements.sendBtn.disabled =
-                    false;
-            }
-        }
-
-        async function heartbeat() {
-            try {
-                await api(
-                    "/api/chat",
-                    {
-                        method:
-                            "POST",
-                        body:
-                            JSON.stringify({
-                                action:
-                                    "heartbeat"
-                            })
-                    }
-                );
-            } catch {}
-        }
-
-        async function refreshAll() {
-            const previousScroll =
-                elements.messages.scrollTop;
-
-            await Promise.allSettled([
-                loadGroup(),
-                loadUsers(),
-                loadMessages({
-                    forceScroll:
-                        false
-                })
-            ]);
-
-            if (
-                state.messages.length
-            ) {
-                elements.messages.scrollTop =
-                    previousScroll;
-            }
-        }
-
-        function openProfile() {
-            elements.profileOverlay.classList.add(
-                "active"
-            );
-
-            state.profileOpen =
-                true;
-
-            loadGroup().catch(
-                () => {}
-            );
-        }
-
-        function closeProfile() {
-            elements.profileOverlay.classList.remove(
-                "active"
-            );
-
-            state.profileOpen =
-                false;
-        }
-
-        function autoResizeTextarea() {
-            elements.messageInput.style.height =
-                "auto";
-
-            elements.messageInput.style.height =
-                Math.min(
-                    elements.messageInput.scrollHeight,
-                    130
-                ) + "px";
-        }
-
-        async function logout() {
-            try {
-                await fetch(
-                    "/api/auth/logout",
-                    {
-                        method:
-                            "POST",
-                        credentials:
-                            "include",
-                        cache:
-                            "no-store"
-                    }
-                );
-            } catch {}
-
-            window.location.href =
-                "/login";
-        }
-
-        function startPolling() {
-            if (
-                state.pollingStarted
-            ) {
-                return;
-            }
-
-            state.pollingStarted =
-                true;
-
-            setInterval(
-                async () => {
-                    if (
-                        document.visibilityState !==
-                        "visible"
-                    ) {
-                        return;
-                    }
-
-                    await Promise.allSettled([
-                        loadGroup(),
-                        loadUsers(),
-                        loadMessages({
-                            forceScroll:
-                                false,
-                            silent:
-                                true
-                        })
-                    ]);
-                },
-                8000
-            );
-        }
-
-        function startHeartbeat() {
-            if (
-                state.heartbeatStarted
-            ) {
-                return;
-            }
-
-            state.heartbeatStarted =
-                true;
-
-            heartbeat();
-
-            setInterval(
-                heartbeat,
-                25000
-            );
-        }
-
-        elements.sendBtn.addEventListener(
-            "click",
-            sendMessage
-        );
-
-        elements.messageInput.addEventListener(
-            "input",
-            () => {
-                autoResizeTextarea();
-
-                elements.typingIndicator.textContent =
-                    elements.messageInput.value.trim()
-                        ? "Mengetik..."
-                        : "";
-            }
-        );
-
-        elements.messageInput.addEventListener(
-            "keydown",
-            event => {
-                if (
-                    event.key ===
-                        "Enter" &&
-                    !event.shiftKey
-                ) {
-                    event.preventDefault();
-
-                    sendMessage();
-                }
-            }
-        );
-
-        elements.searchInput.addEventListener(
-            "input",
-            event => {
-                renderUsers(
-                    event.target.value
-                );
-            }
-        );
-
-        elements.refreshBtn.addEventListener(
-            "click",
-            refreshAll
-        );
-
-        elements.groupHeader.addEventListener(
-            "click",
-            event => {
-                if (
-                    event.target.closest(
-                        ".mobile-back"
-                    ) ||
-                    event.target.closest(
-                        ".icon-btn"
-                    )
-                ) {
-                    return;
-                }
-
-                openProfile();
-            }
-        );
-
-        elements.profileClose.addEventListener(
-            "click",
-            closeProfile
-        );
-
-        elements.profileOverlay.addEventListener(
-            "click",
-            event => {
-                if (
-                    event.target ===
-                    elements.profileOverlay
-                ) {
-                    closeProfile();
-                }
-            }
-        );
-
-        elements.logoutBtn.addEventListener(
-            "click",
-            logout
-        );
-
-        elements.mobileBackBtn.addEventListener(
-            "click",
-            () => {
-                window.history.back();
-            }
-        );
-
-        elements.attachBtn.addEventListener(
-            "click",
-            () => {
-                showToast(
-                    "Fitur lampiran akan ditambahkan nanti."
-                );
-            }
-        );
-
-        window.addEventListener(
-            "keydown",
-            event => {
-                if (
-                    event.key ===
-                        "Escape" &&
-                    state.profileOpen
-                ) {
-                    closeProfile();
-                }
-            }
-        );
-
-        window.addEventListener(
-            "pageshow",
-            async () => {
-                if (
-                    !state.user
-                ) {
-                    return;
-                }
-
-                await loadMessages({
-                    forceScroll:
-                        false,
-                    silent:
-                        true
-                });
-
-                await heartbeat();
-            }
-        );
-
-        document.addEventListener(
-            "visibilitychange",
-            async () => {
-                if (
-                    document.visibilityState !==
-                    "visible"
-                ) {
-                    return;
-                }
-
-                if (
-                    !state.user
-                ) {
-                    return;
-                }
-
-                await loadMessages({
-                    forceScroll:
-                        false,
-                    silent:
-                        true
-                });
-
-                await heartbeat();
-            }
-        );
-
-        async function init() {
-            try {
-                loadMessagesCache();
-
-                await loadMe();
-
-                await Promise.allSettled([
-                    loadGroup(),
-                    loadUsers()
-                ]);
-
-                await loadMessages({
-                    forceScroll:
-                        true,
-                    silent:
-                        false
-                });
-
-                await heartbeat();
-
-                startHeartbeat();
-                startPolling();
-            } catch (error) {
-                if (
-                    state.messages.length
-                ) {
-                    renderMessages();
-                } else {
-                    loadMessagesCache();
-                }
-
-                showToast(
-                    error.message ||
-                    "Gagal memuat chat"
-                );
-            }
-        }
-
-        init();
-    </script>
+<div class="app">
+<div class="shell">
+<header class="header">
+<div class="logo">R</div>
+<div class="brand"><strong>Marketplace</strong><span>Temukan produk terbaik</span></div>
+<div class="search">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+<input id="searchInput" placeholder="Cari produk...">
+</div>
+<div class="header-actions">
+<button class="icon-btn" id="ordersBtn" title="Pesanan">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12l2 5H4l2-5Z"></path><path d="M4 7h16v13H4z"></path><path d="M9 11h6"></path></svg>
+</button>
+<button class="icon-btn" id="cartBtn" title="Keranjang">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7H6"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg>
+<span class="cart-count" id="cartCount">0</span>
+</button>
+<button class="user-mini" id="profileBtn">
+<img id="headerAvatar" src="" alt="">
+<span class="user-mini-name" id="headerName">User</span>
+</button>
+</div>
+</header>
+
+<main class="main">
+<section class="hero">
+<div>
+<h1>Marketplace</h1>
+<p>Jual, temukan, dan beli produk dari komunitas.</p>
+</div>
+<button class="primary" id="sellBtn">＋ Jual Produk</button>
+</section>
+
+<div class="categories" id="categories"></div>
+
+<div class="section-head">
+<h2>Produk Terbaru</h2>
+<span id="resultInfo">Memuat...</span>
+</div>
+
+<section class="products" id="products"></section>
+
+<div class="load-more">
+<button class="secondary" id="loadMoreBtn" style="display:none">Muat lebih banyak</button>
+</div>
+</main>
+</div>
+</div>
+
+<div class="modal" id="detailModal">
+<div class="modal-card">
+<div class="modal-head">
+<h3>Detail Produk</h3>
+<button class="close" data-close="detailModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+</div>
+<div id="detailContent"></div>
+</div>
+</div>
+
+<div class="modal" id="sellModal">
+<div class="modal-card">
+<div class="modal-head">
+<h3>Jual Produk</h3>
+<button class="close" data-close="sellModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+</div>
+<form class="form" id="productForm">
+<div class="field"><label>Nama Produk</label><input name="name" maxlength="100" required placeholder="Contoh: Website Landing Page"></div>
+<div class="form-row">
+<div class="field"><label>Harga</label><input name="price" type="number" min="0" required placeholder="50000"></div>
+<div class="field"><label>Stock</label><input name="stock" type="number" min="0" required placeholder="10"></div>
+</div>
+<div class="field">
+<label>Kategori</label>
+<select name="category" required>
+<option value="">Pilih kategori</option>
+<option value="Digital">Digital</option>
+<option value="Game">Game</option>
+<option value="Design">Design</option>
+<option value="Website">Website</option>
+<option value="Source Code">Source Code</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+<div class="field"><label>Deskripsi</label><textarea name="description" maxlength="2000" required placeholder="Jelaskan produk kamu..."></textarea></div>
+<div class="field"><label>Foto Produk</label><input class="file-input" id="productImages" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required></div>
+<div class="preview-grid" id="imagePreview"></div>
+<button class="primary" id="publishBtn" type="submit">Terbitkan Produk</button>
+</form>
+</div>
+</div>
+
+<div class="drawer" id="cartDrawer">
+<div class="drawer-card">
+<div class="drawer-head">
+<h3>Keranjang</h3>
+<button class="close" data-close="cartDrawer">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+</div>
+<div class="drawer-body" id="cartBody"></div>
+<div class="cart-footer">
+<div class="total"><span>Total</span><strong id="cartTotal">Rp0</strong></div>
+<button class="primary" id="checkoutBtn" style="width:100%">Checkout</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="profileModal">
+<div class="modal-card" style="max-width:430px">
+<div class="modal-head">
+<h3>Profil</h3>
+<button class="close" data-close="profileModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+</div>
+<div class="profile" id="profileContent"></div>
+</div>
+</div>
+
+<div class="modal" id="ordersModal">
+<div class="modal-card">
+<div class="modal-head">
+<h3>Pesanan Saya</h3>
+<button class="close" data-close="ordersModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+</button>
+</div>
+<div class="form" id="ordersContent"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const state={
+user:null,
+products:[],
+page:1,
+limit:20,
+hasMore:false,
+loading:false,
+search:"",
+category:"",
+cart:null,
+selectedProduct:null
+};
+
+const $=id=>document.getElementById(id);
+
+function escapeHtml(value){
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function verified(){
+return `<span class="verified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.7 14.3 4l2.6-.1 1.4 2.2 2.3 1.1-.1 2.6 1.2 2.3-1.2 2.3.1 2.6-2.3 1.1-1.4 2.2-2.6-.1-2.3 1.3-2.3-1.3-2.6.1-1.4-2.2-2.3-1.1.1-2.6L2.3 12l1.2-2.3-.1-2.6 2.3-1.1 1.4-2.2 2.6.1L12 2.7Z"></path><path d="m8.1 12.3 2.3 2.3 5.5-5.5" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>`;
+}
+
+function avatar(url,name){
+if(url)return url;
+return `https://ui-avatars.com/api/?name=${encodeURIComponent(name||"User")}&background=10213a&color=fff&bold=true`;
+}
+
+function money(value){
+return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(value)||0);
+}
+
+function timeAgo(date){
+const diff=Math.max(0,Date.now()-new Date(date).getTime());
+const m=Math.floor(diff/60000);
+if(m<1)return"baru saja";
+if(m<60)return`${m} menit lalu`;
+const h=Math.floor(m/60);
+if(h<24)return`${h} jam lalu`;
+const d=Math.floor(h/24);
+if(d<30)return`${d} hari lalu`;
+return new Date(date).toLocaleDateString("id-ID");
+}
+
+async function api(url,options={}){
+const response=await fetch(url,{
+credentials:"include",
+cache:"no-store",
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+}
+});
+let data={};
+try{data=await response.json()}catch{}
+if(!response.ok)throw new Error(data.message||"Terjadi kesalahan");
+return data;
+}
+
+function toast(message){
+const el=$("toast");
+el.textContent=message;
+el.classList.add("show");
+clearTimeout(toast.timer);
+toast.timer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+
+function openModal(id){
+$(id).classList.add("open");
+document.body.style.overflow="hidden";
+}
+
+function closeModal(id){
+$(id).classList.remove("open");
+if(!document.querySelector(".modal.open,.drawer.open"))document.body.style.overflow="";
+}
+
+function renderCategories(){
+const list=["Semua","Digital","Game","Design","Website","Source Code","Lainnya"];
+$("categories").innerHTML=list.map(item=>{
+const value=item==="Semua"?"":item;
+return`<button class="category ${state.category===value?"active":""}" data-category="${escapeHtml(value)}">${item}</button>`;
+}).join("");
+}
+
+function renderProducts(){
+const box=$("products");
+if(state.loading&&!state.products.length){
+box.innerHTML=`<div class="loading">Memuat produk...</div>`;
+return;
+}
+if(!state.products.length){
+box.innerHTML=`<div class="empty"><div><strong>Belum ada produk</strong><span>Coba gunakan kata kunci lain atau jadilah penjual pertama.</span></div></div>`;
+$("resultInfo").textContent="0 produk";
+$("loadMoreBtn").style.display="none";
+return;
+}
+box.innerHTML=state.products.map(product=>{
+const seller=product.seller||{};
+const image=product.images?.[0]||"";
+const verifiedSeller=seller.emailVerified===true||seller.phoneVerified===true;
+return`
+<article class="product" data-product="${escapeHtml(product._id||product.id)}">
+<img class="product-image" src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" onerror="this.style.visibility='hidden'">
+<div class="product-body">
+<div class="product-name">${escapeHtml(product.name)}</div>
+<div class="product-price">${money(product.price)}</div>
+<div class="product-stock">${Number(product.stock)||0} stock</div>
+<div class="seller">
+<img src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}" alt="">
+<div class="seller-info">
+<div class="seller-name"><span>${escapeHtml(seller.name||"Seller")}</span>${verifiedSeller?verified():""}</div>
+<div class="seller-meta">${escapeHtml(product.category||"Lainnya")}</div>
+</div>
+<div class="comments-count">💬 ${Number(product.commentCount)||0}</div>
+</div>
+</div>
+</article>`;
+}).join("");
+$("resultInfo").textContent=`${state.products.length} produk`;
+$("loadMoreBtn").style.display=state.hasMore?"block":"none";
+}
+
+async function loadProducts(reset=true){
+if(state.loading)return;
+state.loading=true;
+if(reset){
+state.page=1;
+state.products=[];
+renderProducts();
+}
+try{
+const params=new URLSearchParams();
+params.set("action","products");
+params.set("page",state.page);
+params.set("limit",state.limit);
+if(state.search)params.set("search",state.search);
+if(state.category)params.set("category",state.category);
+const data=await api(`/api/chat?${params.toString()}`);
+const items=Array.isArray(data.products)?data.products:[];
+state.products=reset?items:[...state.products,...items];
+state.hasMore=Boolean(data.hasMore)||(items.length===state.limit);
+renderProducts();
+}catch(error){
+if(reset)$("products").innerHTML=`<div class="empty"><div><strong>Gagal memuat produk</strong><span>${escapeHtml(error.message)}</span></div></div>`;
+toast(error.message);
+}finally{
+state.loading=false;
+}
+}
+
+function openDetail(product){
+state.selectedProduct=product;
+const seller=product.seller||{};
+const verifiedSeller=seller.emailVerified===true||seller.phoneVerified===true;
+const images=Array.isArray(product.images)&&product.images.length?product.images:[""];
+$("detailContent").innerHTML=`
+<div class="detail-grid">
+<div>
+<img class="gallery-main" id="detailMainImage" src="${escapeHtml(images[0])}" alt="">
+<div class="thumbs">${images.map((img,i)=>`<img class="thumb" data-image="${escapeHtml(img)}" src="${escapeHtml(img)}" alt="">`).join("")}</div>
+</div>
+<div>
+<div class="detail-title">${escapeHtml(product.name)}</div>
+<div class="detail-price">${money(product.price)}</div>
+<div class="detail-category">${escapeHtml(product.category||"Lainnya")}</div>
+<div class="detail-desc">${escapeHtml(product.description||"Tidak ada deskripsi.")}</div>
+<div class="detail-seller">
+<img src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}" alt="">
+<div>
+<div class="detail-seller-name">${escapeHtml(seller.name||"Seller")}${verifiedSeller?verifiedSellerIcon(): ""}</div>
+<div class="detail-seller-sub">${Number(product.stock)||0} stock tersedia</div>
+</div>
+</div>
+<div class="detail-actions">
+<button class="primary" id="detailCartBtn">🛒 Tambah ke Keranjang</button>
+</div>
+</div>
+</div>
+<div class="comment-section">
+<div class="comment-title"><strong>Komentar</strong><span id="commentCount">Memuat...</span></div>
+<div class="comments-list" id="commentsList"><div class="loading" style="min-height:80px">Memuat komentar...</div></div>
+<div class="comment-form">
+<input id="commentInput" maxlength="1000" placeholder="Tulis komentar...">
+<button class="primary" id="commentSend">Kirim</button>
+</div>
+</div>`;
+openModal("detailModal");
+$("detailCartBtn").addEventListener("click",()=>addCart(product._id||product.id));
+$("commentSend").addEventListener("click",sendComment);
+$("commentInput").addEventListener("keydown",e=>{
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+sendComment();
+}
+});
+document.querySelectorAll(".thumb").forEach(el=>{
+el.addEventListener("click",()=>{$("detailMainImage").src=el.dataset.image});
+});
+loadComments(product._id||product.id);
+}
+
+function verifiedSellerIcon(){
+return verified();
+}
+
+async function loadComments(productId){
+try{
+const data=await api(`/api/chat?action=comments&productId=${encodeURIComponent(productId)}`);
+const comments=Array.isArray(data.comments)?data.comments:[];
+$("commentCount").textContent=`${comments.length} komentar`;
+if(!comments.length){
+$("commentsList").innerHTML=`<div class="empty" style="min-height:90px"><div><span>Belum ada komentar.</span></div></div>`;
+return;
+}
+$("commentsList").innerHTML=comments.map(comment=>{
+const user=comment.user||{};
+const verifiedUser=user.emailVerified===true||user.phoneVerified===true;
+return`
+<div class="comment">
+<img class="comment-avatar" src="${escapeHtml(avatar(user.avatarUrl,user.name))}" alt="">
+<div class="comment-content">
+<div class="comment-user"><span>${escapeHtml(user.name||"User")}</span>${verifiedUser?verified():""}</div>
+<div class="comment-text">${escapeHtml(comment.text)}</div>
+<div class="comment-meta">${timeAgo(comment.createdAt)}</div>
+</div>
+</div>`;
+}).join("");
+}catch(error){
+$("commentsList").innerHTML=`<div class="empty" style="min-height:90px"><div><span>Gagal memuat komentar.</span></div></div>`;
+}
+}
+
+async function sendComment(){
+const input=$("commentInput");
+const text=input.value.trim();
+if(!text||!state.selectedProduct)return;
+const button=$("commentSend");
+button.disabled=true;
+try{
+await api("/api/chat",{
+method:"POST",
+body:JSON.stringify({
+action:"addComment",
+productId:state.selectedProduct._id||state.selectedProduct.id,
+text
+})
+});
+input.value="";
+await loadComments(state.selectedProduct._id||state.selectedProduct.id);
+}catch(error){
+toast(error.message);
+}finally{
+button.disabled=false;
+}
+}
+
+async function addCart(productId){
+try{
+await api("/api/chat",{
+method:"POST",
+body:JSON.stringify({
+action:"addCart",
+productId,
+quantity:1
+})
+});
+toast("Produk ditambahkan ke keranjang");
+await loadCart();
+}catch(error){
+toast(error.message);
+}
+}
+
+async function loadCart(){
+try{
+const data=await api("/api/chat?action=cart");
+state.cart=data.cart||{items:[]};
+renderCart();
+}catch(error){
+state.cart={items:[]};
+renderCart();
+}
+}
+
+function renderCart(){
+const cart=state.cart||{items:[]};
+const items=Array.isArray(cart.items)?cart.items:[];
+let total=0;
+let count=0;
+if(!items.length){
+$("cartBody").innerHTML=`<div class="empty" style="min-height:260px"><div><strong>Keranjang kosong</strong><span>Tambahkan produk yang kamu suka.</span></div></div>`;
+$("cartTotal").textContent=money(0);
+$("cartCount").textContent="0";
+return;
+}
+$("cartBody").innerHTML=items.map(item=>{
+const product=item.product||item.productId||{};
+const price=Number(product.price??item.price)||0;
+const quantity=Math.max(1,Number(item.quantity)||1);
+total+=price*quantity;
+count+=quantity;
+return`
+<div class="cart-item">
+<img src="${escapeHtml(product.images?.[0]||item.image||"")}" alt="">
+<div class="cart-info">
+<div class="cart-name">${escapeHtml(product.name||item.name||"Produk")}</div>
+<div class="cart-price">${money(price)}</div>
+<div class="qty">
+<button data-cart-action="minus" data-product="${escapeHtml(product._id||product.id||item.productId)}">−</button>
+<span>${quantity}</span>
+<button data-cart-action="plus" data-product="${escapeHtml(product._id||product.id||item.productId)}">+</button>
+<button class="remove" data-cart-action="remove" data-product="${escapeHtml(product._id||product.id||item.productId)}">Hapus</button>
+</div>
+</div>
+</div>`;
+}).join("");
+$("cartTotal").textContent=money(total);
+$("cartCount").textContent=String(count);
+document.querySelectorAll("[data-cart-action]").forEach(btn=>{
+btn.addEventListener("click",()=>updateCart(btn.dataset.product,btn.dataset.cartAction));
+});
+}
+
+async function updateCart(productId,action){
+try{
+if(action==="remove"){
+await api("/api/chat",{method:"POST",body:JSON.stringify({action:"removeCart",productId,quantity:0})});
+}else{
+const current=(state.cart.items||[]).find(x=>String(x.product?._id||x.product?.id||x.productId)===String(productId));
+const quantity=Math.max(1,Number(current?.quantity)||1)+(action==="plus"?1:-1);
+if(quantity<=0){
+await api("/api/chat",{method:"POST",body:JSON.stringify({action:"removeCart",productId,quantity:0})});
+}else{
+await api("/api/chat",{method:"POST",body:JSON.stringify({action:"addCart",productId,quantity})});
+}
+}
+await loadCart();
+}catch(error){
+toast(error.message);
+}
+}
+
+async function checkout(){
+if(!state.cart?.items?.length){
+toast("Keranjang masih kosong");
+return;
+}
+const button=$("checkoutBtn");
+button.disabled=true;
+try{
+await api("/api/chat",{method:"POST",body:JSON.stringify({action:"checkout"})});
+toast("Checkout berhasil");
+await loadCart();
+closeModal("cartDrawer");
+}catch(error){
+toast(error.message);
+}finally{
+button.disabled=false;
+}
+}
+
+function openProfile(){
+const user=state.user||{};
+const verifiedUser=user.emailVerified===true||user.phoneVerified===true;
+$("profileContent").innerHTML=`
+<div class="profile-cover">${user.coverUrl?`<img src="${escapeHtml(user.coverUrl)}" alt="">`:""}</div>
+<img class="profile-avatar" src="${escapeHtml(avatar(user.avatarUrl,user.name))}" alt="">
+<div class="profile-name">${escapeHtml(user.name||"User")}${verifiedUser?verified():""}</div>
+<div class="profile-email">${escapeHtml(user.email||"")}</div>
+<div class="profile-actions">
+<button class="secondary" id="myProductsBtn">Produk Saya</button>
+<button class="secondary" id="logoutBtn">Keluar</button>
+</div>`;
+openModal("profileModal");
+$("myProductsBtn").addEventListener("click",loadMyProducts);
+$("logoutBtn").addEventListener("click",logout);
+}
+
+async function loadMyProducts(){
+try{
+const data=await api("/api/chat?action=myProducts");
+const products=Array.isArray(data.products)?data.products:[];
+$("profileContent").innerHTML=`
+<div class="section-head"><h2>Produk Saya</h2><span>${products.length} produk</span></div>
+<div class="products" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+${products.length?products.map(product=>`
+<article class="product" data-product="${escapeHtml(product._id||product.id)}">
+<img class="product-image" src="${escapeHtml(product.images?.[0]||"")}" alt="">
+<div class="product-body">
+<div class="product-name">${escapeHtml(product.name)}</div>
+<div class="product-price">${money(product.price)}</div>
+<div class="product-stock">${Number(product.stock)||0} stock</div>
+</div>
+</article>`).join(""):`<div class="empty" style="grid-column:1/-1;min-height:180px"><div><strong>Belum ada produk</strong><span>Mulai jual produkmu.</span></div></div>`}
+</div>
+<div style="margin-top:14px"><button class="secondary" id="backProfile" style="width:100%">Kembali</button></div>`;
+$("backProfile").addEventListener("click",openProfile);
+document.querySelectorAll("#profileContent .product").forEach(card=>{
+card.addEventListener("click",()=>{
+const product=products.find(x=>String(x._id||x.id)===String(card.dataset.product));
+if(product){
+closeModal("profileModal");
+openDetail(product);
+}
+});
+});
+}catch(error){
+toast(error.message);
+}
+}
+
+async function loadOrders(){
+openModal("ordersModal");
+$("ordersContent").innerHTML=`<div class="loading">Memuat pesanan...</div>`;
+try{
+const data=await api("/api/chat?action=orders");
+const orders=Array.isArray(data.orders)?data.orders:[];
+if(!orders.length){
+$("ordersContent").innerHTML=`<div class="empty" style="min-height:220px"><div><strong>Belum ada pesanan</strong><span>Pesanan kamu akan muncul di sini.</span></div></div>`;
+return;
+}
+$("ordersContent").innerHTML=orders.map(order=>`
+<div style="border:1px solid var(--border);border-radius:15px;padding:13px;background:rgba(255,255,255,.03)">
+<div style="display:flex;justify-content:space-between;gap:10px">
+<strong style="font-size:11px">Pesanan #${escapeHtml(String(order._id||"").slice(-8))}</strong>
+<span style="font-size:9px;color:#65b8ff">${escapeHtml(order.status||"pending")}</span>
+</div>
+<div style="font-size:10px;color:var(--muted);margin-top:5px">${new Date(order.createdAt).toLocaleString("id-ID")}</div>
+<div style="font-size:15px;font-weight:900;margin-top:9px">${money(order.total)}</div>
+</div>`).join("");
+}catch(error){
+$("ordersContent").innerHTML=`<div class="empty" style="min-height:220px"><div><strong>Gagal memuat pesanan</strong><span>${escapeHtml(error.message)}</span></div></div>`;
+}
+}
+
+async function logout(){
+try{
+await fetch("/api/auth/logout",{method:"POST",credentials:"include",cache:"no-store"});
+}catch{}
+window.location.href="/login";
+}
+
+function debounce(fn,delay){
+let timer;
+return(...args)=>{
+clearTimeout(timer);
+timer=setTimeout(()=>fn(...args),delay);
+};
+}
+
+$("searchInput").addEventListener("input",debounce(e=>{
+state.search=e.target.value.trim();
+loadProducts(true);
+},350));
+
+$("categories").addEventListener("click",e=>{
+const button=e.target.closest("[data-category]");
+if(!button)return;
+state.category=button.dataset.category;
+renderCategories();
+loadProducts(true);
+});
+
+$("products").addEventListener("click",e=>{
+const card=e.target.closest("[data-product]");
+if(!card)return;
+const product=state.products.find(x=>String(x._id||x.id)===String(card.dataset.product));
+if(product)openDetail(product);
+});
+
+$("loadMoreBtn").addEventListener("click",async()=>{
+state.page++;
+await loadProducts(false);
+});
+
+$("sellBtn").addEventListener("click",()=>openModal("sellModal"));
+$("cartBtn").addEventListener("click",async()=>{
+await loadCart();
+document.getElementById("cartDrawer").classList.add("open");
+document.body.style.overflow="hidden";
+});
+$("profileBtn").addEventListener("click",openProfile);
+$("ordersBtn").addEventListener("click",loadOrders);
+$("checkoutBtn").addEventListener("click",checkout);
+
+document.querySelectorAll("[data-close]").forEach(button=>{
+button.addEventListener("click",()=>closeModal(button.dataset.close));
+});
+
+document.querySelectorAll(".modal").forEach(modal=>{
+modal.addEventListener("click",e=>{
+if(e.target===modal)closeModal(modal.id);
+});
+});
+
+$("productImages").addEventListener("change",e=>{
+const files=[...e.target.files].slice(0,6);
+$("imagePreview").innerHTML="";
+files.forEach(file=>{
+const reader=new FileReader();
+reader.onload=event=>{
+const img=document.createElement("img");
+img.className="preview";
+img.src=event.target.result;
+$("imagePreview").appendChild(img);
+};
+reader.readAsDataURL(file);
+});
+});
+
+$("productForm").addEventListener("submit",async e=>{
+e.preventDefault();
+const button=$("publishBtn");
+const form=e.currentTarget;
+const files=[...$("productImages").files].slice(0,6);
+if(!files.length){
+toast("Pilih minimal satu foto");
+return;
+}
+button.disabled=true;
+button.textContent="Menerbitkan...";
+try{
+const data=new FormData();
+data.append("action","createProduct");
+data.append("name",form.name.value.trim());
+data.append("price",form.price.value);
+data.append("stock",form.stock.value);
+data.append("category",form.category.value);
+data.append("description",form.description.value.trim());
+files.forEach(file=>data.append("images",file));
+const response=await fetch("/api/chat",{
+method:"POST",
+credentials:"include",
+body:data,
+cache:"no-store"
+});
+const result=await response.json();
+if(!response.ok)throw new Error(result.message||"Gagal membuat produk");
+toast("Produk berhasil diterbitkan");
+form.reset();
+$("imagePreview").innerHTML="";
+closeModal("sellModal");
+await loadProducts(true);
+}catch(error){
+toast(error.message);
+}finally{
+button.disabled=false;
+button.textContent="Terbitkan Produk";
+}
+});
+
+async function init(){
+try{
+const me=await api("/api/user/me");
+state.user=me.user;
+$("headerName").textContent=state.user.name||"User";
+$("headerAvatar").src=avatar(state.user.avatarUrl,state.user.name);
+renderCategories();
+await Promise.all([loadProducts(true),loadCart()]);
+}catch(error){
+toast(error.message);
+if(error.message.toLowerCase().includes("login")||error.message.toLowerCase().includes("session")){
+window.location.href="/login";
+}
+}
+}
+
+init();
+</script>
 </body>
-    </html>
+</html>
