@@ -1,17 +1,15 @@
+import mongoose from "mongoose";
 import formidable from "formidable";
 import fs from "fs/promises";
-import mongoose from "mongoose";
-
-import { connectDB } from "./_lib/mongodb.js";
-import {
-    getAuthToken,
-    verifyToken
-} from "./_lib/auth.js";
 
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 import ProductComment from "../models/ProductComment.js";
+import User from "../models/User.js";
+
+import { connectDB } from "./_lib/mongodb.js";
+import { getAuthToken, verifyToken } from "./_lib/auth.js";
 import { uploadImage, deleteImage } from "../lib/upload.js";
 
 export const config = {
@@ -20,28 +18,75 @@ export const config = {
     }
 };
 
-function parseNumber(value, fallback = 0) {
-    const number = Number(value);
+const MAX_PRODUCT_IMAGES = 6;
+const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
 
-    if (!Number.isFinite(number)) {
-        return fallback;
-    }
-
-    return number;
+function response(res, status, data) {
+    return res.status(status).json(data);
 }
 
-function parsePositiveInt(value) {
-    const number = Number(value);
+function getField(value, fallback = "") {
+    if (Array.isArray(value)) {
+        return value[0] ?? fallback;
+    }
 
-    if (!Number.isInteger(number) || number < 1) {
+    return value ?? fallback;
+}
+
+function getFiles(files) {
+    const result = [];
+
+    for (const value of Object.values(files || {})) {
+        if (Array.isArray(value)) {
+            result.push(...value);
+        } else if (value) {
+            result.push(value);
+        }
+    }
+
+    return result;
+}
+
+function validId(value) {
+    return typeof value === "string" &&
+        mongoose.Types.ObjectId.isValid(value);
+}
+
+function normalizeUser(user) {
+    if (!user) {
         return null;
     }
 
-    return number;
+    return {
+        _id: user._id,
+        name: user.name || "User",
+        email: user.email || "",
+        whatsapp: user.whatsapp || "",
+        avatarUrl: user.avatarUrl || "",
+        coverUrl: user.coverUrl || "",
+        emailVerified: Boolean(user.emailVerified),
+        phoneVerified: Boolean(user.phoneVerified),
+        verified: Boolean(user.emailVerified || user.phoneVerified)
+    };
 }
 
-function isValidId(value) {
-    return mongoose.Types.ObjectId.isValid(value);
+function normalizeProduct(product) {
+    if (!product) {
+        return null;
+    }
+
+    const item = {
+        ...product
+    };
+
+    if (item.sellerId && typeof item.sellerId === "object") {
+        item.seller = normalizeUser(item.sellerId);
+        item.sellerId = item.seller?._id || item.sellerId;
+    }
+
+    delete item.__v;
+
+    return item;
 }
 
 async function parseJsonBody(req) {
@@ -49,997 +94,763 @@ async function parseJsonBody(req) {
         return req.body;
     }
 
-    return new Promise((resolve, reject) => {
-        let data = "";
+    const chunks = [];
 
-        req.on("data", chunk => {
-            data += chunk.toString();
-        });
-
-        req.on("end", () => {
-            if (!data.trim()) {
-                return resolve({});
-            }
-
-            try {
-                resolve(JSON.parse(data));
-            } catch {
-                reject(new Error("Format JSON tidak valid"));
-            }
-        });
-
-        req.on("error", reject);
-    });
-}
-
-function normalizeProduct(product, commentCount = 0) {
-    if (!product) {
-        return null;
+    for await (const chunk of req) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
     }
 
-    const seller =
-        product.sellerId &&
-        typeof product.sellerId === "object" &&
-        product.sellerId._id
-            ? {
-                id: product.sellerId._id.toString(),
-                name: product.sellerId.name || "Seller",
-                avatarUrl:
-                    product.sellerId.avatarUrl || "",
-                emailVerified:
-                    Boolean(
-                        product.sellerId.emailVerified
-                    ),
-                phoneVerified:
-                    Boolean(
-                        product.sellerId.phoneVerified
-                    )
-            }
-            : null;
+    if (!chunks.length) {
+        return {};
+    }
 
-    return {
-        id: product._id.toString(),
-        sellerId:
-            seller?.id ||
-            product.sellerId?.toString() ||
-            "",
-        seller,
-        name: product.name,
-        description: product.description || "",
-        price: product.price,
-        stock: product.stock,
-        category: product.category,
-        images: product.images || [],
-        status: product.status,
-        commentCount,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt
-    };
+    const raw = Buffer.concat(chunks).toString("utf8").trim();
+
+    if (!raw) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(raw);
+    } catch {
+        throw new Error("JSON tidak valid");
+    }
 }
 
 async function parseMultipart(req) {
     const form = formidable({
         multiples: true,
-        maxFiles: 6,
-        maxFileSize: 8 * 1024 * 1024,
+        maxFiles: MAX_PRODUCT_IMAGES,
+        maxFileSize: MAX_IMAGE_SIZE,
         keepExtensions: true,
         allowEmptyFiles: false
     });
 
-    const [fields, files] = await form.parse(req);
+    return await new Promise((resolve, reject) => {
+        form.parse(req, (error, fields, files) => {
+            if (error) {
+                reject(error);
+                return;
+            }
 
-    const normalizedFields = {};
+            resolve({
+                fields,
+                files
+            });
+        });
+    });
+}
 
-    for (const [key, value] of Object.entries(fields)) {
-        normalizedFields[key] =
-            Array.isArray(value)
-                ? value[0]
-                : value;
+async function authenticate(req) {
+    const token = getAuthToken(req);
+
+    if (!token) {
+        throw new Error("Belum login");
     }
 
-    const uploadedFiles = [];
+    const payload = await verifyToken(token);
 
-    for (const value of Object.values(files)) {
-        const list = Array.isArray(value)
-            ? value
-            : [value];
+    if (!payload?.userId) {
+        throw new Error("Session tidak valid");
+    }
 
-        for (const file of list) {
-            if (file) {
-                uploadedFiles.push(file);
+    return payload;
+}
+
+async function uploadProductImages(files, userId, productId = "") {
+    const uploaded = [];
+
+    if (!files.length) {
+        return uploaded;
+    }
+
+    if (files.length > MAX_PRODUCT_IMAGES) {
+        throw new Error(`Maksimal ${MAX_PRODUCT_IMAGES} gambar`);
+    }
+
+    try {
+        for (const file of files) {
+            if (!file?.filepath) {
+                continue;
             }
+
+            if (file.size > MAX_IMAGE_SIZE) {
+                throw new Error("Ukuran setiap gambar maksimal 8 MB");
+            }
+
+            const buffer = await fs.readFile(file.filepath);
+
+            const result = await uploadImage({
+                buffer,
+                contentType: file.mimetype,
+                userId,
+                type: "productImage",
+                productId: productId || new mongoose.Types.ObjectId().toString()
+            });
+
+            uploaded.push(result.url);
         }
-    }
 
-    return {
-        fields: normalizedFields,
-        files: uploadedFiles
-    };
+        return uploaded;
+    } catch (error) {
+        await Promise.allSettled(
+            uploaded.map(url => deleteImage(url))
+        );
+
+        throw error;
+    }
 }
 
-async function getCommentCounts(productIds) {
-    if (!productIds.length) {
-        return new Map();
-    }
+async function getProducts(req, res, userId = null) {
+    const {
+        search = "",
+        category = "",
+        sellerId = "",
+        page = "1",
+        limit = "20"
+    } = req.query;
 
-    const rows = await ProductComment.aggregate([
-        {
-            $match: {
-                productId: {
-                    $in: productIds
-                }
-            }
-        },
-        {
-            $group: {
-                _id: "$productId",
-                count: {
-                    $sum: 1
-                }
-            }
-        }
-    ]);
-
-    return new Map(
-        rows.map(row => [
-            row._id.toString(),
-            row.count
-        ])
-    );
-}
-
-async function getProductById(id) {
-    if (!id || !isValidId(id)) {
-        return null;
-    }
-
-    return Product.findById(id).populate(
-        "sellerId",
-        "_id name avatarUrl emailVerified phoneVerified"
-    );
-}
-
-async function getProducts(req) {
-    const search = String(
-        req.query?.search || ""
-    ).trim();
-
-    const category = String(
-        req.query?.category || ""
-    ).trim();
-
-    const sellerId = String(
-        req.query?.sellerId || ""
-    ).trim();
-
-    const page = Math.max(
-        1,
-        Math.floor(
-            parseNumber(
-                req.query?.page,
-                1
-            )
-        )
-    );
-
-    const limit = Math.min(
+    const currentPage = Math.max(1, Number.parseInt(page, 10) || 1);
+    const currentLimit = Math.min(
         50,
-        Math.max(
-            1,
-            Math.floor(
-                parseNumber(
-                    req.query?.limit,
-                    20
-                )
-            )
-        )
+        Math.max(1, Number.parseInt(limit, 10) || 20)
     );
 
     const filter = {
         status: "active"
     };
 
-    if (category) {
+    if (category && category !== "all") {
         filter.category = category;
     }
 
     if (sellerId) {
-        if (!isValidId(sellerId)) {
-            return {
-                products: [],
-                pagination: {
-                    page,
-                    limit,
-                    total: 0,
-                    pages: 0
-                }
-            };
+        if (!validId(sellerId)) {
+            return response(res, 400, {
+                success: false,
+                message: "Seller tidak valid"
+            });
         }
 
         filter.sellerId = sellerId;
     }
 
-    if (search) {
-        const safeSearch = search.slice(0, 100);
+    if (search.trim()) {
+        const keyword = search.trim().slice(0, 100);
 
         filter.$or = [
             {
                 name: {
-                    $regex: safeSearch,
+                    $regex: keyword,
                     $options: "i"
                 }
             },
             {
                 description: {
-                    $regex: safeSearch,
+                    $regex: keyword,
                     $options: "i"
                 }
             },
             {
                 category: {
-                    $regex: safeSearch,
+                    $regex: keyword,
                     $options: "i"
                 }
             }
         ];
     }
 
-    const skip = (page - 1) * limit;
+    const skip = (currentPage - 1) * currentLimit;
 
-    const [products, total] =
-        await Promise.all([
-            Product.find(filter)
-                .populate(
-                    "sellerId",
-                    "_id name avatarUrl emailVerified phoneVerified"
-                )
-                .sort({
-                    createdAt: -1
-                })
-                .skip(skip)
-                .limit(limit)
-                .lean(),
+    const [products, total] = await Promise.all([
+        Product.find(filter)
+            .populate({
+                path: "sellerId",
+                model: User,
+                select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+            })
+            .sort({
+                createdAt: -1
+            })
+            .skip(skip)
+            .limit(currentLimit)
+            .lean(),
 
-            Product.countDocuments(filter)
-        ]);
+        Product.countDocuments(filter)
+    ]);
 
-    const productIds =
-        products.map(
-            product => product._id
-        );
+    const productIds = products.map(product => product._id);
 
-    const commentCounts =
-        await getCommentCounts(
-            productIds
-        );
+    const comments = productIds.length
+        ? await ProductComment.aggregate([
+            {
+                $match: {
+                    productId: {
+                        $in: productIds
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$productId",
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ])
+        : [];
 
-    return {
-        products: products.map(
-            product =>
-                normalizeProduct(
-                    product,
-                    commentCounts.get(
-                        product._id.toString()
-                    ) || 0
-                )
-        ),
+    const commentMap = new Map(
+        comments.map(item => [
+            item._id.toString(),
+            item.count
+        ])
+    );
+
+    const result = products.map(product => {
+        const normalized = normalizeProduct(product);
+
+        normalized.commentCount =
+            commentMap.get(product._id.toString()) || 0;
+
+        normalized.isOwner =
+            Boolean(userId) &&
+            String(product.sellerId?._id || product.sellerId) === String(userId);
+
+        return normalized;
+    });
+
+    return response(res, 200, {
+        success: true,
+        products: result,
         pagination: {
-            page,
-            limit,
+            page: currentPage,
+            limit: currentLimit,
             total,
-            pages: Math.ceil(
-                total / limit
-            )
+            pages: Math.ceil(total / currentLimit),
+            hasMore: skip + result.length < total
         }
-    };
+    });
 }
 
-async function createProduct(
-    userId,
-    fields,
-    files
-) {
-    const name = String(
-        fields.name || ""
-    ).trim();
+async function getProduct(req, res, userId) {
+    const productId = getField(req.query.id);
 
-    const description = String(
-        fields.description || ""
-    ).trim();
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID produk tidak valid"
+        });
+    }
 
-    const category = String(
-        fields.category || ""
-    ).trim();
+    const product = await Product.findById(productId)
+        .populate({
+            path: "sellerId",
+            model: User,
+            select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+        })
+        .lean();
 
-    const price = parseNumber(
-        fields.price,
-        -1
-    );
+    if (!product) {
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
+        });
+    }
 
-    const stock = parseNumber(
-        fields.stock,
-        -1
-    );
+    const commentCount = await ProductComment.countDocuments({
+        productId
+    });
+
+    const result = normalizeProduct(product);
+
+    result.commentCount = commentCount;
+    result.isOwner =
+        String(product.sellerId?._id || product.sellerId) === String(userId);
+
+    return response(res, 200, {
+        success: true,
+        product: result
+    });
+}
+
+async function getMyProducts(req, res, userId) {
+    const products = await Product.find({
+        sellerId: userId
+    })
+        .sort({
+            createdAt: -1
+        })
+        .lean();
+
+    return response(res, 200, {
+        success: true,
+        products: products.map(product => ({
+            ...normalizeProduct(product),
+            isOwner: true
+        }))
+    });
+}
+
+async function createProduct(req, res, userId) {
+    const { fields, files } = await parseMultipart(req);
+
+    const name = getField(fields.name).trim();
+    const description = getField(fields.description).trim();
+    const category = getField(fields.category).trim();
+    const price = Number(getField(fields.price));
+    const stock = Number(getField(fields.stock));
 
     if (!name) {
-        throw new Error(
-            "Nama produk wajib diisi"
-        );
+        return response(res, 400, {
+            success: false,
+            message: "Nama produk wajib diisi"
+        });
     }
 
     if (name.length > 100) {
-        throw new Error(
-            "Nama produk maksimal 100 karakter"
-        );
-    }
-
-    if (description.length > 2000) {
-        throw new Error(
-            "Deskripsi maksimal 2000 karakter"
-        );
+        return response(res, 400, {
+            success: false,
+            message: "Nama produk maksimal 100 karakter"
+        });
     }
 
     if (!category) {
-        throw new Error(
-            "Kategori wajib diisi"
-        );
+        return response(res, 400, {
+            success: false,
+            message: "Kategori wajib dipilih"
+        });
     }
 
-    if (category.length > 40) {
-        throw new Error(
-            "Kategori maksimal 40 karakter"
-        );
+    if (!Number.isFinite(price) || price < 0) {
+        return response(res, 400, {
+            success: false,
+            message: "Harga tidak valid"
+        });
     }
 
-    if (price < 0) {
-        throw new Error(
-            "Harga tidak valid"
-        );
+    if (!Number.isInteger(stock) || stock < 0) {
+        return response(res, 400, {
+            success: false,
+            message: "Stock tidak valid"
+        });
     }
 
-    if (
-        stock < 0 ||
-        !Number.isInteger(stock)
-    ) {
-        throw new Error(
-            "Stok tidak valid"
-        );
+    if (description.length > 2000) {
+        return response(res, 400, {
+            success: false,
+            message: "Deskripsi maksimal 2000 karakter"
+        });
     }
 
-    if (files.length > 6) {
-        throw new Error(
-            "Maksimal 6 gambar produk"
-        );
+    const imageFiles = getFiles(files);
+
+    if (imageFiles.length > MAX_PRODUCT_IMAGES) {
+        return response(res, 400, {
+            success: false,
+            message: `Maksimal ${MAX_PRODUCT_IMAGES} gambar`
+        });
     }
 
-    const product =
-        await Product.create({
+    const productId = new mongoose.Types.ObjectId();
+
+    let images = [];
+
+    try {
+        images = await uploadProductImages(
+            imageFiles,
+            userId,
+            productId.toString()
+        );
+
+        const product = await Product.create({
+            _id: productId,
             sellerId: userId,
             name,
             description,
             price,
             stock,
             category,
-            images: []
+            images,
+            status: "active"
         });
 
-    const uploaded = [];
+        const populated = await Product.findById(product._id)
+            .populate({
+                path: "sellerId",
+                model: User,
+                select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+            })
+            .lean();
 
-    try {
-        for (const file of files) {
-            const buffer =
-                await fs.readFile(
-                    file.filepath
-                );
-
-            const result =
-                await uploadImage({
-                    buffer,
-                    contentType:
-                        file.mimetype,
-                    userId,
-                    type:
-                        "productImage",
-                    productId:
-                        product._id.toString()
-                });
-
-            uploaded.push(
-                result.url
-            );
-        }
-
-        product.images =
-            uploaded;
-
-        await product.save();
+        return response(res, 201, {
+            success: true,
+            message: "Produk berhasil diterbitkan",
+            product: normalizeProduct(populated)
+        });
     } catch (error) {
-        for (const url of uploaded) {
-            await deleteImage(
-                url
-            ).catch(
-                () => {}
-            );
-        }
-
-        await Product.findByIdAndDelete(
-            product._id
+        await Promise.allSettled(
+            images.map(url => deleteImage(url))
         );
 
         throw error;
     }
-
-    const populated =
-        await getProductById(
-            product._id
-        );
-
-    return normalizeProduct(
-        populated
-    );
 }
 
-async function updateProduct(
-    userId,
-    fields,
-    files
-) {
+async function updateProduct(req, res, userId) {
+    const { fields, files } = await parseMultipart(req);
+
+    const productId = getField(fields.productId);
+
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID produk tidak valid"
+        });
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
+        });
+    }
+
+    if (String(product.sellerId) !== String(userId)) {
+        return response(res, 403, {
+            success: false,
+            message: "Kamu bukan pemilik produk ini"
+        });
+    }
+
+    const update = {};
+
+    const name = getField(fields.name, null);
+    const description = getField(fields.description, null);
+    const category = getField(fields.category, null);
+    const priceRaw = getField(fields.price, null);
+    const stockRaw = getField(fields.stock, null);
+    const status = getField(fields.status, null);
+
+    if (name !== null) {
+        if (!name.trim() || name.trim().length > 100) {
+            return response(res, 400, {
+                success: false,
+                message: "Nama produk tidak valid"
+            });
+        }
+
+        update.name = name.trim();
+    }
+
+    if (description !== null) {
+        if (description.length > 2000) {
+            return response(res, 400, {
+                success: false,
+                message: "Deskripsi maksimal 2000 karakter"
+            });
+        }
+
+        update.description = description.trim();
+    }
+
+    if (category !== null) {
+        if (!category.trim() || category.trim().length > 40) {
+            return response(res, 400, {
+                success: false,
+                message: "Kategori tidak valid"
+            });
+        }
+
+        update.category = category.trim();
+    }
+
+    if (priceRaw !== null) {
+        const price = Number(priceRaw);
+
+        if (!Number.isFinite(price) || price < 0) {
+            return response(res, 400, {
+                success: false,
+                message: "Harga tidak valid"
+            });
+        }
+
+        update.price = price;
+    }
+
+    if (stockRaw !== null) {
+        const stock = Number(stockRaw);
+
+        if (!Number.isInteger(stock) || stock < 0) {
+            return response(res, 400, {
+                success: false,
+                message: "Stock tidak valid"
+            });
+        }
+
+        update.stock = stock;
+    }
+
+    if (status !== null) {
+        if (!["active", "inactive"].includes(status)) {
+            return response(res, 400, {
+                success: false,
+                message: "Status produk tidak valid"
+            });
+        }
+
+        update.status = status;
+    }
+
+    const imageFiles = getFiles(files);
+    let newImages = [];
+
+    if (imageFiles.length) {
+        newImages = await uploadProductImages(
+            imageFiles,
+            userId,
+            productId
+        );
+
+        update.images = newImages;
+    }
+
+    const oldImages = product.images || [];
+
+    try {
+        await Product.findByIdAndUpdate(
+            productId,
+            {
+                $set: update
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (newImages.length && oldImages.length) {
+            await Promise.allSettled(
+                oldImages.map(url => deleteImage(url))
+            );
+        }
+
+        const updated = await Product.findById(productId)
+            .populate({
+                path: "sellerId",
+                model: User,
+                select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+            })
+            .lean();
+
+        return response(res, 200, {
+            success: true,
+            message: "Produk berhasil diperbarui",
+            product: normalizeProduct(updated)
+        });
+    } catch (error) {
+        await Promise.allSettled(
+            newImages.map(url => deleteImage(url))
+        );
+
+        throw error;
+    }
+}
+
+async function deleteProduct(req, res, userId) {
     const productId =
-        String(
-            fields.productId || ""
-        ).trim();
+        getField(req.query.id) ||
+        getField(req.body?.productId);
 
-    if (
-        !productId ||
-        !isValidId(productId)
-    ) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID produk tidak valid"
+        });
     }
 
-    const product =
-        await Product.findOne({
-            _id: productId,
-            sellerId: userId
-        });
+    const product = await Product.findById(productId);
 
     if (!product) {
-        throw new Error(
-            "Produk tidak ditemukan"
-        );
-    }
-
-    if (
-        fields.name !== undefined
-    ) {
-        const name =
-            String(
-                fields.name
-            ).trim();
-
-        if (!name) {
-            throw new Error(
-                "Nama produk wajib diisi"
-            );
-        }
-
-        if (name.length > 100) {
-            throw new Error(
-                "Nama produk maksimal 100 karakter"
-            );
-        }
-
-        product.name =
-            name;
-    }
-
-    if (
-        fields.description !==
-        undefined
-    ) {
-        const description =
-            String(
-                fields.description
-            ).trim();
-
-        if (
-            description.length >
-            2000
-        ) {
-            throw new Error(
-                "Deskripsi maksimal 2000 karakter"
-            );
-        }
-
-        product.description =
-            description;
-    }
-
-    if (
-        fields.category !==
-        undefined
-    ) {
-        const category =
-            String(
-                fields.category
-            ).trim();
-
-        if (!category) {
-            throw new Error(
-                "Kategori wajib diisi"
-            );
-        }
-
-        if (
-            category.length >
-            40
-        ) {
-            throw new Error(
-                "Kategori maksimal 40 karakter"
-            );
-        }
-
-        product.category =
-            category;
-    }
-
-    if (
-        fields.price !==
-        undefined
-    ) {
-        const price =
-            parseNumber(
-                fields.price,
-                -1
-            );
-
-        if (price < 0) {
-            throw new Error(
-                "Harga tidak valid"
-            );
-        }
-
-        product.price =
-            price;
-    }
-
-    if (
-        fields.stock !==
-        undefined
-    ) {
-        const stock =
-            parseNumber(
-                fields.stock,
-                -1
-            );
-
-        if (
-            stock < 0 ||
-            !Number.isInteger(stock)
-        ) {
-            throw new Error(
-                "Stok tidak valid"
-            );
-        }
-
-        product.stock =
-            stock;
-    }
-
-    if (
-        fields.status !==
-        undefined
-    ) {
-        const status =
-            String(
-                fields.status
-            ).trim();
-
-        if (
-            ![
-                "active",
-                "inactive"
-            ].includes(status)
-        ) {
-            throw new Error(
-                "Status produk tidak valid"
-            );
-        }
-
-        product.status =
-            status;
-    }
-
-    const replaceImages =
-        String(
-            fields.replaceImages ||
-            ""
-        ).toLowerCase() ===
-        "true";
-
-    const oldImages =
-        replaceImages
-            ? [...product.images]
-            : [];
-
-    if (replaceImages) {
-        product.images = [];
-    }
-
-    if (files.length) {
-        if (files.length > 6) {
-            throw new Error(
-                "Maksimal 6 gambar produk"
-            );
-        }
-
-        if (
-            product.images.length +
-            files.length >
-            6
-        ) {
-            throw new Error(
-                "Total gambar produk maksimal 6"
-            );
-        }
-
-        const uploaded = [];
-
-        try {
-            for (const file of files) {
-                const buffer =
-                    await fs.readFile(
-                        file.filepath
-                    );
-
-                const result =
-                    await uploadImage({
-                        buffer,
-                        contentType:
-                            file.mimetype,
-                        userId,
-                        type:
-                            "productImage",
-                        productId:
-                            product._id.toString()
-                    });
-
-                uploaded.push(
-                    result.url
-                );
-            }
-
-            product.images.push(
-                ...uploaded
-            );
-        } catch (error) {
-            for (const url of uploaded) {
-                await deleteImage(
-                    url
-                ).catch(
-                    () => {}
-                );
-            }
-
-            throw error;
-        }
-    }
-
-    await product.save();
-
-    if (replaceImages) {
-        for (const url of oldImages) {
-            await deleteImage(
-                url
-            ).catch(
-                () => {}
-            );
-        }
-    }
-
-    const populated =
-        await getProductById(
-            product._id
-        );
-
-    const commentCount =
-        await ProductComment.countDocuments({
-            productId:
-                product._id
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
         });
-
-    return normalizeProduct(
-        populated,
-        commentCount
-    );
-}
-
-async function deleteProduct(
-    userId,
-    productId
-) {
-    if (!isValidId(productId)) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
     }
 
-    const product =
-        await Product.findOne({
-            _id: productId,
-            sellerId: userId
+    if (String(product.sellerId) !== String(userId)) {
+        return response(res, 403, {
+            success: false,
+            message: "Kamu bukan pemilik produk ini"
         });
-
-    if (!product) {
-        throw new Error(
-            "Produk tidak ditemukan"
-        );
     }
 
-    await Product.findByIdAndDelete(
-        product._id
-    );
-
-    for (const url of product.images) {
-        await deleteImage(
-            url
-        ).catch(
-            () => {}
-        );
-    }
+    await Product.findByIdAndDelete(productId);
 
     await Cart.updateMany(
-        {},
+        {
+            "items.productId": productId
+        },
         {
             $pull: {
                 items: {
-                    productId:
-                        product._id
+                    productId
                 }
             }
         }
     );
 
-    await ProductComment.deleteMany({
-        productId:
-            product._id
+    await Promise.allSettled(
+        (product.images || []).map(url => deleteImage(url))
+    );
+
+    return response(res, 200, {
+        success: true,
+        message: "Produk berhasil dihapus"
+    });
+}
+
+async function getCart(req, res, userId) {
+    let cart = await Cart.findOne({
+        userId
+    })
+        .populate({
+            path: "items.productId",
+            populate: {
+                path: "sellerId",
+                model: User,
+                select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+            }
+        })
+        .lean();
+
+    if (!cart) {
+        return response(res, 200, {
+            success: true,
+            cart: {
+                _id: null,
+                userId,
+                items: [],
+                total: 0,
+                count: 0
+            }
+        });
+    }
+
+    const items = (cart.items || [])
+        .filter(item => item.productId)
+        .map(item => {
+            const product = normalizeProduct(item.productId);
+
+            return {
+                productId: product._id,
+                quantity: item.quantity,
+                product
+            };
+        });
+
+    const total = items.reduce(
+        (sum, item) =>
+            sum + Number(item.product.price || 0) * item.quantity,
+        0
+    );
+
+    const count = items.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+    );
+
+    return response(res, 200, {
+        success: true,
+        cart: {
+            _id: cart._id,
+            userId: cart.userId,
+            items,
+            total,
+            count
+        }
+    });
+}
+
+async function addCart(req, res, userId) {
+    const body = await parseJsonBody(req);
+
+    const productId = body.productId;
+    const quantity = Number(body.quantity ?? 1);
+
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "Produk tidak valid"
+        });
+    }
+
+    if (!Number.isInteger(quantity) || quantity < 1) {
+        return response(res, 400, {
+            success: false,
+            message: "Quantity tidak valid"
+        });
+    }
+
+    const product = await Product.findOne({
+        _id: productId,
+        status: "active"
     });
 
-    return true;
-}
-
-async function getMyProducts(
-    userId
-) {
-    const products =
-        await Product.find({
-            sellerId: userId
-        })
-            .populate(
-                "sellerId",
-                "_id name avatarUrl emailVerified phoneVerified"
-            )
-            .sort({
-                createdAt: -1
-            })
-            .lean();
-
-    const commentCounts =
-        await getCommentCounts(
-            products.map(
-                product =>
-                    product._id
-            )
-        );
-
-    return products.map(
-        product =>
-            normalizeProduct(
-                product,
-                commentCounts.get(
-                    product._id.toString()
-                ) || 0
-            )
-    );
-}
-
-async function getCart(
-    userId
-) {
-    const cart =
-        await Cart.findOne({
-            userId
-        })
-            .populate({
-                path: "items.productId",
-                populate: {
-                    path: "sellerId",
-                    select:
-                        "_id name avatarUrl emailVerified phoneVerified"
-                }
-            })
-            .lean();
-
-    if (!cart) {
-        return {
-            id: null,
-            items: [],
-            total: 0
-        };
-    }
-
-    const items =
-        cart.items
-            .filter(
-                item =>
-                    item.productId
-            )
-            .map(
-                item => {
-                    const product =
-                        item.productId;
-
-                    const quantity =
-                        Math.max(
-                            1,
-                            item.quantity
-                        );
-
-                    const subtotal =
-                        product.price *
-                        quantity;
-
-                    return {
-                        productId:
-                            product._id.toString(),
-                        quantity,
-                        name:
-                            product.name,
-                        price:
-                            product.price,
-                        stock:
-                            product.stock,
-                        image:
-                            product.images?.[0] ||
-                            "",
-                        images:
-                            product.images ||
-                            [],
-                        category:
-                            product.category,
-                        status:
-                            product.status,
-                        seller:
-                            product.sellerId
-                                ? {
-                                    id:
-                                        product.sellerId._id.toString(),
-                                    name:
-                                        product.sellerId.name,
-                                    avatarUrl:
-                                        product.sellerId.avatarUrl ||
-                                        "",
-                                    emailVerified:
-                                        Boolean(
-                                            product.sellerId.emailVerified
-                                        )
-                                }
-                                : null,
-                        subtotal
-                    };
-                }
-            );
-
-    return {
-        id:
-            cart._id.toString(),
-        items,
-        total:
-            items.reduce(
-                (sum, item) =>
-                    sum +
-                    item.subtotal,
-                0
-            )
-    };
-}
-
-async function addCartItem(
-    userId,
-    productId,
-    quantity
-) {
-    if (!isValidId(productId)) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
-    }
-
-    const product =
-        await Product.findOne({
-            _id: productId,
-            status: "active"
-        });
-
     if (!product) {
-        throw new Error(
-            "Produk tidak ditemukan"
-        );
-    }
-
-    if (
-        product.sellerId.toString() ===
-        userId.toString()
-    ) {
-        throw new Error(
-            "Kamu tidak bisa membeli produk sendiri"
-        );
-    }
-
-    let cart =
-        await Cart.findOne({
-            userId
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
         });
+    }
+
+    if (String(product.sellerId) === String(userId)) {
+        return response(res, 400, {
+            success: false,
+            message: "Kamu tidak bisa membeli produk sendiri"
+        });
+    }
+
+    if (product.stock < quantity) {
+        return response(res, 400, {
+            success: false,
+            message: "Stock tidak mencukupi"
+        });
+    }
+
+    let cart = await Cart.findOne({
+        userId
+    });
 
     if (!cart) {
-        if (
-            quantity >
-            product.stock
-        ) {
-            throw new Error(
-                "Stok produk tidak mencukupi"
-            );
-        }
-
-        await Cart.create({
+        cart = new Cart({
             userId,
-            items: [
-                {
-                    productId,
-                    quantity
-                }
-            ]
+            items: []
         });
-
-        return getCart(
-            userId
-        );
     }
 
-    const item =
-        cart.items.find(
-            item =>
-                item.productId.toString() ===
-                productId.toString()
-        );
+    const existing = cart.items.find(
+        item => String(item.productId) === String(productId)
+    );
 
-    if (item) {
-        const next =
-            item.quantity +
-            quantity;
+    const nextQuantity =
+        existing
+            ? existing.quantity + quantity
+            : quantity;
 
-        if (
-            next >
-            product.stock
-        ) {
-            throw new Error(
-                "Jumlah melebihi stok"
-            );
-        }
+    if (nextQuantity > product.stock) {
+        return response(res, 400, {
+            success: false,
+            message: "Jumlah melebihi stock"
+        });
+    }
 
-        item.quantity =
-            next;
+    if (existing) {
+        existing.quantity = nextQuantity;
     } else {
-        if (
-            quantity >
-            product.stock
-        ) {
-            throw new Error(
-                "Stok produk tidak mencukupi"
-            );
-        }
-
         cart.items.push({
             productId,
             quantity
@@ -1048,307 +859,236 @@ async function addCartItem(
 
     await cart.save();
 
-    return getCart(
-        userId
-    );
+    return response(res, 200, {
+        success: true,
+        message: "Produk masuk keranjang"
+    });
 }
 
-async function updateCartItem(
-    userId,
-    productId,
-    quantity
-) {
-    if (!isValidId(productId)) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
-    }
+async function updateCart(req, res, userId) {
+    const body = await parseJsonBody(req);
 
-    if (
-        !Number.isInteger(quantity) ||
-        quantity < 1
-    ) {
-        throw new Error(
-            "Jumlah cart tidak valid"
-        );
-    }
+    const productId = body.productId;
+    const quantity = Number(body.quantity);
 
-    const product =
-        await Product.findOne({
-            _id: productId,
-            status: "active"
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "Produk tidak valid"
         });
+    }
+
+    if (!Number.isInteger(quantity) || quantity < 1) {
+        return response(res, 400, {
+            success: false,
+            message: "Quantity minimal 1"
+        });
+    }
+
+    const product = await Product.findOne({
+        _id: productId,
+        status: "active"
+    });
 
     if (!product) {
-        throw new Error(
-            "Produk tidak ditemukan"
-        );
-    }
-
-    if (
-        product.sellerId.toString() ===
-        userId.toString()
-    ) {
-        throw new Error(
-            "Produk sendiri tidak dapat dibeli"
-        );
-    }
-
-    if (
-        quantity >
-        product.stock
-    ) {
-        throw new Error(
-            "Jumlah melebihi stok"
-        );
-    }
-
-    const cart =
-        await Cart.findOne({
-            userId
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
         });
+    }
+
+    if (quantity > product.stock) {
+        return response(res, 400, {
+            success: false,
+            message: "Quantity melebihi stock"
+        });
+    }
+
+    const cart = await Cart.findOne({
+        userId
+    });
 
     if (!cart) {
-        throw new Error(
-            "Keranjang tidak ditemukan"
-        );
+        return response(res, 404, {
+            success: false,
+            message: "Keranjang tidak ditemukan"
+        });
     }
 
-    const item =
-        cart.items.find(
-            item =>
-                item.productId.toString() ===
-                productId.toString()
-        );
+    const item = cart.items.find(
+        value => String(value.productId) === String(productId)
+    );
 
     if (!item) {
-        throw new Error(
-            "Produk tidak ada di keranjang"
-        );
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ada di keranjang"
+        });
     }
 
-    item.quantity =
-        quantity;
+    item.quantity = quantity;
 
     await cart.save();
 
-    return getCart(
-        userId
-    );
+    return response(res, 200, {
+        success: true,
+        message: "Keranjang diperbarui"
+    });
 }
 
-async function removeCartItem(
-    userId,
-    productId,
-    quantity = null
-) {
-    if (!isValidId(productId)) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
+async function removeCart(req, res, userId) {
+    const body = req.method === "POST"
+        ? await parseJsonBody(req)
+        : {};
+
+    const productId =
+        body.productId ||
+        getField(req.query.productId);
+
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "Produk tidak valid"
+        });
     }
 
-    const cart =
-        await Cart.findOne({
-            userId
-        });
+    const cart = await Cart.findOne({
+        userId
+    });
 
     if (!cart) {
-        return getCart(
-            userId
-        );
+        return response(res, 404, {
+            success: false,
+            message: "Keranjang tidak ditemukan"
+        });
     }
 
-    const index =
-        cart.items.findIndex(
-            item =>
-                item.productId.toString() ===
-                productId.toString()
-        );
-
-    if (index === -1) {
-        return getCart(
-            userId
-        );
-    }
-
-    if (quantity === null) {
-        cart.items.splice(
-            index,
-            1
-        );
-    } else {
-        if (
-            !Number.isInteger(quantity) ||
-            quantity < 1
-        ) {
-            throw new Error(
-                "Jumlah tidak valid"
-            );
-        }
-
-        cart.items[index].quantity -=
-            quantity;
-
-        if (
-            cart.items[index].quantity <=
-            0
-        ) {
-            cart.items.splice(
-                index,
-                1
-            );
-        }
-    }
+    cart.items = cart.items.filter(
+        item => String(item.productId) !== String(productId)
+    );
 
     await cart.save();
 
-    return getCart(
-        userId
-    );
+    return response(res, 200, {
+        success: true,
+        message: "Produk dihapus dari keranjang"
+    });
 }
 
-async function checkout(
-    userId
-) {
-    const cart =
-        await Cart.findOne({
-            userId
-        }).populate(
-            "items.productId"
-        );
+async function checkout(req, res, userId) {
+    const cart = await Cart.findOne({
+        userId
+    }).lean();
 
-    if (
-        !cart ||
-        !cart.items.length
-    ) {
-        throw new Error(
-            "Keranjang masih kosong"
-        );
+    if (!cart || !cart.items?.length) {
+        return response(res, 400, {
+            success: false,
+            message: "Keranjang masih kosong"
+        });
     }
+
+    const productIds = cart.items.map(item => item.productId);
+
+    const products = await Product.find({
+        _id: {
+            $in: productIds
+        },
+        status: "active"
+    }).lean();
+
+    const productMap = new Map(
+        products.map(product => [
+            product._id.toString(),
+            product
+        ])
+    );
 
     const orderItems = [];
-    let total = 0;
 
-    for (
-        const cartItem of cart.items
-    ) {
-        const product =
-            cartItem.productId;
+    for (const cartItem of cart.items) {
+        const product = productMap.get(
+            cartItem.productId.toString()
+        );
 
         if (!product) {
-            throw new Error(
-                "Ada produk di keranjang yang sudah tidak tersedia"
-            );
+            return response(res, 400, {
+                success: false,
+                message: "Ada produk di keranjang yang sudah tidak tersedia"
+            });
         }
 
-        if (
-            product.status !==
-            "active"
-        ) {
-            throw new Error(
-                `Produk ${product.name} tidak tersedia`
-            );
+        if (String(product.sellerId) === String(userId)) {
+            return response(res, 400, {
+                success: false,
+                message: "Kamu tidak bisa membeli produk sendiri"
+            });
         }
 
-        if (
-            product.sellerId.toString() ===
-            userId.toString()
-        ) {
-            throw new Error(
-                `Produk ${product.name} adalah produk kamu sendiri`
-            );
+        if (product.stock < cartItem.quantity) {
+            return response(res, 400, {
+                success: false,
+                message: `Stock produk "${product.name}" tidak mencukupi`
+            });
         }
-
-        if (
-            product.stock <
-            cartItem.quantity
-        ) {
-            throw new Error(
-                `Stok ${product.name} tidak mencukupi`
-            );
-        }
-
-        const subtotal =
-            product.price *
-            cartItem.quantity;
 
         orderItems.push({
-            productId:
-                product._id,
-            sellerId:
-                product.sellerId,
-            name:
-                product.name,
-            image:
-                product.images?.[0] ||
-                "",
-            price:
-                product.price,
-            quantity:
-                cartItem.quantity,
-            subtotal
+            productId: product._id,
+            sellerId: product.sellerId,
+            name: product.name,
+            image: product.images?.[0] || "",
+            price: product.price,
+            quantity: cartItem.quantity,
+            subtotal: product.price * cartItem.quantity
         });
-
-        total +=
-            subtotal;
     }
 
-    const updatedProducts = [];
+    const decremented = [];
 
     try {
-        for (
-            const item of orderItems
-        ) {
-            const updated =
-                await Product.findOneAndUpdate(
-                    {
-                        _id:
-                            item.productId,
-                        stock: {
-                            $gte:
-                                item.quantity
-                        },
-                        status:
-                            "active"
-                    },
-                    {
-                        $inc: {
-                            stock:
-                                -item.quantity
-                        }
-                    },
-                    {
-                        new: true
+        for (const item of orderItems) {
+            const updated = await Product.findOneAndUpdate(
+                {
+                    _id: item.productId,
+                    status: "active",
+                    stock: {
+                        $gte: item.quantity
                     }
-                );
+                },
+                {
+                    $inc: {
+                        stock: -item.quantity
+                    }
+                },
+                {
+                    new: true
+                }
+            );
 
             if (!updated) {
                 throw new Error(
-                    `Stok ${item.name} berubah, silakan coba lagi`
+                    `Stock produk "${item.name}" berubah`
                 );
             }
 
-            updatedProducts.push({
-                productId:
-                    item.productId,
-                quantity:
-                    item.quantity
+            decremented.push({
+                productId: item.productId,
+                quantity: item.quantity
             });
         }
 
-        const order =
-            await Order.create({
-                buyerId:
-                    userId,
-                items:
-                    orderItems,
-                total,
-                status:
-                    "pending"
-            });
+        const total = orderItems.reduce(
+            (sum, item) => sum + item.subtotal,
+            0
+        );
 
-        await Cart.findOneAndUpdate(
+        const order = await Order.create({
+            buyerId: userId,
+            items: orderItems,
+            total,
+            status: "pending"
+        });
+
+        await Cart.updateOne(
             {
                 userId
             },
@@ -1359,916 +1099,663 @@ async function checkout(
             }
         );
 
-        return order;
+        return response(res, 201, {
+            success: true,
+            message: "Checkout berhasil",
+            order
+        });
     } catch (error) {
-        for (
-            const item of updatedProducts
-        ) {
-            await Product.findOneAndUpdate(
-                {
-                    _id:
-                        item.productId
-                },
-                {
-                    $inc: {
-                        stock:
-                            item.quantity
+        await Promise.allSettled(
+            decremented.map(item =>
+                Product.updateOne(
+                    {
+                        _id: item.productId
+                    },
+                    {
+                        $inc: {
+                            stock: item.quantity
+                        }
                     }
-                }
-            ).catch(
-                () => {}
-            );
-        }
+                )
+            )
+        );
 
         throw error;
     }
 }
 
-async function getOrders(
-    userId
-) {
-    const orders =
-        await Order.find({
-            buyerId: userId
+async function getOrders(req, res, userId) {
+    const orders = await Order.find({
+        buyerId: userId
+    })
+        .sort({
+            createdAt: -1
         })
-            .populate(
-                "items.sellerId",
-                "_id name avatarUrl emailVerified phoneVerified"
-            )
-            .sort({
-                createdAt: -1
-            })
-            .lean();
+        .lean();
 
-    return orders.map(
-        order => ({
-            id:
-                order._id.toString(),
-            total:
-                order.total,
-            status:
-                order.status,
-            items:
-                order.items.map(
-                    item => ({
-                        productId:
-                            item.productId.toString(),
-                        sellerId:
-                            item.sellerId?._id
-                                ? item.sellerId._id.toString()
-                                : item.sellerId?.toString() || "",
-                        seller:
-                            item.sellerId?.name ||
-                            "",
-                        sellerAvatar:
-                            item.sellerId?.avatarUrl ||
-                            "",
-                        name:
-                            item.name,
-                        image:
-                            item.image,
-                        price:
-                            item.price,
-                        quantity:
-                            item.quantity,
-                        subtotal:
-                            item.subtotal
-                    })
-                ),
-            createdAt:
-                order.createdAt
-        })
-    );
+    return response(res, 200, {
+        success: true,
+        orders
+    });
 }
 
-async function getSellerOrders(
-    userId
-) {
-    const orders =
-        await Order.find({
-            "items.sellerId":
-                userId
+async function getSellerOrders(req, res, userId) {
+    const orders = await Order.find({
+        "items.sellerId": userId
+    })
+        .sort({
+            createdAt: -1
         })
-            .populate(
-                "buyerId",
-                "_id name avatarUrl emailVerified phoneVerified"
-            )
-            .sort({
-                createdAt: -1
-            })
-            .lean();
+        .lean();
 
-    return orders.map(
-        order => {
-            const sellerItems =
-                order.items.filter(
-                    item =>
-                        item.sellerId.toString() ===
-                        userId.toString()
-                );
+    const result = orders.map(order => ({
+        ...order,
+        items: order.items.filter(
+            item => String(item.sellerId) === String(userId)
+        )
+    })).map(order => ({
+        ...order,
+        total: order.items.reduce(
+            (sum, item) => sum + item.subtotal,
+            0
+        )
+    }));
 
-            return {
-                id:
-                    order._id.toString(),
-                buyer:
-                    order.buyerId
-                        ? {
-                            id:
-                                order.buyerId._id.toString(),
-                            name:
-                                order.buyerId.name,
-                            avatarUrl:
-                                order.buyerId.avatarUrl ||
-                                "",
-                            emailVerified:
-                                Boolean(
-                                    order.buyerId.emailVerified
-                                )
-                        }
-                        : null,
-                status:
-                    order.status,
-                items:
-                    sellerItems.map(
-                        item => ({
-                            productId:
-                                item.productId.toString(),
-                            name:
-                                item.name,
-                            image:
-                                item.image,
-                            price:
-                                item.price,
-                            quantity:
-                                item.quantity,
-                            subtotal:
-                                item.subtotal
-                        })
-                    ),
-                total:
-                    sellerItems.reduce(
-                        (
-                            sum,
-                            item
-                        ) =>
-                            sum +
-                            item.subtotal,
-                        0
-                    ),
-                createdAt:
-                    order.createdAt
-            };
-        }
-    );
+    return response(res, 200, {
+        success: true,
+        orders: result
+    });
 }
 
-async function getComments(
-    productId
-) {
-    if (
-        !productId ||
-        !isValidId(productId)
-    ) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
-    }
+async function getComments(req, res) {
+    const productId = getField(req.query.productId);
 
-    const comments =
-        await ProductComment.find({
-            productId
-        })
-            .populate(
-                "userId",
-                "_id name avatarUrl emailVerified phoneVerified"
-            )
-            .sort({
-                createdAt: -1
-            })
-            .lean();
-
-    return comments.map(
-        comment => ({
-            id:
-                comment._id.toString(),
-            productId:
-                comment.productId.toString(),
-            parentId:
-                comment.parentId
-                    ? comment.parentId.toString()
-                    : null,
-            text:
-                comment.text,
-            user:
-                comment.userId
-                    ? {
-                        id:
-                            comment.userId._id.toString(),
-                        name:
-                            comment.userId.name,
-                        avatarUrl:
-                            comment.userId.avatarUrl ||
-                            "",
-                        emailVerified:
-                            Boolean(
-                                comment.userId.emailVerified
-                            ),
-                        phoneVerified:
-                            Boolean(
-                                comment.userId.phoneVerified
-                            )
-                    }
-                    : null,
-            createdAt:
-                comment.createdAt,
-            updatedAt:
-                comment.updatedAt
-        })
-    );
-}
-
-async function addComment(
-    userId,
-    productId,
-    text,
-    parentId = null
-) {
-    if (
-        !productId ||
-        !isValidId(productId)
-    ) {
-        throw new Error(
-            "Product ID tidak valid"
-        );
-    }
-
-    const product =
-        await Product.findOne({
-            _id: productId,
-            status: "active"
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID produk tidak valid"
         });
+    }
+
+    const comments = await ProductComment.find({
+        productId
+    })
+        .populate({
+            path: "userId",
+            model: User,
+            select: "name avatarUrl emailVerified phoneVerified"
+        })
+        .sort({
+            createdAt: 1
+        })
+        .lean();
+
+    const result = comments.map(comment => ({
+        ...comment,
+        user: normalizeUser(comment.userId),
+        userId: comment.userId?._id || comment.userId
+    }));
+
+    return response(res, 200, {
+        success: true,
+        comments: result
+    });
+}
+
+async function addComment(req, res, userId) {
+    const body = await parseJsonBody(req);
+
+    const productId = body.productId;
+    const text = String(body.text || "").trim();
+    const parentId = body.parentId || null;
+
+    if (!validId(productId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID produk tidak valid"
+        });
+    }
+
+    if (!text) {
+        return response(res, 400, {
+            success: false,
+            message: "Komentar tidak boleh kosong"
+        });
+    }
+
+    if (text.length > 1000) {
+        return response(res, 400, {
+            success: false,
+            message: "Komentar maksimal 1000 karakter"
+        });
+    }
+
+    const product = await Product.findById(productId).select("_id");
 
     if (!product) {
-        throw new Error(
-            "Produk tidak ditemukan"
-        );
+        return response(res, 404, {
+            success: false,
+            message: "Produk tidak ditemukan"
+        });
     }
-
-    const cleanText =
-        String(
-            text || ""
-        ).trim();
-
-    if (!cleanText) {
-        throw new Error(
-            "Komentar tidak boleh kosong"
-        );
-    }
-
-    if (
-        cleanText.length >
-        1000
-    ) {
-        throw new Error(
-            "Komentar maksimal 1000 karakter"
-        );
-    }
-
-    let normalizedParentId =
-        null;
 
     if (parentId) {
-        if (
-            !isValidId(
-                parentId
-            )
-        ) {
-            throw new Error(
-                "Parent comment tidak valid"
-            );
+        if (!validId(parentId)) {
+            return response(res, 400, {
+                success: false,
+                message: "Parent komentar tidak valid"
+            });
         }
 
-        const parent =
-            await ProductComment.findOne({
-                _id:
-                    parentId,
-                productId
-            });
+        const parent = await ProductComment.findOne({
+            _id: parentId,
+            productId
+        });
 
         if (!parent) {
-            throw new Error(
-                "Komentar induk tidak ditemukan"
-            );
+            return response(res, 404, {
+                success: false,
+                message: "Komentar induk tidak ditemukan"
+            });
         }
-
-        normalizedParentId =
-            parent._id;
     }
 
-    const comment =
-        await ProductComment.create({
-            productId,
-            userId,
-            parentId:
-                normalizedParentId,
-            text:
-                cleanText
-        });
+    const comment = await ProductComment.create({
+        productId,
+        userId,
+        parentId,
+        text
+    });
 
-    const populated =
-        await ProductComment.findById(
-            comment._id
-        ).populate(
-            "userId",
-            "_id name avatarUrl emailVerified phoneVerified"
-        ).lean();
+    const populated = await ProductComment.findById(comment._id)
+        .populate({
+            path: "userId",
+            model: User,
+            select: "name avatarUrl emailVerified phoneVerified"
+        })
+        .lean();
 
-    return {
-        id:
-            populated._id.toString(),
-        productId:
-            populated.productId.toString(),
-        parentId:
-            populated.parentId
-                ? populated.parentId.toString()
-                : null,
-        text:
-            populated.text,
-        user:
-            populated.userId
-                ? {
-                    id:
-                        populated.userId._id.toString(),
-                    name:
-                        populated.userId.name,
-                    avatarUrl:
-                        populated.userId.avatarUrl ||
-                        "",
-                    emailVerified:
-                        Boolean(
-                            populated.userId.emailVerified
-                        ),
-                    phoneVerified:
-                        Boolean(
-                            populated.userId.phoneVerified
-                        )
-                }
-                : null,
-        createdAt:
-            populated.createdAt,
-        updatedAt:
-            populated.updatedAt
-    };
+    return response(res, 201, {
+        success: true,
+        message: "Komentar berhasil ditambahkan",
+        comment: {
+            ...populated,
+            user: normalizeUser(populated.userId),
+            userId: populated.userId?._id || populated.userId
+        }
+    });
 }
 
-async function deleteComment(
-    userId,
-    commentId
-) {
-    if (
-        !commentId ||
-        !isValidId(commentId)
-    ) {
-        throw new Error(
-            "Comment ID tidak valid"
-        );
+async function deleteComment(req, res, userId) {
+    const commentId =
+        getField(req.query.id) ||
+        getField(req.query.commentId);
+
+    if (!validId(commentId)) {
+        return response(res, 400, {
+            success: false,
+            message: "ID komentar tidak valid"
+        });
     }
 
-    const comment =
-        await ProductComment.findOne({
-            _id: commentId,
-            userId
-        });
+    const comment = await ProductComment.findById(commentId);
 
     if (!comment) {
-        throw new Error(
-            "Komentar tidak ditemukan"
-        );
+        return response(res, 404, {
+            success: false,
+            message: "Komentar tidak ditemukan"
+        });
+    }
+
+    const product = await Product.findById(comment.productId)
+        .select("sellerId")
+        .lean();
+
+    const isCommentOwner =
+        String(comment.userId) === String(userId);
+
+    const isProductOwner =
+        product &&
+        String(product.sellerId) === String(userId);
+
+    if (!isCommentOwner && !isProductOwner) {
+        return response(res, 403, {
+            success: false,
+            message: "Kamu tidak memiliki akses menghapus komentar ini"
+        });
     }
 
     await ProductComment.deleteMany({
         $or: [
             {
-                _id:
-                    comment._id
+                _id: commentId
             },
             {
-                parentId:
-                    comment._id
+                parentId: commentId
             }
         ]
     });
 
-    return true;
+    return response(res, 200, {
+        success: true,
+        message: "Komentar berhasil dihapus"
+    });
 }
 
-export default async function handler(
-    req,
-    res
-) {
-    if (
-        req.method !== "GET" &&
-        req.method !== "POST"
-    ) {
-        return res.status(405).json({
-            success: false,
-            message:
-                "Method tidak diizinkan"
+async function route(req, res) {
+    await connectDB();
+
+    const method = req.method.toUpperCase();
+
+    if (method === "OPTIONS") {
+        return response(res, 200, {
+            success: true
         });
     }
 
-    try {
-        const token =
-            getAuthToken(req);
+    if (!["GET", "POST", "PATCH", "DELETE"].includes(method)) {
+        return response(res, 405, {
+            success: false,
+            message: "Method tidak diizinkan"
+        });
+    }
 
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message:
-                    "Belum login"
-            });
+    const actionRaw =
+        getField(req.query.action) ||
+        "";
+
+    const action = actionRaw.toLowerCase();
+
+    const user = await authenticate(req);
+    const userId = user.userId;
+
+    if (method === "GET") {
+        switch (action) {
+            case "products":
+                return getProducts(req, res, userId);
+
+            case "product":
+                return getProduct(req, res, userId);
+
+            case "myproducts":
+            case "my-products":
+                return getMyProducts(req, res, userId);
+
+            case "cart":
+                return getCart(req, res, userId);
+
+            case "orders":
+                return getOrders(req, res, userId);
+
+            case "sellerorders":
+            case "seller-orders":
+                return getSellerOrders(req, res, userId);
+
+            case "comments":
+                return getComments(req, res);
+
+            default:
+                return response(res, 400, {
+                    success: false,
+                    message: "Action tidak dikenal"
+                });
+        }
+    }
+
+    const contentType =
+        String(req.headers["content-type"] || "").toLowerCase();
+
+    if (
+        contentType.includes("multipart/form-data")
+    ) {
+        let actionMultipart = "";
+
+        const parsed = await parseMultipart(req);
+
+        actionMultipart = getField(
+            parsed.fields.action
+        ).toLowerCase();
+
+        req.body = {
+            ...parsed.fields
+        };
+
+        if (actionMultipart === "createproduct") {
+            const originalParse = parseMultipart;
+
+            void originalParse;
+
+            const name = getField(parsed.fields.name).trim();
+            const description = getField(parsed.fields.description).trim();
+            const category = getField(parsed.fields.category).trim();
+            const price = Number(getField(parsed.fields.price));
+            const stock = Number(getField(parsed.fields.stock));
+            const imageFiles = getFiles(parsed.files);
+
+            if (!name) {
+                return response(res, 400, {
+                    success: false,
+                    message: "Nama produk wajib diisi"
+                });
+            }
+
+            if (!category) {
+                return response(res, 400, {
+                    success: false,
+                    message: "Kategori wajib diisi"
+                });
+            }
+
+            if (!Number.isFinite(price) || price < 0) {
+                return response(res, 400, {
+                    success: false,
+                    message: "Harga tidak valid"
+                });
+            }
+
+            if (!Number.isInteger(stock) || stock < 0) {
+                return response(res, 400, {
+                    success: false,
+                    message: "Stock tidak valid"
+                });
+            }
+
+            if (description.length > 2000) {
+                return response(res, 400, {
+                    success: false,
+                    message: "Deskripsi terlalu panjang"
+                });
+            }
+
+            if (imageFiles.length > MAX_PRODUCT_IMAGES) {
+                return response(res, 400, {
+                    success: false,
+                    message: `Maksimal ${MAX_PRODUCT_IMAGES} gambar`
+                });
+            }
+
+            const productId = new mongoose.Types.ObjectId();
+            let images = [];
+
+            try {
+                images = await uploadProductImages(
+                    imageFiles,
+                    userId,
+                    productId.toString()
+                );
+
+                const product = await Product.create({
+                    _id: productId,
+                    sellerId: userId,
+                    name,
+                    description,
+                    price,
+                    stock,
+                    category,
+                    images,
+                    status: "active"
+                });
+
+                const populated = await Product.findById(product._id)
+                    .populate({
+                        path: "sellerId",
+                        model: User,
+                        select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+                    })
+                    .lean();
+
+                return response(res, 201, {
+                    success: true,
+                    message: "Produk berhasil diterbitkan",
+                    product: normalizeProduct(populated)
+                });
+            } catch (error) {
+                await Promise.allSettled(
+                    images.map(url => deleteImage(url))
+                );
+
+                throw error;
+            }
         }
 
-        const payload =
-            await verifyToken(
-                token
+        if (actionMultipart === "updateproduct") {
+            const productId = getField(
+                parsed.fields.productId
             );
 
-        if (
-            !payload?.userId
-        ) {
-            return res.status(401).json({
-                success: false,
-                message:
-                    "Session tidak valid"
-            });
-        }
-
-        await connectDB();
-
-        const userId =
-            payload.userId;
-
-        if (
-            req.method === "POST" &&
-            String(
-                req.headers[
-                    "content-type"
-                ] || ""
-            ).includes(
-                "multipart/form-data"
-            )
-        ) {
-            const {
-                fields,
-                files
-            } =
-                await parseMultipart(
-                    req
-                );
-
-            const action =
-                String(
-                    fields.action ||
-                    ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-            if (
-                action ===
-                "createproduct"
-            ) {
-                const product =
-                    await createProduct(
-                        userId,
-                        fields,
-                        files
-                    );
-
-                return res.status(201).json({
-                    success: true,
-                    product
+            if (!validId(productId)) {
+                return response(res, 400, {
+                    success: false,
+                    message: "ID produk tidak valid"
                 });
             }
 
-            if (
-                action ===
-                "updateproduct"
-            ) {
-                const product =
-                    await updateProduct(
-                        userId,
-                        fields,
-                        files
-                    );
-
-                return res.status(200).json({
-                    success: true,
-                    product
-                });
-            }
-
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Action multipart tidak dikenali"
-            });
-        }
-
-        let body = {};
-
-        if (
-            req.method ===
-            "POST"
-        ) {
-            body =
-                await parseJsonBody(
-                    req
-                );
-        }
-
-        const action =
-            String(
-                req.method === "GET"
-                    ? req.query?.action ||
-                        ""
-                    : body.action ||
-                        ""
-            )
-                .trim()
-                .toLowerCase();
-
-        if (
-            action ===
-            "products"
-        ) {
-            const result =
-                await getProducts(
-                    req
-                );
-
-            return res.status(200).json({
-                success: true,
-                ...result
-            });
-        }
-
-        if (
-            action ===
-            "product"
-        ) {
-            const id =
-                req.query?.id ||
-                body.id;
-
-            const product =
-                await getProductById(
-                    id
-                );
+            const product = await Product.findById(productId);
 
             if (!product) {
-                return res.status(404).json({
+                return response(res, 404, {
                     success: false,
-                    message:
-                        "Produk tidak ditemukan"
+                    message: "Produk tidak ditemukan"
                 });
             }
 
-            const commentCount =
-                await ProductComment.countDocuments({
-                    productId:
-                        product._id
+            if (String(product.sellerId) !== String(userId)) {
+                return response(res, 403, {
+                    success: false,
+                    message: "Kamu bukan pemilik produk ini"
                 });
-
-            return res.status(200).json({
-                success: true,
-                product:
-                    normalizeProduct(
-                        product,
-                        commentCount
-                    )
-            });
-        }
-
-        if (
-            action ===
-            "myproducts"
-        ) {
-            const products =
-                await getMyProducts(
-                    userId
-                );
-
-            return res.status(200).json({
-                success: true,
-                products
-            });
-        }
-
-        if (
-            action ===
-            "deleteproduct"
-        ) {
-            const productId =
-                body.productId;
-
-            if (!productId) {
-                throw new Error(
-                    "Product ID wajib diisi"
-                );
             }
 
-            await deleteProduct(
-                userId,
-                productId
-            );
+            const update = {};
 
-            return res.status(200).json({
-                success: true
-            });
-        }
+            const name = getField(parsed.fields.name, null);
+            const description = getField(parsed.fields.description, null);
+            const category = getField(parsed.fields.category, null);
+            const priceRaw = getField(parsed.fields.price, null);
+            const stockRaw = getField(parsed.fields.stock, null);
+            const status = getField(parsed.fields.status, null);
 
-        if (
-            action ===
-            "cart"
-        ) {
-            const cart =
-                await getCart(
-                    userId
-                );
-
-            return res.status(200).json({
-                success: true,
-                cart
-            });
-        }
-
-        if (
-            action ===
-            "addcart"
-        ) {
-            const productId =
-                body.productId;
-
-            const quantity =
-                parsePositiveInt(
-                    body.quantity
-                );
-
-            if (
-                !productId ||
-                !quantity
-            ) {
-                throw new Error(
-                    "Produk dan jumlah wajib diisi"
-                );
+            if (name !== null) {
+                update.name = name.trim();
             }
 
-            const cart =
-                await addCartItem(
-                    userId,
-                    productId,
-                    quantity
-                );
-
-            return res.status(200).json({
-                success: true,
-                cart
-            });
-        }
-
-        if (
-            action ===
-            "updatecart"
-        ) {
-            const productId =
-                body.productId;
-
-            const quantity =
-                parsePositiveInt(
-                    body.quantity
-                );
-
-            if (
-                !productId ||
-                !quantity
-            ) {
-                throw new Error(
-                    "Produk dan jumlah wajib diisi"
-                );
+            if (description !== null) {
+                update.description = description.trim();
             }
 
-            const cart =
-                await updateCartItem(
-                    userId,
-                    productId,
-                    quantity
-                );
-
-            return res.status(200).json({
-                success: true,
-                cart
-            });
-        }
-
-        if (
-            action ===
-            "removecart"
-        ) {
-            const productId =
-                body.productId;
-
-            if (!productId) {
-                throw new Error(
-                    "Product ID wajib diisi"
-                );
+            if (category !== null) {
+                update.category = category.trim();
             }
 
-            const quantity =
-                body.quantity ===
-                undefined ||
-                body.quantity ===
-                null
-                    ? null
-                    : parsePositiveInt(
-                        body.quantity
-                    );
+            if (priceRaw !== null) {
+                const price = Number(priceRaw);
 
-            if (
-                body.quantity !==
-                    undefined &&
-                body.quantity !==
-                    null &&
-                !quantity
-            ) {
-                throw new Error(
-                    "Jumlah tidak valid"
-                );
-            }
-
-            const cart =
-                await removeCartItem(
-                    userId,
-                    productId,
-                    quantity
-                );
-
-            return res.status(200).json({
-                success: true,
-                cart
-            });
-        }
-
-        if (
-            action ===
-            "checkout"
-        ) {
-            const order =
-                await checkout(
-                    userId
-                );
-
-            return res.status(201).json({
-                success: true,
-                order: {
-                    id:
-                        order._id.toString(),
-                    total:
-                        order.total,
-                    status:
-                        order.status,
-                    items:
-                        order.items,
-                    createdAt:
-                        order.createdAt
+                if (!Number.isFinite(price) || price < 0) {
+                    return response(res, 400, {
+                        success: false,
+                        message: "Harga tidak valid"
+                    });
                 }
-            });
-        }
 
-        if (
-            action ===
-            "orders"
-        ) {
-            const orders =
-                await getOrders(
-                    userId
-                );
+                update.price = price;
+            }
 
-            return res.status(200).json({
-                success: true,
-                orders
-            });
-        }
+            if (stockRaw !== null) {
+                const stock = Number(stockRaw);
 
-        if (
-            action ===
-            "sellerorders"
-        ) {
-            const orders =
-                await getSellerOrders(
-                    userId
-                );
+                if (!Number.isInteger(stock) || stock < 0) {
+                    return response(res, 400, {
+                        success: false,
+                        message: "Stock tidak valid"
+                    });
+                }
 
-            return res.status(200).json({
-                success: true,
-                orders
-            });
-        }
+                update.stock = stock;
+            }
 
-        if (
-            action ===
-            "comments"
-        ) {
-            const productId =
-                req.query?.productId ||
-                body.productId;
+            if (status !== null) {
+                if (!["active", "inactive"].includes(status)) {
+                    return response(res, 400, {
+                        success: false,
+                        message: "Status tidak valid"
+                    });
+                }
 
-            const comments =
-                await getComments(
+                update.status = status;
+            }
+
+            const imageFiles = getFiles(parsed.files);
+            let newImages = [];
+
+            if (imageFiles.length) {
+                newImages = await uploadProductImages(
+                    imageFiles,
+                    userId,
                     productId
                 );
 
-            return res.status(200).json({
-                success: true,
-                comments
-            });
-        }
-
-        if (
-            action ===
-            "addcomment"
-        ) {
-            const productId =
-                body.productId;
-
-            const comment =
-                await addComment(
-                    userId,
-                    productId,
-                    body.text,
-                    body.parentId ||
-                        null
-                );
-
-            return res.status(201).json({
-                success: true,
-                comment
-            });
-        }
-
-        if (
-            action ===
-            "deletecomment"
-        ) {
-            const commentId =
-                body.commentId;
-
-            if (!commentId) {
-                throw new Error(
-                    "Comment ID wajib diisi"
-                );
+                update.images = newImages;
             }
 
-            await deleteComment(
-                userId,
-                commentId
-            );
+            const oldImages = product.images || [];
 
-            return res.status(200).json({
-                success: true
-            });
+            try {
+                await Product.findByIdAndUpdate(
+                    productId,
+                    {
+                        $set: update
+                    },
+                    {
+                        new: true,
+                        runValidators: true
+                    }
+                );
+
+                if (newImages.length) {
+                    await Promise.allSettled(
+                        oldImages.map(url => deleteImage(url))
+                    );
+                }
+
+                const updated = await Product.findById(productId)
+                    .populate({
+                        path: "sellerId",
+                        model: User,
+                        select: "name email whatsapp avatarUrl coverUrl emailVerified phoneVerified"
+                    })
+                    .lean();
+
+                return response(res, 200, {
+                    success: true,
+                    message: "Produk berhasil diperbarui",
+                    product: normalizeProduct(updated)
+                });
+            } catch (error) {
+                await Promise.allSettled(
+                    newImages.map(url => deleteImage(url))
+                );
+
+                throw error;
+            }
         }
 
-        return res.status(400).json({
+        return response(res, 400, {
             success: false,
-            message:
-                "Action tidak dikenali"
+            message: "Action multipart tidak dikenal"
         });
+    }
+
+    let body = {};
+
+    try {
+        body = await parseJsonBody(req);
     } catch (error) {
-        console.error(
-            "MARKETPLACE ERROR:",
-            error
-        );
+        return response(res, 400, {
+            success: false,
+            message: error.message
+        });
+    }
+
+    req.body = body;
+
+    const bodyAction = String(
+        body.action ||
+        action ||
+        ""
+    ).toLowerCase();
+
+    switch (bodyAction) {
+        case "createproduct":
+            return response(res, 400, {
+                success: false,
+                message: "createProduct harus menggunakan multipart/form-data"
+            });
+
+        case "updateproduct":
+            return response(res, 400, {
+                success: false,
+                message: "updateProduct harus menggunakan multipart/form-data"
+            });
+
+        case "deleteproduct":
+            return deleteProduct(req, res, userId);
+
+        case "addcart":
+            return addCart(req, res, userId);
+
+        case "updatecart":
+            return updateCart(req, res, userId);
+
+        case "removecart":
+            return removeCart(req, res, userId);
+
+        case "checkout":
+            return checkout(req, res, userId);
+
+        case "addcomment":
+            return addComment(req, res, userId);
+
+        case "deletecomment":
+            return deleteComment(req, res, userId);
+
+        default:
+            return response(res, 400, {
+                success: false,
+                message: "Action tidak dikenal"
+            });
+    }
+}
+
+export default async function handler(req, res) {
+    try {
+        await route(req, res);
+    } catch (error) {
+        console.error("Marketplace API error:", error);
 
         const message =
             error?.message ||
-            "Terjadi kesalahan pada marketplace";
+            "Terjadi kesalahan pada server";
 
-        const status =
-            message.includes(
-                "tidak ditemukan"
-            )
-                ? 404
-                : message.includes(
-                    "Belum login"
-                )
-                    ? 401
-                    : 400;
+        let status = 500;
 
-        return res.status(status).json({
+        if (
+            message === "Belum login" ||
+            message === "Session tidak valid"
+        ) {
+            status = 401;
+        }
+
+        if (
+            message.includes("File") ||
+            message.includes("gambar") ||
+            message.includes("JSON")
+        ) {
+            status = 400;
+        }
+
+        return response(res, status, {
             success: false,
             message
         });
     }
-}
+        }
