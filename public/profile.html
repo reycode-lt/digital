@@ -569,6 +569,258 @@
             box-shadow:0 0 10px rgba(35,136,255,.7);
         }
 
+        .posts-section{
+            margin-top:25px;
+            padding:20px;
+            border:1px solid rgba(35,136,255,.13);
+            border-radius:20px;
+            background:
+                radial-gradient(circle at 100% 0%,rgba(35,136,255,.09),transparent 34%),
+                rgba(15,23,35,.72);
+        }
+
+        .posts-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            margin-bottom:16px;
+        }
+
+        .posts-heading{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            min-width:0;
+        }
+
+        .posts-icon{
+            width:38px;
+            height:38px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 auto;
+            border:1px solid rgba(35,136,255,.2);
+            border-radius:12px;
+            color:#6db5ff;
+            background:rgba(35,136,255,.08);
+            font-size:17px;
+        }
+
+        .posts-title{
+            font-size:13px;
+            font-weight:850;
+        }
+
+        .posts-description{
+            margin-top:4px;
+            color:#75849a;
+            font-size:9px;
+        }
+
+        .posts-count{
+            min-width:48px;
+            height:32px;
+            padding:0 10px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid rgba(35,136,255,.2);
+            border-radius:999px;
+            color:#75baff;
+            background:rgba(35,136,255,.08);
+            font-size:10px;
+            font-weight:850;
+        }
+
+        .posts-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:10px;
+        }
+
+        .post-card{
+            min-width:0;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:15px;
+            background:rgba(5,10,17,.48);
+            transition:.22s ease;
+        }
+
+        .post-card:hover{
+            border-color:rgba(35,136,255,.25);
+            background:rgba(35,136,255,.045);
+            transform:translateY(-2px);
+        }
+
+        .post-image-wrap{
+            position:relative;
+            height:145px;
+            overflow:hidden;
+            background:
+                linear-gradient(135deg,#101a29,#0b111c);
+        }
+
+        .post-image{
+            width:100%;
+            height:100%;
+            display:block;
+            object-fit:cover;
+            transition:.3s ease;
+        }
+
+        .post-card:hover .post-image{
+            transform:scale(1.035);
+        }
+
+        .post-placeholder{
+            width:100%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#4e6178;
+            font-size:26px;
+            font-weight:850;
+        }
+
+        .post-status{
+            position:absolute;
+            top:9px;
+            right:9px;
+            padding:5px 8px;
+            border:1px solid rgba(53,220,134,.18);
+            border-radius:999px;
+            color:#70e6a0;
+            background:rgba(5,14,10,.65);
+            backdrop-filter:blur(10px);
+            font-size:7px;
+            font-weight:850;
+        }
+
+        .post-body{
+            padding:12px;
+        }
+
+        .post-category{
+            margin-bottom:6px;
+            color:#65adff;
+            font-size:7px;
+            font-weight:850;
+            letter-spacing:1px;
+            text-transform:uppercase;
+        }
+
+        .post-name{
+            min-height:34px;
+            display:-webkit-box;
+            overflow:hidden;
+            -webkit-box-orient:vertical;
+            -webkit-line-clamp:2;
+            color:#edf3fb;
+            font-size:11px;
+            line-height:1.5;
+            font-weight:800;
+        }
+
+        .post-bottom{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        .post-price{
+            min-width:0;
+            color:#fff;
+            font-size:11px;
+            font-weight:850;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .post-stock{
+            color:#728198;
+            font-size:8px;
+            white-space:nowrap;
+        }
+
+        .posts-empty{
+            display:none;
+            padding:35px 15px;
+            text-align:center;
+            border:1px dashed rgba(255,255,255,.08);
+            border-radius:15px;
+            background:rgba(255,255,255,.018);
+        }
+
+        .posts-empty-icon{
+            width:45px;
+            height:45px;
+            margin:0 auto 10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:14px;
+            color:#66768b;
+            background:rgba(255,255,255,.025);
+            font-size:19px;
+        }
+
+        .posts-empty-title{
+            color:#dce5f1;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .posts-empty-text{
+            margin-top:5px;
+            color:#68778c;
+            font-size:9px;
+            line-height:1.6;
+        }
+
+        .posts-loading{
+            padding:35px;
+            text-align:center;
+            color:#718096;
+            font-size:9px;
+        }
+
+        .posts-footer{
+            display:flex;
+            justify-content:center;
+            margin-top:14px;
+        }
+
+        .posts-link{
+            min-height:39px;
+            padding:0 14px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid rgba(35,136,255,.2);
+            border-radius:11px;
+            color:#75baff;
+            background:rgba(35,136,255,.06);
+            text-decoration:none;
+            font-size:9px;
+            font-weight:800;
+            transition:.2s ease;
+        }
+
+        .posts-link:hover{
+            color:#fff;
+            border-color:rgba(35,136,255,.4);
+            background:rgba(35,136,255,.13);
+            transform:translateY(-1px);
+        }
+
         .editor{
             margin-top:20px;
             padding:20px;
@@ -801,6 +1053,10 @@
             .action-button{
                 flex:1;
             }
+
+            .posts-grid{
+                grid-template-columns:repeat(2,1fr);
+            }
         }
 
         @media(max-width:650px){
@@ -853,6 +1109,18 @@
 
             .edit-grid{
                 grid-template-columns:1fr;
+            }
+
+            .posts-section{
+                padding:16px;
+            }
+
+            .posts-grid{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .post-image-wrap{
+                height:125px;
             }
         }
 
@@ -908,6 +1176,18 @@
 
             .actions{
                 flex-direction:column;
+            }
+
+            .posts-grid{
+                grid-template-columns:1fr;
+            }
+
+            .post-image-wrap{
+                height:170px;
+            }
+
+            .posts-head{
+                align-items:flex-start;
             }
         }
     </style>
@@ -1164,11 +1444,90 @@
                     </div>
 
                     <div class="field">
-                        <div class="label">User ID</div>
+                        <div class="label">Jumlah Postingan</div>
                         <div
-                            id="idValue"
+                            id="postsCountValue"
                             class="value"
-                        >-</div>
+                        >0 produk</div>
+                    </div>
+
+                </div>
+
+                <div class="posts-section">
+
+                    <div class="posts-head">
+
+                        <div class="posts-heading">
+
+                            <div class="posts-icon">
+                                ▣
+                            </div>
+
+                            <div>
+
+                                <div class="posts-title">
+                                    Postingan Saya
+                                </div>
+
+                                <div class="posts-description">
+                                    Produk yang kamu jual di Marketplace MonikaLabs
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            id="postsCount"
+                            class="posts-count"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+                    <div
+                        id="postsLoading"
+                        class="posts-loading"
+                    >
+                        Memuat postingan...
+                    </div>
+
+                    <div
+                        id="postsGrid"
+                        class="posts-grid"
+                        style="display:none;"
+                    ></div>
+
+                    <div
+                        id="postsEmpty"
+                        class="posts-empty"
+                    >
+
+                        <div class="posts-empty-icon">
+                            +
+                        </div>
+
+                        <div class="posts-empty-title">
+                            Belum ada postingan
+                        </div>
+
+                        <div class="posts-empty-text">
+                            Kamu belum memiliki produk di Marketplace.
+                            Mulai jual produk digital kamu sekarang.
+                        </div>
+
+                    </div>
+
+                    <div class="posts-footer">
+
+                        <a
+                            href="/chat"
+                            class="posts-link"
+                        >
+                            Buka Marketplace →
+                        </a>
+
                     </div>
 
                 </div>
@@ -1259,10 +1618,10 @@
                     </a>
 
                     <a
-                        href="/"
+                        href="/chat"
                         class="button"
                     >
-                        Beranda
+                        Marketplace
                     </a>
 
                 </div>
@@ -1325,6 +1684,31 @@ const uploadStatus =
 const verifiedBadge =
     document.getElementById(
         "verifiedBadge"
+    );
+
+const postsGrid =
+    document.getElementById(
+        "postsGrid"
+    );
+
+const postsLoading =
+    document.getElementById(
+        "postsLoading"
+    );
+
+const postsEmpty =
+    document.getElementById(
+        "postsEmpty"
+    );
+
+const postsCount =
+    document.getElementById(
+        "postsCount"
+    );
+
+const postsCountValue =
+    document.getElementById(
+        "postsCountValue"
     );
 
 let currentUser = null;
@@ -1428,6 +1812,48 @@ function formatCreatedDate(user){
             year:"numeric"
         }
     );
+}
+
+function formatPrice(value){
+    const price =
+        Number(value || 0);
+
+    return new Intl.NumberFormat(
+        "id-ID",
+        {
+            style:"currency",
+            currency:"IDR",
+            maximumFractionDigits:0
+        }
+    ).format(
+        Number.isFinite(price)
+            ? price
+            : 0
+    );
+}
+
+function escapeHtml(value){
+    return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function getProductImage(product){
+    if(
+        Array.isArray(product?.images) &&
+        product.images.length
+    ){
+        return product.images[0];
+    }
+
+    if(product?.image){
+        return product.image;
+    }
+
+    return "";
 }
 
 function showUploadStatus(
@@ -1560,12 +1986,14 @@ function renderUser(user){
     ).textContent =
         formatCreatedDate(user);
 
-    document.getElementById(
-        "idValue"
-    ).textContent =
+    const userId =
         user._id ||
         user.id ||
         "-";
+
+    document.getElementById(
+        "idValue"
+    );
 
     const emailBadge =
         document.getElementById(
@@ -1632,6 +2060,20 @@ function renderUser(user){
         phoneEditStatus.style.color =
             "#65e59a";
 
+    }else if(whatsapp){
+
+        phoneBadge.className =
+            "badge";
+
+        phoneBadge.innerHTML =
+            '<span class="badge-dot"></span> WhatsApp ditambahkan';
+
+        phoneEditStatus.textContent =
+            "Nomor WhatsApp sudah ditambahkan";
+
+        phoneEditStatus.style.color =
+            "#91a0b4";
+
     }else{
 
         phoneBadge.className =
@@ -1645,6 +2087,282 @@ function renderUser(user){
 
         phoneEditStatus.style.color =
             "#91a0b4";
+    }
+}
+
+function renderPosts(products){
+    const list =
+        Array.isArray(products)
+            ? products
+            : [];
+
+    const count =
+        list.length;
+
+    postsCount.textContent =
+        count;
+
+    postsCountValue.textContent =
+        `${count} produk`;
+
+    postsLoading.style.display =
+        "none";
+
+    postsGrid.innerHTML = "";
+
+    if(!count){
+
+        postsGrid.style.display =
+            "none";
+
+        postsEmpty.style.display =
+            "block";
+
+        return;
+    }
+
+    postsEmpty.style.display =
+        "none";
+
+    postsGrid.style.display =
+        "grid";
+
+    list
+        .slice(0,3)
+        .forEach(product => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "post-card";
+
+            const image =
+                getProductImage(product);
+
+            const name =
+                escapeHtml(
+                    product.name ||
+                    "Produk tanpa nama"
+                );
+
+            const category =
+                escapeHtml(
+                    product.category ||
+                    "Digital"
+                );
+
+            const price =
+                formatPrice(
+                    product.price
+                );
+
+            const stock =
+                Number(product.stock || 0);
+
+            const imageHtml =
+                image
+                    ? `
+                        <img
+                            class="post-image"
+                            src="${escapeHtml(image)}"
+                            alt="${name}"
+                            loading="lazy"
+                        >
+                    `
+                    : `
+                        <div class="post-placeholder">
+                            ${escapeHtml(
+                                String(
+                                    product.name ||
+                                    "P"
+                                ).charAt(0).toUpperCase()
+                            )}
+                        </div>
+                    `;
+
+            card.innerHTML =
+                `
+                <div class="post-image-wrap">
+
+                    ${imageHtml}
+
+                    <div class="post-status">
+                        ${product.status === "inactive" ? "INACTIVE" : "ACTIVE"}
+                    </div>
+
+                </div>
+
+                <div class="post-body">
+
+                    <div class="post-category">
+                        ${category}
+                    </div>
+
+                    <div class="post-name">
+                        ${name}
+                    </div>
+
+                    <div class="post-bottom">
+
+                        <div class="post-price">
+                            ${price}
+                        </div>
+
+                        <div class="post-stock">
+                            Stok ${stock}
+                        </div>
+
+                    </div>
+
+                </div>
+                `;
+
+            const productId =
+                product._id ||
+                product.id;
+
+            if(productId){
+
+                card.style.cursor =
+                    "pointer";
+
+                card.addEventListener(
+                    "click",
+                    () => {
+                        window.location.href =
+                            `/chat?product=${encodeURIComponent(productId)}`;
+                    }
+                );
+            }
+
+            const imageElement =
+                card.querySelector(
+                    ".post-image"
+                );
+
+            if(imageElement){
+
+                imageElement.addEventListener(
+                    "error",
+                    () => {
+
+                        const parent =
+                            imageElement.parentElement;
+
+                        if(!parent){
+                            return;
+                        }
+
+                        const fallback =
+                            document.createElement(
+                                "div"
+                            );
+
+                        fallback.className =
+                            "post-placeholder";
+
+                        fallback.textContent =
+                            String(
+                                product.name ||
+                                "P"
+                            )
+                            .charAt(0)
+                            .toUpperCase();
+
+                        imageElement.replaceWith(
+                            fallback
+                        );
+                    }
+                );
+            }
+
+            postsGrid.appendChild(card);
+        });
+}
+
+async function loadPosts(){
+    postsLoading.style.display =
+        "block";
+
+    postsGrid.style.display =
+        "none";
+
+    postsEmpty.style.display =
+        "none";
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/chat?action=myproducts&_=${Date.now()}`,
+                {
+                    method:"GET",
+                    credentials:"include",
+                    cache:"no-store",
+                    headers:{
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+        if(
+            response.status === 401 ||
+            response.status === 403
+        ){
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+            throw new Error(
+                data.message ||
+                "Gagal memuat postingan."
+            );
+        }
+
+        renderPosts(
+            data.products ||
+            []
+        );
+
+    }catch(error){
+
+        console.error(
+            "POSTS ERROR:",
+            error
+        );
+
+        postsLoading.style.display =
+            "none";
+
+        postsGrid.innerHTML =
+            `
+            <div style="
+                grid-column:1/-1;
+                padding:30px 15px;
+                text-align:center;
+                color:#78869a;
+                font-size:9px;
+            ">
+                Postingan belum dapat dimuat.
+            </div>
+            `;
+
+        postsGrid.style.display =
+            "grid";
+
+        postsCount.textContent =
+            "0";
+
+        postsCountValue.textContent =
+            "0 produk";
     }
 }
 
@@ -1697,6 +2415,8 @@ async function loadProfile(){
 
         content.style.display =
             "block";
+
+        await loadPosts();
 
     }catch(error){
 
@@ -2013,4 +2733,4 @@ loadProfile();
 </script>
 
 </body>
-</html>
+    </html>
