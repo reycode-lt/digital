@@ -10,10 +10,10 @@
 :root{
 --bg:#050914;
 --bg2:#08101d;
---panel:rgba(10,18,32,.78);
---panel2:rgba(15,26,45,.88);
+--panel:rgba(10,18,32,.82);
+--panel2:rgba(15,26,45,.92);
 --card:rgba(255,255,255,.045);
---card2:rgba(255,255,255,.065);
+--card2:rgba(255,255,255,.07);
 --border:rgba(255,255,255,.08);
 --text:#f4f8ff;
 --muted:#8997aa;
@@ -31,8 +31,7 @@ color:var(--text);
 font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 }
 body{overflow-x:hidden}
-body:before,
-body:after{
+body:before,body:after{
 content:"";
 position:fixed;
 z-index:-1;
@@ -256,6 +255,16 @@ color:#dce7f5;
 font-size:12px;
 font-weight:700
 }
+.danger-btn{
+height:42px;
+padding:0 14px;
+border-radius:12px;
+background:rgba(255,82,104,.1);
+border:1px solid rgba(255,82,104,.2);
+color:#ff7081;
+font-size:12px;
+font-weight:800
+}
 .categories{
 display:flex;
 gap:8px;
@@ -321,19 +330,41 @@ to{opacity:1;transform:translateY(0)}
 }
 .product-image-wrap{
 width:100%;
-aspect-ratio:1/1;
+position:relative;
 background:linear-gradient(135deg,#0b1728,#101d31);
 overflow:hidden
 }
 .product-image{
 width:100%;
-height:100%;
-object-fit:cover;
+height:auto;
+display:block;
+object-fit:contain;
 background:#0d1727;
 transition:transform .3s ease
 }
 .product:hover .product-image{
-transform:scale(1.035)
+transform:scale(1.015)
+}
+.product-menu-btn{
+position:absolute;
+right:9px;
+top:9px;
+z-index:4;
+width:35px;
+height:35px;
+border:1px solid rgba(255,255,255,.13);
+border-radius:11px;
+background:rgba(4,10,19,.78);
+backdrop-filter:blur(12px);
+color:#fff;
+font-size:21px;
+font-weight:900;
+line-height:1;
+display:grid;
+place-items:center
+}
+.product-menu-btn:hover{
+background:rgba(22,140,255,.88)
 }
 .product-body{padding:13px}
 .product-name{
@@ -360,8 +391,11 @@ align-items:center;
 gap:7px;
 margin-top:12px;
 padding-top:10px;
-border-top:1px solid rgba(255,255,255,.055)
+border-top:1px solid rgba(255,255,255,.055);
+cursor:pointer;
+transition:.15s
 }
+.seller:hover{opacity:.82}
 .seller img{
 width:27px;
 height:27px;
@@ -392,7 +426,20 @@ margin-top:2px
 }
 .comments-count{
 font-size:9px;
-color:#8190a4
+color:#8190a4;
+white-space:nowrap
+}
+.owner-label{
+display:inline-flex;
+align-items:center;
+gap:4px;
+padding:3px 6px;
+border-radius:6px;
+background:rgba(32,212,122,.09);
+color:#5be99d;
+font-size:8px;
+font-weight:800;
+margin-top:6px
 }
 .empty{
 min-height:300px;
@@ -424,8 +471,7 @@ display:flex;
 justify-content:center;
 padding:22px 0 5px
 }
-.modal,
-.drawer{
+.modal,.drawer{
 position:fixed;
 inset:0;
 z-index:100;
@@ -440,8 +486,7 @@ visibility:hidden;
 pointer-events:none;
 transition:.22s
 }
-.modal.open,
-.drawer.open{
+.modal.open,.drawer.open{
 opacity:1;
 visibility:visible;
 pointer-events:auto
@@ -466,7 +511,7 @@ position:sticky;
 top:0;
 background:rgba(8,17,31,.94);
 backdrop-filter:blur(15px);
-z-index:2
+z-index:8
 }
 .modal-head h3{
 font-size:15px;
@@ -490,9 +535,10 @@ padding:20px
 }
 .gallery-main{
 width:100%;
-aspect-ratio:1/1;
+height:auto;
+display:block;
 border-radius:18px;
-object-fit:cover;
+object-fit:contain;
 background:#0d1727
 }
 .thumbs{
@@ -546,13 +592,23 @@ padding:12px;
 margin-top:17px;
 border:1px solid var(--border);
 border-radius:14px;
-background:rgba(255,255,255,.025)
+background:rgba(255,255,255,.025);
+cursor:pointer;
+transition:.15s
+}
+.detail-seller:hover{
+background:rgba(255,255,255,.05);
+border-color:rgba(22,140,255,.3)
 }
 .detail-seller img{
 width:40px;
 height:40px;
 border-radius:12px;
 object-fit:cover
+}
+.detail-seller-info{
+flex:1;
+min-width:0
 }
 .detail-seller-name{
 display:flex;
@@ -566,12 +622,22 @@ font-size:9px;
 color:var(--muted);
 margin-top:3px
 }
+.detail-seller-arrow{
+color:#708096;
+font-size:15px
+}
 .detail-actions{
 display:flex;
 gap:8px;
 margin-top:17px
 }
 .detail-actions>*{flex:1}
+.owner-actions{
+display:flex;
+gap:8px;
+margin-top:9px
+}
+.owner-actions>*{flex:1}
 .comment-section{
 border-top:1px solid var(--border);
 padding:18px 20px 22px
@@ -664,9 +730,7 @@ font-size:10px;
 color:#98a6b8;
 font-weight:700
 }
-.field input,
-.field textarea,
-.field select{
+.field input,.field textarea,.field select{
 width:100%;
 border:1px solid var(--border);
 border-radius:12px;
@@ -697,11 +761,26 @@ grid-template-columns:repeat(6,1fr);
 gap:7px
 }
 .preview{
+width:100%;
+height:auto;
 aspect-ratio:1;
 border-radius:10px;
 object-fit:cover;
 border:1px solid var(--border);
 background:#101a2a
+}
+.edit-current{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:7px;
+margin-top:4px
+}
+.edit-current img{
+width:100%;
+aspect-ratio:1;
+object-fit:cover;
+border-radius:9px;
+border:1px solid var(--border)
 }
 .drawer{
 justify-content:flex-end;
@@ -804,7 +883,9 @@ font-size:10px;
 color:var(--muted)
 }
 .total strong{font-size:17px}
-.profile{padding:18px}
+.profile{
+padding:18px
+}
 .profile-cover{
 height:120px;
 border-radius:18px;
@@ -844,6 +925,229 @@ margin-top:4px
 }
 .profile-actions{
 display:grid;
+gap:8px;
+margin-top:18px
+}
+.profile-stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:16px
+}
+.profile-stat{
+padding:12px 8px;
+border:1px solid var(--border);
+border-radius:13px;
+background:rgba(255,255,255,.035);
+text-align:center
+}
+.profile-stat strong{
+display:block;
+font-size:15px;
+font-weight:900
+}
+.profile-stat span{
+display:block;
+font-size:8px;
+color:var(--muted);
+margin-top:3px
+}
+.seller-profile{
+padding:18px
+}
+.seller-cover{
+height:180px;
+border-radius:18px;
+overflow:hidden;
+background:linear-gradient(135deg,#0d5caf,#07111e);
+border:1px solid var(--border)
+}
+.seller-cover img{
+width:100%;
+height:100%;
+object-fit:cover
+}
+.seller-profile-main{
+display:flex;
+align-items:flex-end;
+gap:14px;
+margin-top:-38px;
+padding:0 12px;
+position:relative
+}
+.seller-profile-avatar{
+width:82px;
+height:82px;
+border-radius:24px;
+object-fit:cover;
+border:4px solid #08111f;
+background:#101c2e;
+flex:none
+}
+.seller-profile-info{
+min-width:0;
+padding-bottom:4px
+}
+.seller-profile-name{
+display:flex;
+align-items:center;
+gap:5px;
+font-size:18px;
+font-weight:900
+}
+.seller-profile-email{
+font-size:10px;
+color:var(--muted);
+margin-top:3px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+.seller-stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:18px
+}
+.seller-stat{
+padding:13px 10px;
+border:1px solid var(--border);
+border-radius:14px;
+background:rgba(255,255,255,.035);
+text-align:center
+}
+.seller-stat strong{
+display:block;
+font-size:16px;
+font-weight:900
+}
+.seller-stat span{
+display:block;
+font-size:9px;
+color:var(--muted);
+margin-top:3px
+}
+.seller-products-head{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin:20px 0 12px
+}
+.seller-products-head strong{font-size:14px}
+.seller-products-head span{
+font-size:10px;
+color:var(--muted)
+}
+.seller-products{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:10px
+}
+.seller-product{
+border:1px solid var(--border);
+border-radius:15px;
+overflow:hidden;
+background:rgba(255,255,255,.035);
+cursor:pointer
+}
+.seller-product:hover{
+border-color:rgba(22,140,255,.35)
+}
+.seller-product img{
+width:100%;
+height:auto;
+display:block;
+background:#0d1727
+}
+.seller-product-body{
+padding:9px
+}
+.seller-product-name{
+font-size:10px;
+font-weight:800;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+.seller-product-price{
+font-size:12px;
+font-weight:900;
+margin-top:5px
+}
+.seller-product-stock{
+font-size:8px;
+color:var(--muted);
+margin-top:3px
+}
+.action-menu{
+position:fixed;
+z-index:250;
+width:170px;
+padding:6px;
+border:1px solid var(--border);
+border-radius:14px;
+background:#0a1525;
+box-shadow:0 20px 60px rgba(0,0,0,.55);
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transform:translateY(-4px);
+transition:.15s
+}
+.action-menu.open{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+transform:translateY(0)
+}
+.action-menu button{
+width:100%;
+height:40px;
+display:flex;
+align-items:center;
+gap:9px;
+padding:0 11px;
+border-radius:10px;
+background:transparent;
+color:#dce6f4;
+font-size:11px;
+font-weight:750;
+text-align:left
+}
+.action-menu button:hover{
+background:rgba(255,255,255,.06)
+}
+.action-menu .delete-action{
+color:#ff7181
+}
+.confirm-box{
+padding:22px;
+text-align:center
+}
+.confirm-icon{
+width:52px;
+height:52px;
+border-radius:17px;
+margin:0 auto 13px;
+display:grid;
+place-items:center;
+background:rgba(255,82,104,.1);
+color:#ff7181;
+font-size:24px
+}
+.confirm-box h3{
+font-size:17px;
+font-weight:900
+}
+.confirm-box p{
+font-size:11px;
+color:var(--muted);
+line-height:1.6;
+margin-top:7px
+}
+.confirm-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:8px;
 margin-top:18px
 }
@@ -891,9 +1195,7 @@ height:39px
 .user-mini{padding:3px}
 .search{max-width:none}
 .main{padding:14px}
-.hero{
-padding:17px
-}
+.hero{padding:17px}
 .hero h1{font-size:21px}
 .hero p{font-size:10px}
 .hero .primary{white-space:nowrap}
@@ -923,7 +1225,16 @@ border-radius:0;
 border:0
 }
 .form-row{grid-template-columns:1fr}
-.preview-grid{grid-template-columns:repeat(4,1fr)}
+.preview-grid,.edit-current{grid-template-columns:repeat(4,1fr)}
+.seller-cover{height:140px}
+.seller-profile-main{margin-top:-32px}
+.seller-profile-avatar{
+width:70px;
+height:70px;
+border-radius:20px
+}
+.seller-profile-name{font-size:15px}
+.seller-products{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:420px){
 .header-actions{gap:4px}
@@ -1021,18 +1332,15 @@ Muat lebih banyak
 </div>
 
 <div class="modal" id="detailModal">
-
 <div class="modal-card">
 
 <div class="modal-head">
 <h3>Detail Produk</h3>
-
 <button class="close" data-close="detailModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="m6 6 12 12M18 6 6 18"></path>
 </svg>
 </button>
-
 </div>
 
 <div id="detailContent"></div>
@@ -1040,12 +1348,28 @@ Muat lebih banyak
 </div>
 </div>
 
-<div class="modal" id="sellModal">
+<div class="modal" id="sellerModal">
+<div class="modal-card" style="max-width:760px">
 
+<div class="modal-head">
+<h3>Profil Penjual</h3>
+<button class="close" data-close="sellerModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="m6 6 12 12M18 6 6 18"></path>
+</svg>
+</button>
+</div>
+
+<div id="sellerContent"></div>
+
+</div>
+</div>
+
+<div class="modal" id="sellModal">
 <div class="modal-card">
 
 <div class="modal-head">
-<h3>Jual Produk</h3>
+<h3 id="sellModalTitle">Jual Produk</h3>
 
 <button class="close" data-close="sellModal">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1077,11 +1401,8 @@ Muat lebih banyak
 </div>
 
 <div class="field">
-
 <label>Kategori</label>
-
 <select name="category" required>
-
 <option value="">Pilih kategori</option>
 <option value="Digital">Digital</option>
 <option value="Game">Game</option>
@@ -1089,27 +1410,16 @@ Muat lebih banyak
 <option value="Website">Website</option>
 <option value="Source Code">Source Code</option>
 <option value="Lainnya">Lainnya</option>
-
 </select>
-
 </div>
 
 <div class="field">
-
 <label>Deskripsi</label>
-
-<textarea
-name="description"
-maxlength="2000"
-required
-placeholder="Jelaskan produk kamu..."
-></textarea>
-
+<textarea name="description" maxlength="2000" required placeholder="Jelaskan produk kamu..."></textarea>
 </div>
 
 <div class="field">
-
-<label>Foto Produk</label>
+<label id="imageLabel">Foto Produk</label>
 
 <input
 class="file-input"
@@ -1121,15 +1431,76 @@ multiple
 required
 >
 
+<div
+id="currentImagesWrap"
+style="display:none">
+
+<div style="font-size:10px;color:var(--muted);margin-bottom:6px">
+Foto saat ini
+</div>
+
+<div class="edit-current" id="currentImages"></div>
+
+</div>
+
 </div>
 
 <div class="preview-grid" id="imagePreview"></div>
+
+<div class="form-row">
+
+<button class="secondary" id="cancelEditBtn" type="button" style="display:none">
+Batal Edit
+</button>
 
 <button class="primary" id="publishBtn" type="submit">
 Terbitkan Produk
 </button>
 
+</div>
+
 </form>
+
+</div>
+</div>
+
+<div class="modal" id="confirmModal">
+<div class="modal-card" style="max-width:390px">
+
+<div class="modal-head">
+<h3>Konfirmasi</h3>
+
+<button class="close" data-close="confirmModal">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="m6 6 12 12M18 6 6 18"></path>
+</svg>
+</button>
+
+</div>
+
+<div class="confirm-box">
+
+<div class="confirm-icon">!</div>
+
+<h3>Hapus Produk?</h3>
+
+<p>
+Produk ini akan dihapus permanen dan tidak dapat dikembalikan.
+</p>
+
+<div class="confirm-actions">
+
+<button class="secondary" id="cancelDeleteBtn">
+Batal
+</button>
+
+<button class="danger-btn" id="confirmDeleteBtn">
+Hapus Produk
+</button>
+
+</div>
+
+</div>
 
 </div>
 </div>
@@ -1139,7 +1510,6 @@ Terbitkan Produk
 <div class="drawer-card">
 
 <div class="drawer-head">
-
 <h3>Keranjang</h3>
 
 <button class="close" data-close="cartDrawer">
@@ -1147,7 +1517,6 @@ Terbitkan Produk
 <path d="m6 6 12 12M18 6 6 18"></path>
 </svg>
 </button>
-
 </div>
 
 <div class="drawer-body" id="cartBody"></div>
@@ -1169,7 +1538,6 @@ Checkout
 </div>
 
 <div class="modal" id="profileModal">
-
 <div class="modal-card" style="max-width:430px">
 
 <div class="modal-head">
@@ -1190,7 +1558,6 @@ Checkout
 </div>
 
 <div class="modal" id="ordersModal">
-
 <div class="modal-card">
 
 <div class="modal-head">
@@ -1210,6 +1577,15 @@ Checkout
 </div>
 </div>
 
+<div class="action-menu" id="productActionMenu">
+<button type="button" data-product-action="edit">
+✏️ Edit Produk
+</button>
+<button type="button" class="delete-action" data-product-action="delete">
+🗑️ Hapus Produk
+</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1223,7 +1599,10 @@ loading:false,
 search:"",
 category:"",
 cart:null,
-selectedProduct:null
+selectedProduct:null,
+editingProduct:null,
+deleteProductId:null,
+sellerProducts:[]
 };
 
 const $=id=>document.getElementById(id);
@@ -1372,6 +1751,16 @@ ${escapeHtml(item)}
 }).join("");
 }
 
+function productImage(product){
+return product.images?.[0]||"";
+}
+
+function isVerified(user){
+return user?.emailVerified===true||
+user?.phoneVerified===true||
+user?.verified===true;
+}
+
 function renderProducts(){
 const box=$("products");
 
@@ -1406,11 +1795,7 @@ return;
 box.innerHTML=state.products.map((product,index)=>{
 
 const seller=product.seller||{};
-const image=product.images?.[0]||"";
-
-const verifiedSeller=
-seller.emailVerified===true||
-seller.phoneVerified===true;
+const image=productImage(product);
 
 return`
 <article
@@ -1424,7 +1809,16 @@ style="animation-delay:${Math.min(index*35,350)}ms">
 class="product-image"
 src="${escapeHtml(image)}"
 alt="${escapeHtml(product.name)}"
-onerror="this.style.visibility='hidden'">
+onerror="this.style.display='none'">
+
+${product.isOwner?`
+<button
+type="button"
+class="product-menu-btn"
+data-product-menu="${escapeHtml(product._id||product.id)}">
+⋮
+</button>
+`:""}
 
 </div>
 
@@ -1442,7 +1836,15 @@ ${money(product.price)}
 ${Number(product.stock)||0} stock tersedia
 </div>
 
-<div class="seller">
+${product.isOwner?`
+<div class="owner-label">
+✓ Produk Saya
+</div>
+`:""}
+
+<div
+class="seller"
+data-seller="${escapeHtml(seller._id||product.sellerId||"")}">
 
 <img
 src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}"
@@ -1456,7 +1858,7 @@ alt="">
 ${escapeHtml(seller.name||"Seller")}
 </span>
 
-${verifiedSeller?verified():""}
+${isVerified(seller)?verified():""}
 
 </div>
 
@@ -1530,8 +1932,7 @@ reset
 :[...state.products,...items];
 
 state.hasMore=
-Boolean(data.hasMore)||
-items.length===state.limit;
+Boolean(data.pagination?.hasMore);
 
 renderProducts();
 
@@ -1563,11 +1964,6 @@ function openDetail(product){
 state.selectedProduct=product;
 
 const seller=product.seller||{};
-
-const verifiedSeller=
-seller.emailVerified===true||
-seller.phoneVerified===true;
-
 const images=
 Array.isArray(product.images)&&product.images.length
 ?product.images
@@ -1583,7 +1979,8 @@ $("detailContent").innerHTML=`
 class="gallery-main"
 id="detailMainImage"
 src="${escapeHtml(images[0])}"
-alt="${escapeHtml(product.name)}">
+alt="${escapeHtml(product.name)}"
+onerror="this.style.display='none'">
 
 <div class="thumbs">
 
@@ -1593,7 +1990,8 @@ ${images.map((img,index)=>`
 class="thumb"
 data-image="${escapeHtml(img)}"
 src="${escapeHtml(img)}"
-alt="Foto ${index+1}">
+alt="Foto ${index+1}"
+onerror="this.style.display='none'">
 
 `).join("")}
 
@@ -1619,26 +2017,33 @@ ${escapeHtml(product.category||"Lainnya")}
 ${escapeHtml(product.description||"Tidak ada deskripsi.")}
 </div>
 
-<div class="detail-seller">
+<div
+class="detail-seller"
+id="detailSellerBtn"
+data-seller="${escapeHtml(seller._id||product.sellerId||"")}">
 
 <img
 src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}"
 alt="">
 
-<div>
+<div class="detail-seller-info">
 
 <div class="detail-seller-name">
 
 ${escapeHtml(seller.name||"Seller")}
 
-${verifiedSeller?verified():""}
+${isVerified(seller)?verified():""}
 
 </div>
 
 <div class="detail-seller-sub">
-${Number(product.stock)||0} stock tersedia
+${Number(product.stock)||0} stock tersedia · Lihat profil
 </div>
 
+</div>
+
+<div class="detail-seller-arrow">
+›
 </div>
 
 </div>
@@ -1647,11 +2052,32 @@ ${Number(product.stock)||0} stock tersedia
 
 <button
 class="primary"
-id="detailCartBtn">
-🛒 Tambah ke Keranjang
+id="detailCartBtn"
+${product.isOwner?"disabled":""}>
+${product.isOwner?"Produk Kamu":"🛒 Tambah ke Keranjang"}
 </button>
 
 </div>
+
+${product.isOwner?`
+
+<div class="owner-actions">
+
+<button
+class="secondary"
+id="detailEditBtn">
+✏️ Edit
+</button>
+
+<button
+class="danger-btn"
+id="detailDeleteBtn">
+🗑️ Hapus
+</button>
+
+</div>
+
+`:""}
 
 </div>
 
@@ -1703,9 +2129,41 @@ openModal("detailModal");
 $("detailCartBtn").addEventListener(
 "click",
 ()=>{
+if(!product.isOwner){
 addCart(product._id||product.id);
 }
+}
 );
+
+$("detailSellerBtn").addEventListener(
+"click",
+()=>{
+openSellerProfile(
+seller._id||product.sellerId,
+seller
+);
+}
+);
+
+if(product.isOwner){
+
+$("detailEditBtn").addEventListener(
+"click",
+()=>{
+closeModal("detailModal");
+openEditProduct(product);
+}
+);
+
+$("detailDeleteBtn").addEventListener(
+"click",
+()=>{
+closeModal("detailModal");
+openDeleteConfirm(product._id||product.id);
+}
+);
+
+}
 
 $("commentSend").addEventListener(
 "click",
@@ -1747,6 +2205,243 @@ product.id
 );
 }
 
+async function openSellerProfile(sellerId,sellerData={}){
+
+if(!sellerId){
+
+toast("Profil penjual tidak tersedia");
+
+return;
+}
+
+const seller=sellerData||{};
+
+$("sellerContent").innerHTML=`
+
+<div class="seller-profile">
+
+<div class="seller-cover">
+
+${seller.coverUrl?`
+<img
+src="${escapeHtml(seller.coverUrl)}"
+alt="">
+`:""}
+
+</div>
+
+<div class="seller-profile-main">
+
+<img
+class="seller-profile-avatar"
+src="${escapeHtml(avatar(seller.avatarUrl,seller.name))}"
+alt="">
+
+<div class="seller-profile-info">
+
+<div class="seller-profile-name">
+
+${escapeHtml(seller.name||"Seller")}
+
+${isVerified(seller)?verified():""}
+
+</div>
+
+<div class="seller-profile-email">
+${escapeHtml(seller.email||"Penjual Marketplace")}
+</div>
+
+</div>
+
+</div>
+
+<div class="seller-stats">
+
+<div class="seller-stat">
+<strong id="sellerPostCount">0</strong>
+<span>Postingan</span>
+</div>
+
+<div class="seller-stat">
+<strong id="sellerActiveCount">0</strong>
+<span>Aktif</span>
+</div>
+
+<div class="seller-stat">
+<strong id="sellerStockCount">0</strong>
+<span>Total Stok</span>
+</div>
+
+</div>
+
+<div class="seller-products-head">
+
+<strong>Produk Penjual</strong>
+
+<span id="sellerProductInfo">
+Memuat...
+</span>
+
+</div>
+
+<div
+class="seller-products"
+id="sellerProducts">
+
+<div
+class="loading"
+style="min-height:140px">
+Memuat produk...
+</div>
+
+</div>
+
+</div>`;
+
+openModal("sellerModal");
+
+try{
+
+const data=await api(
+`/api/chat?action=products&sellerId=${encodeURIComponent(sellerId)}&page=1&limit=50`
+);
+
+const products=
+Array.isArray(data.products)
+?data.products
+:[];
+
+state.sellerProducts=products;
+
+const activeProducts=
+products.filter(
+product=>product.status==="active"
+);
+
+const totalStock=
+products.reduce(
+(sum,product)=>sum+(Number(product.stock)||0),
+0
+);
+
+$("sellerPostCount").textContent=
+String(data.pagination?.total??products.length);
+
+$("sellerActiveCount").textContent=
+String(activeProducts.length);
+
+$("sellerStockCount").textContent=
+String(totalStock);
+
+$("sellerProductInfo").textContent=
+`${products.length} produk`;
+
+if(!products.length){
+
+$("sellerProducts").innerHTML=`
+<div
+class="empty"
+style="grid-column:1/-1;min-height:150px">
+
+<div>
+
+<strong>Belum ada produk</strong>
+
+<span>
+Penjual ini belum memiliki produk aktif.
+</span>
+
+</div>
+
+</div>`;
+
+return;
+}
+
+$("sellerProducts").innerHTML=
+products.map(product=>`
+
+<article
+class="seller-product"
+data-seller-product="${escapeHtml(product._id||product.id)}">
+
+${product.images?.[0]?`
+<img
+src="${escapeHtml(product.images[0])}"
+alt="${escapeHtml(product.name)}"
+onerror="this.style.display='none'">
+`:""}
+
+<div class="seller-product-body">
+
+<div class="seller-product-name">
+${escapeHtml(product.name)}
+</div>
+
+<div class="seller-product-price">
+${money(product.price)}
+</div>
+
+<div class="seller-product-stock">
+${Number(product.stock)||0} stock
+</div>
+
+</div>
+
+</article>
+
+`).join("");
+
+document.querySelectorAll(
+"[data-seller-product]"
+).forEach(card=>{
+
+card.addEventListener(
+"click",
+()=>{
+
+const product=
+products.find(
+item=>
+String(item._id||item.id)===
+String(card.dataset.sellerProduct)
+);
+
+if(product){
+
+closeModal("sellerModal");
+
+openDetail(product);
+
+}
+
+}
+);
+
+});
+
+}catch(error){
+
+$("sellerProducts").innerHTML=`
+<div
+class="empty"
+style="grid-column:1/-1;min-height:150px">
+
+<div>
+
+<strong>Gagal memuat produk</strong>
+
+<span>
+${escapeHtml(error.message)}
+</span>
+
+</div>
+
+</div>`;
+
+}
+}
+
 async function loadComments(productId){
 
 try{
@@ -1784,10 +2479,6 @@ comments.map(comment=>{
 
 const user=comment.user||{};
 
-const verifiedUser=
-user.emailVerified===true||
-user.phoneVerified===true;
-
 return`
 <div class="comment">
 
@@ -1804,7 +2495,7 @@ alt="">
 ${escapeHtml(user.name||"User")}
 </span>
 
-${verifiedUser?verified():""}
+${isVerified(user)?verified():""}
 
 </div>
 
@@ -1915,8 +2606,7 @@ const data=await api(
 "/api/chat?action=cart"
 );
 
-state.cart=
-data.cart||{
+state.cart=data.cart||{
 items:[]
 };
 
@@ -1965,6 +2655,7 @@ Tambahkan produk yang kamu suka.
 </span>
 
 </div>
+
 </div>`;
 
 $("cartTotal").textContent=
@@ -1978,8 +2669,7 @@ return;
 $("cartBody").innerHTML=
 items.map(item=>{
 
-const product=
-item.product||{};
+const product=item.product||{};
 
 const productId=
 product._id||
@@ -1987,10 +2677,7 @@ product.id||
 item.productId;
 
 const price=
-Number(
-product.price??
-item.price
-)||0;
+Number(product.price??item.price)||0;
 
 const quantity=
 Math.max(
@@ -2087,8 +2774,7 @@ await api("/api/chat",{
 method:"POST",
 body:JSON.stringify({
 action:"removeCart",
-productId,
-quantity:0
+productId
 })
 });
 
@@ -2127,8 +2813,7 @@ await api("/api/chat",{
 method:"POST",
 body:JSON.stringify({
 action:"removeCart",
-productId,
-quantity:0
+productId
 })
 });
 
@@ -2137,9 +2822,9 @@ quantity:0
 await api("/api/chat",{
 method:"POST",
 body:JSON.stringify({
-action:"removeCart",
+action:"updateCart",
 productId,
-quantity:1
+quantity:quantity-1
 })
 });
 
@@ -2199,10 +2884,6 @@ function openProfile(){
 
 const user=state.user||{};
 
-const verifiedUser=
-user.emailVerified===true||
-user.phoneVerified===true;
-
 $("profileContent").innerHTML=`
 
 <div class="profile-cover">
@@ -2224,12 +2905,31 @@ alt="">
 
 ${escapeHtml(user.name||"User")}
 
-${verifiedUser?verified():""}
+${isVerified(user)?verified():""}
 
 </div>
 
 <div class="profile-email">
 ${escapeHtml(user.email||"")}
+</div>
+
+<div class="profile-stats">
+
+<div class="profile-stat">
+<strong id="myPostCount">0</strong>
+<span>Postingan</span>
+</div>
+
+<div class="profile-stat">
+<strong id="myActiveCount">0</strong>
+<span>Aktif</span>
+</div>
+
+<div class="profile-stat">
+<strong id="myStockCount">0</strong>
+<span>Total Stok</span>
+</div>
+
 </div>
 
 <div class="profile-actions">
@@ -2250,6 +2950,8 @@ Keluar
 
 openModal("profileModal");
 
+loadMyProductStats();
+
 $("myProductsBtn").addEventListener(
 "click",
 loadMyProducts
@@ -2261,12 +2963,54 @@ logout
 );
 }
 
+async function loadMyProductStats(){
+
+try{
+
+const data=await api(
+"/api/chat?action=myproducts"
+);
+
+const products=
+Array.isArray(data.products)
+?data.products
+:[];
+
+const active=
+products.filter(
+product=>product.status==="active"
+);
+
+const stock=
+products.reduce(
+(sum,product)=>sum+(Number(product.stock)||0),
+0
+);
+
+if($("myPostCount")){
+$("myPostCount").textContent=
+String(products.length);
+}
+
+if($("myActiveCount")){
+$("myActiveCount").textContent=
+String(active.length);
+}
+
+if($("myStockCount")){
+$("myStockCount").textContent=
+String(stock);
+}
+
+}catch{}
+}
+
 async function loadMyProducts(){
 
 try{
 
 const data=await api(
-"/api/chat?action=myProducts"
+"/api/chat?action=myproducts"
 );
 
 const products=
@@ -2299,14 +3043,22 @@ products.map(product=>`
 
 <article
 class="product"
-data-product="${escapeHtml(product._id||product.id)}">
+data-my-product="${escapeHtml(product._id||product.id)}">
 
 <div class="product-image-wrap">
 
 <img
 class="product-image"
 src="${escapeHtml(product.images?.[0]||"")}"
-alt="${escapeHtml(product.name)}">
+alt="${escapeHtml(product.name)}"
+onerror="this.style.display='none'">
+
+<button
+type="button"
+class="product-menu-btn"
+data-my-menu="${escapeHtml(product._id||product.id)}">
+⋮
+</button>
 
 </div>
 
@@ -2322,6 +3074,10 @@ ${money(product.price)}
 
 <div class="product-stock">
 ${Number(product.stock)||0} stock
+</div>
+
+<div class="owner-label">
+${product.status==="active"?"✓ Aktif":"○ Nonaktif"}
 </div>
 
 </div>
@@ -2370,18 +3126,22 @@ openProfile
 );
 
 document.querySelectorAll(
-"#profileContent .product"
+"#profileContent [data-my-product]"
 ).forEach(card=>{
 
 card.addEventListener(
 "click",
-()=>{
+event=>{
+
+if(event.target.closest("[data-my-menu]")){
+return;
+}
 
 const product=
 products.find(
 item=>
 String(item._id||item.id)===
-String(card.dataset.product)
+String(card.dataset.myProduct)
 );
 
 if(product){
@@ -2397,9 +3157,192 @@ openDetail(product);
 
 });
 
+document.querySelectorAll(
+"#profileContent [data-my-menu]"
+).forEach(button=>{
+
+button.addEventListener(
+"click",
+event=>{
+
+event.stopPropagation();
+
+const product=
+products.find(
+item=>
+String(item._id||item.id)===
+String(button.dataset.myMenu)
+);
+
+if(product){
+showActionMenu(
+button,
+product
+);
+}
+
+}
+);
+
+});
+
 }catch(error){
 
 toast(error.message);
+
+}
+}
+
+function showActionMenu(button,product){
+
+const menu=$("productActionMenu");
+
+menu.dataset.productId=
+String(product._id||product.id);
+
+const rect=button.getBoundingClientRect();
+
+const width=170;
+
+let left=
+Math.min(
+window.innerWidth-width-10,
+Math.max(10,rect.right-width)
+);
+
+let top=rect.bottom+7;
+
+if(top+100>window.innerHeight){
+top=rect.top-107;
+}
+
+menu.style.left=`${left}px`;
+menu.style.top=`${top}px`;
+
+menu.classList.add("open");
+}
+
+function hideActionMenu(){
+
+$("productActionMenu").classList.remove("open");
+
+}
+
+function openEditProduct(product){
+
+hideActionMenu();
+
+state.editingProduct=product;
+
+const form=$("productForm");
+
+$("sellModalTitle").textContent="Edit Produk";
+$("publishBtn").textContent="Simpan Perubahan";
+$("cancelEditBtn").style.display="block";
+$("imageLabel").textContent="Foto Baru Opsional";
+
+form.name.value=product.name||"";
+form.price.value=product.price??"";
+form.stock.value=product.stock??"";
+form.category.value=product.category||"";
+form.description.value=product.description||"";
+
+$("productImages").required=false;
+$("productImages").value="";
+$("imagePreview").innerHTML="";
+
+const images=
+Array.isArray(product.images)
+?product.images
+:[];
+
+if(images.length){
+
+$("currentImagesWrap").style.display="block";
+
+$("currentImages").innerHTML=
+images.map(image=>`
+<img
+src="${escapeHtml(image)}"
+alt=""
+onerror="this.style.display='none'">
+`).join("");
+
+}else{
+
+$("currentImagesWrap").style.display="none";
+$("currentImages").innerHTML="";
+
+}
+
+openModal("sellModal");
+}
+
+function resetProductForm(){
+
+state.editingProduct=null;
+
+const form=$("productForm");
+
+form.reset();
+
+$("sellModalTitle").textContent="Jual Produk";
+$("publishBtn").textContent="Terbitkan Produk";
+$("cancelEditBtn").style.display="none";
+$("imageLabel").textContent="Foto Produk";
+$("productImages").required=true;
+$("productImages").value="";
+$("currentImagesWrap").style.display="none";
+$("currentImages").innerHTML="";
+$("imagePreview").innerHTML="";
+}
+
+function openDeleteConfirm(productId){
+
+state.deleteProductId=productId;
+
+openModal("confirmModal");
+}
+
+async function deleteProduct(){
+
+const productId=state.deleteProductId;
+
+if(!productId)return;
+
+const button=$("confirmDeleteBtn");
+
+button.disabled=true;
+button.textContent="Menghapus...";
+
+try{
+
+await api("/api/chat",{
+method:"POST",
+body:JSON.stringify({
+action:"deleteProduct",
+productId
+})
+});
+
+toast("Produk berhasil dihapus");
+
+closeModal("confirmModal");
+
+state.deleteProductId=null;
+state.selectedProduct=null;
+
+await loadProducts(true);
+await loadCart();
+
+}catch(error){
+
+toast(error.message);
+
+}finally{
+
+button.disabled=false;
+button.textContent="Hapus Produk";
 
 }
 }
@@ -2572,8 +3515,7 @@ $("searchInput").addEventListener(
 "input",
 debounce(event=>{
 
-state.search=
-event.target.value.trim();
+state.search=event.target.value.trim();
 
 loadProducts(true);
 
@@ -2584,8 +3526,7 @@ $("categories").addEventListener(
 "click",
 event=>{
 
-const button=
-event.target.closest(
+const button=event.target.closest(
 "[data-category]"
 );
 
@@ -2605,6 +3546,65 @@ $("products").addEventListener(
 "click",
 event=>{
 
+const menuButton=
+event.target.closest(
+"[data-product-menu]"
+);
+
+if(menuButton){
+
+event.stopPropagation();
+
+const product=
+state.products.find(
+item=>
+String(item._id||item.id)===
+String(menuButton.dataset.productMenu)
+);
+
+if(product){
+showActionMenu(
+menuButton,
+product
+);
+}
+
+return;
+}
+
+const sellerButton=
+event.target.closest(
+"[data-seller]"
+);
+
+if(sellerButton){
+
+event.stopPropagation();
+
+const card=
+sellerButton.closest(
+"[data-product]"
+);
+
+const product=
+state.products.find(
+item=>
+String(item._id||item.id)===
+String(card?.dataset.product)
+);
+
+if(product){
+
+openSellerProfile(
+sellerButton.dataset.seller,
+product.seller||{}
+);
+
+}
+
+return;
+}
+
 const card=
 event.target.closest(
 "[data-product]"
@@ -2620,8 +3620,66 @@ String(card.dataset.product)
 );
 
 if(product){
-
 openDetail(product);
+}
+
+}
+);
+
+$("productActionMenu").addEventListener(
+"click",
+event=>{
+
+const button=
+event.target.closest(
+"[data-product-action]"
+);
+
+if(!button)return;
+
+const productId=
+$("productActionMenu").dataset.productId;
+
+const product=
+state.products.find(
+item=>
+String(item._id||item.id)===
+String(productId)
+);
+
+if(button.dataset.productAction==="edit"){
+
+if(product){
+openEditProduct(product);
+}
+
+hideActionMenu();
+
+return;
+}
+
+if(button.dataset.productAction==="delete"){
+
+hideActionMenu();
+
+openDeleteConfirm(productId);
+
+}
+
+}
+);
+
+document.addEventListener(
+"click",
+event=>{
+
+if(
+!event.target.closest("#productActionMenu")&&
+!event.target.closest("[data-product-menu]")&&
+!event.target.closest("[data-my-menu]")
+){
+
+hideActionMenu();
 
 }
 
@@ -2644,7 +3702,22 @@ await loadProducts(false);
 $("sellBtn").addEventListener(
 "click",
 ()=>{
+
+resetProductForm();
+
 openModal("sellModal");
+
+}
+);
+
+$("cancelEditBtn").addEventListener(
+"click",
+()=>{
+
+resetProductForm();
+
+closeModal("sellModal");
+
 }
 );
 
@@ -2676,6 +3749,22 @@ $("checkoutBtn").addEventListener(
 checkout
 );
 
+$("cancelDeleteBtn").addEventListener(
+"click",
+()=>{
+
+state.deleteProductId=null;
+
+closeModal("confirmModal");
+
+}
+);
+
+$("confirmDeleteBtn").addEventListener(
+"click",
+deleteProduct
+);
+
 document.querySelectorAll(
 "[data-close]"
 ).forEach(button=>{
@@ -2683,9 +3772,16 @@ document.querySelectorAll(
 button.addEventListener(
 "click",
 ()=>{
-closeModal(
-button.dataset.close
-);
+
+const id=
+button.dataset.close;
+
+if(id==="sellModal"){
+resetProductForm();
+}
+
+closeModal(id);
+
 }
 );
 
@@ -2700,6 +3796,10 @@ modal.addEventListener(
 event=>{
 
 if(event.target===modal){
+
+if(modal.id==="sellModal"){
+resetProductForm();
+}
 
 closeModal(modal.id);
 
@@ -2770,8 +3870,8 @@ async event=>{
 event.preventDefault();
 
 const button=$("publishBtn");
-
 const form=event.currentTarget;
+const editing=state.editingProduct;
 
 const files=
 [...$("productImages").files]
@@ -2785,7 +3885,7 @@ const files=
 )
 .slice(0,6);
 
-if(!files.length){
+if(!editing&&!files.length){
 
 toast(
 "Pilih minimal satu foto"
@@ -2795,7 +3895,11 @@ return;
 }
 
 button.disabled=true;
-button.textContent="Menerbitkan...";
+
+button.textContent=
+editing
+?"Menyimpan..."
+:"Menerbitkan...";
 
 try{
 
@@ -2804,8 +3908,22 @@ new FormData();
 
 data.append(
 "action",
-"createProduct"
+editing
+?"updateProduct"
+:"createProduct"
 );
+
+if(editing){
+
+data.append(
+"productId",
+String(
+editing._id||
+editing.id
+)
+);
+
+}
 
 data.append(
 "name",
@@ -2855,29 +3973,32 @@ cache:"no-store"
 let result={};
 
 try{
-result=await response.json();
+result=
+await response.json();
 }catch{}
 
 if(!response.ok){
 
 throw new Error(
 result.message||
-"Gagal membuat produk"
+(
+editing
+?"Gagal memperbarui produk"
+:"Gagal membuat produk"
+)
 );
 
 }
 
 toast(
-"Produk berhasil diterbitkan"
+editing
+?"Produk berhasil diperbarui"
+:"Produk berhasil diterbitkan"
 );
 
-form.reset();
+resetProductForm();
 
-$("imagePreview").innerHTML="";
-
-closeModal(
-"sellModal"
-);
+closeModal("sellModal");
 
 await loadProducts(true);
 
@@ -2890,12 +4011,14 @@ error.message
 }finally{
 
 button.disabled=false;
-button.textContent="Terbitkan Produk";
+
+button.textContent=
+state.editingProduct
+?"Simpan Perubahan"
+:"Terbitkan Produk";
 
 }
-
-}
-);
+});
 
 async function init(){
 
@@ -2948,10 +4071,9 @@ window.location.href="/login";
 }
 
 }
-
 }
 
 init();
 </script>
 </body>
-  </html>
+</html>
