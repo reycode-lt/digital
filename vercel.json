@@ -43,6 +43,10 @@
     {
       "source": "/chat",
       "destination": "/chatpublic.html"
+    },
+    {
+      "source": "/license-card",
+      "destination": "/lisensi-card.html"
     }
   ]
 }
