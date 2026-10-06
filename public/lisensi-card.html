@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ReyCode Digital License Card V2</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+:root{--bg:#070b12;--panel:#0e1522;--panel2:#111b2b;--line:#223047;--text:#f7f9fc;--muted:#94a3b8;--accent:#66e3ff;--accent2:#8b7cff;--ok:#27d17f;--gold:#f5c76b}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 20% 0%,#17243a 0,#070b12 45%,#05070b 100%);color:var(--text)}
+body{padding:24px}.app{max-width:1500px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px}.brandmark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#071019;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.status{font-size:12px;color:var(--muted);border:1px solid var(--line);background:#0b111c;padding:9px 12px;border-radius:999px}.layout{display:grid;grid-template-columns:370px minmax(0,1fr);gap:22px}.panel{background:rgba(12,18,29,.9);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 20px 70px #0005}.panel h2{font-size:14px;margin:0 0 14px}.section{border-top:1px solid #1c283a;padding-top:15px;margin-top:15px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:11px}.field label{display:block;font-size:11px;color:#aab7c9;margin:0 0 6px}.input,.select{width:100%;height:40px;border-radius:11px;border:1px solid #27364e;background:#09111d;color:#eef4fb;padding:0 11px;outline:none}.input:focus,.select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #66e3ff1a}.input.readonly{opacity:.75;cursor:not-allowed}.color{width:100%;height:40px;border:1px solid #27364e;border-radius:11px;background:#09111d;padding:4px}.check{display:flex;align-items:center;gap:8px;color:#c5d0df;font-size:12px}.check input{accent-color:var(--accent)}.btns{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{min-height:42px;border-radius:11px;border:1px solid #2a3950;background:#111b2a;color:#edf3fa;font-weight:700;cursor:pointer}.btn:hover{filter:brightness(1.12)}.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;color:#061019}.btn.danger{border-color:#5b2931}.canvas-wrap{min-width:0;display:flex;justify-content:center;align-items:flex-start}.stage{width:min(100%,760px);padding:18px;border:1px solid var(--line);background:#080e18;border-radius:22px}.hint{font-size:11px;color:var(--muted);margin:0 0 13px}.card-area{perspective:1800px;width:100%}.card-wrap{width:100%;aspect-ratio:1.586/1;position:relative;transform-style:preserve-3d;transition:transform .65s ease}.card-wrap.flipped{transform:rotateY(180deg)}.license-card{position:absolute;inset:0;backface-visibility:hidden;border-radius:28px;overflow:hidden;color:#0c1220;background:linear-gradient(135deg,#f7fbff 0%,#e9eef5 52%,#dce5f0 100%);box-shadow:0 28px 80px #0009}.license-card.back{transform:rotateY(180deg)}.card-noise{position:absolute;inset:0;opacity:.11;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:5px 5px;pointer-events:none}.accent{position:absolute;inset:0;background:linear-gradient(120deg,var(--cardAccent,#66e3ff) 0%,transparent 34%,transparent 70%,var(--cardAccent2,#8b7cff) 100%);opacity:.13;pointer-events:none}.topline{position:absolute;left:5%;right:5%;top:5%;height:5px;border-radius:99px;background:linear-gradient(90deg,var(--cardAccent,#66e3ff),var(--cardAccent2,#8b7cff));opacity:.9}.front-content{position:absolute;inset:0;padding:8% 7%;display:flex;flex-direction:column}.mini-brand{font-size:11px;letter-spacing:.18em;font-weight:900;color:#334155;text-transform:uppercase}.greeting{margin-top:4%;font-size:clamp(15px,2.2vw,25px);font-weight:800;color:#111827}.greeting .blue{color:#1687ff;display:inline-block;font-size:.9em;margin-left:4px}.holder-label{margin-top:auto;color:#64748b;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800}.holder{font-size:clamp(23px,4vw,46px);line-height:1.05;font-weight:950;letter-spacing:-.035em;color:#0b1220;max-width:85%;overflow-wrap:anywhere}.org{font-size:clamp(12px,1.8vw,19px);font-weight:800;color:#475569;margin-top:7px;overflow-wrap:anywhere}.meta{display:flex;justify-content:space-between;gap:14px;margin-top:5%;align-items:flex-end}.meta small{display:block;color:#64748b;font-size:9px;text-transform:uppercase;letter-spacing:.12em}.meta strong{font-size:12px;color:#111827}.sig{font-family:"Segoe Script","Bradley Hand",cursive;font-size:clamp(15px,2.2vw,25px);font-weight:700;color:#111827}.blue-check{display:inline-grid;place-items:center;width:1.15em;height:1.15em;border-radius:50%;background:#1687ff;color:white;font-size:.65em;vertical-align:middle;box-shadow:0 2px 6px #1687ff55}.back-content{position:absolute;inset:0;padding:7%;display:grid;grid-template-columns:1fr 180px;gap:6%;align-items:center}.back-title{font-size:clamp(22px,3.2vw,37px);font-weight:950;letter-spacing:-.03em}.back-sub{color:#64748b;font-size:12px;line-height:1.5;margin:10px 0 20px}.back-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.back-item{border-top:1px solid #b8c3d1;padding-top:8px}.back-item span{display:block;color:#64748b;font-size:9px;text-transform:uppercase;letter-spacing:.1em}.back-item b{display:block;margin-top:3px;font-size:12px;overflow-wrap:anywhere}.qrbox{width:100%;aspect-ratio:1;background:#fff;border-radius:17px;padding:9px;display:grid;place-items:center;border:1px solid #cbd5e1}.qrbox img{max-width:100%;max-height:100%;object-fit:contain}.qr-placeholder{font-size:11px;color:#64748b;text-align:center}.watermark{position:absolute;right:6%;bottom:6%;font-size:9px;color:#64748b;letter-spacing:.15em;text-transform:uppercase}.theme-row{display:flex;gap:8px;flex-wrap:wrap}.theme{width:30px;height:30px;border-radius:50%;border:2px solid #fff2;cursor:pointer}.theme.active{outline:2px solid #fff;outline-offset:2px}.small{font-size:10px;color:var(--muted);line-height:1.5}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:#101a29;color:#fff;border:1px solid #2b3b54;border-radius:12px;padding:10px 14px;font-size:12px;transition:.25s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:950px){body{padding:14px}.layout{grid-template-columns:1fr}.panel{order:2}.canvas-wrap{order:1}.top{align-items:flex-start}.status{display:none}}@media(max-width:520px){.row,.back-grid{grid-template-columns:1fr}.stage{padding:8px}.license-card{border-radius:18px}.front-content,.back-content{padding:7%}.back-content{grid-template-columns:1fr 95px;gap:4%}.btns{grid-template-columns:1fr}.topline{height:3px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="brandmark">R</div><div><h1>ReyCode Digital License Card V2</h1><p>License card generator • account connected</p></div></div>
+    <div class="status" id="apiStatus">Menghubungkan akun…</div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>License Card</h2>
+      <div class="field"><label>Username</label><input id="usernamePreview" class="input" value="ReyCloudDev" readonly></div>
+      <div class="field"><label>License Holder</label><input id="holderInput" class="input" value="ReyCloudDev" maxlength="80"></div>
+      <div class="field"><label>Organization</label><input id="orgInput" class="input" value="Monika Labs" maxlength="80"></div>
+      <div class="field"><label>Authorized Signature</label><input id="signatureInput" class="input readonly" value="ReyCode Digitall" readonly aria-readonly="true"></div>
+
+      <div class="section">
+        <h2>License Details</h2>
+        <div class="row">
+          <div class="field"><label>License Type</label><input id="typeInput" class="input" value="Digital License" maxlength="50"></div>
+          <div class="field"><label>License ID</label><input id="licenseInput" class="input" value="RCD-2026-0001" maxlength="50"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Issued</label><input id="issuedInput" class="input" type="date"></div>
+          <div class="field"><label>Expires</label><input id="expiresInput" class="input" type="date"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Branding</h2>
+        <div class="row">
+          <div class="field"><label>Accent</label><input id="accentInput" class="color" type="color" value="#66e3ff"></div>
+          <div class="field"><label>Accent 2</label><input id="accent2Input" class="color" type="color" value="#8b7cff"></div>
+        </div>
+        <div class="field"><label>Logo</label><input id="logoInput" class="input" type="file" accept="image/png,image/jpeg,image/webp"></div>
+        <div class="field"><label>QR Image</label><input id="qrInput" class="input" type="file" accept="image/png,image/jpeg,image/webp"></div>
+      </div>
+
+      <div class="section">
+        <h2>Actions</h2>
+        <div class="btns">
+          <button class="btn" id="flipBtn" type="button">Flip Card</button>
+          <button class="btn" id="copyBtn" type="button">Copy License ID</button>
+          <button class="btn" id="downloadFrontBtn" type="button">Download Front</button>
+          <button class="btn" id="downloadBackBtn" type="button">Download Back</button>
+          <button class="btn primary" id="downloadBothBtn" type="button" style="grid-column:1/-1">Download Both ZIP</button>
+          <button class="btn danger" id="resetBtn" type="button" style="grid-column:1/-1">Reset</button>
+        </div>
+      </div>
+      <p class="small" style="margin:14px 0 0">Username dan centang biru berasal dari <code>/api/user/me</code>. License Holder dan Organization dapat diedit. Authorized Signature dikunci.</p>
+    </aside>
+
+    <main class="canvas-wrap">
+      <div class="stage">
+        <p class="hint">Preview • export langsung pada ukuran 2400px agar teks tidak diraster ulang dua kali.</p>
+        <div class="card-area" id="cardArea">
+          <div class="card-wrap" id="cardWrap">
+            <section class="license-card front" id="frontCard">
+              <div class="card-noise"></div><div class="accent"></div><div class="topline"></div>
+              <div class="front-content">
+                <div class="mini-brand" id="frontOrgTop">MONIKA LABS</div>
+                <div class="greeting"><span id="greetingText">Selamat malam</span>, <span id="usernameText">ReyCloudDev</span> <span class="blue-check" aria-label="Verified">✓</span></div>
+                <div class="holder-label">License Holder</div>
+                <div class="holder" id="holderText">ReyCloudDev</div>
+                <div class="org" id="orgText">Monika Labs</div>
+                <div class="meta">
+                  <div><small>License Type</small><strong id="typeText">Digital License</strong><div style="height:6px"></div><small>License ID</small><strong id="licenseText">RCD-2026-0001</strong></div>
+                  <div style="text-align:right"><small>Authorized Signature</small><div class="sig" id="signatureText">ReyCode Digitall</div></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="license-card back" id="backCard">
+              <div class="card-noise"></div><div class="accent"></div><div class="topline"></div>
+              <div class="back-content">
+                <div>
+                  <div class="mini-brand" id="backOrgTop">MONIKA LABS</div>
+                  <div class="back-title" style="margin-top:14px">Digital License</div>
+                  <div class="back-sub">This card confirms the license information shown on the front side.</div>
+                  <div class="back-grid">
+                    <div class="back-item"><span>Holder</span><b id="backHolder">ReyCloudDev</b></div>
+                    <div class="back-item"><span>Organization</span><b id="backOrg">Monika Labs</b></div>
+                    <div class="back-item"><span>Issued</span><b id="issuedText">—</b></div>
+                    <div class="back-item"><span>Expires</span><b id="expiresText">—</b></div>
+                  </div>
+                  <div class="back-item" style="margin-top:15px"><span>Authorized Signature</span><b id="backSignature">ReyCode Digitall</b></div>
+                </div>
+                <div class="qrbox" id="qrBox"><div class="qr-placeholder" id="qrPlaceholder">Upload QR<br>to display it here</div><img id="qrPreview" alt="QR" hidden></div>
+              </div>
+              <div class="watermark">REYCODE DIGITAL • LICENSE CARD V2</div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const AUTHORIZED_SIGNATURE = "ReyCode Digitall";
+  const DEFAULT_ORGANIZATION = "Monika Labs";
+  const DEFAULT_USERNAME = "ReyCloudDev";
+  const state = { username: DEFAULT_USERNAME, holder: DEFAULT_USERNAME, organization: DEFAULT_ORGANIZATION, flipped:false, logo:null, qr:null };
+
+  function toast(message){
+    const el=$("toast"); el.textContent=message; el.classList.add("show");
+    clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.classList.remove("show"),2200);
+  }
+
+  function greeting(){
+    const h=new Date().getHours();
+    if(h>=5 && h<11) return "Selamat pagi";
+    if(h>=11 && h<15) return "Selamat siang";
+    if(h>=15 && h<18) return "Selamat sore";
+    return "Selamat malam";
+  }
+
+  function formatDate(value){
+    if(!value) return "—";
+    const [y,m,d]=value.split("-");
+    return y&&m&&d ? `${d}/${m}/${y}` : "—";
+  }
+
+  function apply(){
+    // Signature is intentionally immutable.
+    $("signatureInput").value = AUTHORIZED_SIGNATURE;
+    const username = state.username || DEFAULT_USERNAME;
+    const holder = $("holderInput").value.trim() || username;
+    const org = $("orgInput").value.trim() || DEFAULT_ORGANIZATION;
+    state.holder=holder; state.organization=org;
+
+    $("usernamePreview").value=username;
+    $("usernameText").textContent=username;
+    $("greetingText").textContent=greeting();
+    $("holderText").textContent=holder;
+    $("backHolder").textContent=holder;
+    $("orgText").textContent=org;
+    $("backOrg").textContent=org;
+    $("frontOrgTop").textContent=org.toUpperCase();
+    $("backOrgTop").textContent=org.toUpperCase();
+    $("signatureText").textContent=AUTHORIZED_SIGNATURE;
+    $("backSignature").textContent=AUTHORIZED_SIGNATURE;
+    $("typeText").textContent=$("typeInput").value.trim() || "Digital License";
+    $("licenseText").textContent=$("licenseInput").value.trim() || "RCD-2026-0001";
+    $("issuedText").textContent=formatDate($("issuedInput").value);
+    $("expiresText").textContent=formatDate($("expiresInput").value);
+
+    const root=document.documentElement;
+    root.style.setProperty("--cardAccent",$("accentInput").value);
+    root.style.setProperty("--cardAccent2",$("accent2Input").value);
+  }
+
+  function setDefaults(){
+    $("holderInput").value=state.username || DEFAULT_USERNAME;
+    $("orgInput").value=DEFAULT_ORGANIZATION;
+    $("signatureInput").value=AUTHORIZED_SIGNATURE;
+    $("typeInput").value="Digital License";
+    $("licenseInput").value="RCD-2026-0001";
+    const now=new Date();
+    const iso=d=>{const x=new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`};
+    $("issuedInput").value=iso(now);
+    const exp=new Date(now); exp.setFullYear(exp.getFullYear()+1); $("expiresInput").value=iso(exp);
+    $("accentInput").value="#66e3ff"; $("accent2Input").value="#8b7cff";
+    state.logo=null; state.qr=null;
+    $("qrPreview").hidden=true; $("qrPlaceholder").hidden=false; $("qrInput").value=""; $("logoInput").value="";
+    state.flipped=false; $("cardWrap").classList.remove("flipped");
+    apply();
+  }
+
+  async function loadImage(file){
+    return new Promise((resolve,reject)=>{
+      const r=new FileReader(); r.onload=()=>{const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src=r.result}; r.onerror=reject; r.readAsDataURL(file);
+    });
+  }
+
+  function updateQr(img){
+    state.qr=img; const p=$("qrPreview"); p.src=img.src; p.hidden=false; $("qrPlaceholder").hidden=true;
+  }
+
+  async function fetchCurrentUser(){
+    const status=$("apiStatus");
+    try{
+      const res=await fetch("/api/user/me",{method:"GET",credentials:"include",headers:{Accept:"application/json"},cache:"no-store"});
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data=await res.json();
+      const u=data?.result?.user || data?.result || data?.user || data;
+      const username=String(u?.username || u?.name || u?.displayName || "").trim();
+      if(username){
+        state.username=username;
+        $("holderInput").value=username;
+        $("usernamePreview").value=username;
+        status.textContent=`✓ ${username}`; status.style.color="#66e3ff";
+        apply();
+      }else throw new Error("Username tidak ditemukan");
+    }catch(error){
+      state.username=DEFAULT_USERNAME;
+      $("usernamePreview").value=DEFAULT_USERNAME;
+      status.textContent="Mode fallback • username default";
+      status.style.color="#f5c76b";
+      apply();
+      console.warn("[License Card] /api/user/me:",error);
+    }
+  }
+
+  async function waitReady(){
+    if(document.fonts?.ready) await document.fonts.ready;
+    const images=[...document.querySelectorAll("#frontCard img,#backCard img")];
+    await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.addEventListener("load",r,{once:true});img.addEventListener("error",r,{once:true})})));
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  }
+
+  async function renderCard(target){
+    await waitReady();
+    const rect=target.getBoundingClientRect();
+    const targetWidth=2400;
+    const scale=targetWidth/Math.max(1,rect.width);
+    return html2canvas(target,{scale,width:rect.width,height:rect.height,useCORS:true,allowTaint:false,backgroundColor:null,logging:false,imageTimeout:15000,scrollX:0,scrollY:0,foreignObjectRendering:false,onclone:(doc)=>{
+      const clonedWrap=doc.querySelector("#cardWrap");
+      if(clonedWrap){clonedWrap.style.transform="none";clonedWrap.style.transition="none";}
+      const cloned=doc.getElementById(target.id); if(cloned){cloned.style.transform="none";cloned.style.backfaceVisibility="visible";cloned.style.position="relative";}
+    }});
+  }
+
+  async function downloadCanvas(canvas,filename){
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png",1));
+    if(!blob) throw new Error("Gagal membuat PNG");
+    const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+
+  async function capture(side){
+    const desired=side==="back";
+    const before=state.flipped;
+    if(desired!==before){state.flipped=desired;$("cardWrap").classList.toggle("flipped",desired);}
+    await new Promise(r=>setTimeout(r,350));
+    const canvas=await renderCard(desired?$("backCard"):$("frontCard"));
+    await downloadCanvas(canvas,`reycode-license-${side}-2400px.png`);
+    if(before!==desired){state.flipped=before;$("cardWrap").classList.toggle("flipped",before);}
+  }
+
+  $("flipBtn").addEventListener("click",()=>{state.flipped=!state.flipped;$("cardWrap").classList.toggle("flipped",state.flipped)});
+  $("copyBtn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("licenseInput").value.trim());toast("License ID berhasil disalin")}catch{toast("Tidak bisa menyalin License ID")}});
+  $("downloadFrontBtn").addEventListener("click",async()=>{try{toast("Membuat PNG front…");await capture("front");toast("Front berhasil diunduh")}catch(e){console.error(e);toast("Export front gagal")}});
+  $("downloadBackBtn").addEventListener("click",async()=>{try{toast("Membuat PNG back…");await capture("back");toast("Back berhasil diunduh")}catch(e){console.error(e);toast("Export back gagal")}});
+  $("downloadBothBtn").addEventListener("click",async()=>{
+    try{
+      toast("Membuat ZIP…"); const before=state.flipped; const zip=new JSZip();
+      state.flipped=false; $("cardWrap").classList.remove("flipped"); await new Promise(r=>setTimeout(r,300));
+      const front=await renderCard($("frontCard")); const frontBlob=await new Promise(r=>front.toBlob(r,"image/png",1)); zip.file("reycode-license-front-2400px.png",frontBlob);
+      state.flipped=true; $("cardWrap").classList.add("flipped"); await new Promise(r=>setTimeout(r,300));
+      const back=await renderCard($("backCard")); const backBlob=await new Promise(r=>back.toBlob(r,"image/png",1)); zip.file("reycode-license-back-2400px.png",backBlob);
+      state.flipped=before; $("cardWrap").classList.toggle("flipped",before);
+      const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="reycode-license-card-v2.zip"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500); toast("ZIP berhasil diunduh");
+    }catch(e){console.error(e);toast("Export ZIP gagal")}
+  });
+  $("resetBtn").addEventListener("click",()=>{setDefaults();toast("Card dikembalikan ke default")});
+
+  ["holderInput","orgInput","typeInput","licenseInput","issuedInput","expiresInput","accentInput","accent2Input"].forEach(id=>$(id).addEventListener("input",apply));
+  $("logoInput").addEventListener("change",async e=>{const f=e.target.files?.[0];if(!f)return;try{state.logo=await loadImage(f);toast("Logo dimuat")}catch{toast("Logo tidak valid")}});
+  $("qrInput").addEventListener("change",async e=>{const f=e.target.files?.[0];if(!f)return;try{updateQr(await loadImage(f));toast("QR dimuat")}catch{toast("QR tidak valid")}});
+
+  // Prevent any runtime attempt to alter the protected signature field.
+  Object.defineProperty($("signatureInput"),"value",{configurable:false,get(){return AUTHORIZED_SIGNATURE},set(){return true}});
+
+  setDefaults();
+  fetchCurrentUser();
+  setInterval(()=>$("greetingText").textContent=greeting(),60000);
+})();
+</script>
+</body>
+</html>
